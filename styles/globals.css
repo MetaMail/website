@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  width: 1440px;
+  margin: auto;
+  background-image: url('/static/landing_bg.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
