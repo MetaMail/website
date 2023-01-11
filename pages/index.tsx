@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router'
 import logo_brand from '@assets/logo_brand.svg';
 import computer from '@assets/computer.svg';
 import table from '@assets/Table.svg';
@@ -18,16 +19,16 @@ export default function Intro() {
     //} else {
     //  setIsConnectModalVisible(true);
     //  setisOnLoginProcess(true);
+    const router = useRouter()
+    router.push('/mail');
     }
   return (
     <div className="flex flex-col mx-auto">
       <div className="home-bg">
-        <div className='flex justify-between'>
+        <div className='flex justify-between relative'>
         <Image src={gdL} alt="gradient NW" className="fixed w-1069"/>
-        <div>
         <div className='gradient-dot-NE'/>
         <div className='gradient-dot-middle'/>
-        </div>
         </div>
     <div className="pt-43 relative"> 
       <header className="flex flex-row justify-between px-40 lg:px-102">
@@ -51,6 +52,8 @@ export default function Intro() {
   </div>
   <div className='scale-65 xl:scale-80 2xl:scale-100'>
   <div className="relative hidden lg:flex">
+  <Image src={pDot} alt="dot SW" className="absolute w-32 bottom-100 right-903"/>
+  <Image src={pDot} alt="dot NE" className="absolute w-32 bottom-440 right-68"/>
           <Image
             src={computer}
             alt="computer height-404"
@@ -64,12 +67,14 @@ export default function Intro() {
         </div>
         <ReviewInfo/>
         </div>
-        <div className='h-960 description-bg mt-150 lg:-mt-360 lg:flex flex-row justify-between xl:justify-center pt-153 px-57 gap-40 2xl:gap-200'>
+        <div className='relative h-960 description-bg mt-150 lg:-mt-360 lg:flex flex-row justify-between xl:justify-center pt-153 px-57 gap-40 2xl:gap-200'>
           <Image
             src={pic1left}
             className='hidden lg:flex w-452'
             alt="first carton pic"
           />
+            <Image src={pDot} alt="dot SW" className="absolute w-36 top-217 right-903"/>
+            <Image src={pDot} alt="dot NE" className="absolute w-19 bottom-86 right-346"/>
           <div className='flex flex-col self-start justify-between gap-52 w-519 pt-0 lg:pt-140 '>
             <div className='text-5xl font-medium leading-normal'>Use your wallet or ens as email address</div>
           <div className='text-3xl font-normal leading-normal
@@ -77,7 +82,7 @@ export default function Intro() {
           <button className=" w-250 h-44 border border-[#1e1e1e] rounded-40 font-poppins" onClick={handleOpenConnectModal}>Connect Wallet</button>
           </div>
         </div>
-        <div className='h-820 description-bg2 flex flex-row justify-between px-141 gap-40 2xl:gap-200 2xl:justify-center'>
+        <div className='relative h-820 description-bg2 flex flex-row justify-between px-141 gap-40 2xl:gap-200 2xl:justify-center'>
           <div className='hidden lg:flex flex-col self-start justify-between gap-52 w-519 pt-246'>
             <div className='text-5xl font-medium leading-normal'>Sign every mail you send</div>
           <div className='text-3xl font-normal leading-normal
@@ -89,13 +94,15 @@ export default function Intro() {
             alt="second carton pic"
             className='scale-125 lg:scale-100 w-420'
           />
+            <Image src={pDot} alt="dot NW" className="absolute w-31 top-118 left-356"/>
         </div>
-        <div className='h-820 description-bg3 lg:flex flex-row justify-between xl:justify-center px-57 gap-40 2xl:gap-200'>
+        <div className='relative h-820 description-bg3 lg:flex flex-row justify-between xl:justify-center px-57 gap-40 2xl:gap-200'>
           <Image
             src={pic3left}
             className='hidden lg:inline py-200 w-452'
             alt="third carton pic"
           />
+            <Image src={pDot} alt="dot" className="absolute w-32 bottom-97 left-388"/>
           <div className='flex flex-col self-start justify-between gap-52 w-519 pt-140'>
             <div className='text-5xl font-medium leading-normal'>Protect mail with p2p encryption</div>
           <div className='text-3xl font-normal leading-normal
