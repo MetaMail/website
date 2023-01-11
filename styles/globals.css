@@ -1,11 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Space+Grotesk&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  width: 1440px;
+  width: 100%;
   margin: auto;
-  background-image: url('/static/landing_bg.svg');
+  background-color: #F2F8FF;
   background-repeat: no-repeat;
   background-size: cover;
+  max-width: 2000px;
+  font-family: 'Poppins', 'sans-serif';
+  font-family: 'Space Grotesk', 'sans-serif';
+  font-style: "Space Grotesk";
 }
+.home-bg{
+  background-repeat: no-repeat;
+}
+.gradient-dot-NE{
+  position: absolute;
+  right: 0;
+  top: 190px;
+  background: #00D1FF;
+  opacity: 0.2;
+  filter: blur(100px);
+  width: 210px;
+  height: 210px;
+
+}
+.gradient-dot-middle{
+  position:absolute;
+  background: #FF6B00;
+  right: 123px;
+  top: 185px;
+  opacity: 0.3;
+  width: 170px;
+  height: 170px;
+  filter: blur(150px);
+}
+
+.description-bg{
+  background: linear-gradient(296.84deg, rgba(172, 180, 252, 0.02) 2.19%, rgba(171, 207, 254, 0.31) 98%);
+  background-repeat: no-repeat;
+}
+.description-bg2{
+  background: linear-gradient(72.92deg, rgba(232, 201, 255, 0.147) 5.55%, rgba(102, 117, 255, 0.182) 82.18%);
+}
+.description-bg3{
+  background: linear-gradient(292.77deg, rgba(171, 207, 255, 0.08) 14.7%, rgba(141, 152, 255, 0.26) 97.91%);
+}
+
+
