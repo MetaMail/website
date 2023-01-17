@@ -12,6 +12,7 @@ import ReviewInfo from 'sections/reviewinfo';
 import Footer from 'sections/Footer';
 
 export default function Intro() {
+  const router = useRouter()
   const handleOpenConnectModal = () => {
     //setIsConnectModalVisible(true);
     //if (address) {
@@ -19,11 +20,10 @@ export default function Intro() {
     //} else {
     //  setIsConnectModalVisible(true);
     //  setisOnLoginProcess(true);
-    const router = useRouter()
     router.push('/mail');
-    }
+    };
   return (
-    <div className="flex flex-col mx-auto">
+    <div className="flex flex-col mx-auto max-w-[2000px]">
       <div className="home-bg">
         <div className='flex justify-between relative'>
         <Image src={gdL} alt="gradient NW" className="fixed w-1069"/>

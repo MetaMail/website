@@ -9,7 +9,6 @@ body {
   background-color: #F2F8FF;
   background-repeat: no-repeat;
   background-size: cover;
-  max-width: 2000px;
   font-family: 'Poppins', 'sans-serif';
   font-family: 'Space Grotesk', 'sans-serif';
   font-style: "Space Grotesk";
@@ -49,5 +48,12 @@ body {
 .description-bg3{
   background: linear-gradient(292.77deg, rgba(171, 207, 255, 0.08) 14.7%, rgba(141, 152, 255, 0.26) 97.91%);
 }
+
+.omit{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 
 
