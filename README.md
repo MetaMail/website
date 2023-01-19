@@ -1,5 +1,5 @@
 # MetaMail Website
-This is the frontend project of [MetaMail](https://metamail.ink) which based on Nest.js.
+This is the frontend project of [MetaMail](https://metamail.ink) which based on Next.js.
 
 ## Getting Started
 
