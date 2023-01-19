@@ -16,9 +16,9 @@ import Unread from '@assets/Unread.svg';
 export default function Mail() {
   //const router = useRouter()
   return (
-    <div className='pl-20 py-38 pr-44 font-poppins'>
+      <div className='pl-20 py-38 pr-44 font-poppins'>
       <div className='flex flex-row gap-37'>
-      <div className='flex flex-col w-170 gap-26'>
+<div className='flex flex-col w-170 gap-26'>
             <a href="/" className='flex flex-row gap-9'>
               <Image src={logo} alt="logo" className="w-30 "/>
               <Image src={logo_brand} alt="logo_brand" className="h-29"/>
@@ -30,13 +30,21 @@ export default function Mail() {
           <div className=''>
 
           </div>
-      </div>
-      <div className='relative flex-1 w-0'>
+</div>
+<div className='relative flex-1 w-0'>
       <div className='flex flex-row pt-10 justify-between'>
         <div className='flex flex-row'><div className='w-6 h-24 bg-[#006AD4] rounded-4'/>
         {/*<span className='pl-7 font-black text-xl'>Inbox</span>*/}</div>
         <div className='w-490 flex flex-row justify-between'>
-          <button className='w-294 h-28 bg-[#F3F7FF] border border-[#1e1e1e] rounded-40'>Search</button>
+          {/*<button className='w-294 h-28 bg-[#F3F7FF] border border-[#1e1e1e] rounded-40'>Search</button>*/}
+          <div className="form-control">
+  <div className="input-group ">
+    <input type="text" placeholder="Search Mail" className="input input-bordered h-32" />
+    <button className="btn h-32 min-h-0 px-5 bg-[#006AD4]">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+    </button>
+  </div>
+  </div>
         <span className='omit w-131 text-sm omit font-bold py-8'>0xb3833ffb8fceb3333333333333</span>
         </div>
         </div>
@@ -53,7 +61,6 @@ export default function Mail() {
         <Image src={turnLeft} alt="left" className="w-24"/>
           <div className='text-sm pt-3'>4 / 25</div>
           <Image src={turnRight} alt="right" className="w-24"/>
-
         </div>
         </div>
         <div className='h-38 flex flex-row py-6 px-18 justify-between text-sm gap-35 text-[#999999] text-center'>
@@ -79,7 +86,7 @@ export default function Mail() {
         <MailListItem />
         </div>
         </div>
-      </div>
+</div>
       </div>)
       {/*<PageHeader
         onBack={() => {

@@ -10,7 +10,7 @@ import pic3left from '@assets/pic3left.png';
 import gdL from '@assets/gdL.png';
 import ReviewInfo from 'sections/reviewinfo';
 import Footer from 'sections/Footer';
-
+import SignIn from 'pages/signin';
 export default function Intro() {
   const router = useRouter()
   const handleOpenConnectModal = () => {
@@ -33,7 +33,14 @@ export default function Intro() {
     <div className="pt-43 relative"> 
       <header className="flex flex-row justify-between px-40 lg:px-102">
         <Image src={logo_brand} alt="logo" className="w-298 h-52" onClick={handleOpenConnectModal}/>
-        <button className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins" onClick={handleOpenConnectModal}>Connect Wallet</button>
+        <SignIn/>
+        {/*<button className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins" onClick={handleOpenConnectModal}>Connect Wallet</button>
+        <div className=' w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins'>
+          <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains}>
+      <ConnectButton chainStatus="none" showBalance={false} accountStatus="address"/>
+      </RainbowKitProvider>
+    </WagmiConfig></div>*/}
       </header>
       </div>
     <div className="pt-78 lg:pt-136 relative left-174 2xl:left-[18%] w-399">

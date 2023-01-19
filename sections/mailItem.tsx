@@ -35,7 +35,11 @@ export default function MailListItem()//({
     return (
       <div className='h-38 flex flex-row py-6 px-18 justify-between text-sm gap-35'>
         <div className='flex flex-row gap-15'>
-        <Image src={encrypt} alt="new_mail" className="w-24 "/>
+        <div className="form-control">
+          <label className="label cursor-pointer py-6 ">
+            <input type="checkbox" className="checkbox checkbox-xs rounded-4" />
+          </label>
+        </div>
         <Image src={encrypt} alt="new_mail" className="w-24 "/>
         <Image src={encrypt} alt="new_mail" className="w-24 "/>
         </div>
