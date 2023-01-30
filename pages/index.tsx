@@ -80,7 +80,7 @@ export default function Intro() {
     <div className="flex flex-col mx-auto max-w-[2000px]">
       <div className="home-bg">
         <div className='flex justify-between relative'>
-        <Image src={gdL} alt="gradient NW" className="fixed w-1069"/>
+        <Image src={gdL} alt="gradient NW" className="fixed w-1069 h-auto"/>
         <div className='gradient-dot-NE'/>
         <div className='gradient-dot-middle'/>
         </div>
@@ -128,7 +128,7 @@ export default function Intro() {
         <div className='relative h-960 description-bg mt-150 lg:-mt-360 lg:flex flex-row justify-between xl:justify-center pt-153 px-57 gap-40 2xl:gap-200'>
           <Image
             src={pic1left}
-            className='hidden lg:flex w-452'
+            className='hidden lg:flex w-452 h-auto'
             alt="first carton pic"
           />
             <Image src={pDot} alt="dot SW" className="absolute w-36 top-217 right-903"/>
