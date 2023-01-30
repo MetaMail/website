@@ -10,9 +10,24 @@ import pic3left from '@assets/pic3left.png';
 import gdL from '@assets/gdL.png';
 import ReviewInfo from 'sections/reviewinfo';
 import Footer from 'sections/Footer';
-import SignIn from 'pages/signin';
+import RainbowLogin from 'RainbowLogin';
+import { disconnect } from '@wagmi/core'
+import {
+  useConnectModal,
+  useAccountModal,
+  useChainModal,
+} from '@rainbow-me/rainbowkit';
+import { configureChains, createClient, useAccount, WagmiConfig} from 'wagmi';
+import { useEffect, useState } from 'react';
+import { getJwtToken, getRandomStrToSign } from 'services/login';
+import { render } from 'react-dom';
+
 export default function Intro() {
-  const router = useRouter()
+  const router = useRouter()  
+  const { address, isConnected } = useAccount();
+  console.log('pages');
+  console.log(address);
+  console.log(isConnected);
   const handleOpenConnectModal = () => {
     //setIsConnectModalVisible(true);
     //if (address) {
@@ -20,8 +35,47 @@ export default function Intro() {
     //} else {
     //  setIsConnectModalVisible(true);
     //  setisOnLoginProcess(true);
-    router.push('/mail');
+    //router.push('/mail');
     };
+    useEffect(() => {
+        // handleAuth function
+        const handleAuth = async () => {
+          try{
+            //setOnProcess(true);
+            const lowAddr = address!.toLowerCase();
+            console.log(`address: ${address}\nlowAddr: ${lowAddr}`);
+            const { data } = await getRandomStrToSign(lowAddr!);
+            const { randomStr, signMethod, tokenForRandom } = data;
+            console.log(randomStr);
+            const signedMessage = await window.ethereum.request({
+                method: 'personal_sign',
+                params: [
+                  `0x${Buffer.from(randomStr, 'utf8').toString('hex')}`,
+                  address,
+                  'password',
+                ],
+              });
+            console.log(signedMessage);
+            const res = await getJwtToken({
+                tokenForRandom,
+                signedMessage,
+              });
+            const { data: user } = res ?? {};
+            console.log(user?.ens);
+            console.log(user?.public_key);
+            router.push('/home');
+        }
+        catch(e){
+          console.log(e);
+          await disconnect();
+
+        }
+      }
+        // isConnected then handleAuth
+        if (isConnected ) {
+            handleAuth();
+        }
+    },[address]);
   return (
     <div className="flex flex-col mx-auto max-w-[2000px]">
       <div className="home-bg">
@@ -33,14 +87,11 @@ export default function Intro() {
     <div className="pt-43 relative"> 
       <header className="flex flex-row justify-between px-40 lg:px-102">
         <Image src={logo_brand} alt="logo" className="w-298 h-52" onClick={handleOpenConnectModal}/>
-        <SignIn/>
+        <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
+        <RainbowLogin content='Connect Wallet'/>
+        </div>
         {/*<button className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins" onClick={handleOpenConnectModal}>Connect Wallet</button>
-        <div className=' w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins'>
-          <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
-      <ConnectButton chainStatus="none" showBalance={false} accountStatus="address"/>
-      </RainbowKitProvider>
-    </WagmiConfig></div>*/}
+        <div className=' w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins'></div>*/}
       </header>
       </div>
     <div className="pt-78 lg:pt-136 relative left-174 2xl:left-[18%] w-399">
@@ -52,10 +103,10 @@ export default function Intro() {
     Create And Use Your Crypto Email
     </p>
     {/*<Image src={pDot} alt="purpledot" className="w-36 h-36" width={36} height={36}/>*/}
-    <div className="pt-80 relative">
-    <button className="w-219 h-69 rounded-20 text-white font-semibold 
-    text-2xl bg-black " onClick={handleOpenConnectModal}>Try It Now</button>
-    </div>
+    <div className="mt-80 relative z-[10] font-poppins flex items-center justify-center w-219 h-69 rounded-20 text-white font-semibold 
+    text-2xl bg-black ">
+        <RainbowLogin content='Try It Now'/>
+        </div>
   </div>
   <div className='scale-65 xl:scale-80 2xl:scale-100'>
   <div className="relative hidden lg:flex">
@@ -69,7 +120,7 @@ export default function Intro() {
           <Image
             src={table}
             alt="table under computer"
-            className="absolute right-0 bottom-0 z-[-1] height-440"/>
+            className="absolute right-0 bottom-0 height-440"/>
         </div>
         </div>
         <ReviewInfo/>
@@ -86,7 +137,9 @@ export default function Intro() {
             <div className='text-5xl font-medium leading-normal'>Use your wallet or ens as email address</div>
           <div className='text-3xl font-normal leading-normal
           '>Use the wallet to log in our mailbox directly, send and receive mails with users of our mailbox and other common mainstream mailboxes. Totally free!</div>
-          <button className=" w-250 h-44 border border-[#1e1e1e] rounded-40 font-poppins" onClick={handleOpenConnectModal}>Connect Wallet</button>
+        <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
+        <RainbowLogin content='Connect Wallet'/>
+        </div>
           </div>
         </div>
         <div className='relative h-820 description-bg2 flex flex-row justify-between px-141 gap-40 2xl:gap-200 2xl:justify-center'>
@@ -94,7 +147,9 @@ export default function Intro() {
             <div className='text-5xl font-medium leading-normal'>Sign every mail you send</div>
           <div className='text-3xl font-normal leading-normal
           '>Sign evey mail digitally with your wallet. No forged mails anymore!</div>
-          <button className=" w-250 h-44 border border-[#1e1e1e] rounded-40 font-poppins" onClick={handleOpenConnectModal}>Start Now</button>
+        <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
+        <RainbowLogin content='Start Now'/>
+        </div>
           </div>
           <Image
             src={pic2Right}
@@ -114,7 +169,9 @@ export default function Intro() {
             <div className='text-5xl font-medium leading-normal'>Protect mail with p2p encryption</div>
           <div className='text-3xl font-normal leading-normal
           '>Mails sent and received by Metamail users could be optionally encrypted, and only the recipient has the private key to decrypt the mails, ensuring the ultimate security.</div>
-          <button className=" w-250 h-44 border border-[#1e1e1e] rounded-40 font-poppins" onClick={handleOpenConnectModal}>Encrypt Now</button>
+        <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
+        <RainbowLogin content='Encrypt Now'/>
+        </div>
           </div>
         </div>
         <Footer/>

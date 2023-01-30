@@ -1,37 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 //import { notification, message, PageHeader, Button } from 'antd'
-import Image from 'next/image';
 import { useRouter } from 'next/router'
-import logo_brand from '@assets/inbox_brand.svg';
-import logo from '@assets/logo.svg';
-import compose from '@assets/inbox_compose.svg';
-import MailListItem from 'sections/mailItem';
-import turnLeft from '@assets/turnLeft.svg';
-import turnRight from '@assets/turnRight.png';
-import Collection from '@assets/Collection.svg';
-import Delete from '@assets/Delete.svg';
-import Read from '@assets/Read.svg';
-import Unread from '@assets/Unread.svg';
+import SideMenu from 'SideMenu';
+import RainbowLogin from 'RainbowLogin';
+import { configureChains, createClient, useAccount, WagmiConfig } from 'wagmi';
+import MailList from '@pages/list';
+//import { changeMailStatus, getMailList, IMailChangeParams } from '@/services';
 
-export default function Mail() {
-  //const router = useRouter()
+export default function Mail(props:any) {
+  const { children } = props;
+  const { address, isConnected } = useAccount();
+  const router = useRouter()   
+  console.log('mail');
+  console.log(address);
+  console.log(isConnected);
+  useEffect(() => {
+  if (!isConnected) router.push('/'); ///////////////////返回首页
+},[address]);
   return (
-      <div className='pl-20 py-38 pr-44 font-poppins'>
-      <div className='flex flex-row gap-37'>
-<div className='flex flex-col w-170 gap-26'>
-            <a href="/" className='flex flex-row gap-9'>
-              <Image src={logo} alt="logo" className="w-30 "/>
-              <Image src={logo_brand} alt="logo_brand" className="h-29"/>
-          </a>
-          <div className='flex w-158 h-38 bg-[#006AD4] rounded-11 justify-center gap-17 py-10'>
-          <Image src={compose} alt="new_mail" className="w-16 "/>
-          <div className='text-sm text-white'>Compose</div>
-          </div>
-          <div className=''>
-
-          </div>
-</div>
-<div className='relative flex-1 w-0'>
+      <div className='pr-44 font-poppins mail-bg'>
+      <div className='flex flex-row gap-17 '>
+      <SideMenu/>
+<div className='flex flex-col flex-1 w-0 h-screen pt-33'>
       <div className='flex flex-row pt-10 justify-between'>
         <div className='flex flex-row'><div className='w-6 h-24 bg-[#006AD4] rounded-4'/>
         {/*<span className='pl-7 font-black text-xl'>Inbox</span>*/}</div>
@@ -45,49 +35,33 @@ export default function Mail() {
     </button>
   </div>
   </div>
-        <span className='omit w-131 text-sm omit font-bold py-8'>0xb3833ffb8fceb3333333333333</span>
+        <div className=" w-131 text-sm omit font-bold py-8">
+        <RainbowLogin content='Connect Wallet'/>
         </div>
         </div>
-        <div className='flex flex-row justify-between h-50 p-13 text-[#999999]'>
-          <div className='flex flex-row space-x-50 px-15'>
-            <Image src={Collection} alt={Collection} className="w-81"/>    
-            <Image src={Delete} alt={Delete} className="w-59"/>    
-            <Image src={Read} alt={Read} className="w-99"/>    
-            <Image src={Unread} alt={Unread} className="w-114"/>    
-
-
-          </div>
-        <div className='flex flex-row justify-end space-x-51'>
-        <Image src={turnLeft} alt="left" className="w-24"/>
-          <div className='text-sm pt-3'>4 / 25</div>
-          <Image src={turnRight} alt="right" className="w-24"/>
         </div>
-        </div>
-        <div className='h-38 flex flex-row py-6 px-18 justify-between text-sm gap-35 text-[#999999] text-center'>
-        <div className='flex flex-row justify-around w-102 px-5'>
-        <div className="w-12 h-12 border border-[#B3B3B3] rounded-2 content-center mt-4"/>
-        <div className=''>Option</div>
-        </div>
-        <span className='w-120 '>Address</span>
-        <span className='w-135 '>Theme</span>
-          {/*<div className='h-14 w-1 rounded-1 bg-[#333333] align-center'/>*/}
-        <div className='min-w-0 flex-1'>Abstract</div>
-        <div className='w-80'>Date</div></div>
-        <div className=''>
-        <MailListItem />
-        <MailListItem />
-        <MailListItem />
-        <MailListItem />
-        <MailListItem />
-        <MailListItem />
-        <MailListItem />
-        <MailListItem />
-        <MailListItem />
-        <MailListItem />
-        </div>
+        {children ?? <MailList/>}
         </div>
 </div>
       </div>)
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       {/*<PageHeader
         onBack={() => {
           router.back();

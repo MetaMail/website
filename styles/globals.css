@@ -54,6 +54,10 @@ body {
   white-space: nowrap;
   overflow: hidden;
 }
+.mail-bg{
+  min-width: 1000px;
+  background-color: white;
+}
 
 
 
