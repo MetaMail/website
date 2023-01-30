@@ -312,8 +312,9 @@ function MailList(props: any) {
   <div className='w-120'>Date</div>
   </div>
   <div className='flex flex-col overflow-auto flex-1 h-0 pl-8'>
-  {list.map(item => { 
+  {list.map((item,index) => { 
     return (<MailListItem
+            key={index}
             mark={item?.mark}
             from={item.mail_from}
             subject={item.subject}
