@@ -36,7 +36,7 @@ export const Connectbtn = ({content}:Istring) => {
             })}
           >
             {(() => {
-              if (true) {
+              if (!connected) {
                 return (
                   <button onClick={openConnectModal} type="button">
                     {content}

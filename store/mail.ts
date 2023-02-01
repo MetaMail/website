@@ -1,5 +1,5 @@
-import { IPersonItem } from '@/pages/home/interfaces';
-import { deleteStorage, getStorage, updateStorage } from '@/utils/storage';
+import { IPersonItem } from '@pages/home/interfaces';
+import { deleteStorage, getStorage, updateStorage } from '@utils/storage';
 
 const TempMailStoreKey = 'MetaMailTemporalContent';
 

@@ -14,12 +14,18 @@ const PERCENT_SIZE = [...Array(101).keys()];
 
 module.exports = {
   content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './sections/**/*.{ts,tsx}', './SideMenu/**/*.{ts,tsx}'],
+  variants: {
+    extend: {
+      backgroundColor: ['active'],
+    }
+  },  
   theme: {
     extend: {
       fontFamily: {
       'poppins':   ['Poppins', ],
-      'space-grotesk': ['"Space Grotesk"', ],
+      'space-grotesk': ['"Space Grotesk"', ],   
     },
+
 
       spacing: {
         ...gen(v => `${v}px`)(ALL_SIZE),

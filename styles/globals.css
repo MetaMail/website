@@ -59,5 +59,9 @@ body {
   background-color: white;
 }
 
+.active-bg{
+  background-color: rgba(171, 199, 255, 0.35);
+}
+
 
 

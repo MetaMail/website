@@ -21,9 +21,12 @@ import { configureChains, createClient, useAccount, WagmiConfig} from 'wagmi';
 import { useEffect, useState } from 'react';
 import { getJwtToken, getRandomStrToSign } from 'services/login';
 import { render } from 'react-dom';
+import { getWalletAddress, saveUserInfo } from 'store/user';
+
 
 export default function Intro() {
   const router = useRouter()  
+
   const { address, isConnected } = useAccount();
   console.log('pages');
   console.log(address);
@@ -47,10 +50,11 @@ export default function Intro() {
             const { data } = await getRandomStrToSign(lowAddr!);
             const { randomStr, signMethod, tokenForRandom } = data;
             console.log(randomStr);
+            if (!window.ethereum) throw new Error('Your client does not support Ethereum');
             const signedMessage = await window.ethereum.request({
                 method: 'personal_sign',
                 params: [
-                  `0x${Buffer.from(randomStr, 'utf8').toString('hex')}`,
+                  Buffer.from(randomStr, 'utf8').toString('hex'),
                   address,
                   'password',
                 ],
@@ -63,19 +67,24 @@ export default function Intro() {
             const { data: user } = res ?? {};
             console.log(user?.ens);
             console.log(user?.public_key);
+            saveUserInfo({
+              address,
+              ensName: user?.user?.ens,
+              publicKey: user?.user?.public_key?.public_key,
+            });
             router.push('/home');
         }
         catch(e){
           console.log(e);
           await disconnect();
-
         }
       }
         // isConnected then handleAuth
-        if (isConnected ) {
-            handleAuth();
+        if (isConnected) {
+            if (getWalletAddress()) router.push('/home');
+            else handleAuth();
         }
-    },[address]);
+    },);
   return (
     <div className="flex flex-col mx-auto max-w-[2000px]">
       <div className="home-bg">

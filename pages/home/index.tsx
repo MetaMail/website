@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 //import { notification, message, PageHeader, Button } from 'antd'
 import { useRouter } from 'next/router'
 import SideMenu from 'SideMenu';
-import RainbowLogin from 'RainbowLogin';
 import { configureChains, createClient, useAccount, WagmiConfig } from 'wagmi';
 import MailList from '@pages/list';
+import { clearUserInfo } from 'store/user';
 //import { changeMailStatus, getMailList, IMailChangeParams } from '@/services';
 
 export default function Mail(props:any) {
@@ -15,7 +15,10 @@ export default function Mail(props:any) {
   console.log(address);
   console.log(isConnected);
   useEffect(() => {
-  if (!isConnected) router.push('/'); ///////////////////返回首页
+  if (!isConnected) {
+    clearUserInfo();
+    router.push('/'); ///////////////////返回首页
+  }
 },[address]);
   return (
       <div className='pr-44 font-poppins mail-bg'>
@@ -35,9 +38,6 @@ export default function Mail(props:any) {
     </button>
   </div>
   </div>
-        <div className=" w-131 text-sm omit font-bold py-8">
-        <RainbowLogin content='Connect Wallet'/>
-        </div>
         </div>
         </div>
         {children ?? <MailList/>}

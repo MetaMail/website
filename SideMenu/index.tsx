@@ -4,6 +4,7 @@ import compose from '@assets/inbox_compose.svg';
 import Image from 'next/image';
 import { MailMenuItems } from 'SideMenu/constants';
 import { FilterTypeEn, MetaMailTypeEn } from '@pages/home/interfaces';
+import RainbowLogin from 'RainbowLogin';
 const SiderWidth = 200;
 
 export interface MenuInfo {
@@ -18,7 +19,7 @@ interface ISiderMenuProps {
 
 export default function SideMenu(props: any) {
   return(
-    <div className='bg-[#F3F7FF] w-230 px-25 pt-23'>
+    <div className='bg-[#F3F7FF] w-230 p-25 flex flex-col justify-between'>
     <div className='flex flex-col space-y-24'>
             <a href="/" className='flex flex-row space-x-9'>
               <Image src={logo} alt="logo" className="w-30 "/>
@@ -29,14 +30,13 @@ export default function SideMenu(props: any) {
           <div className='text-sm text-white'>Compose</div>
           </div>
           <div className=''>
-          <ul className="menu w-56 p-2 rounded-box w-full">
+          <ul className="menu w-56 p-2 rounded-box w-full ">
           {MailMenuItems.map((item) => {
           return (
             <li
-              className=''
               key={Number(item.key)}
               //icon={<Icon url={item.logo} />}
-            ><a className='p-10 flex flex-row gap-7'>
+              ><a className={item.title === 'Inbox'? 'p-10 flex flex-row gap-7 active-bg':'p-10 flex flex-row gap-7 '}>
               <Image src={item?.logo} alt={item?.title} height="12.5"></Image>
               <div className=''>
                 <span className=''> {item.title}</span>
@@ -53,6 +53,9 @@ export default function SideMenu(props: any) {
         </ul>
         </div>
 </div>
+<div className="flex w-full text-lg omit font-bold py-8 justify-center">
+        <RainbowLogin content='Connect Wallet'/>
+        </div>
 </div>
   )
 }

@@ -1,12 +1,12 @@
-import { postPublicKey } from '@services/user';
+import { postPublicKey } from 'services/user';
 import { getPublicKey, pkPack } from '@utils/publicKey';
 import { getPersonalSign } from '@utils/sign';
 //import { Modal, notification } from 'antd';
-//import CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js';
 //import { encrypt } from '@metamask/eth-sig-util';
 import { MetaMailTypeEn } from '@pages/home/interfaces';
-import { getUserInfo, saveUserInfo, setRandomBits } from '@store/user';
-import { createDraft } from '@services';
+import { getUserInfo, saveUserInfo, setRandomBits } from 'store/user';
+import { createDraft } from 'services';
 import { useRouter } from 'next/router'
 const router = useRouter()
 export const ETHVersion = 'x25519-xsalsa20-poly1305';
@@ -84,19 +84,19 @@ export const createMail = async (type: MetaMailTypeEn) => {
         onOk: async () => {
           pKey = await updatePublicKey(address);
           if (!pKey) {
-            notification.error({
-              message: 'Permission denied',
-              description: 'Failed to get your public key',
-            });
+            /////////notification.error({
+            //////////  message: 'Permission denied',
+            ////////  description: 'Failed to get your public key',
+            ///////});
             return;
           }
           saveUserInfo({
             publicKey: pKey,
           });
-          notification.success({
-            message: 'Success',
-            description: 'You can send and receive encrypted mail now.',
-          });
+          ///////notification.success({
+          //////////  message: 'Success',
+          ////////  description: 'You can send and receive encrypted mail now.',
+          ///////});
         },
       });
       return;
