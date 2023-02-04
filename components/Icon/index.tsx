@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-//import { Popover } from 'antd';
+import React from 'react';
 import Image from 'next/image';
 
 interface IIconProps {
@@ -13,29 +12,14 @@ interface IIconProps {
   tip?: string;
 }
 
-export default function Icon({
-  url,
-  checkedUrl,
-  onClick,
-  className,
-  style,
-  imgStyle,
-  select,
-  tip,
-}: IIconProps) {
+export default function Icon({ url, checkedUrl, onClick, className, style, select }: IIconProps) {
   const handleClick = () => {
-    if (onClick) {
-      onClick(!select);
-    }
+    onClick?.(!select);
   };
 
   return (
-    <div
-      onClick={handleClick}
-      style={onClick ? { cursor: 'pointer', ...style } : style}
-      className={className}
-    >
-      <Image src={!select ? url : checkedUrl ?? url} alt=''/>
+    <div onClick={handleClick} style={onClick ? { cursor: 'pointer', ...style } : style} className={className}>
+      <Image src={!select ? url : checkedUrl ?? url} alt="" />
     </div>
   );
 }

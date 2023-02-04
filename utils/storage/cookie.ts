@@ -10,20 +10,13 @@ export function getCookieByName(name: string) {
   return getCookie(name);
 }
 
-export function setCookieByName(
-  name: string,
-  value: any,
-  options?: Types.CookieAttributes,
-) {
+export function setCookieByName(name: string, value: any, options?: Types.CookieAttributes) {
   return setCookie(name, value, {
     ...baseConfigOptions,
     ...(options ? { ...options } : {}),
   });
 }
 
-export function deleteCookieByName(
-  name: string,
-  options?: Types.CookieAttributes,
-) {
+export function deleteCookieByName(name: string, options?: Types.CookieAttributes) {
   return removeCookie(name, options);
 }

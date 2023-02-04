@@ -1,4 +1,4 @@
-import { IPersonItem, MetaMailTypeEn } from '@pages/home/interfaces';
+import { IPersonItem, MetaMailTypeEn } from '@constants/interfaces';
 import request from '../utils/request';
 
 const APIs = {
@@ -28,29 +28,21 @@ interface IMailUpdateParams {
 }
 
 export function updateMail(mailId: string, params: IMailUpdateParams) {
-  return request(
-    APIs.updateMail.replace('{mail_id}', window.btoa(mailId)),
-  ).patch(params);
+  return request(APIs.updateMail.replace('{mail_id}', window.btoa(mailId))).patch(params);
 }
 
 export function sendMail(mailId: string, props: Record<string, any>) {
-  return request(APIs.sendMail.replace('{mail_id}', window.btoa(mailId))).post(
-    props,
-  );
+  return request(APIs.sendMail.replace('{mail_id}', window.btoa(mailId))).post(props);
 }
 
 export function uploadAttachment(mailId: string, data: FormData) {
-  return request(
-    APIs.uploadAttachment.replace('{mail_id}', window.btoa(mailId)),
-  ).post(data, {
+  return request(APIs.uploadAttachment.replace('{mail_id}', window.btoa(mailId))).post(data, {
     timeout: 60000,
   });
 }
 
 export function deleteAttachment(mailId: string, attachmentId: string) {
   return request(
-    APIs.deleteAttachment
-      .replace('{mail_id}', window.btoa(mailId))
-      .replace('{attachment_id}', attachmentId),
+    APIs.deleteAttachment.replace('{mail_id}', window.btoa(mailId)).replace('{attachment_id}', attachmentId)
   ).delete();
 }

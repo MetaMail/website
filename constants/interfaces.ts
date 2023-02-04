@@ -31,8 +31,8 @@ export enum MetaMailTypeEn {
 }
 
 export const MailTypeIconMap = {
-  [MetaMailTypeEn.Signed]: undefined,//signedMail,
-  [MetaMailTypeEn.Encrypted]: undefined,//encryptedMail,
+  [MetaMailTypeEn.Signed]: undefined, //signedMail,
+  [MetaMailTypeEn.Encrypted]: undefined, //encryptedMail,
   [MetaMailTypeEn.Plain]: undefined,
 };
 

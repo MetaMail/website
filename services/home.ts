@@ -1,8 +1,4 @@
-import {
-  MailBoxTypeEn,
-  MarkTypeEn,
-  ReadStatusTypeEn,
-} from 'pages/home/interfaces';
+import { MailBoxTypeEn, MarkTypeEn, ReadStatusTypeEn } from '@constants/interfaces';
 import request from '../utils/request';
 
 const APIs = {
@@ -26,11 +22,7 @@ export interface IMailChangeParams {
   mailbox?: MailBoxTypeEn;
 }
 
-export const changeMailStatus = (
-  mails: IMailChangeParams[],
-  mark?: MarkTypeEn,
-  read?: ReadStatusTypeEn,
-) => {
+export const changeMailStatus = (mails: IMailChangeParams[], mark?: MarkTypeEn, read?: ReadStatusTypeEn) => {
   return request(`${APIs.mailDetail}`).post({
     mails,
     mark,

@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import { mergeUrlWithParams } from './url';
 
@@ -11,7 +11,7 @@ const ajax = axios.create({
 });
 
 // ajax.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-ajax.defaults.headers.common['Access-Control-Allow-Origin'] ='https://api.metamail.ink/';
+ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://api.metamail.ink/';
 
 type requestParams = Record<string, any>;
 
@@ -21,9 +21,7 @@ const checkResponse = (res: any) => {
   }
 };
 
-const checkLoginStatus = (e: unknown) => {
-
-};
+const checkLoginStatus = (e: unknown) => {};
 
 const request = (url: string, config?: Record<string, string>) => {
   return {

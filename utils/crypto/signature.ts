@@ -6,20 +6,12 @@ export enum SignTypeEn {
   TypedDataV4 = 4,
 }
 
-export const getPersonalSign = async (
-  account: string,
-  msg: string,
-  password?: string,
-) => {
+export const getPersonalSign = async (account: string, msg: string, password?: string) => {
   try {
     // @ts-ignore
     const sign = await ethereum.request({
       method: 'personal_sign',
-      params: [
-        `0x${Buffer.from(msg, 'utf8').toString('hex')}`,
-        account,
-        password ?? '',
-      ],
+      params: [`0x${Buffer.from(msg, 'utf8').toString('hex')}`, account, password ?? ''],
     });
 
     return Promise.resolve(sign);
@@ -66,11 +58,7 @@ const getTypedDataSign = async (account: string, msgParams: TypedMessage[]) => {
   }
 };
 
-export const getSignResult = async (
-  type: SignTypeEn,
-  account: string,
-  msg: any,
-) => {
+export const getSignResult = async (type: SignTypeEn, account: string, msg: any) => {
   let signResult;
 
   switch (type) {
@@ -89,11 +77,7 @@ export const getSignResult = async (
       break;
   }
 
-  if (
-    !signResult ||
-    typeof signResult !== 'string' ||
-    signResult.length === 0
-  ) {
+  if (!signResult || typeof signResult !== 'string' || signResult.length === 0) {
     throw new Error('Something went wrong when signing');
   }
 
