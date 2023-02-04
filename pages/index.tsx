@@ -22,11 +22,14 @@ import { useEffect, useState } from 'react';
 import { getJwtToken, getRandomStrToSign } from 'services/login';
 import { render } from 'react-dom';
 import { getWalletAddress, saveUserInfo } from 'store/user';
+import { ethers } from "ethers";
+
 
 
 export default function Intro() {
   const router = useRouter()  
-
+  const provider = new ethers.providers.JsonRpcProvider();
+  const signer = provider.getSigner()
   const { address, isConnected } = useAccount();
   console.log('pages');
   console.log(address);
@@ -51,6 +54,7 @@ export default function Intro() {
             const { randomStr, signMethod, tokenForRandom } = data;
             console.log(randomStr);
             if (!window.ethereum) throw new Error('Your client does not support Ethereum');
+            //const signedMessage = await signer.signMessage("Hello World");
             const signedMessage = await window.ethereum.request({
                 method: 'personal_sign',
                 params: [
