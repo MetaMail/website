@@ -13,19 +13,19 @@ const ALL_SIZE = [...Array(1441).keys()];
 const PERCENT_SIZE = [...Array(101).keys()];
 
 module.exports = {
-  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './sections/**/*.{ts,tsx}', './SideMenu/**/*.{ts,tsx}'],
+  purge: true,
+  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './sections/**/*.{ts,tsx}'],
   variants: {
     extend: {
       backgroundColor: ['active'],
-    }
-  },  
+    },
+  },
   theme: {
     extend: {
       fontFamily: {
-      'poppins':   ['Poppins', ],
-      'space-grotesk': ['"Space Grotesk"', ],   
-    },
-
+        poppins: ['Poppins'],
+        'space-grotesk': ['"Space Grotesk"'],
+      },
 
       spacing: {
         ...gen(v => `${v}px`)(ALL_SIZE),
@@ -61,5 +61,5 @@ module.exports = {
       // },
     },
   },
-  plugins: [require("daisyui")],
+  plugins: [require('daisyui')],
 };

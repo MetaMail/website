@@ -3,25 +3,25 @@
 // import { getPersonalSign } from '@utils/sign';
 // //import { Modal, notification } from 'antd';
 // import CryptoJS from 'crypto-js';
-// import { encrypt } from '@metamask/eth-sig-util';
+import { encrypt } from '@metamask/eth-sig-util';
 // import { MetaMailTypeEn } from '@constants/interfaces';
 // import { getUserInfo, saveUserInfo, setRandomBits } from 'store/user';
 // import { createDraft } from 'services';
 // import { useRouter } from 'next/router';
 // const router = useRouter();
-// export const ETHVersion = 'x25519-xsalsa20-poly1305';
+export const ETHVersion = 'x25519-xsalsa20-poly1305';
 
-// export const pkEncrypt = (pk: string, data: string) => {
-//   return Buffer.from(
-//     JSON.stringify(
-//       encrypt({
-//         publicKey: pk,
-//         data: data,
-//         version: ETHVersion,
-//       })
-//     )
-//   ).toString('base64');
-// };
+export const pkEncrypt = (pk: string, data: string) => {
+  return Buffer.from(
+    JSON.stringify(
+      encrypt({
+        publicKey: pk,
+        data: data,
+        version: ETHVersion,
+      })
+    )
+  ).toString('base64');
+};
 
 // export const updatePublicKey = async (address: string) => {
 //   try {
