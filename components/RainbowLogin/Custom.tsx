@@ -1,8 +1,8 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-export interface Istring {
+export interface IString {
     content:string;
     };
-export const Connectbtn = ({content}:Istring) => {
+export const ConnectBtn = ({content}:IString) => {
   return (
     <ConnectButton.Custom>
       {({

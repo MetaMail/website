@@ -4,7 +4,7 @@ import discord from '@assets/discord.png';
 import tg from '@assets/telegram.svg';
 import git from '@assets/git.png';
 import LinkItem from '@components/LinkItem';
-
+import Link from 'next/link';
 const Links = [
   {
     href: '',
@@ -41,21 +41,21 @@ export default function Footer({}) {
         <div className="w-370 text-3xl font-light leading-tight ">Create And Use Your Crypto Email</div>
       </div>
       <div className="flex flex-row justify-between gap-30 font-poppins">
-        <a className="font-extrabold text-ml pt-10" href="http://www.example.com">
+        <Link className="font-extrabold text-ml pt-10" href="http://www.example.com">
           FAQs
-        </a>
-        <a className="font-extrabold text-ml pr-20 pt-10" href="http://www.example.com">
+        </Link>
+        <Link className="font-extrabold text-ml pr-20 pt-10" href="http://www.example.com">
           Blog
-        </a>
+        </Link>
         <div className="flex flex-col gap-23">
           <div className="flex flex-row gap-10">
-            {Links.map(link => (
-              <LinkItem {...link} />
+            {Links.map((link,index) => (
+              <LinkItem {...link} key={index}/>
             ))}
           </div>
           <div className="font-normal text-xl flex flex-row justify-between gap-30 text-[#3E3E3E] font-poppins">
-            <a href="http://www.example.com">Terms of Service</a>
-            <a href="http://www.example.com">Privacy</a>
+            <Link href="http://www.example.com">Terms of Service</Link>
+            <Link href="http://www.example.com">Privacy</Link>
           </div>
         </div>
       </div>

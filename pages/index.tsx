@@ -1,19 +1,78 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import logo_brand from '@assets/logo_brand.svg';
+import logoBrand from '@assets/logo_brand.svg';
 import computer from '@assets/computer.svg';
 import table from '@assets/Table.svg';
 import pDot from '@assets/pdot.svg';
-import pic1left from '@assets/pic1left.svg';
+import pic1Left from '@assets/pic1left.svg';
 import pic2Right from '@assets/pic2Right.svg';
-import pic3left from '@assets/pic3left.png';
+import pic3Left from '@assets/pic3left.png';
 import gdL from '@assets/gdL.png';
-import ReviewInfo from 'sections/reviewinfo';
+import ReviewInfo from 'sections/ReviewInfo';
 import Footer from 'sections/Footer';
 import RainbowLogin from '@components/RainbowLogin';
 import Head from 'next/head';
-
+import { useEffect } from 'react';
+import {ethers} from 'ethers';
+import { useAccount } from 'wagmi';
+import { getJwtToken, getRandomStrToSign } from '@services/login';
+import { getWalletAddress, saveUserInfo } from '@utils/storage/user';
+import { disconnect } from '@wagmi/core';
 export default function Intro() {
+  const router = useRouter()  
+  const { address, isConnected } = useAccount();
+  console.log('pages');
+  console.log(address);
+  console.log(isConnected);
+  const handleAuth = async () => {
+    try{
+      if (!window.ethereum) throw new Error('Your client does not support Ethereum');
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      //const balance = await signer.signMessage("Hello World");
+      //console.log(balance);
+      //setOnProcess(true);
+      const lowAddr = address!.toLowerCase();
+      console.log(`address: ${address}\nlowAddr: ${lowAddr}`);
+      const { data } = await getRandomStrToSign(lowAddr!);
+      const { randomStr, signMethod, tokenForRandom } = data;
+      console.log(randomStr);
+
+      const signedMessage = await signer.signMessage(randomStr);
+      //const signedMessage = await window.ethereum.request({
+      //    method: 'personal_sign',
+      //    params: [
+      //      Buffer.from(randomStr, 'utf8').toString('hex'),
+      //      address,
+      //      'password',
+      //    ],
+      //  });
+      console.log(signedMessage);
+      const res = await getJwtToken({
+          tokenForRandom,
+          signedMessage,
+        });
+      const { data: user } = res ?? {};
+      console.log(user?.ens);
+      console.log(user?.public_key);
+      saveUserInfo({
+        address,
+        ensName: user?.user?.ens,
+        publicKey: user?.user?.public_key?.public_key,
+      });
+      router.push('/home');
+    }
+    catch(e){
+      console.log(e);
+      await disconnect();
+    }
+  } 
+  useEffect(() => {
+      if (isConnected) {
+          if (getWalletAddress()) router.push('/home');
+          else handleAuth();
+      }
+  },);
   return (
     <div className="flex flex-col mx-auto max-w-[2000px]">
       <Head>
@@ -27,7 +86,7 @@ export default function Intro() {
         </div>
         <div className="pt-43 relative">
           <header className="flex flex-row justify-between px-40 lg:px-102">
-            <Image src={logo_brand} alt="logo" className="w-298 h-52" />
+            <Image src={logoBrand} alt="logo" className="w-298 h-52" />
             <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
               <RainbowLogin content="Connect Wallet" />
             </div>
@@ -61,7 +120,7 @@ export default function Intro() {
         <ReviewInfo />
       </div>
       <div className="relative h-960 description-bg mt-150 lg:-mt-360 lg:flex flex-row justify-between xl:justify-center pt-153 px-57 gap-40 2xl:gap-200">
-        <Image src={pic1left} className="hidden lg:flex w-452 h-auto" alt="first carton pic" />
+        <Image src={pic1Left} className="hidden lg:flex w-452 h-auto" alt="first carton pic" />
         <Image src={pDot} alt="dot SW" className="absolute w-36 top-217 right-903" />
         <Image src={pDot} alt="dot NE" className="absolute w-19 bottom-86 right-346" />
         <div className="flex flex-col self-start justify-between gap-52 w-519 pt-0 lg:pt-140 ">
@@ -93,7 +152,7 @@ export default function Intro() {
         <Image src={pDot} alt="dot NW" className="absolute w-31 top-118 left-356" />
       </div>
       <div className="relative h-820 description-bg3 lg:flex flex-row justify-between xl:justify-center px-57 gap-40 2xl:gap-200">
-        <Image src={pic3left} className="hidden lg:inline py-200 w-452" alt="third carton pic" />
+        <Image src={pic3Left} className="hidden lg:inline py-200 w-452" alt="third carton pic" />
         <Image src={pDot} alt="dot" className="absolute w-32 bottom-97 left-388" />
         <div className="flex flex-col self-start justify-between gap-52 w-519 pt-140">
           <div className="text-5xl font-medium leading-normal">Protect mail with p2p encryption</div>

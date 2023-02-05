@@ -3,7 +3,7 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import { Connectbtn } from './Custom';
+import { ConnectBtn } from './Custom';
 const { chains, provider } = configureChains([mainnet], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
@@ -11,20 +11,20 @@ const { connectors } = getDefaultWallets({
   chains,
 });
 
-const wagmiClient = createClient({
+const WagmiClient = createClient({
   autoConnect: false,
   connectors,
   provider,
 });
-interface Istring {
+interface IString {
   content: string;
 }
-const RainbowLogin = ({ content }: Istring) => {
+const RainbowLogin = ({ content }: IString) => {
   //const USER_NONCE_URL='https://api.metamail.ink';
   return (
-    <WagmiConfig client={wagmiClient}>
+    <WagmiConfig client={WagmiClient}>
       <RainbowKitProvider chains={chains}>
-        <Connectbtn content={content} />
+        <ConnectBtn content={content} />
       </RainbowKitProvider>
     </WagmiConfig>
   );
