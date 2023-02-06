@@ -10,6 +10,8 @@ import Collection from '@assets/Collection.svg';
 import Delete from '@assets/Delete.svg';
 import Read from '@assets/Read.svg';
 import Unread from '@assets/Unread.svg';
+import filter from '@assets/filter.svg';
+import update from '@assets/update.svg';
 import {
   FilterTypeEn,
   getMailBoxType,
@@ -242,9 +244,48 @@ function MailList(props: any) {
     });
   };
   return (
-    <div className='flex flex-col flex-1 h-0 '>
-        <div className='flex flex-row justify-end p-13 py-7 text-[#999999]'>
-            <div className='flex flex-row space-x-50 px-15'>
+    <div className='flex flex-col flex-1 h-0 bg-white rounded-10'>
+        <div className='flex flex-row w-full justify-between p-13 py-7'>
+          <div className='flex flex-row space-x-15'>
+          <Icon      ///////////最初设计稿的提示
+            url={checkbox}
+            checkedUrl={selected}
+            className='pt-3'
+            onClick={(res: boolean) => {
+                setSelectList(res ? list?.map((item) => item) : []);
+                setIsAll(res);
+            }}
+            select={isAll}/>            
+            <Icon   
+            className='pt-2'
+            url={filter}/>            
+            <Icon      ///////////最初设计稿的提示
+            url={update}/>
+          </div>
+          <div className='flex flex-row justify-end space-x-20'>
+            <button
+                disabled={pageIdx===1}
+                className='w-24 text-xl'
+                onClick={() => {
+                  setPageIdx((prev:number) => {
+                    if (prev - 1 > 0) {
+                      return prev - 1;
+                    } else return prev;
+                  });
+                }}>{"<"}</button>
+          {/*<span className='text-sm pt-3'>{pageIdx ?? '-'} /{pageNum ?? '-'}</span>//////显示邮件的数量*/}
+            <button
+                className='w-24 text-xl'
+                disabled={pageIdx===pageNum}
+                onClick={() => {
+                  setPageIdx((prev:number) => {
+                    if (prev + 1 <= pageNum) {
+                      return prev + 1;
+                    } else return prev;
+                  });
+                }}>{">"}</button>
+            </div>  
+            {/*<div className='flex flex-row space-x-50 px-15'>  //最初设计稿针对mailList的四种操作
                 <Icon
                 url={Collection}
                 select={isAllFavorite}
@@ -290,11 +331,11 @@ function MailList(props: any) {
                         }}
                         tip={'mark unread'}
                     />
-            </div>
+                      </div>*/}
         </div>
-    <div className='h-28 flex flex-row pb-6 px-18 justify-between text-sm gap-35 text-[#999999] text-center'>
+    {/*<div className='h-28 flex flex-row pb-6 px-18 justify-between text-sm gap-35 text-[#999999] text-center'>
         <div className='flex flex-row justify-around w-102 px-5'>
-            <Icon
+            <Icon      ///////////最初设计稿的提示
             url={checkbox}
             checkedUrl={selected}
             onClick={(res: boolean) => {
@@ -302,14 +343,14 @@ function MailList(props: any) {
                 setIsAll(res);
             }}
             select={isAll}/>
-        <div className=''>Option</div>
+            <div className=''>Option</div>
         </div>
         <span className='w-120 '>Address</span>
         <span className='w-135 '>Theme</span>
-        {/*<div className='h-14 w-1 rounded-1 bg-[#333333] align-center'/>*/}
+        {/*<div className='h-14 w-1 rounded-1 bg-[#333333] align-center'/>
         <div className='min-w-0 flex-1 overflow-hidden'>Abstract</div>
         <div className='w-120'>Date</div>
-    </div>
+    </div>*/}
     <div className='flex flex-col overflow-auto flex-1 h-0 pl-8'>
         {list.map((item,index) => { 
         return (<MailListItem
@@ -365,72 +406,7 @@ function MailList(props: any) {
           />)}
           )}
         </div>
-    <div className='flex flex-row justify-end space-x-51 pt-8 pb-15'>
-        <Image
-              src={turnLeft}
-              alt="left"
-              className='w-24'
-              onClick={() => {
-                setPageIdx((prev) => {
-                  if (prev - 1 > 0) {
-                    return prev - 1;
-                  } else return prev;
-                });
-                //props.minusPageIdx();
-                //sessionStorage.setItem('pageIdx', String(pageIdx));
-                //console.log(pageIdx);
-                //props.setPageIndex({
-                //  currentIndex: pageIdx,
-                //  totalIndex: pageNum,
-                //});
-                //console.log("page2 "+props.pageIndex.currentIndex);
-                //console.log("total2 "+props.pageIndex.totalIndex);
-                //history.push({
-                //  pathname: '/home/list',
-                //  query: {
-                //    filter: inboxType,
-                //  },
-                //  state: {
-                //    pageIdx,
-                //  },
-                //});
-              }}
-            />
-    <span className='text-sm pt-3'>
-              {pageIdx ?? '-'} /{pageNum ?? '-'}
-            </span>
-    <Image
-              src={turnRight}
-              alt="right"
-              className='w-24'
-              onClick={() => {
-                setPageIdx((prev) => {
-                  if (prev + 1 <= pageNum) {
-                    return prev + 1;
-                  } else return prev;
-                });
-                //console.log('xian1');
-                //props.setPageIndex({
-                //  currentIndex: pageIdx,
-                //  totalIndex: pageNum,
-                //});
-                //props.addPageIdx();
-                //sessionStorage.setItem('pageIdx', String(pageIdx));
-                //console.log(pageIdx);
-                //console.log("page3 "+props.pageIndex.currentIndex);
-                //console.log("total3 "+props.pageIndex.totalIndex);
-                //history.push({
-                //  pathname: '/home/list',
-                //  query: {
-                //    filter: inboxType,
-                //  },
-                //  state: {
-                //    pageIdx,
-                //  },
-                //});
-              }}
-            />
-    </div>
+
   </div>
   );
 }

@@ -6,7 +6,7 @@ import {
     MarkTypeEn,
     MetaMailTypeEn,
   } from 'constants/interfaces';
-import { checkbox, favorite, markFavorite, selected, white } from 'assets/icons';
+import { checkbox, starred, markFavorite, selected, white } from 'assets/icons';
 interface IMailItemProps {
     subject: string;
     from: IPersonItem;
@@ -39,7 +39,7 @@ export default function MailListItem({
       <div className = {isRead ? '' : 'font-bold'}>
         <div className='h-38 flex flex-row py-6 px-18 justify-between text-sm gap-35'>
           <div className='flex flex-row gap-15'>
-            <div className='pt-2'>
+            <div className='pt-6'>
               <Icon
               url={checkbox}
               checkedUrl={selected}
@@ -47,20 +47,20 @@ export default function MailListItem({
               select={select}
               tip={'select'}
               /></div>
-            <div className='pt-2'>
+            <div className='pt-4'>
               <Icon
-              url={favorite}
+              url={starred}
               checkedUrl={markFavorite}
               onClick={onFavorite}
               select={mark === MarkTypeEn.Starred}
               tip={'star'}/></div>
-              <Icon
+              {/*<Icon    显示加密状态
               url={white}
               checkedUrl={encrypt}
               onClick={onFavorite}
               //select={metaType === MetaMailTypeEn.Encrypted}
               select={isRead === false}
-              tip={'star'}/></div>
+    tip={'star'}/>*/}</div>
             <span className='pt-2 text-[#333333] omit w-120 ' onClick={onClick} >
             {from?.name && from.name.length > 0 ? from.name : from.address}
             </span>

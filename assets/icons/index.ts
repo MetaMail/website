@@ -13,7 +13,7 @@ import sent from './sent.svg';
 import settings from './settings.svg';
 import signedMail from './signedMail.svg';
 import spam from './spam.svg';
-import trash from './trash.svg';
+//import trash from './trash.svg';
 import unread from './unread.svg';
 import amazing from './amazing.svg';
 import write from './write.svg';
@@ -30,8 +30,11 @@ import knn3 from './other/knn3.svg';
 import downloadmail from './downloadmailcontent.svg';
 import reply from './reply.svg';
 import white from './white.svg';
+import starred from './starred.svg';
+import trash from './delete.svg';
 export {
   white,
+  starred,
   draft,
   inbox,
   encryptedInbox,

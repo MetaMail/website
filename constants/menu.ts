@@ -1,16 +1,18 @@
-import { draft, encryptedInbox, inbox, read, sent, spam, trash, unread, markFavorite } from '@assets/icons';
+import { draft, encryptedInbox, inbox, read, sent, spam, trash, unread, markFavorite,starred } from '@assets/icons';
 import { FilterTypeEn } from './interfaces';
 
 export const SiderFilterMap: Record<FilterTypeEn, { title: string; logo: string }> = {
   [FilterTypeEn.Inbox]: { title: 'Inbox', logo: inbox },
-  [FilterTypeEn.Encrypted]: { title: 'Encrypted Inbox', logo: encryptedInbox },
-  [FilterTypeEn.Draft]: { title: 'Draft', logo: draft },
+  //[FilterTypeEn.Encrypted]: { title: 'Encrypted Inbox', logo: encryptedInbox },
+
   [FilterTypeEn.Sent]: { title: 'Sent', logo: sent },
   // [FilterTypeEn.Read]: { title: 'Read', logo: read },
-  [FilterTypeEn.Unread]: { title: 'Unread', logo: unread },
-  [FilterTypeEn.Starred]: { title: 'Starred', logo: markFavorite },
-  [FilterTypeEn.Trash]: { title: 'Trash', logo: trash },
-  [FilterTypeEn.Spam]: { title: 'Spam', logo: spam },
+  [FilterTypeEn.Draft]: { title: 'Draft', logo: draft },
+  //[FilterTypeEn.Unread]: { title: 'Unread', logo: unread },
+  [FilterTypeEn.Starred]: { title: 'Starred', logo: starred },
+  [FilterTypeEn.Trash]: { title: 'Delete', logo: trash },
+  //[FilterTypeEn.Spam]: { title: 'Spam', logo: spam },
+
 };
 
 export const MenuItems = {
