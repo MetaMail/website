@@ -37,8 +37,8 @@ export default function MailListItem({
     console.log('render');
     return (
       <div className = {isRead ? '' : 'font-bold'}>
-        <div className='h-38 flex flex-row py-6 px-18 justify-between text-sm gap-35'>
-          <div className='flex flex-row gap-15'>
+        <div className='h-35 flex flex-row py-6 px-18 justify-between text-xs hover:bg-[#DAE7FF]'>
+          <div className='flex flex-row gap-9'>
             <div className='pt-6'>
               <Icon
               url={checkbox}
@@ -61,19 +61,18 @@ export default function MailListItem({
               //select={metaType === MetaMailTypeEn.Encrypted}
               select={isRead === false}
     tip={'star'}/>*/}</div>
-            <span className='pt-2 text-[#333333] omit w-120 ' onClick={onClick} >
+            <span className='pt-4 text-[#333333] omit w-110 pl-30' onClick={onClick} >
             {from?.name && from.name.length > 0 ? from.name : from.address}
             </span>
-            <span className='pt-2 text-[#333333] omit w-135 ' onClick={onClick} >{subject}</span>
+            <span className='pt-4 text-[#333333] omit w-120 pl-30' onClick={onClick} >{subject}</span>
             {/*<div className='h-14 w-1 rounded-1 bg-[#333333] align-center'/>*/}
-            <div className='pt-2 text-[#999999] omit min-w-0 flex-1' onClick={onClick} >{abstract}</div>
-            <div className='pt-2 text-[#999999]'>
-            {moment(date).calendar(null, {
-            sameDay: 'LT',
-            lastDay: '[Yesterday] LT',
-            lastWeek: 'LL',
-            sameElse: 'LL',
-            })}
+            <span className='pt-4 pl-2 pr-7 text-[#333333] omit' onClick={onClick}>{"-"}</span>
+            <div className='pt-4 text-[#999999] omit min-w-0 flex-1' onClick={onClick} >{abstract}</div>
+            <div className='pt-4 text-[#999999] pl-45'>
+            {moment(date).format("MMM ") }
+            </div>
+            <div className='pt-4 text-[#999999] flex justify-center w-20'>
+            {moment(date).format("D ") }
             </div>
           </div>
         </div>

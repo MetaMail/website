@@ -262,10 +262,10 @@ function MailList(props: any) {
             <Icon      ///////////最初设计稿的提示
             url={update}/>
           </div>
-          <div className='flex flex-row justify-end space-x-20'>
+          <div className='flex flex-row justify-end space-x-20 text-xl text-[#7F7F7F]'>
             <button
                 disabled={pageIdx===1}
-                className='w-24 text-xl'
+                className='w-24 disabled:opacity-40'
                 onClick={() => {
                   setPageIdx((prev:number) => {
                     if (prev - 1 > 0) {
@@ -275,7 +275,7 @@ function MailList(props: any) {
                 }}>{"<"}</button>
           {/*<span className='text-sm pt-3'>{pageIdx ?? '-'} /{pageNum ?? '-'}</span>//////显示邮件的数量*/}
             <button
-                className='w-24 text-xl'
+                className='w-24 disabled:opacity-40'
                 disabled={pageIdx===pageNum}
                 onClick={() => {
                   setPageIdx((prev:number) => {

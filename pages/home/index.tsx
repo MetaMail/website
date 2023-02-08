@@ -1,27 +1,29 @@
 import Layout from '@components/Layouts';
 import { clearUserInfo } from '@utils/storage/user';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import MailList from './list';
 import RainbowLogin from 'components/RainbowLogin';
+import NewMail from './new';
 
 export default function HomePage() {
   const { address, isConnected } = useAccount();
-  const router = useRouter()  
+  const router = useRouter()
+  const [onCompose, setOnCompose] = useState(false);  
   useEffect(() => { 
   if (!isConnected) {
       clearUserInfo();
       router.push('/'); ///////////////////返回首页
     }
-  },[isConnected]);
+  },[isConnected, onCompose]);
   return (
-    <div className='flex flex-col flex-1 h-screen pt-12 pb-24 font-poppins px-21 w-[calc(100vw-206px)]'>
+    <div className='flex flex-col flex-1 h-screen pt-12 pb-24 font-poppins pr-21 w-[calc(100vw-206px)] min-w-[700px]'>
       <div className='flex flex-row pt-10 justify-between'>
         <div className='flex flex-row'><div className='w-6 h-24 bg-[#006AD4] rounded-4'/>
         {/*<span className='pl-7 font-black text-xl'>Inbox</span>*/}</div>
         <div className='flex flex-row justify-right'>
-        <div className="flex text-md omit font-bold pb-12 px-20 justify-between">
+        <div className="flex text-sm omit font-bold pb-12 px-20 justify-between">
       <RainbowLogin content='Address Expired'/>
       </div>
           {/*<div className="form-control"> ////////////////////// Search 先不加了
@@ -35,6 +37,7 @@ export default function HomePage() {
         </div>
       </div>
       <MailList/>
+      {onCompose===true?<NewMail/>:null}
     </div>
   );
 }
