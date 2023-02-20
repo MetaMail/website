@@ -1,17 +1,16 @@
 import MailListItem from '@components/MailItem';
 import { useState, useEffect, useRef } from 'react';
 import Icon from '@components/Icon';
-//import { useHistory, useLocation } from 'react-router-dom';
 import { useRouter } from 'next/router'
-import Image from 'next/image';
-import turnLeft from '@assets/turnLeft.svg';
-import turnRight from '@assets/turnRight.png';
-import Collection from '@assets/Collection.svg';
-import Delete from '@assets/Delete.svg';
-import Read from '@assets/Read.svg';
-import Unread from '@assets/Unread.svg';
-import filter from '@assets/filter.svg';
-import update from '@assets/update.svg';
+import useStore from '@utils/storage/filter';
+import shallow from 'zustand/shallow';
+//import Image from 'next/image';
+//import turnLeft from '@assets/turnLeft.svg';
+//import turnRight from '@assets/turnRight.png';
+//import Collection from '@assets/Collection.svg';
+//import Delete from '@assets/Delete.svg';
+///import Read from '@assets/Read.svg';
+//import Unread from '@assets/Unread.svg';
 import {
   FilterTypeEn,
   getMailBoxType,
@@ -22,83 +21,61 @@ import {
   ReadStatusTypeEn,
 } from 'constants/interfaces';
 import { changeMailStatus, getMailList, IMailChangeParams } from 'services/home';
-//import styles from './index.less';
-//import Icon from '@/components/Icon';
 import {
   checkbox,
-  markFavorite,
+  //markFavorite,
   selected,
-  favorite,
+  //favorite,
   trash,
   read,
-  leftArrow,
-  rightArrow,
+  //leftArrow,
+  //rightArrow,
+  starred,
+  markUnread,
+  temp1,
+  spam,
+  filter,
+  update,
+  cancelSelected,
 } from 'assets/icons';
-//import { connect, history } from 'umi';
 import { setRandomBits } from 'utils/storage/user';
-
 function MailList(props: any) {
-    console.log('maillist');
-  //const { location = useLocation() } = props;
-  const router = useRouter()  
+  const state = useStore()
+  const pageIdx = useStore((state) => state.page)
+  const filterType = useStore((state) => state.filter)
+  const addPage = useStore((state) => state.addPage)
+  const subPage = useStore((state) => state.subPage)
+  const router = useRouter()
   const queryRef = useRef(0);
-  //const history = useHistory();
-  const mailBox = getMailBoxType(queryRef.current);
+  const [hiddenIcon, setHiddenIcon] = useState(false);
+  /////////const mailBox = getMailBoxType(queryRef.current);
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState<IMailItem[]>([]);
-  //const fetchIndex = sessionStorage.getItem('pageIdx')
-  //  ? Number(sessionStorage.getItem('pageIdx'))
-  //  : 1;
-  const [pageIdx, setPageIdx] = useState(
-    props?.pageIndex?.currentIndex ? props?.pageIndex?.currentIndex : 1,
-  );
+  const fiveSource = [trash,starred,spam,temp1,read,markUnread,]
   const [pageNum, setPageNum] = useState(0);
-  const [inboxType, setInboxType] = useState(Number(mailBox));
+  ///////const [inboxType, setInboxType] = useState(Number(mailBox));
+  const [inboxType, setInboxType] = useState(0);
   const [selectList, setSelectList] = useState<IMailItem[]>([]);
   const [isAll, setIsAll] = useState(false);
-  const [isAllFavorite, setIsAllFavorite] = useState(false);
-  //const [clickItemInfo, setClickItemInfo] = useState(sessionStorage.getItem('clickInfo')? sessionStorage.getItem('clickInfo') : '');
-  //const [hover, setHover] = useState<string | undefined>(undefined);
+  const [isFilterHidden, setIsFilterHidden] = useState(true);
+
   const getMails = () => {
     const res: IMailChangeParams[] = [];
-
     selectList?.forEach((item) => {
       res.push({
         message_id: item.message_id,
         mailbox: item.mailbox,
       });
     });
-
     return res;
   };
 
   const fetchMailList = async (showLoading = true) => {
-    //console.log('pageindx: '+sessionStorage.getItem("pageIdx"));
-    //console.log('inbox: '+queryRef.current);
-    //console.log('pageindxstate: '+pageIdx);
-    //console.log('end');
     if (showLoading) {
       setLoading(true);
     }
-    console.log('infetchmaillist');
-    //console.log(props?.pageIndex?.totalIndex);
-    if (props?.pageIndex && typeof props?.pageIndex?.totalIndex == 'undefined')
-      setPageIdx(1); //undefined就证明是sidemenu传的state，代表了初次渲染时点击了别的inbox，因此返回第一页
-    //if (pageNum==0) {setPageIdx(0);
-    //setPageIdx(1);};
     try {
-      //console.log(props?.data);
-      //props.setUnreadCount({
-      //  unread: 3,
-      //  total: 3,
-      //});
-      //console.log("page1 "+props.pageIndex.currentIndex);
-      //console.log("total1 "+props.pageIndex.totalIndex);
-      //console.log('try');
-      //console.log(props?.data?.pageIndex);
-      //console.log(props?.data?.inboxType);
-      //console.log(props?.data?.content);
-      if (
+      if ( //////////缓存
         props?.data &&
         props?.data?.pageIndex == pageIdx &&
         props?.data?.inboxType == queryRef.current &&
@@ -108,29 +85,14 @@ function MailList(props: any) {
         setList(props?.data?.mailList);
         //setPageIdx(data?.page_index);
         setPageNum(props?.data?.totalPage);
-      } else {
+      } else { ////////不是缓存 重新取
         const { data } = await getMailList({
-          filter: queryRef.current,
+          filter: filterType,
           page_index: pageIdx,
         });
         console.log('this');
         console.log(data);
-        //props.setPageIndex({
-        //  currentIndex: pageIdx,
-        //  totalIndex: data?.page_num,
-        //})
-        //console.log('this');
-        //console.log(pageIdx);
-        //console.log(data?.page_num);
-
-        ///////////////////////////props.setPageIndex({
-        ////////////////////////  currentIndex: pageIdx,
-        ////////////////////  totalIndex: data?.page_num,
-        //////////////////////////////});
-        //console.log("page1 "+props.pageIndex.currentIndex);
-        //console.log("total1 "+props.pageIndex.totalIndex);
         setList(data?.mails ?? []);
-        //setPageIdx(data?.page_index);
         setPageNum(data?.page_num);
         props.setUnreadCount({
           unread: data?.unread,
@@ -146,7 +108,6 @@ function MailList(props: any) {
       if (showLoading) {
         setLoading(false);
       }
-      //setPageIdx(fetchIndex);
     }
     console.log('finally');
     console.log(list);
@@ -168,8 +129,6 @@ function MailList(props: any) {
 
   useEffect(() => {
     console.log('useEffect')
-    //if (props?.pageIndex?.currentIndex && props?.pageIndex?.currentIndex!=pageIdx)
-    //setPageIdx(props.pageIndex.currentIndex);
     ///////////////props.setPageIndex({
     /////////////////  currentIndex: pageIdx,
     ///////////////  totalIndex: pageNum,
@@ -180,8 +139,7 @@ function MailList(props: any) {
     //if (!sessionStorage.getItem('pageIdx')) setPageIdx(1);
     /////////////setInboxType(queryRef.current);
     fetchMailList();
-  }, [pageIdx, //location?.query
-                                                        ]);
+  }, [pageIdx, state, ]);
   const handleChangeSelectList = (item: IMailItem, isSelect?: boolean) => {
     if (isSelect) {
       const nextList = selectList.slice();
@@ -226,112 +184,65 @@ function MailList(props: any) {
       const mails = [{ message_id: id, mailbox: Number(mailbox) }];
       changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
     }
-    //history.replace({
-    //pathname: location.pathname,
-    //state: { pageIdx },
-    //});
-    //setPageIdx(fetchIndex);
-    //sessionStorage.setItem('pageIdx', String(pageIdx));
-    //sessionStorage.setItem('inboxType', String(inboxType));
-    //setinboxType(inboxType);
     router.push({
     pathname,
     query: {
         id,
         type: type + '',
     },
-      //  state: { pageIdx, inboxType },
     });
   };
   return (
     <div className='flex flex-col flex-1 h-0 bg-white rounded-10'>
         <div className='flex flex-row w-full justify-between p-13 py-7'>
-          <div className='flex flex-row space-x-15'>
+          <div className='flex flex-row space-x-12 pt-4'>
           <Icon      ///////////最初设计稿的提示
             url={checkbox}
-            checkedUrl={selected}
-            className='pt-3'
+            checkedUrl={cancelSelected}
             onClick={(res: boolean) => {
                 setSelectList(res ? list?.map((item) => item) : []);
                 setIsAll(res);
             }}
-            select={isAll}/>            
-            <Icon   
-            className='pt-2'
-            url={filter}/>            
+            select={isAll}/>     
             <Icon      ///////////最初设计稿的提示
             url={update}/>
-          </div>
+              <div className="dropdown inline-relative">
+              <Icon      ///////////最初设计稿的提示
+            url={filter}
+            onClick={()=>setIsFilterHidden(!isFilterHidden)}/>
+                <div className={isFilterHidden?'hidden':'auto'}>
+                <ul className="menu absolute mt-6 shadow bg-base-100 rounded-5 ">
+                  <li className='focus:bg-[#DAE7FF]'><a className='px-12 py-4 text-xs'>All</a></li>
+                  <li><a className='px-12 py-4 text-xs'>Read</a></li>
+                  <li><a className='px-12 py-4 text-xs'>Unread</a></li>
+                  <li><a className='px-12 py-4 text-xs'>Encrypted</a></li>
+                </ul>
+                </div>
+              </div>
+            <div className='h-14 flex gap-10'>
+            {selectList.length ?
+                fiveSource.map((item,index) => {
+            return (
+                <Icon
+                url={item}
+                key={index}
+                className='w-13 h-auto self-center'
+                /> 
+            );})
+              :null}  
+              </div>          
+          </div>  
           <div className='flex flex-row justify-end space-x-20 text-xl text-[#7F7F7F]'>
             <button
                 disabled={pageIdx===1}
                 className='w-24 disabled:opacity-40'
-                onClick={() => {
-                  setPageIdx((prev:number) => {
-                    if (prev - 1 > 0) {
-                      return prev - 1;
-                    } else return prev;
-                  });
-                }}>{"<"}</button>
+                onClick={() => {if (pageIdx > 1) subPage();}}>{"<"}</button>
           {/*<span className='text-sm pt-3'>{pageIdx ?? '-'} /{pageNum ?? '-'}</span>//////显示邮件的数量*/}
             <button
                 className='w-24 disabled:opacity-40'
                 disabled={pageIdx===pageNum}
-                onClick={() => {
-                  setPageIdx((prev:number) => {
-                    if (prev + 1 <= pageNum) {
-                      return prev + 1;
-                    } else return prev;
-                  });
-                }}>{">"}</button>
+                onClick={() => {if (pageIdx < pageNum) addPage();}}>{">"}</button>
             </div>  
-            {/*<div className='flex flex-row space-x-50 px-15'>  //最初设计稿针对mailList的四种操作
-                <Icon
-                url={Collection}
-                select={isAllFavorite}
-                onClick={(res) => {
-                handleChangeMailStatus(
-                undefined,
-                res ? MarkTypeEn.Starred : MarkTypeEn.Normal,
-                );
-                setIsAllFavorite(res);
-                }}
-                tip={'star'}/>
-                <Icon
-                    url={Delete}
-                    onClick={() => {
-                        handleChangeMailStatus(
-                        undefined,
-                        queryRef.current == 3 ? MarkTypeEn.Deleted : MarkTypeEn.Trash,
-                    );
-                    }}
-                    tip={'delete'}
-                />  
-                <Icon
-                    url={Read}
-                    data-tip="marked read"
-                    onClick={() => {
-                        handleChangeMailStatus(
-                        undefined,
-                        undefined,
-                        ReadStatusTypeEn.read,
-                        );
-                    }}
-                    tip={'mark read'}
-                />
-                <Icon
-                        url={Unread}
-                        data-tip="marked unread"
-                        onClick={() => {
-                        handleChangeMailStatus(
-                            undefined,
-                            undefined,
-                            ReadStatusTypeEn.unread,
-                        );
-                        }}
-                        tip={'mark unread'}
-                    />
-                      </div>*/}
         </div>
     {/*<div className='h-28 flex flex-row pb-6 px-18 justify-between text-sm gap-35 text-[#999999] text-center'>
         <div className='flex flex-row justify-around w-102 px-5'>
@@ -353,8 +264,13 @@ function MailList(props: any) {
     </div>*/}
     <div className='flex flex-col overflow-auto flex-1 h-0 pl-8'>
         {list.map((item,index) => { 
-        return (<MailListItem
-            key={index}
+        return (
+        <button key={index} className={selectList.findIndex(
+          (i) =>
+            i.message_id === item.message_id &&
+            i.mailbox === item.mailbox,
+        ) >= 0 ?'text-left select-bg':'text-left'}>
+          <MailListItem
             mark={item?.mark}
             from={item.mail_from}
             subject={item.subject}
@@ -403,7 +319,8 @@ function MailList(props: any) {
             onSelect={(isSelect) => {
               handleChangeSelectList(item, isSelect);
             }}
-          />)}
+          />
+          </button>)}
           )}
         </div>
 
@@ -418,26 +335,6 @@ const mapStateToProps = (state: any) => {
 //const mapIndexStateToProps = (state: any) => {
 //  return state.pageIndex ?? {};
 //};
-
-const mapDispatchToProps = (
-  dispatch: (arg0: { type: string; payload: any }) => any,
-) => ({
-  setUnreadCount: (data: any) =>
-    dispatch({
-      type: 'user/setUnreadCount',
-      payload: data,
-    }),
-  setPageIndex: (data: any) =>
-    dispatch({
-      type: 'user/setPageIndex',
-      payload: data,
-    }),
-  setDataList: (data: any) =>
-    dispatch({
-      type: 'user/setDataList',
-      payload: data,
-    }),
-});
 
 //export default connect(mapStateToProps, mapDispatchToProps)(MailList);
 export default MailList;

@@ -62,6 +62,8 @@ body {
 .active-bg{
   background-color: rgba(171, 199, 255, 0.35);
 }
-
+.select-bg{
+  background: rgba(218, 231, 255, 0.4);
+}
 
 

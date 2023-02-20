@@ -16,18 +16,20 @@ import { useEffect } from 'react';
 import {ethers} from 'ethers';
 import { useAccount } from 'wagmi';
 import { getJwtToken, getRandomStrToSign } from '@services/login';
-import { getWalletAddress, saveUserInfo } from '@utils/storage/user';
+import { getUserInfo, getWalletAddress, saveUserInfo } from '@utils/storage/user';
 import { disconnect } from '@wagmi/core';
+import { add } from '@assets/icons';
 export default function Intro() {
   const router = useRouter()  
   const { address, isConnected } = useAccount();
   console.log('pages');
   console.log(address);
   console.log(isConnected);
+  
   const handleAuth = async () => {
     try{
       if (!window.ethereum) throw new Error('Your client does not support Ethereum');
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
       const signer = provider.getSigner();
       //const balance = await signer.signMessage("Hello World");
       //console.log(balance);
@@ -61,6 +63,8 @@ export default function Intro() {
         publicKey: user?.user?.public_key?.public_key,
       });
       router.push('/home');
+      await disconnect();
+
     }
     catch(e){
       console.log(e);
@@ -69,8 +73,11 @@ export default function Intro() {
   } 
   useEffect(() => {
       if (isConnected) {
-          if (getWalletAddress()) router.push('/home');
-          else handleAuth();
+        if(getUserInfo().address===address){
+          router.push('/home');
+          disconnect();
+        }
+        else handleAuth();
       }
   },);
   return (

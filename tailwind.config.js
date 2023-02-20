@@ -21,12 +21,21 @@ module.exports = {
     },
   },
   theme: {
+
     extend: {
       fontFamily: {
         poppins: ['Poppins'],
         'space-grotesk': ['"Space Grotesk"'],
       },
-
+      fontSize: {
+        sm: ['12px', '18px'],
+        xs: ['10px', '15px'],
+        md: ['14px', '21px'],
+        
+      },
+      backgroundImage: {
+        'filter': "url('/assets/icons/filter.svg')",
+      },
       spacing: {
         ...gen(v => `${v}px`)(ALL_SIZE),
         ...gen(

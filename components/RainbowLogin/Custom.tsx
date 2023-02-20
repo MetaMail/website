@@ -1,5 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-export interface IString {
+interface IString {
     content:string;
     };
 export const ConnectBtn = ({content}:IString) => {
