@@ -1,16 +1,9 @@
 import MailListItem from '@components/MailItem';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Icon from '@components/Icon';
 import { useRouter } from 'next/router'
-import useStore from '@utils/storage/filter';
-import shallow from 'zustand/shallow';
-//import Image from 'next/image';
-//import turnLeft from '@assets/turnLeft.svg';
-//import turnRight from '@assets/turnRight.png';
-//import Collection from '@assets/Collection.svg';
-//import Delete from '@assets/Delete.svg';
-///import Read from '@assets/Read.svg';
-//import Unread from '@assets/Unread.svg';
+import useStore from '@utils/storage/zustand';
+
 import {
   FilterTypeEn,
   getMailBoxType,
@@ -39,6 +32,7 @@ import {
   cancelSelected,
 } from 'assets/icons';
 import { setRandomBits } from 'utils/storage/user';
+import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
 function MailList(props: any) {
   const state = useStore()
   const pageIdx = useStore((state) => state.page)
@@ -46,18 +40,42 @@ function MailList(props: any) {
   const addPage = useStore((state) => state.addPage)
   const subPage = useStore((state) => state.subPage)
   const router = useRouter()
-  const queryRef = useRef(0);
-  const [hiddenIcon, setHiddenIcon] = useState(false);
-  /////////const mailBox = getMailBoxType(queryRef.current);
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState<IMailItem[]>([]);
-  const fiveSource = [trash,starred,spam,temp1,read,markUnread,]
   const [pageNum, setPageNum] = useState(0);
   ///////const [inboxType, setInboxType] = useState(Number(mailBox));
-  const [inboxType, setInboxType] = useState(0);
   const [selectList, setSelectList] = useState<IMailItem[]>([]);
   const [isAll, setIsAll] = useState(false);
   const [isFilterHidden, setIsFilterHidden] = useState(true);
+  const sixList = [
+    { src: trash,
+      handler: async ()=>{
+        await handleDelete(getMails());
+        await fetchMailList(false);
+      }},
+    { src: starred,
+      handler: async ()=>{
+        await handleStar(getMails());
+        await fetchMailList(false);
+      }},  
+    { src: spam,
+      handler: async ()=>{
+        await handleSpam(getMails());
+        await fetchMailList(false);
+      }},  
+    { src: temp1,
+      handler: ()=>{
+      }},  
+    { src: read,
+      handler: async ()=>{
+        await handleChangeReadStatus(getMails(),ReadStatusTypeEn.read);
+        await fetchMailList(false);
+      }}, 
+    { src: markUnread,
+      handler: async ()=>{
+        await handleChangeReadStatus(getMails(),ReadStatusTypeEn.unread);
+        await fetchMailList(false);
+      }},]
 
   const getMails = () => {
     const res: IMailChangeParams[] = [];
@@ -76,22 +94,23 @@ function MailList(props: any) {
     }
     try {
       if ( //////////缓存
-        props?.data &&
-        props?.data?.pageIndex == pageIdx &&
-        props?.data?.inboxType == queryRef.current &&
-        props?.data?.mailList.length !== 0
-      ) {
-        console.log('shi');
-        setList(props?.data?.mailList);
+        //props?.data &&
+        //props?.data?.pageIndex == pageIdx &&
+        //props?.data?.inboxType == filterType &&
+        //props?.data?.mailList.length !== 0
+      false) {
+        //console.log('shi');
+        //setList(props?.data?.mailList);
         //setPageIdx(data?.page_index);
-        setPageNum(props?.data?.totalPage);
+        //setPageNum(props?.data?.totalPage);
       } else { ////////不是缓存 重新取
         const { data } = await getMailList({
           filter: filterType,
           page_index: pageIdx,
         });
-        console.log('this');
+        //console.log('this');
         console.log(data);
+        console.log(data?.mails);
         setList(data?.mails ?? []);
         setPageNum(data?.page_num);
         props.setUnreadCount({
@@ -109,9 +128,6 @@ function MailList(props: any) {
         setLoading(false);
       }
     }
-    console.log('finally');
-    console.log(list);
-    //console.log(pageNum);
     //因为缓存的时候每次读data，所以如果old data有数据证明old data是下一次返回要用的，把old data变成data，现在这一页存进old data里
     ////////////////////props.setDataList({
     ////////////////  pageIndex: props?.data?.oldPageIndex ? props.data.oldPageIndex : pageIdx,
@@ -128,18 +144,9 @@ function MailList(props: any) {
   };
 
   useEffect(() => {
-    console.log('useEffect')
-    ///////////////props.setPageIndex({
-    /////////////////  currentIndex: pageIdx,
-    ///////////////  totalIndex: pageNum,
-    ///////////////});
-    ///////////queryRef.current = location?.query?.filter
-    /////////////  ? Number(location?.query?.filter)
-    //////////////  : 0;
-    //if (!sessionStorage.getItem('pageIdx')) setPageIdx(1);
-    /////////////setInboxType(queryRef.current);
     fetchMailList();
-  }, [pageIdx, state, ]);
+  }, [pageIdx, filterType ]);
+  
   const handleChangeSelectList = (item: IMailItem, isSelect?: boolean) => {
     if (isSelect) {
       const nextList = selectList.slice();
@@ -178,7 +185,7 @@ function MailList(props: any) {
     read: number,
   ) => {
     const pathname =
-      queryRef.current === FilterTypeEn.Draft ? '/home/new' : '/home/mail';
+      filterType === FilterTypeEn.Draft ? '/home/new' : '/home/mail';
     setRandomBits(undefined); // clear random bits
     if (!read) {
       const mails = [{ message_id: id, mailbox: Number(mailbox) }];
@@ -205,9 +212,11 @@ function MailList(props: any) {
             }}
             select={isAll}/>     
             <Icon      ///////////最初设计稿的提示
-            url={update}/>
-              <div className="dropdown inline-relative">
-              <Icon      ///////////最初设计稿的提示
+            url={update}
+            onClick={()=>fetchMailList()}
+            />
+            <div className="dropdown inline-relative">
+            <Icon      ///////////最初设计稿的提示
             url={filter}
             onClick={()=>setIsFilterHidden(!isFilterHidden)}/>
                 <div className={isFilterHidden?'hidden':'auto'}>
@@ -221,11 +230,12 @@ function MailList(props: any) {
               </div>
             <div className='h-14 flex gap-10'>
             {selectList.length ?
-                fiveSource.map((item,index) => {
+                sixList.map((item,index) => {
             return (
                 <Icon
-                url={item}
+                url={item.src}
                 key={index}
+                onClick={item.handler}
                 className='w-13 h-auto self-center'
                 /> 
             );})
@@ -282,15 +292,7 @@ function MailList(props: any) {
             } // message_id as primary key
             abstract={item?.digest}
             onClick={() => {
-              ////////////////props.setDataList({
-                //点击了邮件那肯定是需要返回最新的一页，因此重新把store更新
-                ///////////////pageIndex: pageIdx,
-                /////////////////inboxType: queryRef.current,
-                //////////////mailList: list,
-                ////////////////totalPage: pageNum,
-              /////////////////});
               sessionStorage.setItem(item?.message_id, item?.message_id); // set read in sessionstorage for update without fetching maillist
-              //console.log(item?.message_id);
               handleClickMail(
                 item.message_id,
                 item.meta_type,
@@ -318,6 +320,29 @@ function MailList(props: any) {
             }}
             onSelect={(isSelect) => {
               handleChangeSelectList(item, isSelect);
+            }}
+            onDelete={() => {
+              handleChangeMailStatus(
+                [
+                  {
+                    message_id: item?.message_id,
+                    mailbox: item?.mailbox,
+                  },
+                ],
+                item?.mailbox===3 ? MarkTypeEn.Deleted : MarkTypeEn.Trash,
+              );
+            }}
+            onUnread={() => {
+              handleChangeMailStatus(
+                [
+                  {
+                    message_id: item?.message_id,
+                    mailbox: item?.mailbox,
+                  },
+                ],
+                undefined,
+                ReadStatusTypeEn.unread,
+              );
             }}
           />
           </button>)}

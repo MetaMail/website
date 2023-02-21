@@ -21,7 +21,12 @@ export default function HomePage() {
     router.push('/');
   }
   useEffect(()=>{
-    if (!getUserInfo().address) router.push('/'); 
+    console.log('aaaaa');
+    console.log(getUserInfo().address);
+    if (!getUserInfo().address) {
+      clearUserInfo();
+      router.push('/');
+    } 
     setAddress(getUserInfo()?.address??'');
   }, []);
   return (

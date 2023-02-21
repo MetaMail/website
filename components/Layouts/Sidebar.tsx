@@ -12,17 +12,23 @@ import React, { useEffect, useState } from 'react';
 import Icon from '@components/Icon';
 import { useRouter } from 'next/router';
 import { disconnect } from '@wagmi/core';
-import useStore from '@utils/storage/filter';
+import useStore from '@utils/storage/zustand';
+import { FilterTypeEn } from '@constants/interfaces';
 
-export default function Sidebar(props: { setOnCompose: (arg0: boolean) => void; unreadCount: { unread: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | null | undefined; }; }) {
-  const setFilter = useStore(state => state.setFilter)
-  const filterType = useStore(state => state.filter)
+export default function Sidebar(props:any) {
+  const setFilter = useStore((state: any) => state.setFilter)
+  const filterType = useStore((state: any) => state.filter)
   const [hideDropStatus, setHideDropStatus] = useState(false);
   const [dropStatus, setDropStatus] = useState(false);
   const router = useRouter()
   async function handleReturnHome(){
     router.push('/');
   }
+  function handleChangeFilter(filter:FilterTypeEn){
+    if (router?.query?.id) router.push('/home');
+    setFilter(Number(filter));
+  }
+
   return (
   <div className='bg-[#F3F7FF] w-200 pl-15 pr-10 pt-12 flex flex-col justify-between font-poppins text-sm '>
     <div className='flex flex-col'>
@@ -41,8 +47,8 @@ export default function Sidebar(props: { setOnCompose: (arg0: boolean) => void; 
               <li
                 key={index}
                 className={item.hidden===false?'auto':'hidden'}
-                ><button onClick={()=>{setFilter(Number(item.key))}} className={filterType === Number(item.key)? 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold':'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'}>
-                <Image src={item?.logo} alt={item?.title} height="12.5" className='self-center'/>
+                ><button onClick={()=>{handleChangeFilter(item.key)}} className={filterType === Number(item.key)? 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold':'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'}>
+                <Image src={item?.logo} alt={item?.title} height="12.5" className='self-center stroke-width-100'/>
                 <div className=''>
                   <span className=''> {item.title}</span>
                   {item.title === 'Inbox' ? (
@@ -55,23 +61,25 @@ export default function Sidebar(props: { setOnCompose: (arg0: boolean) => void; 
               </li>
             );
           })}
-      <li className='p-9 flex flex-row gap-10 rounded-5 text-[#BDBDBD]'>
+      <button className='p-9 py-3 flex flex-row gap-10 rounded-5 text-[#BDBDBD] w-full' onClick={()=>setDropStatus(dropStatus===false)}>
       <Icon   
             url={showMore}
-            className={dropStatus? 'mt-4 h-12 self-center rotate-90':'mt-4 h-12 self-center'}
-            onClick={()=>setDropStatus(dropStatus===false)}/>   
+            className={dropStatus? 'mt-4 h-12 self-center rotate-90':'mt-4 h-12 self-center'}/>   
                 <div className='flex justify-between w-full '>
                   <span className=''>More</span>
                     <span className=''>2</span>
                 </div>
-              </li>
+              </button>
         </ul>
       <ul className='text-[#7F7F7F]'>
       {dropStatus?MailMenuItems.map((item,index) => {
             return (
-              <li key={index} className={item.hidden?'auto':'hidden'}><Link href={''} className={item.title === 'Inbox'? 'hover:bg-[#DAE7FF] p-7 flex flex-row gap-7 active-bg rounded-5 font-bold':'hover:bg-[#DAE7FF] p-7 flex flex-row gap-7 rounded-5'}>
+              <li key={index} className={item.hidden?'auto':'hidden'}>
+                <button onClick={()=>{handleChangeFilter(item.key)}} className={filterType === Number(item.key)? 
+                  'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold':
+                  'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'}>
                 <Image src={item?.logo} alt={item?.title} height="12.5"/>
-                <div className='pt-3'>
+                <div className=''>
                   <span className=''> {item.title}</span>
                   {item.title === 'Inbox' ? (
                     <span className=''>
@@ -79,17 +87,16 @@ export default function Sidebar(props: { setOnCompose: (arg0: boolean) => void; 
                     </span>
                   ) : null}
                 </div>
-                </Link>
+                </button>
               </li>
             );
           }):null}
           </ul>
           <div className='w-177 h-0 border'></div>
-          <ul><li className='p-9 flex flex-row gap-10 rounded-5 text-[#707070]'>
-      <Icon   
+          <ul><button className='p-9 flex flex-row gap-10 rounded-5 text-[#707070] w-full' onClick={()=>setHideDropStatus(hideDropStatus===false)}>
+            <Icon   
             url={showMore}
-            className={hideDropStatus? 'mt-4 h-12 self-center rotate-90':'mt-4 h-12 self-center'}
-            onClick={()=>setHideDropStatus(hideDropStatus===false)}/>   
+            className={hideDropStatus? 'mt-4 h-12 self-center rotate-90':'mt-4 h-12 self-center'}/>   
                 <div className='flex flex-row justify-between w-full '>
                   <span className=''>Tag</span>
                   <div className='flex flex-row gap-5'>
@@ -97,7 +104,7 @@ export default function Sidebar(props: { setOnCompose: (arg0: boolean) => void; 
                     <Image src={more} alt="more"/>
                   </div>
                 </div>
-              </li>
+              </button>
         </ul>
         {hideDropStatus?
         <div>

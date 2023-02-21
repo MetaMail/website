@@ -31,7 +31,10 @@ import {
 } from 'assets/icons';
 import {
   IMailContentItem,
+  MailBoxTypeEn,
+  MarkTypeEn,
   MetaMailTypeEn,
+  ReadStatusTypeEn,
   //MailBoxTypeEn,
   //FilterTypeEn,
 } from 'constants/interfaces';
@@ -52,9 +55,11 @@ import { useRouter } from 'next/router';
 import parse from 'html-react-parser';
 import { getUserInfo, getShowName } from '@utils/storage/user';
 import Layout from '@components/Layouts';
+import useStore from '@utils/storage/zustand';
+import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
 //import SenderCard from './SenderCard';
-const sixSource = [back,trash,temp1,spam,read,starred,]
-const threeMail = [starred,sent,mailMore]
+
+
 //import { setMailContent } from '@utils/storage/mail';
 //import { useLocation } from 'react-router-dom';
 //import { useHistory } from 'react-router-dom';
@@ -87,14 +92,78 @@ var regex = RegExp('^(' + allowlist.join('|') + '):', 'gim');
 //});*/
 
 function Mail(props:any) {
-    const router = useRouter()
-    const [mail, setMail] = useState<IMailContentItem>();
-    const [isExtend, setIsExtend] = useState(false);
-    //const { address, ensName } = getUserInfo();
-    const [readable, setReadable] = useState(true);
-    const randomBitsRef = useRef('');
-    const queryRef = useRef(0);
-    const [isHidden, setIsHidden] = useState(true);
+  const router = useRouter()
+  const [mail, setMail] = useState<IMailContentItem>();
+  const [isExtend, setIsExtend] = useState(false);
+  //const { address, ensName } = getUserInfo();
+  const [readable, setReadable] = useState(true);
+  const randomBitsRef = useRef('');
+  const queryRef = useRef(0);
+  const [isHidden, setIsHidden] = useState(true);
+  const filterType = useStore((state) => state.filter)
+  const mailInfo = [
+    {
+      message_id: mail?.message_id ?? '',
+      mailbox: filterType, 
+    },
+  ]
+  const sixMail = [
+    {
+      src: back,
+      handler: ()=>{
+        router.back();
+      } 
+    },
+    {
+      src: trash,
+      handler: ()=>{
+        handleDelete(mailInfo);
+        router.back();
+      } 
+    },  {
+      src: temp1,
+      handler: ()=>{
+  
+      } 
+    },  {
+      src: spam,
+      handler: ()=>{
+        handleSpam(mailInfo);
+      } 
+    },  {
+      src: read,
+      handler: ()=>{
+        handleChangeReadStatus(mailInfo,ReadStatusTypeEn.read);
+      }
+    },  {
+      src: starred,
+      handler: ()=>{
+        handleStar(mailInfo);
+      } 
+    },]
+
+  const threeMail = [
+    {
+      src: starred,
+      handler: ()=>{
+        handleStar(mailInfo);
+
+      }
+    },
+    {
+      src: sent,
+      handler: ()=>{
+        //handleStar(mailInfo);
+      }
+    },
+    {
+      src: mailMore,
+      handler: ()=>{
+        //handleStar(mailInfo);
+      }
+    },]
+
+
   const handleOpenReplyMail = async () => {
     //createMail(MetaMailTypeEn.Signed).catch(() => {
     //  notification.error({
@@ -173,12 +242,13 @@ function Mail(props:any) {
           <header className='flex flex-col justify-between h-100 w-full px-16'>
             <div className='py-11 flex justify-between w-full'>
                 <div className='h-14 flex gap-10'>
-                    {sixSource.map((item,index) => {
+                    {sixMail.map((item,index) => {
                     return (
                         <Icon
-                        url={item}
+                        url={item.src}
                         key={index}
                         className='w-13 h-auto self-center'
+                        onClick={item.handler}
                         /> 
                     );})}  
                 </div>
@@ -190,6 +260,7 @@ function Mail(props:any) {
                   onClick={()=>setIsExtend(!isExtend)}/> 
                 <Icon
                   url={cancel}
+                  onClick={()=>router.back()}
                   className='w-13 scale-[120%] h-auto self-center'/> 
                 </div>
             </div>
@@ -214,8 +285,9 @@ function Mail(props:any) {
                 {threeMail.map((item,index) => {
                     return (
                         <Icon
-                        url={item}
+                        url={item.src}
                         key={index}
+                        onClick={item.handler}
                         className='w-13 h-auto self-center'
                         /> 
                     );})} 

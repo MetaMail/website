@@ -1,12 +1,13 @@
 import encrypt from '@assets/encrypt.svg';
 import moment from 'moment';
 import Icon from '@components/Icon';
+import Image from 'next/image';
 import {
     IPersonItem,
     MarkTypeEn,
     MetaMailTypeEn,
   } from 'constants/interfaces';
-import { checkbox, favorite, markFavorite, selected, white } from 'assets/icons';
+import { checkbox, favorite, markFavorite, selected, white, trash, markUnread} from 'assets/icons';
 interface IMailItemProps {
     subject: string;
     from: IPersonItem;
@@ -19,6 +20,8 @@ interface IMailItemProps {
     onClick: () => void;
     onSelect: (isSelected: boolean) => void;
     onFavorite: (isSelected: boolean) => void;
+    onDelete: () => void;
+    onUnread: () => void;
 }
 
 export default function MailListItem({
@@ -33,10 +36,11 @@ export default function MailListItem({
     mark,
     metaType,
     abstract,
+    onDelete,
+    onUnread,
   }: IMailItemProps) {
-    console.log('render');
     return (
-        <div className='flex flex-row pt-1 pb-5 px-18 justify-between text-sm hover:bg-[#DAE7FF] hover:shadow-md group'>
+        <div className='flex flex-row pt-1 pb-5 px-18 justify-between text-sm hover:bg-[#DAE7FF] hover:shadow-sm group'>
           <div className='flex flex-row gap-9'>
             <div className='pt-7'>
               <Icon
@@ -76,7 +80,10 @@ export default function MailListItem({
             {moment(date).format("D ") }
             </div>
             </div>
-            <div className='hidden flex-row group-hover:flex'></div>
+            <div className='hidden flex-row group-hover:flex '>
+              <button onClick={onDelete}><Image src={trash} alt='delete mail'/></button>
+              <button onClick={onUnread} className='mx-8'><Image src={markUnread} alt='markUnread mail'className='scale-125'/></button>
+            </div>
           </div>
       );
     }
