@@ -18,8 +18,10 @@ import { FilterTypeEn } from '@constants/interfaces';
 export default function Sidebar(props:any) {
   const setFilter = useStore((state: any) => state.setFilter)
   const filterType = useStore((state: any) => state.filter)
-  const [hideDropStatus, setHideDropStatus] = useState(false);
-  const [dropStatus, setDropStatus] = useState(false);
+  const resetPage = useStore((state: any) => state.resetPage)
+  const unreadCount = useStore((state: any) => state.unreadCount)
+  const [dropTag, setDropTag] = useState(false);
+  const [dropFilter, setDropFilter] = useState(false);
   const router = useRouter()
   async function handleReturnHome(){
     router.push('/');
@@ -27,6 +29,7 @@ export default function Sidebar(props:any) {
   function handleChangeFilter(filter:FilterTypeEn){
     if (router?.query?.id) router.push('/home');
     setFilter(Number(filter));
+    resetPage();
   }
 
   return (
@@ -47,13 +50,13 @@ export default function Sidebar(props:any) {
               <li
                 key={index}
                 className={item.hidden===false?'auto':'hidden'}
-                ><button onClick={()=>{handleChangeFilter(item.key)}} className={filterType === Number(item.key)? 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold':'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'}>
+                ><button onClick={()=>{handleChangeFilter(item.key); setDropFilter(false);}} className={filterType === Number(item.key)? 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold':'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'}>
                 <Image src={item?.logo} alt={item?.title} height="12.5" className='self-center stroke-width-100'/>
-                <div className=''>
+                <div className='flex w-full justify-between'>
                   <span className=''> {item.title}</span>
                   {item.title === 'Inbox' ? (
                     <span className=''>
-                      {props?.unreadCount?.unread}
+                      {unreadCount===0?'':unreadCount}
                     </span>
                   ) : null}
                 </div>
@@ -61,10 +64,10 @@ export default function Sidebar(props:any) {
               </li>
             );
           })}
-      <button className='p-9 py-3 flex flex-row gap-10 rounded-5 text-[#BDBDBD] w-full' onClick={()=>setDropStatus(dropStatus===false)}>
+      <button className='p-9 py-3 flex flex-row gap-10 rounded-5 text-[#BDBDBD] w-full' onClick={()=>setDropFilter(dropFilter===false)}>
       <Icon   
             url={showMore}
-            className={dropStatus? 'mt-4 h-12 self-center rotate-90':'mt-4 h-12 self-center'}/>   
+            className={dropFilter? 'mt-4 h-12 self-center rotate-90':'mt-4 h-12 self-center'}/>   
                 <div className='flex justify-between w-full '>
                   <span className=''>More</span>
                     <span className=''>2</span>
@@ -72,7 +75,7 @@ export default function Sidebar(props:any) {
               </button>
         </ul>
       <ul className='text-[#7F7F7F]'>
-      {dropStatus?MailMenuItems.map((item,index) => {
+      {dropFilter?MailMenuItems.map((item,index) => {
             return (
               <li key={index} className={item.hidden?'auto':'hidden'}>
                 <button onClick={()=>{handleChangeFilter(item.key)}} className={filterType === Number(item.key)? 
@@ -93,20 +96,20 @@ export default function Sidebar(props:any) {
           }):null}
           </ul>
           <div className='w-177 h-0 border'></div>
-          <ul><button className='p-9 flex flex-row gap-10 rounded-5 text-[#707070] w-full' onClick={()=>setHideDropStatus(hideDropStatus===false)}>
+          <ul><button className='p-9 flex flex-row gap-10 rounded-5 text-[#707070] w-full' onClick={()=>setDropTag(dropTag===false)}>
             <Icon   
             url={showMore}
-            className={hideDropStatus? 'mt-4 h-12 self-center rotate-90':'mt-4 h-12 self-center'}/>   
+            className={dropTag? 'mt-4 h-12 self-center rotate-90':'mt-4 h-12 self-center'}/>   
                 <div className='flex flex-row justify-between w-full '>
                   <span className=''>Tag</span>
                   <div className='flex flex-row gap-5'>
-                    <Image src={add} alt="add"/>
-                    <Image src={more} alt="more"/>
+                    <Image src={add} alt="add" className='w-12 h-auto'/>
+                    <Image src={more} alt="more" className='w-12 h-auto'/>
                   </div>
                 </div>
               </button>
         </ul>
-        {hideDropStatus?
+        {dropTag?
         <div>
             <div className='text-[#707070] flex flex-row gap-5 pl-12 pb-13'>
 <svg className='self-end pb-[0.5px]' width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">

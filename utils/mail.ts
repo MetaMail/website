@@ -1,6 +1,7 @@
 import { MarkTypeEn, ReadStatusTypeEn } from "@constants/interfaces";
 import { IMailChangeParams, changeMailStatus } from "@services/home";
-import router from "next/router";
+import { deleteStorage } from "./storage";
+//import router from "next/router";
 
 export const handleDelete = async (
     inputMails: IMailChangeParams[],
@@ -8,7 +9,8 @@ export const handleDelete = async (
     const mails = inputMails;
     try {
       await changeMailStatus(mails, MarkTypeEn.Trash, undefined);
-    } catch {
+    } catch(e) {
+      console.log(e)
       //notification.error({
       //  message: 'Failed',
       //  description: 'Sorry, network problem.',
@@ -19,10 +21,13 @@ export const handleDelete = async (
 
   export const handleStar = async (
     inputMails: IMailChangeParams[],
+    setUnStar ?: boolean,
   ) => {
+    console.log(setUnStar);
+    console.log(inputMails);
     const mails = inputMails;
     try {
-      await changeMailStatus(mails, MarkTypeEn.Starred, undefined);
+      await changeMailStatus(mails, setUnStar===true ? MarkTypeEn.Normal : MarkTypeEn.Starred, undefined);
     } catch {
       //notification.error({
       //  message: 'Failed',
@@ -37,6 +42,7 @@ export const handleDelete = async (
   ) => {
     const mails = inputMails;
     try {
+        console.log(mails);
         await changeMailStatus(mails, MarkTypeEn.Spam, undefined);
     } catch {
       //notification.error({

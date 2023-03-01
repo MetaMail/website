@@ -1,33 +1,31 @@
+import Alert from '@components/Alert';
 import Layout from '@components/Layouts';
 import { clearUserInfo, getUserInfo } from '@utils/storage/user';
+import useStore from '@utils/storage/zustand';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
 import MailList from './list';
-import RainbowLogin from 'components/RainbowLogin';
 import NewMail from './new';
-import Mail from './mail';
-import { useStore } from 'zustand';
-import { add } from '@assets/icons';
-
 
 export default function HomePage() {
   const router = useRouter()
   const [onShow, setOnShow] = useState(false);
   const [onCompose, setOnCompose] = useState(true);
   const [address,setAddress] = useState<string>();  
+  const removeAll = useStore((state:any) => state.removeAll)
+
   function getLogOut(){
     clearUserInfo();
+    removeAll();
     router.push('/');
   }
   useEffect(()=>{
-    console.log('aaaaa');
-    console.log(getUserInfo().address);
     if (!getUserInfo().address) {
       clearUserInfo();
+      removeAll();      
       router.push('/');
     } 
-    setAddress(getUserInfo()?.address??'');
+    setAddress(getUserInfo()?.address);
   }, []);
   return (
     <div>
@@ -49,6 +47,7 @@ export default function HomePage() {
         </div>
       </div>
       <MailList/>
+      <Alert message={'Network Error'} description={'Can not fetch detail info of this email for now.'}/>
       <NewMail onCompose={onCompose} setOnCompose={setOnCompose}/>
     </div>
     </div>

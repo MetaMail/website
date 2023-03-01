@@ -7,13 +7,14 @@ import useStore from '@utils/storage/zustand';
 import {
   FilterTypeEn,
   getMailBoxType,
+  IMailContentItem,
   IMailItem,
   MailBoxTypeEn,
   MarkTypeEn,
   MetaMailTypeEn,
   ReadStatusTypeEn,
 } from 'constants/interfaces';
-import { changeMailStatus, getMailList, IMailChangeParams } from 'services/home';
+import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'services/home';
 import {
   checkbox,
   //markFavorite,
@@ -31,22 +32,30 @@ import {
   update,
   cancelSelected,
 } from 'assets/icons';
-import { setRandomBits } from 'utils/storage/user';
+import { getUserInfo, setRandomBits } from 'utils/storage/user';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
+import { clearStorage, deleteStorage, getStorage, updateStorage } from '@utils/storage';
+import Link from 'next/link';
 function MailList(props: any) {
-  const state = useStore()
-  const pageIdx = useStore((state) => state.page)
-  const filterType = useStore((state) => state.filter)
-  const addPage = useStore((state) => state.addPage)
-  const subPage = useStore((state) => state.subPage)
+  //const state = useStore()
+  const setFilter = useStore((state: any) => state.setFilter)
+
+  const pageIdx = useStore((state:any) => state.page)
+  const filterType = useStore((state:any) => state.filter)
+  const addPage = useStore((state:any) => state.addPage)
+  const subPage = useStore((state:any) => state.subPage)
+  const setUnreadCount = useStore((state:any) => state.setUnreadCount)
+  const setDetailFromList = useStore((state:any) => state.setDetailFromList)
   const router = useRouter()
   const [loading, setLoading] = useState(false);
+  let mailDetail: IMailContentItem[] = [];
   const [list, setList] = useState<IMailItem[]>([]);
   const [pageNum, setPageNum] = useState(0);
   ///////const [inboxType, setInboxType] = useState(Number(mailBox));
   const [selectList, setSelectList] = useState<IMailItem[]>([]);
   const [isAll, setIsAll] = useState(false);
   const [isFilterHidden, setIsFilterHidden] = useState(true);
+  const removeAll = useStore((state:any) => state.removeAll)
   const sixList = [
     { src: trash,
       handler: async ()=>{
@@ -76,7 +85,19 @@ function MailList(props: any) {
         await handleChangeReadStatus(getMails(),ReadStatusTypeEn.unread);
         await fetchMailList(false);
       }},]
-
+      const fourFilter = [
+        { content: 'All',
+          filter: FilterTypeEn.Inbox,
+          },
+        { content: 'Read',
+          filter: FilterTypeEn.Inbox,
+          },
+        { content: 'Unread',
+          filter: FilterTypeEn.Unread,
+          },
+        { content: 'Encrypted',
+          filter: FilterTypeEn.Encrypted,
+          },]
   const getMails = () => {
     const res: IMailChangeParams[] = [];
     selectList?.forEach((item) => {
@@ -93,30 +114,29 @@ function MailList(props: any) {
       setLoading(true);
     }
     try {
-      if ( //////////缓存
-        //props?.data &&
-        //props?.data?.pageIndex == pageIdx &&
-        //props?.data?.inboxType == filterType &&
-        //props?.data?.mailList.length !== 0
-      false) {
-        //console.log('shi');
-        //setList(props?.data?.mailList);
-        //setPageIdx(data?.page_index);
-        //setPageNum(props?.data?.totalPage);
+      const mailListStorage = getStorage('mailListStorage');
+      console.log(mailListStorage);
+      if (mailListStorage?.data?.page_index === pageIdx && mailListStorage?.filter === filterType && showLoading) { //判断是否有邮件列表的缓存
+        console.log('mailliststoragecunle');
+        setList(mailListStorage?.data?.mails ?? []);   //用缓存更新状态组件
+        setPageNum(mailListStorage?.data?.page_num);
+        setUnreadCount(mailListStorage.data?.unread ?? 0);
       } else { ////////不是缓存 重新取
+        console.log('meiyoulisthuancun');
         const { data } = await getMailList({
           filter: filterType,
           page_index: pageIdx,
         });
-        //console.log('this');
         console.log(data);
         console.log(data?.mails);
         setList(data?.mails ?? []);
         setPageNum(data?.page_num);
-        props.setUnreadCount({
-          unread: data?.unread,
-          total: data?.total,
-        });
+        setUnreadCount(data.unread ?? 0);
+        const mailListStorage = { //设置邮件列表缓存
+          data: data,
+          filter: filterType,
+        }
+        updateStorage('mailListStorage',mailListStorage);
       }
     } catch {
       //notification.error({
@@ -128,24 +148,40 @@ function MailList(props: any) {
         setLoading(false);
       }
     }
-    //因为缓存的时候每次读data，所以如果old data有数据证明old data是下一次返回要用的，把old data变成data，现在这一页存进old data里
-    ////////////////////props.setDataList({
-    ////////////////  pageIndex: props?.data?.oldPageIndex ? props.data.oldPageIndex : pageIdx,
-     //////////// inboxType: props?.data?.oldInboxType
-    ///////////////    ? props.data.oldInboxType
-    /////////////////////    : queryRef.current,
-      //mailList: props?.data?.oldMailList ? props.data.oldMailList : list,
-      //totalPage: props?.data?.oldTotalPage ? props.data.oldTotalPage : pageNum,
-    ////////////////  mailList: list, //这里的list和pagenum实际上就是old data的state，由于在这个阶段未更新所以可以直接用
-    /////////////  totalPage: pageNum,
-    //////////////  oldPageIndex: pageIdx,
-    ///////////  oldInboxType: queryRef.current,
-    //////////////////});
   };
+  const getMailDetail = ()=>{
+      const mailDetailStorage = getStorage('mailDetailStorage');
+      console.log('zzzzzzz');
+      console.log(mailDetailStorage)
+      if (mailDetailStorage?.page_index===pageIdx && mailDetailStorage?.filter===filterType && mailDetailStorage?.mailDetails[list.length-1]?.message_id){
+        console.log('detailhuancunle');
+        mailDetail = mailDetailStorage?.mailDetails;
+        console.log(mailDetailStorage);
+      }
+      else{
+        deleteStorage('mailDetailStorage');
+        try{
+        mailDetail = [];
+        list.map(async (item)=>{
+          const { data } = (await getMailDetailByID(window.btoa(item.message_id)))??{};
+          console.log(data);
+          mailDetail.push(data);
+          console.log(mailDetail);
+          })
+        }catch(e){
+          console.log(e);
+          console.log("ListError");
+        }
+      }
+  }
 
   useEffect(() => {
-    fetchMailList();
-  }, [pageIdx, filterType ]);
+    if (getUserInfo()?.address) fetchMailList(true);
+    getMailDetail();
+  }, [pageIdx, filterType]);
+  useEffect(() => {
+
+  }, [pageIdx, filterType]);
   
   const handleChangeSelectList = (item: IMailItem, isSelect?: boolean) => {
     if (isSelect) {
@@ -184,6 +220,14 @@ function MailList(props: any) {
     mailbox: MailBoxTypeEn,
     read: number,
   ) => {
+    const mailDetailStorage = {
+      mailDetails: mailDetail,
+      page_index: pageIdx,
+      filter: filterType,
+    }
+    console.log('mailDetailStorage');
+    console.log(mailDetailStorage);
+    updateStorage('mailDetailStorage',mailDetailStorage);
     const pathname =
       filterType === FilterTypeEn.Draft ? '/home/new' : '/home/mail';
     setRandomBits(undefined); // clear random bits
@@ -213,20 +257,26 @@ function MailList(props: any) {
             select={isAll}/>     
             <Icon      ///////////最初设计稿的提示
             url={update}
-            onClick={()=>fetchMailList()}
+            onClick={()=>
+              { removeAll();
+                deleteStorage('mailListStorage');
+                deleteStorage('mailDetailStorage');
+                fetchMailList(true);}}
             />
             <div className="dropdown inline-relative">
             <Icon      ///////////最初设计稿的提示
             url={filter}
             onClick={()=>setIsFilterHidden(!isFilterHidden)}/>
-                <div className={isFilterHidden?'hidden':'auto'}>
-                <ul className="menu absolute mt-6 shadow bg-base-100 rounded-5 ">
-                  <li className='focus:bg-[#DAE7FF]'><a className='px-12 py-4 text-xs'>All</a></li>
-                  <li><a className='px-12 py-4 text-xs'>Read</a></li>
-                  <li><a className='px-12 py-4 text-xs'>Unread</a></li>
-                  <li><a className='px-12 py-4 text-xs'>Encrypted</a></li>
+                <ul className={isFilterHidden?'hidden':'flex z-[2] menu absolute mt-6 shadow bg-base-100 rounded-5 '}>
+                {fourFilter.map((item,index) => {
+                  return (
+                    <li onClick={()=>{
+                      setIsFilterHidden(!isFilterHidden);
+                      setFilter(Number(item.filter));                      
+                    }}
+                    key={index}><a className='px-12 py-4 text-xs modal-bg'>{item.content}</a></li>
+                  );})}
                 </ul>
-                </div>
               </div>
             <div className='h-14 flex gap-10'>
             {selectList.length ?
@@ -272,14 +322,18 @@ function MailList(props: any) {
         <div className='min-w-0 flex-1 overflow-hidden'>Abstract</div>
         <div className='w-120'>Date</div>
     </div>*/}
-    <div className='flex flex-col overflow-auto flex-1 h-0 pl-8'>
-        {list.map((item,index) => { 
+    <div className='flex flex-col overflow-auto flex-1 h-0 pl-8 relative'>
+      {loading?<div className='flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]'/>:
+        list.map((item,index) => { 
+          //const url = ('/home/mail?id='+item.message_id.replaceAll('@','%40')+'&type='+item.meta_type);
+          //router.prefetch(url); 
         return (
         <button key={index} className={selectList.findIndex(
           (i) =>
             i.message_id === item.message_id &&
             i.mailbox === item.mailbox,
         ) >= 0 ?'text-left select-bg':'text-left'}>
+          {/*<Link rel='prefetch' href={'/home/mail?id='+item.message_id.replaceAll('@','%40')+'&type='+item.meta_type}/>*/}
           <MailListItem
             mark={item?.mark}
             from={item.mail_from}
@@ -292,7 +346,8 @@ function MailList(props: any) {
             } // message_id as primary key
             abstract={item?.digest}
             onClick={() => {
-              sessionStorage.setItem(item?.message_id, item?.message_id); // set read in sessionstorage for update without fetching maillist
+              //sessionStorage.setItem(item?.message_id, item?.message_id); // set read in sessionstorage for update without fetching maillist
+              setDetailFromList(item);
               handleClickMail(
                 item.message_id,
                 item.meta_type,

@@ -49,14 +49,14 @@ export default function Intro() {
       //      'password',
       //    ],
       //  });
-      console.log(signedMessage);
+      //console.log(signedMessage);
       const res = await getJwtToken({
           tokenForRandom,
           signedMessage,
         });
       const { data: user } = res ?? {};
-      console.log(user?.ens);
-      console.log(user?.public_key);
+      //console.log(user?.ens);
+      //console.log(user?.public_key);
       saveUserInfo({
         address,
         ensName: user?.user?.ens,

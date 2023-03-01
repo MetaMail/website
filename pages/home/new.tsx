@@ -14,7 +14,7 @@ export default function NewMail(props: { onCompose: any; setOnCompose: (arg0: bo
     const [isExtend, setIsExtend] = useState(false);
 
     return(
-    <div className={props.onCompose?'flex':'hidden'}>
+    <div className={'hidden'}>
     <div className={isExtend?'flex flex-col font-poppins bg-white p-18 h-full transition-all w-[calc(100vw-200px)] absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10':'flex flex-col font-poppins bg-white p-18 h-502 w-[45vw] absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 transition-all'}>
         <header className='flex justify-between'>        
             <div className='flex flex-row'>

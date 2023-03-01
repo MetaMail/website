@@ -81,8 +81,8 @@ export default function MailListItem({
             </div>
             </div>
             <div className='hidden flex-row group-hover:flex '>
-              <button onClick={onDelete}><Image src={trash} alt='delete mail'/></button>
-              <button onClick={onUnread} className='mx-8'><Image src={markUnread} alt='markUnread mail'className='scale-125'/></button>
+              <div onClick={onDelete} className='self-center'><Image src={trash} alt='delete mail'/></div>
+              <div onClick={onUnread} className='self-center mx-8'><Image src={markUnread} alt='markUnread mail'className='scale-125'/></div>
             </div>
           </div>
       );

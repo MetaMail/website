@@ -27,7 +27,10 @@ import {
   //cancelSelected,
   //add,
   back,
-  mailMore
+  mailMore,
+  markFavorite,
+  unread,
+  markUnread
 } from 'assets/icons';
 import {
   IMailContentItem,
@@ -53,10 +56,12 @@ import DOMPurify from 'dompurify';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import parse from 'html-react-parser';
-import { getUserInfo, getShowName } from '@utils/storage/user';
+import { getUserInfo, getShowName, clearUserInfo } from '@utils/storage/user';
 import Layout from '@components/Layouts';
 import useStore from '@utils/storage/zustand';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
+import { deleteStorage, getStorage, updateStorage } from '@utils/storage';
+import { reverse } from 'dns';
 //import SenderCard from './SenderCard';
 
 
@@ -97,16 +102,19 @@ function Mail(props:any) {
   const [isExtend, setIsExtend] = useState(false);
   //const { address, ensName } = getUserInfo();
   const [readable, setReadable] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isRead, setIsRead] = useState(true);
   const randomBitsRef = useRef('');
   const queryRef = useRef(0);
-  const [isHidden, setIsHidden] = useState(true);
-  const filterType = useStore((state) => state.filter)
-  const mailInfo = [
+  const filterType = useStore((state:any) => state.filter)
+  const [detailFromList, setDetailFromList] = useState(useStore((state:any) => state.detailFromList));
+  const [mailInfo, setMailInfo] = useState([
     {
-      message_id: mail?.message_id ?? '',
-      mailbox: filterType, 
+      message_id: detailFromList.message_id,
+      mailbox: detailFromList.mailbox
     },
-  ]
+  ]);
+  const [mark,setMark] = useState(detailFromList?.mark===1 ? true : false);
   const sixMail = [
     {
       src: back,
@@ -117,6 +125,7 @@ function Mail(props:any) {
     {
       src: trash,
       handler: ()=>{
+      deleteStorage('mailListStorage');
         handleDelete(mailInfo);
         router.back();
       } 
@@ -128,33 +137,47 @@ function Mail(props:any) {
     },  {
       src: spam,
       handler: ()=>{
+        deleteStorage('mailListStorage');
         handleSpam(mailInfo);
-      } 
-    },  {
-      src: read,
-      handler: ()=>{
-        handleChangeReadStatus(mailInfo,ReadStatusTypeEn.read);
+        router.back();
       }
     },  {
-      src: starred,
+      src: read,
+      checkedSrc: markUnread,
       handler: ()=>{
-        handleStar(mailInfo);
-      } 
+        deleteStorage('mailListStorage');
+        handleChangeReadStatus(mailInfo,isRead?ReadStatusTypeEn.unread:ReadStatusTypeEn.read);
+        setIsRead(!isRead);
+      },
+      onselect: isRead,
+    },  
+    {
+      src: starred,
+      checkedSrc: markFavorite,
+      handler: ()=>{
+        deleteStorage('mailListStorage');
+        handleStar(mailInfo, mark);
+        setMark(!mark);
+      },
+      onselect: mark,
     },]
 
   const threeMail = [
     {
       src: starred,
+      checkedSrc: markFavorite,
       handler: ()=>{
-        handleStar(mailInfo);
-
-      }
+        deleteStorage('mailListStorage');
+        handleStar(mailInfo, mark);
+        setMark(!mark);
+      },
+      onselect: mark,
     },
     {
       src: sent,
       handler: ()=>{
         //handleStar(mailInfo);
-      }
+      },
     },
     {
       src: mailMore,
@@ -172,48 +195,65 @@ function Mail(props:any) {
     //  });
     //});
   };
+
+  const changeInnerHTML = (data:IMailContentItem)=>{
+    if (data.part_html) {
+      var el = document.createElement('html');
+      el.innerHTML = data.part_html;
+      {
+        data?.attachments?.map(
+          (item: {
+            filename: string;
+            download: {
+              expire_at: string;
+              url: string;
+            };
+          }) => {
+            //imgReplace = document.getElementById(item.filename);
+            el.querySelectorAll('img').forEach(function (element) {
+              if (element.alt == item.filename) {
+                element.src = item.download.url;
+                data.part_html = el.innerHTML;
+              }
+            });
+          },
+        );
+      }
+    }
+  }
+
   const handleLoad = async () => {
+    let ifIndex = false;
     try {
       if (!router.query?.id && router?.query?.id?.length === 0) {
         throw new Error();
       }
-      const { data } = await getMailDetailByID(window.btoa(router.query.id instanceof Array? router.query.id[0] : router.query.id ?? ''));
-      if (data.part_html) {
-        var el = document.createElement('html');
-        el.innerHTML = data.part_html;
-        //console.log(el.innerHTML);
-        {
-          data?.attachments?.map(
-            (item: {
-              filename: string;
-              download: {
-                expire_at: string;
-                url: string;
-              };
-            }) => {
-              //imgReplace = document.getElementById(item.filename);
-              el.querySelectorAll('img').forEach(function (element) {
-                //console.log(element.alt);
-                //console.log(element.src);
-                if (element.alt == item.filename) {
-                  element.src = item.download.url;
-                  //console.log(el.innerHTML);
-                  data.part_html = el.innerHTML;
-                }
-              });
-            },
-          );
-          //console.log(el.innerHTML);
+      const mailDetail = getStorage('mailDetailStorage')?.mailDetails;
+      console.log(mailDetail);
+      mailDetail.map(async (item: IMailContentItem)=>{ ////search
+        if (String(item?.message_id??'') === String(router.query.id)){
+          changeInnerHTML(item);
+          setMail(item);
+          ifIndex = true;
         }
-      }
+        })
+      if(!loading) setLoading(true);
+      if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
+      const { data } = await getMailDetailByID(window.btoa(router.query.id instanceof Array? router.query.id[0] : router.query.id ?? ''));
+      changeInnerHTML(data);
       setMail(data);
+    }
     } catch (e) {
       console.log(e);
+      console.log('mailError');
       //notification.error({
       //  message: 'Network Error',
       //  description: 'Can not fetch detail info of this email for now.',
       //});
       setMail(undefined);
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -223,7 +263,14 @@ function Mail(props:any) {
       setReadable(false);
     }
     // handleMarkRead();
-    handleLoad();
+    if (getUserInfo()?.address) {
+
+      handleLoad();
+    }
+    else {
+      clearUserInfo();
+      router.push('/');
+    }
   }, [router.query]);
 
   const handleClickDownload = () => {
@@ -247,6 +294,8 @@ function Mail(props:any) {
                         <Icon
                         url={item.src}
                         key={index}
+                        checkedUrl={item?.checkedSrc}
+                        select={item?.onselect}
                         className='w-13 h-auto self-center'
                         onClick={item.handler}
                         /> 
@@ -286,6 +335,8 @@ function Mail(props:any) {
                     return (
                         <Icon
                         url={item.src}
+                        checkedUrl={item?.checkedSrc}
+                        select={item?.onselect}
                         key={index}
                         onClick={item.handler}
                         className='w-13 h-auto self-center'
@@ -296,9 +347,11 @@ function Mail(props:any) {
             </div>
           </header>
           <h1 className='p-16 pl-[4%] w-[70%] h-48 omit text-2xl font-bold pb-0 mb-24'>{mail?.subject}</h1>
+          {loading?<div className='flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]'/>:
           <h2 className='flex-1 overflow-auto ml-19'>{mail?.part_html
-                ? parse(DOMPurify.sanitize(mail?.part_html))
-                : mail?.part_text}</h2>
+            ? parse(DOMPurify.sanitize(mail?.part_html))
+            : mail?.part_text}
+          </h2>}
           {mail?.attachments && mail.attachments.length > 0 && (
               <div className='flex'>
                 {mail?.attachments?.map((item, idx) => (
