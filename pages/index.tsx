@@ -18,18 +18,30 @@ import { useAccount } from 'wagmi';
 import { getJwtToken, getRandomStrToSign } from '@services/login';
 import { getUserInfo, getWalletAddress, saveUserInfo } from '@utils/storage/user';
 import { disconnect } from '@wagmi/core';
-import { add } from '@assets/icons';
+import keccak256 from 'keccak256';
+import crypto from 'crypto';
 export default function Intro() {
   const router = useRouter()  
   const { address, isConnected } = useAccount();
   console.log('pages');
   console.log(address);
   console.log(isConnected);
-  
+
   const handleAuth = async () => {
     try{
       if (!window.ethereum) throw new Error('Your client does not support Ethereum');
       const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      let keyPair = await window.crypto.subtle.generateKey(
+        {
+          name: "RSA-OAEP",
+          modulusLength: 4096,
+          publicExponent: new Uint8Array([1, 0, 1]),
+          hash: "SHA-256"
+        },
+        true,
+        ["encrypt", "decrypt"]
+      );
+      console.log(keyPair);
       const signer = provider.getSigner();
       //const balance = await signer.signMessage("Hello World");
       //console.log(balance);
@@ -41,6 +53,11 @@ export default function Intro() {
       console.log(randomStr);
 
       const signedMessage = await signer.signMessage(randomStr);
+      const salt = crypto.randomBytes(256).toString('hex');
+      const signedSalt = await signer.signMessage('Please sign this message to generate encrypted private key: \n \n' + salt);
+      const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
+
+
       //const signedMessage = await window.ethereum.request({
       //    method: 'personal_sign',
       //    params: [
@@ -55,8 +72,6 @@ export default function Intro() {
           signedMessage,
         });
       const { data: user } = res ?? {};
-      //console.log(user?.ens);
-      //console.log(user?.public_key);
       saveUserInfo({
         address,
         ensName: user?.user?.ens,

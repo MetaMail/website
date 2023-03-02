@@ -90,7 +90,7 @@ function MailList(props: any) {
           filter: FilterTypeEn.Inbox,
           },
         { content: 'Read',
-          filter: FilterTypeEn.Inbox,
+          filter: FilterTypeEn.Read,
           },
         { content: 'Unread',
           filter: FilterTypeEn.Unread,
@@ -116,7 +116,8 @@ function MailList(props: any) {
     try {
       const mailListStorage = getStorage('mailListStorage');
       console.log(mailListStorage);
-      if (mailListStorage?.data?.page_index === pageIdx && mailListStorage?.filter === filterType && showLoading) { //判断是否有邮件列表的缓存
+      const isMailListStorageExist = mailListStorage?.data?.page_index === pageIdx && mailListStorage?.filter === filterType;
+      if (isMailListStorageExist && showLoading) { //showLoading=true的时候相同的邮件列表已经改变了，需要重新取
         console.log('mailliststoragecunle');
         setList(mailListStorage?.data?.mails ?? []);   //用缓存更新状态组件
         setPageNum(mailListStorage?.data?.page_num);
@@ -153,7 +154,8 @@ function MailList(props: any) {
       const mailDetailStorage = getStorage('mailDetailStorage');
       console.log('zzzzzzz');
       console.log(mailDetailStorage)
-      if (mailDetailStorage?.page_index===pageIdx && mailDetailStorage?.filter===filterType && mailDetailStorage?.mailDetails[list.length-1]?.message_id){
+      const isMailDetailStorageExist = mailDetailStorage?.page_index===pageIdx && mailDetailStorage?.filter===filterType && mailDetailStorage?.mailDetails[list.length-1]?.message_id;
+      if (isMailDetailStorageExist){
         console.log('detailhuancunle');
         mailDetail = mailDetailStorage?.mailDetails;
         console.log(mailDetailStorage);

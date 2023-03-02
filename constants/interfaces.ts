@@ -57,8 +57,8 @@ export enum FilterTypeEn {
   Starred,
   Spam,
 
-  //Read,
-  Unread = 8,
+  Read,
+  Unread,
 }
 
 export interface IPersonItem {

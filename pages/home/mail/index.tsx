@@ -107,7 +107,7 @@ function Mail(props:any) {
   const randomBitsRef = useRef('');
   const queryRef = useRef(0);
   const filterType = useStore((state:any) => state.filter)
-  const [detailFromList, setDetailFromList] = useState(useStore((state:any) => state.detailFromList));
+  const detailFromList = useStore((state:any) => state.detailFromList);
   const [mailInfo, setMailInfo] = useState([
     {
       message_id: detailFromList.message_id,
@@ -120,7 +120,7 @@ function Mail(props:any) {
       src: back,
       handler: ()=>{
         router.back();
-      } 
+      }
     },
     {
       src: trash,
@@ -225,7 +225,7 @@ function Mail(props:any) {
   const handleLoad = async () => {
     let ifIndex = false;
     try {
-      if (!router.query?.id && router?.query?.id?.length === 0) {
+      if (!router.query?.id && router?.query?.id?.length === 0 ) {
         throw new Error();
       }
       const mailDetail = getStorage('mailDetailStorage')?.mailDetails;
