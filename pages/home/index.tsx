@@ -5,15 +5,14 @@ import useStore from '@utils/storage/zustand';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import MailList from './list';
+import Mail from './mail';
 import NewMail from './new';
 
 export default function HomePage() {
   const router = useRouter()
   const [onShow, setOnShow] = useState(false);
-  const [onCompose, setOnCompose] = useState(true);
   const [address,setAddress] = useState<string>();  
   const removeAll = useStore((state:any) => state.removeAll)
-
   function getLogOut(){
     clearUserInfo();
     removeAll();
@@ -21,9 +20,7 @@ export default function HomePage() {
   }
   useEffect(()=>{
     if (!getUserInfo().address) {
-      clearUserInfo();
-      removeAll();      
-      router.push('/');
+      getLogOut();
     } 
     setAddress(getUserInfo()?.address);
   }, []);
@@ -46,9 +43,12 @@ export default function HomePage() {
   </div>*/}
         </div>
       </div>
-      <MailList/>
+      <div className='flex flex-row flex-1 h-0 bg-white rounded-10'>
+        <MailList/>
+        <Mail/>
+      </div>
       <Alert message={'Network Error'} description={'Can not fetch detail info of this email for now.'}/>
-      <NewMail onCompose={onCompose} setOnCompose={setOnCompose}/>
+      <NewMail/>
     </div>
     </div>
   );

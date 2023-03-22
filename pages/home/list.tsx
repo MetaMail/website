@@ -35,17 +35,20 @@ import {
 import { getUserInfo, setRandomBits } from 'utils/storage/user';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
 import { clearStorage, deleteStorage, getStorage, updateStorage } from '@utils/storage';
-import Link from 'next/link';
-function MailList(props: any) {
+//import Link from 'next/link';
+import Mail from './mail';
+function MailList() {
   //const state = useStore()
   const setFilter = useStore((state: any) => state.setFilter)
-
+  const setIsAlert = useStore((state:any) => state.setIsAlert)
   const pageIdx = useStore((state:any) => state.page)
   const filterType = useStore((state:any) => state.filter)
   const addPage = useStore((state:any) => state.addPage)
   const subPage = useStore((state:any) => state.subPage)
   const setUnreadCount = useStore((state:any) => state.setUnreadCount)
   const setDetailFromList = useStore((state:any) => state.setDetailFromList)
+  //const isMailDetail = useStore((state:any) => state.isMailDetail)
+  const setIsMailDetail = useStore((state:any) => state.setIsMailDetail)
   const router = useRouter()
   const [loading, setLoading] = useState(false);
   let mailDetail: IMailContentItem[] = [];
@@ -114,6 +117,7 @@ function MailList(props: any) {
       setLoading(true);
     }
     try {
+      setIsMailDetail(false);
       const mailListStorage = getStorage('mailListStorage');
       console.log(mailListStorage);
       const isMailListStorageExist = mailListStorage?.data?.page_index === pageIdx && mailListStorage?.filter === filterType;
@@ -139,7 +143,8 @@ function MailList(props: any) {
         }
         updateStorage('mailListStorage',mailListStorage);
       }
-    } catch {
+    } catch(e) {
+      //setIsAlert(true);
       //notification.error({
       //  message: 'Network Error',
       //  description: 'Can not fetch mail list for now.',
@@ -173,6 +178,8 @@ function MailList(props: any) {
         }catch(e){
           console.log(e);
           console.log("ListError");
+          //setIsAlert(true);
+
         }
       }
   }
@@ -181,9 +188,7 @@ function MailList(props: any) {
     if (getUserInfo()?.address) fetchMailList(true);
     getMailDetail();
   }, [pageIdx, filterType]);
-  useEffect(() => {
 
-  }, [pageIdx, filterType]);
   
   const handleChangeSelectList = (item: IMailItem, isSelect?: boolean) => {
     if (isSelect) {
@@ -206,7 +211,8 @@ function MailList(props: any) {
     const mails = inputMails ?? getMails();
     try {
       await changeMailStatus(mails, mark, read);
-    } catch {
+    } catch(e) {
+      //setIsAlert(true);
       //notification.error({
       //  message: 'Failed',
       //  description: 'Sorry, network problem.',
@@ -237,16 +243,16 @@ function MailList(props: any) {
       const mails = [{ message_id: id, mailbox: Number(mailbox) }];
       changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
     }
-    router.push({
+    /*router.push({
     pathname,
     query: {
         id,
         type: type + '',
     },
-    });
+    }); */
   };
   return (
-    <div className='flex flex-col flex-1 h-0 bg-white rounded-10'>
+      <div className='flex flex-col flex-1 min-w-0'>
         <div className='flex flex-row w-full justify-between p-13 py-7'>
           <div className='flex flex-row space-x-12 pt-4'>
           <Icon      ///////////最初设计稿的提示
@@ -293,7 +299,8 @@ function MailList(props: any) {
             );})
               :null}  
               </div>          
-          </div>  
+          </div>              
+
           <div className='flex flex-row justify-end space-x-20 text-xl text-[#7F7F7F]'>
             <button
                 disabled={pageIdx===1}
@@ -330,12 +337,12 @@ function MailList(props: any) {
           //const url = ('/home/mail?id='+item.message_id.replaceAll('@','%40')+'&type='+item.meta_type);
           //router.prefetch(url); 
         return (
+          //<Link key={index} rel='prefetch' href={'/home/mail?id='+item.message_id+'&type='+item.meta_type}>
         <button key={index} className={selectList.findIndex(
           (i) =>
             i.message_id === item.message_id &&
             i.mailbox === item.mailbox,
         ) >= 0 ?'text-left select-bg':'text-left'}>
-          {/*<Link rel='prefetch' href={'/home/mail?id='+item.message_id.replaceAll('@','%40')+'&type='+item.meta_type}/>*/}
           <MailListItem
             mark={item?.mark}
             from={item.mail_from}
@@ -356,6 +363,7 @@ function MailList(props: any) {
                 item.mailbox,
                 item.read,
               );
+              setIsMailDetail(true);
             }}
             select={
               selectList.findIndex(
@@ -402,11 +410,13 @@ function MailList(props: any) {
               );
             }}
           />
-          </button>)}
+          </button>
+          //</Link>
+          )}
           )}
         </div>
+    </div>
 
-  </div>
   );
 }
 

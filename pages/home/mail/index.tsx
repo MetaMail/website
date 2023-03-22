@@ -96,7 +96,7 @@ var regex = RegExp('^(' + allowlist.join('|') + '):', 'gim');
 //  }
 //});*/
 
-function Mail(props:any) {
+function Mail(props: any) {
   const router = useRouter()
   const [mail, setMail] = useState<IMailContentItem>();
   const [isExtend, setIsExtend] = useState(false);
@@ -107,19 +107,23 @@ function Mail(props:any) {
   const randomBitsRef = useRef('');
   const queryRef = useRef(0);
   const filterType = useStore((state:any) => state.filter)
+  const isMailDetail = useStore((state:any) => state.isMailDetail)
+
   const detailFromList = useStore((state:any) => state.detailFromList);
+  const setIsMailDetail = useStore((state:any) => state.setIsMailDetail) 
+  console.log(detailFromList);
   const [mailInfo, setMailInfo] = useState([
     {
       message_id: detailFromList.message_id,
       mailbox: detailFromList.mailbox
     },
   ]);
-  const [mark,setMark] = useState(detailFromList?.mark===1 ? true : false);
+  const [mark,setMark] = useState(detailFromList?.mark===1?true:false);
   const sixMail = [
     {
       src: back,
       handler: ()=>{
-        router.back();
+        setIsMailDetail(false);
       }
     },
     {
@@ -223,11 +227,13 @@ function Mail(props:any) {
   }
 
   const handleLoad = async () => {
+    setMail(undefined);
+    console.log('sssssssssssssss');
     let ifIndex = false;
     try {
-      if (!router.query?.id && router?.query?.id?.length === 0 ) {
-        throw new Error();
-      }
+      //if (!router.query?.id && router?.query?.id?.length === 0 ) {
+      //  throw new Error();
+      //}
       const mailDetail = getStorage('mailDetailStorage')?.mailDetails;
       console.log(mailDetail);
       mailDetail.map(async (item: IMailContentItem)=>{ ////search
@@ -239,7 +245,7 @@ function Mail(props:any) {
         })
       if(!loading) setLoading(true);
       if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
-      const { data } = await getMailDetailByID(window.btoa(router.query.id instanceof Array? router.query.id[0] : router.query.id ?? ''));
+      const { data } = await getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
       changeInnerHTML(data);
       setMail(data);
     }
@@ -259,6 +265,13 @@ function Mail(props:any) {
 
 
   useEffect(() => {
+    setMailInfo([
+      {
+      message_id: detailFromList.message_id,
+      mailbox: detailFromList.mailbox
+      }
+    ])
+    setMark(detailFromList?.mark===1?true:false);
     if (router.query?.type === MetaMailTypeEn.Encrypted + '') {
       setReadable(false);
     }
@@ -271,7 +284,7 @@ function Mail(props:any) {
       clearUserInfo();
       router.push('/');
     }
-  }, [router.query]);
+  }, [detailFromList]);
 
   const handleClickDownload = () => {
     //const downloadLink=document.createElement('a');
@@ -283,9 +296,10 @@ function Mail(props:any) {
     //downloadLink.click();
   };
         return(
-        <div className={isExtend?'w-[calc(100vw-200px)] absolute right-0 h-ful transition-all':'absolute right-0 w-496 transition-all h-full'}>
-        <div className='w-full h-screen bg-white flex flex-col font-poppins'>
-          <div className='h-[90%] w-0 border absolute top-34'/>
+        <div className={isMailDetail?'flex':'hidden'}>
+        <div className={isExtend?'w-[calc(100vw-225px)] transition-all h-[100%]':'w-[38vw] transition-all h-[100%]'}>
+        <div className='w-full h-full bg-white flex flex-col font-poppins'>
+          <div className='h-[86%] w-0 border absolute top-54'/>
           <header className='flex flex-col justify-between h-100 w-full px-16'>
             <div className='py-11 flex justify-between w-full'>
                 <div className='h-14 flex gap-10'>
@@ -309,7 +323,7 @@ function Mail(props:any) {
                   onClick={()=>setIsExtend(!isExtend)}/> 
                 <Icon
                   url={cancel}
-                  onClick={()=>router.back()}
+                  onClick={()=>setIsMailDetail(false)}
                   className='w-13 scale-[120%] h-auto self-center'/> 
                 </div>
             </div>
@@ -362,6 +376,7 @@ function Mail(props:any) {
           <button className='m-22 mb-9 w-105 h-36 '>
             <Image src={replyBtn} alt={'reply'}/> 
           </button>
+        </div>
         </div>
         </div>
         )

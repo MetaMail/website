@@ -22,6 +22,9 @@ export default function Sidebar(props:any) {
   const unreadCount = useStore((state: any) => state.unreadCount)
   const [dropTag, setDropTag] = useState(false);
   const [dropFilter, setDropFilter] = useState(false);
+  //const setIsAlert = useStore((state:any) => state.setIsAlert)
+  const setIsOnCompose = useStore((state:any) => state.setIsOnCompose)
+
   const router = useRouter()
   async function handleReturnHome(){
     router.push('/');
@@ -39,7 +42,7 @@ export default function Sidebar(props:any) {
           <Image src={logo} alt="logo" className="w-auto h-24 "/>
           <Image src={logoBrand} alt="logo_brand" className="flex self-end pb-4"/>
       </button>
-      <button className='my-19 flex h-35 bg-[#006AD4] rounded-5 justify-center gap-20 py-8' onClick={()=>{props.setOnCompose(true)}}>
+      <button className='my-19 flex h-35 bg-[#006AD4] rounded-5 justify-center gap-20 py-8' onClick={()=>{setIsOnCompose(true)}}>
         <Image src={compose} alt="new_mail" className="w-16 h-auto"/>
         <div className='text-white overflow-hidden'>New Message</div>
       </button>

@@ -5,16 +5,15 @@ import sendMail from '@assets/sendMail.svg';
 import addAttach from '@assets/addAttach.svg';
 import React, { ReactElement, useEffect, useState } from 'react';
 import Image from 'next/image';
-function BaseLine(){
-    return(
-        <div className='w-full h-0 border border-[#DDDDDD] border-opacity-50'/>
-    )
-}
-export default function NewMail(props: { onCompose: any; setOnCompose: (arg0: boolean) => void; }) {
+import useStore from '@utils/storage/zustand';
+import BaseLine from '@components/BaseLine';
+export default function NewMail() {
     const [isExtend, setIsExtend] = useState(false);
-
+    const isOnCompose = useStore((state: any) => state.isOnCompose)
+    const setIsOnCompose = useStore((state:any) => state.setIsOnCompose)
+    
     return(
-    <div className={'hidden'}>
+    <div className={isOnCompose?'visible':'invisible'}>
     <div className={isExtend?'flex flex-col font-poppins bg-white p-18 h-full transition-all w-[calc(100vw-200px)] absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10':'flex flex-col font-poppins bg-white p-18 h-502 w-[45vw] absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 transition-all'}>
         <header className='flex justify-between'>        
             <div className='flex flex-row'>
@@ -30,7 +29,7 @@ export default function NewMail(props: { onCompose: any; setOnCompose: (arg0: bo
                 <Icon
                     url={cancel}
                     className='w-13 scale-[120%] h-auto self-center'
-                    onClick={()=>props.setOnCompose(false)}
+                    onClick={()=>{setIsOnCompose(false)}}
                     /> 
             </div>
         </header>
