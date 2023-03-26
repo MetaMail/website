@@ -50,7 +50,7 @@ export default function ReviewInfo({}) {
         imgSrc={colin}
         role={'colin'}
         role2={'dev @ scroll.io'}
-        content={'MetaMail is an amazing product, web3 style, and it evolves cauti-ously'}
+        content={'MetaMail is an amazing product, web3 style, and it evolves cautiously'}
       />
     </div>
   );
