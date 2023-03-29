@@ -94,7 +94,79 @@ export default function Intro() {
       const text = base64.toString();
       return text;
 }*/
-
+  const generateEncryptionKey = async () => {
+    //if (!window.ethereum) throw new Error('Your client does not support Ethereum');
+    try{
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    const signer = provider.getSigner();
+    const salt = crypto.randomBytes(256).toString('hex');
+    const signedSalt = await signer.signMessage('Please sign this message to generate encrypted private key: \n \n' + salt);
+    const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
+    const keyPair = await window.crypto.subtle.generateKey({
+      name: "ECDSA",
+      //modulusLength: 2048, //can be 1024, 2048, or 4096
+      //publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+      //hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+      namedCurve: "P-256",},
+      true, //whether the key is extractable (i.e. can be used in exportKey)
+      ["sign", "verify"] //must be ["encrypt", "decrypt"] or ["wrapKey", "unwrapKey"]
+    );
+    console.log(keyPair);
+    //if (keyPair){
+    const privateBuffer = await window.crypto.subtle.exportKey(
+      "pkcs8", 
+      keyPair.privateKey 
+    );
+    const publicBuffer = await window.crypto.subtle.exportKey(
+      "spki",
+      keyPair.publicKey 
+    );
+    //var privateKey = RSA2text(keydata1,1);
+    //var uint8private = new Uint8Array(privateBuffer);
+    const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
+    const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
+    
+    let data = {
+      addr: address,
+      date: new Date().toISOString(),
+      salt: signedSalt,
+      message_encryption_public_key: Public_Store_Key,
+      message_encryption_private_key: Private_Store_Key,
+      signing_public_key: Public_Store_Key,
+      signing_private_key: Private_Store_Key,
+      data: 'this is a test',
+      signature: ''
+    };
+    const keyData = keyPack(data);
+    console.log(keyData);
+    const keySignature = await signer.signMessage(keyData);
+    console.log(keySignature)
+    if (!keySignature) throw new Error('sign key error');
+    data.signature = keySignature;
+    const putBody = JSON.stringify({data});
+    console.log(putBody);
+    console.log(putBody);
+    await putEncryptionKey(putBody);
+    console.log('end')
+    }catch(e){
+      console.log('encrytionkey error')
+      console.log(e)
+    }
+  }
+  const keyPack = (keyData:any) =>{
+    const {addr, date, salt, message_encryption_public_key, message_encryption_private_key, signing_public_key, signing_private_key, data} = keyData;
+    let parts = [
+      "Addr: " + addr.toLowerCase(),
+      "Date: " + date,
+      "Salt: " + salt,
+      "Message-Encryption-Public-Key: " + message_encryption_public_key,
+      "Message-Encryption-Private-Key: " + message_encryption_private_key,
+      "Signing-Public-Key: " + signing_public_key,
+      "Signing-Private-Key: " + signing_private_key,
+      "Data: " + data,
+    ];
+    return parts.join('\n');
+  }
   const handleAuth = async () => {
     try{
       if (!window.ethereum) throw new Error('Your client does not support Ethereum');
@@ -110,9 +182,7 @@ export default function Intro() {
       const signedMessage = await signer.signMessage(randomStr);
       console.log('signedMessage');
       console.log(signedMessage);
-      const salt = crypto.randomBytes(256).toString('hex');
-      const signedSalt = await signer.signMessage('Please sign this message to generate encrypted private key: \n \n' + salt);
-      const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
+
       //console.log(await signer.signMessage('Hi there from MetaMail! Sign this message to prove you have access to this account. Sending and receiving mails are totally free, no gas fee.\n\nYour one-time nonce: zKKdqAaFMn8lQCQz0oZK3pabbJoOAZOx-KAjZKf4BjY'));
       //const signedMessage = await window.ethereum.request({
       //    method: 'personal_sign',
@@ -127,30 +197,9 @@ export default function Intro() {
           tokenForRandom,
           signedMessage,
         });
-      const keyPair = await window.crypto.subtle.generateKey({
-        name: "ECDSA",
-        //modulusLength: 2048, //can be 1024, 2048, or 4096
-        //publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-        //hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
-        namedCurve: "P-256",},
-        true, //whether the key is extractable (i.e. can be used in exportKey)
-        ["sign", "verify"] //must be ["encrypt", "decrypt"] or ["wrapKey", "unwrapKey"]
-      );
-      console.log(keyPair);
-      //if (keyPair){
-      const privateBuffer = await window.crypto.subtle.exportKey(
-        "pkcs8", 
-        keyPair.privateKey 
-      );
-      const publicBuffer = await window.crypto.subtle.exportKey(
-        "spki",
-        keyPair.publicKey 
-      );
-      //var privateKey = RSA2text(keydata1,1);
-      //var uint8private = new Uint8Array(privateBuffer);
-      const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
-      const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
-      const postData = {
+
+
+      /*const postData = {
         salt: signedSalt,
         addr: address??'',
         signature: signedMessage,
@@ -159,13 +208,12 @@ export default function Intro() {
         signing_private_key: Private_Store_Key,
         signing_public_key: Public_Store_Key,
         data: 'this is a test',        
-      }
-      putEncryptionKey(postData);
-      const { encryptionData } = await getEncryptionKey(address??'');
-
+      }*/
+      //generateEncryptionKey();
+      const encryptionData = await getEncryptionKey(lowAddr??'');
+      if (encryptionData === 404) await generateEncryptionKey();
       console.log('encrydt');
       console.log(encryptionData);
-
       const { data: user } = res ?? {};
       saveUserInfo({
         address,

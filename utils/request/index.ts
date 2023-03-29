@@ -10,9 +10,9 @@ const ajax = axios.create({
   timeout: 5000,
 });
 
-//ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:8080';
+ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:8080';
 //ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://api.metamail.ink/';
-ajax.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+//ajax.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 //ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://api-v2.metamail.ink/';
 
 type requestParams = Record<string, any>;
@@ -24,7 +24,14 @@ const checkResponse = (res: any) => {
   }
 };
 
-const checkLoginStatus = (e: unknown) => {console.log(e)};
+const checkLoginStatus = (e: unknown) => {
+  console.log(e);
+};
+
+const checkAPIConnected = (e: any) => {
+  if (e?.response?.data?.error) return true;
+  else return false;
+};
 
 const request = (url: string, config?: Record<string, string>) => {
   return {
@@ -52,6 +59,9 @@ const request = (url: string, config?: Record<string, string>) => {
       } catch (e) {
         // const isCancel = axios.isCancel(e);
         checkLoginStatus(e);
+        if (checkAPIConnected(e)) {
+          return 404;
+          }
       }
 
       return checkResponse(res);
