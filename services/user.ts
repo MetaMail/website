@@ -46,5 +46,5 @@ export function postPublicKey(data: IPublicKeyData) {
 }
 
 export function putEncryptionKey(data: any) {
-  return request(APIs.postEncryptionKey).post(data);
+  return request(APIs.postEncryptionKey).put(data);
 }
