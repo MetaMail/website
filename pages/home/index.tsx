@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import MailList from './list';
 import Mail from './mail';
-import NewMail from './new/index.tsx';
+import NewMail from './new';
 
 export default function HomePage() {
   const router = useRouter()
