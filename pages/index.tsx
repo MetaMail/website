@@ -6,7 +6,7 @@ import table from '@assets/Table.svg';
 import gradientDot from '@assets/pdot.svg';
 import pic1Left from '@assets/pic1left.svg';
 import pic2Right from '@assets/pic2Right.svg';
-import pic3Left from '@assets/pic2Right.svg';
+import pic3Left from '@assets/pic3Left.svg';
 //import pic3Left from '@assets/pic3left.png';///////
 import gdL from '@assets/gdL.png';
 import ReviewInfo from 'sections/ReviewInfo';
@@ -127,7 +127,7 @@ export default function Intro() {
     const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
     
     let data = {
-      addr: address,
+      addr: address? address.toString():'',
       date: new Date().toISOString(),
       salt: signedSalt,
       message_encryption_public_key: Public_Store_Key,
@@ -143,10 +143,20 @@ export default function Intro() {
     console.log(keySignature)
     if (!keySignature) throw new Error('sign key error');
     data.signature = keySignature;
-    const putBody = JSON.stringify({data});
-    console.log(putBody);
-    console.log(putBody);
-    await putEncryptionKey(putBody);
+    //const putBody = JSON.stringify({
+    //  addr: address,
+    //  date: new Date().toISOString(),
+    //  salt: signedSalt,
+    //  message_encryption_public_key: Public_Store_Key,
+    //  message_encryption_private_key: Private_Store_Key,
+    //  signing_public_key: Public_Store_Key,
+    //  signing_private_key: Private_Store_Key,
+    //  data: 'this is a test',
+    //  signature: keySignature,
+    //});
+    //console.log(putBody);
+    //console.log(putBody);
+    await putEncryptionKey({data:data});
     console.log('end')
     }catch(e){
       console.log('encrytionkey error')

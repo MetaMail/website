@@ -39,12 +39,20 @@ interface IEncryptionKeyData{
   signing_private_key: string,
   signing_public_key: string,
   data: string,
+  date: string,
 }
+
+interface IPutEncryptionKeyData{
+  data: IEncryptionKeyData
+}
+
+
+
 
 export function postPublicKey(data: IPublicKeyData) {
   return request(APIs.postPublicKey).post(data);
 }
 
-export function putEncryptionKey(data: any) {
+export function putEncryptionKey(data: IPutEncryptionKeyData) {
   return request(APIs.postEncryptionKey).put(data);
 }

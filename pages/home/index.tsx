@@ -1,12 +1,13 @@
 import Alert from '@components/Alert';
 import Layout from '@components/Layouts';
+import { clearMailListInfo } from '@utils/storage/mail';
 import { clearUserInfo, getUserInfo } from '@utils/storage/user';
 import useStore from '@utils/storage/zustand';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import MailList from './list';
 import Mail from './mail';
-import NewMail from './new';
+import NewMail from './new/index.tsx';
 
 export default function HomePage() {
   const router = useRouter()
@@ -15,6 +16,7 @@ export default function HomePage() {
   const removeAll = useStore((state:any) => state.removeAll)
   function getLogOut(){
     clearUserInfo();
+    //clearMailListInfo();
     removeAll();
     router.push('/');
   }

@@ -37,6 +37,7 @@ import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@u
 import { clearStorage, deleteStorage, getStorage, updateStorage } from '@utils/storage';
 //import Link from 'next/link';
 import Mail from './mail';
+import { clearMailListInfo, getMailListInfo } from '@utils/storage/mail';
 function MailList() {
   //const state = useStore()
   const setFilter = useStore((state: any) => state.setFilter)
@@ -117,8 +118,7 @@ function MailList() {
       setLoading(true);
     }
     try {
-      setIsMailDetail(false);
-      const mailListStorage = getStorage('mailListStorage');
+      const mailListStorage = getMailListInfo();
       console.log(mailListStorage);
       const isMailListStorageExist = mailListStorage?.data?.page_index === pageIdx && mailListStorage?.filter === filterType;
       if (isMailListStorageExist && showLoading) { //showLoading=true的时候相同的邮件列表已经改变了，需要重新取
@@ -127,6 +127,7 @@ function MailList() {
         setPageNum(mailListStorage?.data?.page_num);
         setUnreadCount(mailListStorage.data?.unread ?? 0);
       } else { ////////不是缓存 重新取
+        clearMailListInfo();
         console.log('meiyoulisthuancun');
         const { data } = await getMailList({
           filter: filterType,
@@ -141,7 +142,7 @@ function MailList() {
           data: data,
           filter: filterType,
         }
-        updateStorage('mailListStorage',mailListStorage);
+        updateStorage('MailListInfo',mailListStorage);
       }
     } catch(e) {
       //setIsAlert(true);
@@ -155,6 +156,7 @@ function MailList() {
       }
     }
   };
+  /*
   const getMailDetail = ()=>{
       const mailDetailStorage = getStorage('mailDetailStorage');
       console.log('zzzzzzz');
@@ -183,10 +185,11 @@ function MailList() {
         }
       }
   }
+  */
 
   useEffect(() => {
     if (getUserInfo()?.address) fetchMailList(true);
-    getMailDetail();
+    //getMailDetail();  预加载feature abort
   }, [pageIdx, filterType]);
 
   
@@ -222,12 +225,13 @@ function MailList() {
     }
   };
 
-  const handleClickMail = (
+  const handleClickMail = async (
     id: string,
     type: MetaMailTypeEn,
     mailbox: MailBoxTypeEn,
     read: number,
   ) => {
+    /*
     const mailDetailStorage = {
       mailDetails: mailDetail,
       page_index: pageIdx,
@@ -235,14 +239,16 @@ function MailList() {
     }
     console.log('mailDetailStorage');
     console.log(mailDetailStorage);
-    updateStorage('mailDetailStorage',mailDetailStorage);
+    updateStorage('MailListInfo',mailDetailStorage);
+    */
     const pathname =
       filterType === FilterTypeEn.Draft ? '/home/new' : '/home/mail';
     setRandomBits(undefined); // clear random bits
     if (!read) {
       const mails = [{ message_id: id, mailbox: Number(mailbox) }];
-      changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
+      await changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
     }
+    fetchMailList(false);
     /*router.push({
     pathname,
     query: {
@@ -267,8 +273,8 @@ function MailList() {
             url={update}
             onClick={()=>
               { removeAll();
-                deleteStorage('mailListStorage');
-                deleteStorage('mailDetailStorage');
+                clearMailListInfo();
+                //deleteStorage('mailDetailStorage');
                 fetchMailList(true);}}
             />
             <div className="dropdown inline-relative">

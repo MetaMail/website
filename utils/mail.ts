@@ -1,6 +1,6 @@
 import { MarkTypeEn, ReadStatusTypeEn } from "@constants/interfaces";
 import { IMailChangeParams, changeMailStatus } from "@services/home";
-import { deleteStorage } from "./storage";
+//import { deleteStorage } from "./storage";
 //import router from "next/router";
 
 export const handleDelete = async (

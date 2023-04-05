@@ -62,6 +62,7 @@ import useStore from '@utils/storage/zustand';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
 import { deleteStorage, getStorage, updateStorage } from '@utils/storage';
 import { reverse } from 'dns';
+import { clearMailListInfo } from '@utils/storage/mail';
 //import SenderCard from './SenderCard';
 
 
@@ -129,7 +130,7 @@ function Mail(props: any) {
     {
       src: trash,
       handler: ()=>{
-      deleteStorage('mailListStorage');
+      clearMailListInfo();
         handleDelete(mailInfo);
         router.back();
       } 
@@ -141,7 +142,7 @@ function Mail(props: any) {
     },  {
       src: spam,
       handler: ()=>{
-        deleteStorage('mailListStorage');
+        clearMailListInfo();
         handleSpam(mailInfo);
         router.back();
       }
@@ -149,7 +150,7 @@ function Mail(props: any) {
       src: read,
       checkedSrc: markUnread,
       handler: ()=>{
-        deleteStorage('mailListStorage');
+        clearMailListInfo();
         handleChangeReadStatus(mailInfo,isRead?ReadStatusTypeEn.unread:ReadStatusTypeEn.read);
         setIsRead(!isRead);
       },
@@ -159,7 +160,7 @@ function Mail(props: any) {
       src: starred,
       checkedSrc: markFavorite,
       handler: ()=>{
-        deleteStorage('mailListStorage');
+        clearMailListInfo();
         handleStar(mailInfo, mark);
         setMark(!mark);
       },
@@ -171,7 +172,7 @@ function Mail(props: any) {
       src: starred,
       checkedSrc: markFavorite,
       handler: ()=>{
-        deleteStorage('mailListStorage');
+        clearMailListInfo();
         handleStar(mailInfo, mark);
         setMark(!mark);
       },
@@ -234,15 +235,15 @@ function Mail(props: any) {
       //if (!router.query?.id && router?.query?.id?.length === 0 ) {
       //  throw new Error();
       //}
-      const mailDetail = getStorage('mailDetailStorage')?.mailDetails;
-      console.log(mailDetail);
-      mailDetail.map(async (item: IMailContentItem)=>{ ////search
-        if (String(item?.message_id??'') === String(router.query.id)){
-          changeInnerHTML(item);
-          setMail(item);
-          ifIndex = true;
-        }
-        })
+      //const mailDetail = getStorage('mailDetailStorage')?.mailDetails;
+      //console.log(mailDetail);
+      //mailDetail.map(async (item: IMailContentItem)=>{ ////search
+      //  if (String(item?.message_id??'') === String(router.query.id)){
+      //    changeInnerHTML(item);
+      //    setMail(item);
+      //    ifIndex = true;
+      //  }
+      //  })
       if(!loading) setLoading(true);
       if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
       const { data } = await getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
@@ -277,8 +278,7 @@ function Mail(props: any) {
     }
     // handleMarkRead();
     if (getUserInfo()?.address) {
-
-      handleLoad();
+      if (isMailDetail) handleLoad();
     }
     else {
       clearUserInfo();
