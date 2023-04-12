@@ -19,10 +19,12 @@
       "@components*": ["components*"],
       "@utils*": ["utils*"],
       "@pages*": ["pages*"],
-      "@assets*": ["assets*"]
+      "@assets*": ["assets*"],
+      "@constants*": ["constants*"],
+      "@service*": ["service*"]
     },
     "plugins": [{ "name": "next" }]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/home/new/index.tsx"],
   "exclude": ["node_modules"]
 }
