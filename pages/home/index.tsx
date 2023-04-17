@@ -16,6 +16,7 @@ export default function HomePage() {
   const removeAll = useStore((state:any) => state.removeAll)
   function getLogOut(){
     clearUserInfo();
+    clearMailListInfo();
     //clearMailListInfo();
     removeAll();
     router.push('/');
