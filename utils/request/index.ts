@@ -1,18 +1,19 @@
 import axios from 'axios';
 import { mergeUrlWithParams } from '@utils/url';
 
-const BASE_URL = 'https://api.metamail.ink/';
+//const BASE_URL = 'https://api.metamail.ink/';
 //const BASE_URL = 'http://localhost:8080';
-//const BASE_URL = 'https://api-v2.metamail.ink/';
+const BASE_URL = 'https://api-v2.metamail.ink/';
 const ajax = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
   timeout: 5000,
 });
+export const PostfixOfAddress = '@mmail.ink';
 
 //ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:8080';
-ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://api.metamail.ink/';
-//ajax.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+//ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://api.metamail.ink/';
+ajax.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 //ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://api-v2.metamail.ink/';
 
 type requestParams = Record<string, any>;
