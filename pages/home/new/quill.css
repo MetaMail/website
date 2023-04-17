@@ -4,10 +4,10 @@
 
 
 .ql-container.ql-snow {
-  @apply border border-none min-h-0 flex-1;
+  @apply flex border border-none min-h-0 flex-1;
 }
 .ql-toolbar.ql-snow {
-  @apply bg-gray-100 border border-none;
+  @apply flex bg-gray-100 border border-none;
 
 }
 .ql-snow .ql-picker.ql-header {
@@ -23,6 +23,6 @@
   fill: #1f2937;
 }
 .ql-editor{
-    @apply p-8;
+    @apply flex-1;
 }
 
