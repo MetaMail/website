@@ -388,7 +388,7 @@ export default function NewMail(props: { randomBits: any; }) {
               ref={(el) => {
                 el ? (reactQuillRef.current = el) : void 0;
               }}
-              className='flex-1 flex flex-col-reverse'
+              className='flex-1 flex flex-col-reverse overflow-hidden'
               theme="snow"
               placeholder={''}
               modules={EditorModules}

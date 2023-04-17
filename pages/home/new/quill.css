@@ -1,26 +1,16 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-
-
 .ql-container.ql-snow {
-  @apply flex border border-none min-h-0 flex-1;
+  @apply flex border-0 min-h-0 flex-1;
+  border: none !important;
 }
 .ql-toolbar.ql-snow {
-  @apply flex bg-gray-100 border border-none;
-
+  @apply flex bg-white;  
+  border: none !important;
 }
 .ql-snow .ql-picker.ql-header {
     @apply hidden;
-}
-
-.ql-snow .ql-stroke {
-  stroke: #1f2937;
-}
-
-.ql-snow .ql-fill,
-.ql-snow .ql-stroke.ql-fill {
-  fill: #1f2937;
 }
 .ql-editor{
     @apply flex-1;
