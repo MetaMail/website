@@ -8,8 +8,10 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import MailList from './list';
 import Mail from './mail';
 import NewMail from './new';
+import dynamic from 'next/dynamic';
 
 export default function HomePage() {
+  const JazziconGrid = dynamic(() => import('@components/JazziconAvatar'), { ssr: false });
   const router = useRouter()
   const [onShow, setOnShow] = useState(false);
   const [address,setAddress] = useState<string>();  
@@ -32,7 +34,7 @@ export default function HomePage() {
     <div className='flex flex-col flex-1 h-screen pb-24 font-poppins pr-21 w-[calc(100vw-206px)] min-w-[700px]'>
       <div className='flex flex-row pt-10 justify-end'>
         <div className='flex flex-row justify-end gap-4'>
-        <div className='w-24 h-24 rounded-2 bg-[#7070DE]'/>
+        <JazziconGrid/>
         <button className="flex text-md omit font-bold pb-6 mr-17 justify-between w-131" onClick={getLogOut}>
           <div className='omit pt-2'>{address}</div>
         </button>
