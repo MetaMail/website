@@ -9,7 +9,7 @@ import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 import useStore from '@utils/storage/zustand';
 import BaseLine from '@components/BaseLine';
-import ReactQuill from 'react-quill';
+//import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { IMailContentItem, IPersonItem, MetaMailTypeEn } from '@constants/interfaces';
 import { getUserInfo, getWalletAddress, saveUserInfo, setRandomBits } from '@utils/storage/user';
@@ -23,6 +23,7 @@ import { useRouter } from 'next/router';
 import { pkEncrypt } from '@utils/crypto/crypt';
 import useInterval from '@utils/hooks';
 import { PostfixOfAddress } from '@utils/request';
+import QuillWrapper from '@components/QuillWrapper';
 export default function NewMail(props: { randomBits: any; }) {
     const [isExtend, setIsExtend] = useState(false);
     const isOnCompose = useStore((state: any) => state.isOnCompose)
@@ -30,7 +31,6 @@ export default function NewMail(props: { randomBits: any; }) {
     const {randomBits} = props;
     const [subject, setSubject] = useState<string>('');
     const router = useRouter()
-  
     const [receivers, setReceivers] = useState<IPersonItem[]>([]);
   
     const [content, setContent] = useState<string>('');
@@ -49,18 +49,21 @@ export default function NewMail(props: { randomBits: any; }) {
     const dateRef = useRef<string>();
     const allowSaveRef = useRef(true);
     const currRandomBitsRef = useRef<string>(randomBits);
-    const reactQuillRef = useRef<ReactQuill>();
-    const getQuill = () => {
+    const reactQuillRef = useRef<any>();
+    /*const getQuill = () => {
       if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
   
       return reactQuillRef.current.makeUnprivilegedEditor(
         reactQuillRef.current.getEditor(),
       );
-    };
+    };*/
     const handleChangeContent = (content: any) => {
         setContent(content);
-        const quill = getQuill();
-
+        const quill = reactQuillRef.current.getQuill();
+        if (!quill) {
+          console.log('Failed to get Quill instance.');
+          return;
+        }
         if (!quill || !quill?.getHTML || !quill?.getText) {
           //notification.error({
           //  message: 'ERROR',
@@ -246,7 +249,7 @@ export default function NewMail(props: { randomBits: any; }) {
         if (!editable) return;
         const oldHtml = sessionStorage.getItem('html');
         const oldText = sessionStorage.getItem('text');
-        const quill = getQuill();
+        const quill = reactQuillRef.current.getQuill();
         console.log(oldText);
         console.log(quill?.getHTML())
         console.log(quill?.getText())
@@ -384,17 +387,15 @@ export default function NewMail(props: { randomBits: any; }) {
         <BaseLine/>
         </div>
 
-        <ReactQuill
-              ref={(el) => {
-                el ? (reactQuillRef.current = el) : void 0;
-              }}
+        <QuillWrapper
+              ref={reactQuillRef}
               className='flex-1 flex flex-col-reverse overflow-hidden'
               theme="snow"
               placeholder={''}
               modules={EditorModules}
               formats={EditorFormats}
               value={content}
-              onChange={(value) => {
+              onChange={(value:any) => {
                 handleChangeContent(value);
               }}
             />
