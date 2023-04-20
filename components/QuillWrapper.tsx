@@ -12,7 +12,7 @@ const QuillWrapper = (props: any, ref: any) => {
   useImperativeHandle(ref, () => ({
     getQuill: () => {
         console.log('this')
-        console.log(typeof reactQuillRef?.current?.getEditor)
+        console.log(typeof reactQuillRef?.current)
         if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
         console.log('this')
         return reactQuillRef.current.makeUnprivilegedEditor(
@@ -23,11 +23,8 @@ const QuillWrapper = (props: any, ref: any) => {
 
   return (
     <ReactQuill
-    ref={(el) => {
-        if (el) {
-            reactQuillRef.current = el;
-          }}}
     {...props}
+    ref={reactQuillRef}
     />
   );
 };
