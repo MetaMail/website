@@ -14,6 +14,8 @@ import { useRouter } from 'next/router';
 import { disconnect } from '@wagmi/core';
 import useStore from '@utils/storage/zustand';
 import { FilterTypeEn } from '@constants/interfaces';
+import { createMail } from '@utils/crypto/crypt';
+import { getMailDetailByID } from '@services/home';
 
 export default function Sidebar(props:any) {
   const setFilter = useStore((state: any) => state.setFilter)
@@ -24,6 +26,7 @@ export default function Sidebar(props:any) {
   const [dropFilter, setDropFilter] = useState(false);
   //const setIsAlert = useStore((state:any) => state.setIsAlert)
   const setIsOnCompose = useStore((state:any) => state.setIsOnCompose)
+  const setDetailFromNew = useStore((state:any) => state.setDetailFromNew)
 
   const router = useRouter()
   async function handleReturnHome(){
@@ -34,6 +37,18 @@ export default function Sidebar(props:any) {
     setFilter(Number(filter));
     resetPage();
   }
+  async function handleClickNewMail(){
+    const newMailID = await createMail(0);
+    console.log(newMailID)
+    if (newMailID){
+      setDetailFromNew((await getMailDetailByID(window.btoa(newMailID ?? ''))).data)
+      setIsOnCompose(true);
+    }
+    else{
+      console.log('throw new Error');
+    }
+  }
+
 
   return (
   <div className='bg-[#F3F7FF] w-200 pl-15 pr-10 pt-12 flex flex-col justify-between font-poppins text-sm '>
@@ -42,7 +57,7 @@ export default function Sidebar(props:any) {
           <Image src={logo} alt="logo" className="w-auto h-24 "/>
           <Image src={logoBrand} alt="logo_brand" className="flex self-end pb-4"/>
       </button>
-      <button className='my-19 flex h-35 bg-[#006AD4] rounded-5 justify-center gap-20 py-8' onClick={()=>{setIsOnCompose(true)}}>
+      <button className='my-19 flex h-35 bg-[#006AD4] rounded-5 justify-center gap-20 py-8' onClick={()=>{handleClickNewMail()}}>
         <Image src={compose} alt="new_mail" className="w-16 h-auto"/>
         <div className='text-white overflow-hidden'>New Message</div>
       </button>

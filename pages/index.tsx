@@ -31,7 +31,8 @@ export default function Intro() {
 //console.log('mnemonic:', wallet.mnemonic.phrase)
 //console.log('privateKey:', wallet.privateKey)
   const router = useRouter()  
-  const { address, isConnected } = useAccount();
+  const isConnected = useAccount().isConnected;
+  const address = useAccount().address?.toLowerCase();
   console.log('pages');
   console.log(address);
   console.log(isConnected);
@@ -166,7 +167,7 @@ export default function Intro() {
   const keyPack = (keyData:any) =>{
     const {addr, date, salt, message_encryption_public_key, message_encryption_private_key, signing_public_key, signing_private_key, data} = keyData;
     let parts = [
-      "Addr: " + addr.toLowerCase(),
+      "Addr: " + addr,
       "Date: " + date,
       "Salt: " + salt,
       "Message-Encryption-Public-Key: " + message_encryption_public_key,
@@ -182,9 +183,9 @@ export default function Intro() {
       if (!window.ethereum) throw new Error('Your client does not support Ethereum');
       const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
       const signer = provider.getSigner();
-      const lowAddr = address!.toLowerCase();
-      console.log(`address: ${address}\nlowAddr: ${lowAddr}`);
-      const { data } = await getRandomStrToSign(lowAddr!);
+      //const lowAddr = address!.toLowerCase();
+      //console.log(`address: ${address}\nlowAddr: ${lowAddr}`);
+      const { data } = await getRandomStrToSign(address!);
       const { randomStr, signMethod, tokenForRandom } = data;
       console.log('randomStr');
       console.log(crypto.randomBytes(256));
@@ -220,7 +221,7 @@ export default function Intro() {
         data: 'this is a test',        
       }*/
       //generateEncryptionKey();
-      const encryptionData = await getEncryptionKey(lowAddr??'');
+      const encryptionData = await getEncryptionKey(address??'');
       if (encryptionData === 404) await generateEncryptionKey();
       console.log('encrydt');
       console.log(encryptionData);

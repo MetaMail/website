@@ -48,8 +48,11 @@ function MailList() {
   const subPage = useStore((state:any) => state.subPage)
   const setUnreadCount = useStore((state:any) => state.setUnreadCount)
   const setDetailFromList = useStore((state:any) => state.setDetailFromList)
+  const setDetailFromNew = useStore((state:any) => state.setDetailFromNew)
   //const isMailDetail = useStore((state:any) => state.isMailDetail)
+  const setIsOnCompose = useStore((state:any) => state.setIsOnCompose)
   const setIsMailDetail = useStore((state:any) => state.setIsMailDetail)
+  const detailFromNew = useStore((state:any) => state.detailFromNew)
   const router = useRouter()
   const [loading, setLoading] = useState(false);
   let mailDetail: IMailContentItem[] = [];
@@ -191,6 +194,10 @@ function MailList() {
     if (getUserInfo()?.address) fetchMailList(true);
     //getMailDetail();  预加载feature abort
   }, [pageIdx, filterType]);
+  useEffect(() => {
+    if (getUserInfo()?.address) fetchMailList(false);
+    //getMailDetail();  预加载feature abort
+  }, [detailFromNew]);
 
   
   const handleChangeSelectList = (item: IMailItem, isSelect?: boolean) => {
@@ -226,10 +233,11 @@ function MailList() {
   };
 
   const handleClickMail = async (
-    id: string,
-    type: MetaMailTypeEn,
-    mailbox: MailBoxTypeEn,
-    read: number,
+    //id: string,
+    //type: MetaMailTypeEn,
+    //mailbox: MailBoxTypeEn,
+    //read: number,
+    item: IMailItem,
   ) => {
     /*
     const mailDetailStorage = {
@@ -241,14 +249,21 @@ function MailList() {
     console.log(mailDetailStorage);
     updateStorage('MailListInfo',mailDetailStorage);
     */
-    const pathname =
-      filterType === FilterTypeEn.Draft ? '/home/new' : '/home/mail';
+    //const pathname =
+    //  filterType === FilterTypeEn.Draft ? '/home/new' : '/home/mail';
     setRandomBits(undefined); // clear random bits
     if (!read) {
-      const mails = [{ message_id: id, mailbox: Number(mailbox) }];
+      const mails = [{ message_id: item?.message_id, mailbox: Number(item.mailbox) }];
       await changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
     }
     fetchMailList(false);
+    if (filterType === FilterTypeEn.Draft){
+      setDetailFromNew(item);
+      setIsOnCompose(true);
+    }else{
+      setDetailFromList(item);
+      setIsMailDetail(true);
+    } 
     /*router.push({
     pathname,
     query: {
@@ -362,14 +377,9 @@ function MailList() {
             abstract={item?.digest}
             onClick={() => {
               //sessionStorage.setItem(item?.message_id, item?.message_id); // set read in sessionstorage for update without fetching maillist
-              setDetailFromList(item);
-              handleClickMail(
-                item.message_id,
-                item.meta_type,
-                item.mailbox,
-                item.read,
-              );
-              setIsMailDetail(true);
+
+              handleClickMail(item);
+
             }}
             select={
               selectList.findIndex(
