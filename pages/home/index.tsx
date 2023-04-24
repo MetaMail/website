@@ -13,7 +13,6 @@ import dynamic from 'next/dynamic';
 export default function HomePage() {
   const JazziconGrid = dynamic(() => import('@components/JazziconAvatar'), { ssr: false });
   const router = useRouter()
-  const [onShow, setOnShow] = useState(false);
   const [address,setAddress] = useState<string>();  
   const removeAll = useStore((state:any) => state.removeAll)
   function getLogOut(){
