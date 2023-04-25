@@ -7,7 +7,6 @@ import gradientDot from '@assets/pdot.svg';
 import pic1Left from '@assets/pic1left.svg';
 import pic2Right from '@assets/pic2Right.svg';
 import pic3Left from '@assets/pic3Left.svg';
-//import pic3Left from '@assets/pic3left.png';///////
 import gdL from '@assets/gdL.png';
 import ReviewInfo from 'sections/ReviewInfo';
 import Footer from 'sections/Footer';
@@ -21,80 +20,15 @@ import { getUserInfo, getWalletAddress, saveUserInfo } from '@utils/storage/user
 import { disconnect } from '@wagmi/core';
 import keccak256 from 'keccak256';
 import crypto from 'crypto';
-import useStore from '@utils/storage/zustand';
 import { getEncryptionKey, putEncryptionKey } from '@services/user';
 export default function Intro() {
-  const setIsAlert = useStore((state:any) => state.setIsAlert)
-
-  //const wallet = ethers.Wallet.createRandom()
-//console.log('address:', wallet.address)
-//console.log('mnemonic:', wallet.mnemonic.phrase)
-//console.log('privateKey:', wallet.privateKey)
+  //const setIsAlert = useStore((state:any) => state.setIsAlert)
   const router = useRouter()  
   const isConnected = useAccount().isConnected;
   const address = useAccount().address?.toLowerCase();
   console.log('pages');
   console.log(address);
   console.log(isConnected);
-//获取密钥对
-  async function getRsaKeys(){
-    try{
-      const keyPair = await window.crypto.subtle.generateKey({
-        name: "ECDSA",
-        //modulusLength: 2048, //can be 1024, 2048, or 4096
-        //publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-        //hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
-        namedCurve: "P-256",},
-        true, //whether the key is extractable (i.e. can be used in exportKey)
-        ["sign", "verify"] //must be ["encrypt", "decrypt"] or ["wrapKey", "unwrapKey"]
-      );
-      console.log(keyPair);
-      if (keyPair){
-        const privateBuffer = await window.crypto.subtle.exportKey(
-          "pkcs8", 
-          keyPair.privateKey 
-        );
-        const publicBuffer = await window.crypto.subtle.exportKey(
-          "spki",
-          keyPair.publicKey 
-          )
-              //var privateKey = RSA2text(keydata1,1);
-              //var uint8private = new Uint8Array(privateBuffer);
-              const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
-              console.log('privateKey')
-              console.log(Private_Store_Key);
-              const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
-              console.log('publicKey')
-              console.log(Public_Store_Key);
-              //var publicKey = RSA2text(keydata2);
-              //var code = {
-              //    'privateKey':privateKey,
-              //    'publicKey':publicKey
-              //}
-              //console.log('code')
-              //console.log(code)
-              //RSA2text(privateKey,publicKey);
-          }
-        }
-      catch(e){
-          console.error(e);
-          //setIsAlert(true);
-      };
-  }
-/*function RSA2text(buffer,isPrivate=0) {
-      var binary = '';
-      var bytes = new Uint8Array(buffer);
-      var len = bytes.byteLength;
-      for (var i = 0; i < len; i++) {
-          binary += String.fromCharCode(bytes[i]);
-      }
-      var base64 = window.btoa(binary);
-      //var text = "-----BEGIN "+(isPrivate?"PRIVATE":"PUBLIC")+" KEY-----\n";
-      //text += base64.replace(/[^\x00-\xff]/g,"$&\x01").replace(/.{64}\x01?/g,"$&\n");
-      //text += "\n-----END "+(isPrivate?"PRIVATE":"PUBLIC")+" KEY-----";
-      const text = base64.toString();
-      return text;
-}*/
   const generateEncryptionKey = async () => {
     //if (!window.ethereum) throw new Error('Your client does not support Ethereum');
     try{
@@ -144,19 +78,6 @@ export default function Intro() {
     console.log(keySignature)
     if (!keySignature) throw new Error('sign key error');
     data.signature = keySignature;
-    //const putBody = JSON.stringify({
-    //  addr: address,
-    //  date: new Date().toISOString(),
-    //  salt: signedSalt,
-    //  message_encryption_public_key: Public_Store_Key,
-    //  message_encryption_private_key: Private_Store_Key,
-    //  signing_public_key: Public_Store_Key,
-    //  signing_private_key: Private_Store_Key,
-    //  data: 'this is a test',
-    //  signature: keySignature,
-    //});
-    //console.log(putBody);
-    //console.log(putBody);
     await putEncryptionKey({data:data});
     console.log('end')
     }catch(e){

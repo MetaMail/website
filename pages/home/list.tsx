@@ -17,13 +17,8 @@ import {
 import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'services/home';
 import {
   checkbox,
-  //markFavorite,
-  selected,
-  //favorite,
   trash,
   read,
-  //leftArrow,
-  //rightArrow,
   starred,
   markUnread,
   temp1,
@@ -34,9 +29,8 @@ import {
 } from 'assets/icons';
 import { getUserInfo, setRandomBits } from 'utils/storage/user';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
-import { clearStorage, deleteStorage, getStorage, updateStorage } from '@utils/storage';
+import { updateStorage } from '@utils/storage';
 //import Link from 'next/link';
-import Mail from './mail';
 import { clearMailListInfo, getMailListInfo } from '@utils/storage/mail';
 function MailList() {
   //const state = useStore()
@@ -436,13 +430,5 @@ function MailList() {
   );
 }
 
-const mapStateToProps = (state: any) => {
-  return state.user ?? {};
-};
 
-//const mapIndexStateToProps = (state: any) => {
-//  return state.pageIndex ?? {};
-//};
-
-//export default connect(mapStateToProps, mapDispatchToProps)(MailList);
 export default MailList;

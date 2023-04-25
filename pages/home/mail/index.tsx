@@ -1,57 +1,32 @@
-//import { notification, message, PageHeader, Button } from 'antd';
+
 import Icon from '@components/Icon';
-//import { createMail } from '@utils';
 import Image from 'next/image';
 import tempMailSenderIcon from '@assets/tempMailSenderIcon.svg';
 import replyBtn from '@assets/replyButton.svg';
 import ifLock from '@assets/ifLock.svg';
-//import tempAttach from '@assets/Group 48169.svg';
 import {
   extend,
   cancel,
-  checkbox,
-  //markFavorite,
-  selected,
-  //favorite,
   sent,
   trash,
   read,
-  //leftArrow,
-  //rightArrow,
   starred,
-  //markUnread,
   temp1,
   spam,
-  //filter,
-  //update,
-  //cancelSelected,
-  //add,
   back,
   mailMore,
   markFavorite,
-  unread,
   markUnread
 } from 'assets/icons';
 import {
   IMailContentItem,
-  MailBoxTypeEn,
-  MarkTypeEn,
   MetaMailTypeEn,
   ReadStatusTypeEn,
-  //MailBoxTypeEn,
-  //FilterTypeEn,
 } from 'constants/interfaces';
-//import parse from 'html-react-parser';
 import { useState, useEffect, useRef, ReactElement } from 'react';
 import {
-  changeMailStatus,
   getMailDetailByID,
-  getMailList,
-  IMailChangeParams,
 } from '@services/home';
-//import AttachmentItem from './AttachmentItem';
-import CryptoJS from 'crypto-js';
-//import locked from '@assets/locked.svg';
 import DOMPurify from 'dompurify';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -63,12 +38,6 @@ import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@u
 import { deleteStorage, getStorage, updateStorage } from '@utils/storage';
 import { reverse } from 'dns';
 import { clearMailListInfo } from '@utils/storage/mail';
-//import SenderCard from './SenderCard';
-
-
-//import { setMailContent } from '@utils/storage/mail';
-//import { useLocation } from 'react-router-dom';
-//import { useHistory } from 'react-router-dom';
 // allowed URI schemes
 var allowlist = ['http', 'https', 'ftp'];
 // build fitting regex
@@ -190,16 +159,6 @@ function Mail(props: any) {
         //handleStar(mailInfo);
       }
     },]
-
-
-  const handleOpenReplyMail = async () => {
-    //createMail(MetaMailTypeEn.Signed).catch(() => {
-    //  notification.error({
-    //    message: 'Network Error',
-    //    description: 'Can NOT create a new e-mail for now.',
-    //  });
-    //});
-  };
 
   const changeInnerHTML = (data:IMailContentItem)=>{
     if (data.part_html) {
@@ -382,11 +341,6 @@ function Mail(props: any) {
         )
 }
 
-const mapStateToProps = (state: any) => {
-  return state.user ?? {};
-};
 Mail.getLayout = (page: ReactElement) => <Layout>{page}</Layout>;
-
-//export default connect(mapStateToProps)(Mail);
 export default Mail;
 

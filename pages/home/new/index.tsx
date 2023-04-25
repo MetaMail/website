@@ -23,6 +23,7 @@ import { useRouter } from 'next/router';
 import { pkEncrypt } from '@utils/crypto/crypt';
 import useInterval from '@utils/hooks';
 import { PostfixOfAddress } from '@utils/request';
+import FileUploader from '@components/FileUploader';
 export default function NewMail(props: { randomBits: any; }) {
     const [isExtend, setIsExtend] = useState(false);
     const isOnCompose = useStore((state: any) => state.isOnCompose)
@@ -56,6 +57,9 @@ export default function NewMail(props: { randomBits: any; }) {
       return reactQuillRef.current.makeUnprivilegedEditor(
         reactQuillRef.current.getEditor(),
       );
+    };
+    const handleSetAttachmentList = (attachment: any) => {
+      setAttList([...attList, attachment]);
     };
     const handleChangeContent = (content: any) => {
         setContent(content);
@@ -111,7 +115,8 @@ export default function NewMail(props: { randomBits: any; }) {
               // description: 'Your email has been sent successfully.',
             // });
     
-            router.push('/home');
+            //router.push('/home');
+            setIsOnCompose(false)
           }
         } catch (error) {
           console.log(error);
@@ -144,6 +149,7 @@ export default function NewMail(props: { randomBits: any; }) {
             }
             const { address, ensName, showName, publicKey } = getUserInfo();
             console.log(address)
+            console.log(getUserInfo())
             console.log(showName)
             if (!address || !showName) {
               console.warn('No address or name of current user, please check.');
@@ -403,7 +409,9 @@ export default function NewMail(props: { randomBits: any; }) {
                 <Image alt={'sendMail'} src={sendMailIcon}/>
             </button>
             <button>
-                <Image alt={'addAttach'} src={addAttach}/>
+                {/*<Image alt={'addAttach'} src={addAttach}/>
+                <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
+              <FileUploader draftID={draftID} metatype={type} onAttachment={handleSetAttachmentList} showList={attList}/>
             </button>
         </div>
     </div>
