@@ -2,13 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import jazzicon from 'jazzicon';
 import { getUserInfo } from '@utils/storage/user';
 
-const JazziconGrid:React.FC = () => {
+const JazziconGrid = ({ size, addr }: { size: number, addr?:string}) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
-        const address = getUserInfo().address?.slice(2,10)
+        const address = addr?.slice(2,10)
         const seed = parseInt(address??'', 16);
         const container = containerRef.current;
-        const el = jazzicon(24, seed);
+        const el = jazzicon(size, seed);
         container?.appendChild(el);
 
         return () => {
