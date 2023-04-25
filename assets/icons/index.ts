@@ -10,7 +10,7 @@ import sent from './sent.svg';
 import spam from './spam.svg';
 import add from './add.svg';
 import more from './more.svg';
-
+import swapAddr from './swapaddr.svg'
 //import trash from './trash.svg';
 import unread from './unread.svg';
 
@@ -53,7 +53,7 @@ export {
   spam,
   trash,
   unread,
-
+  swapAddr,
   checkbox,
   selected,
   favorite,
