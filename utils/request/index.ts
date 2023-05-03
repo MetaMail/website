@@ -11,11 +11,6 @@ const ajax = axios.create({
 });
 export const PostfixOfAddress = '@mmail.ink';
 
-//ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:8080';
-//ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://api.metamail.ink/';
-ajax.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-//ajax.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://api-v2.metamail.ink/';
-
 type requestParams = Record<string, any>;
 
 const checkResponse = (res: any) => {
