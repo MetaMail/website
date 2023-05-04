@@ -5,11 +5,11 @@ export const EditorModules = {
       [
         { list: 'ordered' },
         { list: 'bullet' },
-        { indent: '-1' },
-        { indent: '+1' },
+        //{ indent: '-1' },
+        //{ indent: '+1' },
       ],
       ['link'],
-      ['clean'],
+      //['clean'],
     ],
   };
   
