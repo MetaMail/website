@@ -7,13 +7,6 @@ function NameSelecter(){
     const { showName, ensName, address} = getUserInfo();
     const [activeName, setActiveName] = useState(showName);
     const [isAddrListHidden, setIsAddrListHidden] = useState(true);
-    const handleBlur = () => {
-        setIsAddrListHidden(true);
-      };
-    
-      const handleFocus = () => {
-        setIsAddrListHidden(false);
-      };
     const DropItem = ({ name }: { name?: string }) => {
     return name ? (
       <div
@@ -34,23 +27,20 @@ function NameSelecter(){
 
 
   return(
-    <div className="pl-[4%]"
-    tabIndex={0}
-    onBlur={handleBlur}
-    onFocus={handleFocus}
-    >
-
-
+    <div className="pl-[4%]">
         <span className="dropdown inline-relative gap-10">
             <div className="flex gap-10">
             <span>{activeName + PostfixOfAddress}</span>
-            <Icon      ///////////最初设计稿的提示
+            {ensName?<Icon      ///////////最初设计稿的提示
             url={swapAddr}
-            onClick={()=>setIsAddrListHidden(!isAddrListHidden)}/>
+            onClick={()=>
+          setIsAddrListHidden(!isAddrListHidden)
+            }
+            />:null}
             </div>
                 <ul className={isAddrListHidden?'hidden':'flex z-[2] menu absolute mt-6 shadow bg-base-100 rounded-5'}>
                     <DropItem name={address} />
-                    <DropItem name={ensName} />
+                    {ensName?<DropItem name={ensName} />:null}
                 </ul>
               </span>
 

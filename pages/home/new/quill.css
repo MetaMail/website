@@ -15,4 +15,15 @@
 .ql-editor{
     @apply flex-1;
 }
+.ql-snow .ql-tooltip{
+  @apply ml-150;
+}
+.ql-toolbar.ql-snow .ql-formats {
+  margin-right: 0px !important;
+}
+
+ql-snow .ql-toolbar button {
+  @apply w-12 h-12;
+}
+
 

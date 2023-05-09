@@ -37,6 +37,7 @@ export default function Intro() {
     const salt = crypto.randomBytes(256).toString('hex');
     const signedSalt = await signer.signMessage('Please sign this message to generate encrypted private key: \n \n' + salt);
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
+
     const keyPair = await window.crypto.subtle.generateKey({
       name: "ECDSA",
       //modulusLength: 2048, //can be 1024, 2048, or 4096
@@ -60,15 +61,15 @@ export default function Intro() {
     //var uint8private = new Uint8Array(privateBuffer);
     const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
     const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
-    
+    const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(Private_Store_Key, Storage_Encryption_Key).toString();
     let data = {
       addr: address? address.toString():'',
       date: new Date().toISOString(),
-      salt: signedSalt,
+      salt: salt,
       message_encryption_public_key: Public_Store_Key,
-      message_encryption_private_key: Private_Store_Key,
+      message_encryption_private_key: Encrypted_Private_Store_Key,
       signing_public_key: Public_Store_Key,
-      signing_private_key: Private_Store_Key,
+      signing_private_key: Encrypted_Private_Store_Key,
       data: 'this is a test',
       signature: ''
     };
@@ -143,6 +144,7 @@ export default function Intro() {
       }*/
       //generateEncryptionKey();
       const encryptionData = await getEncryptionKey(address??'');
+      console.log(encryptionData)
       if (encryptionData === 404) await generateEncryptionKey();
       console.log('encrydt');
       console.log(encryptionData);
