@@ -1,13 +1,13 @@
 import { add, cancel } from '@assets/icons';
 import React, { useState } from 'react';
-import Image from 'next/image'
+import Image from 'next/image';
 import { IPersonItem } from '@constants/interfaces';
 
 interface EmailRecipientInputProps {
-    receivers: IPersonItem[];
-    onAddReceiver: (address: string) => void;
-    onRemoveReceiver: (email: string) => void;
-  }
+  receivers: IPersonItem[];
+  onAddReceiver: (address: string) => void;
+  onRemoveReceiver: (email: string) => void;
+}
 
 const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, onAddReceiver, onRemoveReceiver }) => {
   const [emailInput, setEmailInput] = useState<string>('');
@@ -24,19 +24,20 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
 
   const addRecipient = () => {
     if (emailInput && validateEmail(emailInput)) {
-      onAddReceiver(emailInput)
+      onAddReceiver(emailInput);
       setEmailInput('');
     } else {
       alert('Invalid Email Address!');
     }
   };
 
-  const removeRecipient = (email:string) => {
-    onRemoveReceiver(email)
+  const removeRecipient = (email: string) => {
+    onRemoveReceiver(email);
   };
 
-  const validateEmail = (email:string) => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const validateEmail = (email: string) => {
+    const re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
   };
 
@@ -48,15 +49,19 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
         value={emailInput}
         onChange={handleChange}
         onKeyDown={handleKeyPress}
-        className='focus:outline-none '
+        className="focus:outline-none "
       />
-      <button onClick={addRecipient}><Image src={add} alt="add receivers"/></button>
-      {receivers && receivers.length>0?<div>Receipients:</div>:null}
+      <button onClick={addRecipient}>
+        <Image src={add} alt="add receivers" />
+      </button>
+      {receivers && receivers.length > 0 ? <div>Receipients:</div> : null}
       <ul>
         {receivers.map((email, index) => (
-          <li key={index} className='flex' >
+          <li key={index} className="flex">
             <div>{email.address}</div>
-            <button onClick={() => removeRecipient(email.address)}><Image src={cancel} alt="cancel" /></button>
+            <button onClick={() => removeRecipient(email.address)}>
+              <Image src={cancel} alt="cancel" />
+            </button>
           </li>
         ))}
       </ul>

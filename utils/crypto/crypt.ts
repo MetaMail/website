@@ -16,13 +16,12 @@ export const createMail = async (type: MetaMailTypeEn) => {
       return;
     }
     if (!publicKey || publicKey?.length === 0) {
-    console.log('error: !pKey || pKey?.length === 0');
-    return;
+      console.log('error: !pKey || pKey?.length === 0');
+      return;
     }
 
     const randomBits = generateRandom256Bits(address);
     key = CryptoJS.AES.encrypt(randomBits, publicKey).toString();
-
   } else {
     setRandomBits(undefined);
   }

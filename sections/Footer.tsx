@@ -49,8 +49,8 @@ export default function Footer({}) {
         </Link>
         <div className="flex flex-col gap-23">
           <div className="flex flex-row gap-10">
-            {Links.map((link,index) => (
-              <LinkItem {...link} key={index}/>
+            {Links.map((link, index) => (
+              <LinkItem {...link} key={index} />
             ))}
           </div>
           <div className="font-normal text-xl flex flex-row justify-between gap-30 text-[#3E3E3E] font-poppins">

@@ -1,8 +1,7 @@
 import { IPersonItem } from '@constants/interfaces';
 import { PostfixOfAddress } from '@utils/request';
 
-const concatAddress = (item: IPersonItem) =>
-  (item?.name ?? '') + ' ' + '<' + item.address + '>';
+const concatAddress = (item: IPersonItem) => (item?.name ?? '') + ' ' + '<' + item.address + '>';
 
 export const metaPack = async (data: {
   from: string;
@@ -16,18 +15,7 @@ export const metaPack = async (data: {
   name?: string;
   keys?: string[];
 }) => {
-  const {
-    from,
-    to,
-    cc,
-    date,
-    subject,
-    text_hash,
-    html_hash,
-    attachments_hash,
-    name,
-    keys,
-  } = data;
+  const { from, to, cc, date, subject, text_hash, html_hash, attachments_hash, name, keys } = data;
 
   let parts = [
     'From: ' +
@@ -50,7 +38,7 @@ export const metaPack = async (data: {
   if (Array.isArray(keys) && keys.length > 0) {
     parts.push('Keys: ' + keys.join(' '));
   }
-  
+
   // return await handleGetReceiversInfos(to).then((res) => {
   //   if (res && Object.keys(res).length > 0) {
   //     keys = [pkEncrypt(myKey, randoms)];

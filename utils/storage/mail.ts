@@ -40,7 +40,7 @@ export const getEnsName = () => {
 */
 export const getMailListInfo = () => {
   return getStorage(MailListInfo, null);
-}
+};
 
 const TempMailStoreKey = 'MetaMailTemporalContent';
 
@@ -74,7 +74,6 @@ export const getMailContent = () => {
 //        }
 //  ) as IAllUserInfo;
 //};
-
 
 export const clearMailListInfo = () => {
   deleteStorage(MailListInfo);

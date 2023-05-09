@@ -12,32 +12,32 @@ import dynamic from 'next/dynamic';
 
 export default function HomePage() {
   const JazziconGrid = dynamic(() => import('@components/JazziconAvatar'), { ssr: false });
-  const router = useRouter()
-  const [address,setAddress] = useState<string>();  
-  const removeAll = useStore((state:any) => state.removeAll)
-  function getLogOut(){
+  const router = useRouter();
+  const [address, setAddress] = useState<string>();
+  const removeAll = useStore((state: any) => state.removeAll);
+  function getLogOut() {
     clearUserInfo();
     clearMailListInfo();
     //clearMailListInfo();
     removeAll();
     router.push('/');
   }
-  useEffect(()=>{
+  useEffect(() => {
     if (!getUserInfo().address) {
       getLogOut();
-    } 
+    }
     setAddress(getUserInfo()?.address);
   }, []);
   return (
     <div>
-    <div className='flex flex-col flex-1 h-screen pb-24 font-poppins pr-21 w-[calc(100vw-206px)] min-w-[700px]'>
-      <div className='flex flex-row pt-10 justify-end'>
-        <div className='flex flex-row justify-end gap-4'>
-        <JazziconGrid size={24} addr={getUserInfo().address}/>
-        <button className="flex text-md omit font-bold pb-6 mr-17 justify-between w-131" onClick={getLogOut}>
-          <div className='omit pt-2'>{address}</div>
-        </button>
-          {/*<div className="form-control"> ////////////////////// Search 先不加了
+      <div className="flex flex-col flex-1 h-screen pb-24 font-poppins pr-21 w-[calc(100vw-206px)] min-w-[700px]">
+        <div className="flex flex-row pt-10 justify-end">
+          <div className="flex flex-row justify-end gap-4">
+            <JazziconGrid size={24} addr={getUserInfo().address} />
+            <button className="flex text-md omit font-bold pb-6 mr-17 justify-between w-131" onClick={getLogOut}>
+              <div className="omit pt-2">{address}</div>
+            </button>
+            {/*<div className="form-control"> ////////////////////// Search 先不加了
             <div className="input-group ">
               <input type="text" placeholder="Search Mail" className="input input-bordered h-32" />
               <button className="btn h-32 min-h-0 px-5 bg-[#006AD4]">
@@ -45,15 +45,15 @@ export default function HomePage() {
               </button>
             </div>
   </div>*/}
+          </div>
         </div>
+        <div className="flex flex-row flex-1 h-0 bg-white rounded-10">
+          <MailList />
+          <Mail />
+        </div>
+        <Alert message={'Network Error'} description={'Can not fetch detail info of this email for now.'} />
+        <NewMail />
       </div>
-      <div className='flex flex-row flex-1 h-0 bg-white rounded-10'>
-        <MailList/>
-        <Mail/>
-      </div>
-      <Alert message={'Network Error'} description={'Can not fetch detail info of this email for now.'}/>
-      <NewMail/>
-    </div>
     </div>
   );
 }

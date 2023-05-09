@@ -40,7 +40,7 @@ const request = (url: string, config?: Record<string, string>) => {
       } catch (e) {
         // const isCancel = axios.isCancel(e);
         checkLoginStatus(e);
-        console.log(e)
+        console.log(e);
       }
 
       return checkResponse(res);
@@ -57,7 +57,7 @@ const request = (url: string, config?: Record<string, string>) => {
         checkLoginStatus(e);
         if (checkAPIConnected(e)) {
           return 404;
-          }
+        }
       }
 
       return checkResponse(res);
