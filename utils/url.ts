@@ -14,7 +14,7 @@ export const deleteEmpty = (obj: any) => {
     return obj;
   }
   const copy = { ...obj };
-  Object.keys(obj).forEach((key) => {
+  Object.keys(obj).forEach(key => {
     if (copy[key] === undefined || copy[key] === null) {
       delete copy[key];
     }
@@ -22,10 +22,7 @@ export const deleteEmpty = (obj: any) => {
   return copy;
 };
 
-export const mergeUrlWithParams = (
-  url: string,
-  params?: Record<string, unknown>,
-) => {
+export const mergeUrlWithParams = (url: string, params?: Record<string, unknown>) => {
   if (typeof params !== 'object' || params === null || params === undefined) {
     return url;
   }

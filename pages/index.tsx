@@ -13,7 +13,7 @@ import Footer from 'sections/Footer';
 import RainbowLogin from '@components/RainbowLogin';
 import Head from 'next/head';
 import { useEffect } from 'react';
-import {ethers} from 'ethers';
+import { ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 import { getJwtToken, getRandomStrToSign } from '@services/login';
 import { getUserInfo, getWalletAddress, saveUserInfo } from '@utils/storage/user';
@@ -24,7 +24,7 @@ import CryptoJS from 'crypto-js';
 import { getEncryptionKey, putEncryptionKey } from '@services/user';
 export default function Intro() {
   //const setIsAlert = useStore((state:any) => state.setIsAlert)
-  const router = useRouter()  
+  const router = useRouter();
   const isConnected = useAccount().isConnected;
   const address = useAccount().address?.toLowerCase();
   console.log('pages');
@@ -32,82 +32,89 @@ export default function Intro() {
   console.log(isConnected);
   const generateEncryptionKey = async () => {
     //if (!window.ethereum) throw new Error('Your client does not support Ethereum');
-    try{
-    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-    const signer = provider.getSigner();
-    const salt = crypto.randomBytes(256).toString('hex');
-    const signedSalt = await signer.signMessage('Please sign this message to generate encrypted private key: \n \n' + salt);
-    const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+      const signer = provider.getSigner();
+      const salt = crypto.randomBytes(256).toString('hex');
+      const signedSalt = await signer.signMessage(
+        'Please sign this message to generate encrypted private key: \n \n' + salt
+      );
+      const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
 
-    const keyPair = await window.crypto.subtle.generateKey({
-      name: "ECDSA",
-      //modulusLength: 2048, //can be 1024, 2048, or 4096
-      //publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-      //hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
-      namedCurve: "P-256",},
-      true, //whether the key is extractable (i.e. can be used in exportKey)
-      ["sign", "verify"] //must be ["encrypt", "decrypt"] or ["wrapKey", "unwrapKey"]
-    );
-    console.log(keyPair);
-    //if (keyPair){
-    const privateBuffer = await window.crypto.subtle.exportKey(
-      "pkcs8", 
-      keyPair.privateKey 
-    );
-    const publicBuffer = await window.crypto.subtle.exportKey(
-      "spki",
-      keyPair.publicKey 
-    );
-    //var privateKey = RSA2text(keydata1,1);
-    //var uint8private = new Uint8Array(privateBuffer);
-    const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
-    const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
-    const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(Private_Store_Key, Storage_Encryption_Key).toString();
-    let data = {
-      addr: address? address.toString():'',
-      date: new Date().toISOString(),
-      salt: salt,
-      message_encryption_public_key: Public_Store_Key,
-      message_encryption_private_key: Encrypted_Private_Store_Key,
-      signing_public_key: Public_Store_Key,
-      signing_private_key: Encrypted_Private_Store_Key,
-      data: 'this is a test',
-      signature: ''
-    };
-    const keyData = keyPack(data);
-    console.log(keyData);
-    const keySignature = await signer.signMessage(keyData);
-    console.log(keySignature)
-    if (!keySignature) throw new Error('sign key error');
-    data.signature = keySignature;
-    await putEncryptionKey({data:data});
-    console.log('end')
-    return {
-      data:data
+      const keyPair = await window.crypto.subtle.generateKey(
+        {
+          name: 'ECDSA',
+          //modulusLength: 2048, //can be 1024, 2048, or 4096
+          //publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+          //hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+          namedCurve: 'P-256',
+        },
+        true, //whether the key is extractable (i.e. can be used in exportKey)
+        ['sign', 'verify'] //must be ["encrypt", "decrypt"] or ["wrapKey", "unwrapKey"]
+      );
+      console.log(keyPair);
+      //if (keyPair){
+      const privateBuffer = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
+      const publicBuffer = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
+      //var privateKey = RSA2text(keydata1,1);
+      //var uint8private = new Uint8Array(privateBuffer);
+      const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
+      const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
+      const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(Private_Store_Key, Storage_Encryption_Key).toString();
+      let data = {
+        addr: address ? address.toString() : '',
+        date: new Date().toISOString(),
+        salt: salt,
+        message_encryption_public_key: Public_Store_Key,
+        message_encryption_private_key: Encrypted_Private_Store_Key,
+        signing_public_key: Public_Store_Key,
+        signing_private_key: Encrypted_Private_Store_Key,
+        data: 'this is a test',
+        signature: '',
+      };
+      const keyData = keyPack(data);
+      console.log(keyData);
+      const keySignature = await signer.signMessage(keyData);
+      console.log(keySignature);
+      if (!keySignature) throw new Error('sign key error');
+      data.signature = keySignature;
+      await putEncryptionKey({ data: data });
+      console.log('end');
+      return {
+        data: data,
+      };
+    } catch (e) {
+      console.log('encrytionkey error');
+      console.log(e);
     }
-    }catch(e){
-      console.log('encrytionkey error')
-      console.log(e)
-    }
-  }
-  const keyPack = (keyData:any) =>{
-    const {addr, date, salt, message_encryption_public_key, message_encryption_private_key, signing_public_key, signing_private_key, data} = keyData;
+  };
+  const keyPack = (keyData: any) => {
+    const {
+      addr,
+      date,
+      salt,
+      message_encryption_public_key,
+      message_encryption_private_key,
+      signing_public_key,
+      signing_private_key,
+      data,
+    } = keyData;
     let parts = [
-      "Addr: " + addr,
-      "Date: " + date,
-      "Salt: " + salt,
-      "Message-Encryption-Public-Key: " + message_encryption_public_key,
-      "Message-Encryption-Private-Key: " + message_encryption_private_key,
-      "Signing-Public-Key: " + signing_public_key,
-      "Signing-Private-Key: " + signing_private_key,
-      "Data: " + data,
+      'Addr: ' + addr,
+      'Date: ' + date,
+      'Salt: ' + salt,
+      'Message-Encryption-Public-Key: ' + message_encryption_public_key,
+      'Message-Encryption-Private-Key: ' + message_encryption_private_key,
+      'Signing-Public-Key: ' + signing_public_key,
+      'Signing-Private-Key: ' + signing_private_key,
+      'Data: ' + data,
     ];
     return parts.join('\n');
-  }
+  };
   const handleAuth = async () => {
-    try{
+    try {
       if (!window.ethereum) throw new Error('Your client does not support Ethereum');
-      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
       const signer = provider.getSigner();
       //const lowAddr = address!.toLowerCase();
       //console.log(`address: ${address}\nlowAddr: ${lowAddr}`);
@@ -131,10 +138,9 @@ export default function Intro() {
       //  });
       //console.log(signedMessage);
       const res = await getJwtToken({
-          tokenForRandom,
-          signedMessage,
-        });
-
+        tokenForRandom,
+        signedMessage,
+      });
 
       /*const postData = {
         salt: signedSalt,
@@ -147,8 +153,8 @@ export default function Intro() {
         data: 'this is a test',        
       }*/
       //generateEncryptionKey();
-      let encryptionData = await getEncryptionKey(address??'');
-      console.log(encryptionData)
+      let encryptionData = await getEncryptionKey(address ?? '');
+      console.log(encryptionData);
       if (encryptionData == 404) encryptionData = await generateEncryptionKey();
       console.log('encrydt');
       console.log(encryptionData?.data?.message_encryption_public_key);
@@ -162,25 +168,21 @@ export default function Intro() {
       });
       router.push('/home');
       await disconnect();
-
-    }
-    catch(e){
+    } catch (e) {
       console.log('aaaa');
       //setIsAlert(true);
       console.log(e);
       await disconnect();
     }
-  } 
+  };
   useEffect(() => {
-
-      if (isConnected) {
-        if(getUserInfo().address===address){
-          router.push('/home');
-          disconnect();
-        }
-        else handleAuth();
-      }
-  },);
+    if (isConnected) {
+      if (getUserInfo().address === address) {
+        router.push('/home');
+        disconnect();
+      } else handleAuth();
+    }
+  });
   return (
     <div className="flex flex-col mx-auto max-w-[2000px]">
       <Head>

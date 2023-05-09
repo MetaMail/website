@@ -8,19 +8,19 @@ export function getEncryptionKey(address: string) {
   return request(`${APIs.getEncryptionKey}${address}`).get();
 }
 
-interface IEncryptionKeyData{
-  salt: string,
-  addr: string,
-  signature: string,
-  message_encryption_public_key: string,
-  message_encryption_private_key: string,
-  signing_private_key: string,
-  signing_public_key: string,
-  data: string,
-  date: string,
+interface IEncryptionKeyData {
+  salt: string;
+  addr: string;
+  signature: string;
+  message_encryption_public_key: string;
+  message_encryption_private_key: string;
+  signing_private_key: string;
+  signing_public_key: string;
+  data: string;
+  date: string;
 }
-interface IPutEncryptionKeyData{
-  data: IEncryptionKeyData
+interface IPutEncryptionKeyData {
+  data: IEncryptionKeyData;
 }
 
 export function putEncryptionKey(data: IPutEncryptionKeyData) {

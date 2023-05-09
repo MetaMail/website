@@ -9,8 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier:check": "prettier --check \"./{pages,components}/**/*.{ts,tsx}\"",
-    "prettier:write": "prettier --write \"./{pages,components}/**/*.{ts,tsx}\""
+    "prettier:check": "prettier --check \"./{pages,components,constants,sections,services,styles,typings,utils}/**/*.{ts,tsx}\"",
+    "prettier:write": "prettier --write \"./{pages,components,constants,sections,services,styles,typings,utils}/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@metamask/eth-sig-util": "^5.0.2",

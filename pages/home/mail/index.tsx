@@ -1,4 +1,3 @@
-
 import Icon from '@components/Icon';
 import Image from 'next/image';
 import tempMailSenderIcon from '@assets/tempMailSenderIcon.svg';
@@ -16,17 +15,11 @@ import {
   back,
   mailMore,
   markFavorite,
-  markUnread
+  markUnread,
 } from 'assets/icons';
-import {
-  IMailContentItem,
-  MetaMailTypeEn,
-  ReadStatusTypeEn,
-} from 'constants/interfaces';
+import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'constants/interfaces';
 import { useState, useEffect, useRef, ReactElement } from 'react';
-import {
-  getMailDetailByID,
-} from '@services/home';
+import { getMailDetailByID } from '@services/home';
 import DOMPurify from 'dompurify';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -67,77 +60,79 @@ var regex = RegExp('^(' + allowlist.join('|') + '):', 'gim');
 //});*/
 
 function Mail(props: any) {
-  const router = useRouter()
+  const router = useRouter();
   const [mail, setMail] = useState<IMailContentItem>();
   const [isExtend, setIsExtend] = useState(false);
   const [readable, setReadable] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isRead, setIsRead] = useState(true);
   const randomBitsRef = useRef();
-  const filterType = useStore((state:any) => state.filter)
-  const isMailDetail = useStore((state:any) => state.isMailDetail)
-  const detailFromList = useStore((state:any) => state.detailFromList);
-  const setIsMailDetail = useStore((state:any) => state.setIsMailDetail) 
+  const filterType = useStore((state: any) => state.filter);
+  const isMailDetail = useStore((state: any) => state.isMailDetail);
+  const detailFromList = useStore((state: any) => state.detailFromList);
+  const setIsMailDetail = useStore((state: any) => state.setIsMailDetail);
   console.log(detailFromList);
   const [mailInfo, setMailInfo] = useState([
     {
       message_id: detailFromList.message_id,
-      mailbox: detailFromList.mailbox
+      mailbox: detailFromList.mailbox,
     },
   ]);
-  const [mark,setMark] = useState(detailFromList?.mark===1?true:false);
+  const [mark, setMark] = useState(detailFromList?.mark === 1 ? true : false);
   const sixMail = [
     {
       src: back,
-      handler: ()=>{
+      handler: () => {
         setIsMailDetail(false);
-      }
+      },
     },
     {
       src: trash,
-      handler: ()=>{
-      clearMailListInfo();
+      handler: () => {
+        clearMailListInfo();
         handleDelete(mailInfo);
         router.back();
-      } 
-    },  {
+      },
+    },
+    {
       src: temp1,
-      handler: ()=>{
-  
-      } 
-    },  {
+      handler: () => {},
+    },
+    {
       src: spam,
-      handler: ()=>{
+      handler: () => {
         clearMailListInfo();
         handleSpam(mailInfo);
         router.back();
-      }
-    },  {
+      },
+    },
+    {
       src: read,
       checkedSrc: markUnread,
-      handler: ()=>{
+      handler: () => {
         clearMailListInfo();
-        handleChangeReadStatus(mailInfo,isRead?ReadStatusTypeEn.unread:ReadStatusTypeEn.read);
+        handleChangeReadStatus(mailInfo, isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read);
         setIsRead(!isRead);
       },
       onselect: isRead,
-    },  
+    },
     {
       src: starred,
       checkedSrc: markFavorite,
-      handler: ()=>{
+      handler: () => {
         clearMailListInfo();
         handleStar(mailInfo, mark);
         setMark(!mark);
       },
       onselect: mark,
-    },]
+    },
+  ];
 
   const threeMail = [
     {
       src: starred,
       checkedSrc: markFavorite,
-      handler: ()=>{
+      handler: () => {
         clearMailListInfo();
         handleStar(mailInfo, mark);
         setMark(!mark);
@@ -146,18 +141,19 @@ function Mail(props: any) {
     },
     {
       src: sent,
-      handler: ()=>{
+      handler: () => {
         //handleStar(mailInfo);
       },
     },
     {
       src: mailMore,
-      handler: ()=>{
+      handler: () => {
         //handleStar(mailInfo);
-      }
-    },]
+      },
+    },
+  ];
 
-  const changeInnerHTML = (data:IMailContentItem)=>{
+  const changeInnerHTML = (data: IMailContentItem) => {
     if (data.part_html) {
       var el = document.createElement('html');
       el.innerHTML = data.part_html;
@@ -177,11 +173,11 @@ function Mail(props: any) {
                 data.part_html = el.innerHTML;
               }
             });
-          },
+          }
         );
       }
     }
-  }
+  };
 
   const handleLoad = async () => {
     setMail(undefined);
@@ -200,12 +196,12 @@ function Mail(props: any) {
       //    ifIndex = true;
       //  }
       //  })
-      if(!loading) setLoading(true);
+      if (!loading) setLoading(true);
       //if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
       const { data } = await getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
       changeInnerHTML(data);
       setMail(data);
-    //}
+      //}
     } catch (e) {
       console.log(e);
       console.log('mailError');
@@ -214,121 +210,120 @@ function Mail(props: any) {
       //  description: 'Can not fetch detail info of this email for now.',
       //});
       setMail(undefined);
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   };
 
-
   useEffect(() => {
     setMailInfo([
       {
-      message_id: detailFromList.message_id,
-      mailbox: detailFromList.mailbox
-      }
-    ])
-    setMark(detailFromList?.mark===1?true:false);
+        message_id: detailFromList.message_id,
+        mailbox: detailFromList.mailbox,
+      },
+    ]);
+    setMark(detailFromList?.mark === 1 ? true : false);
     if (detailFromList?.meta_type === MetaMailTypeEn.Encrypted + '') {
       setReadable(false);
     }
     // handleMarkRead();
     if (getUserInfo()?.address) {
       if (isMailDetail) handleLoad();
-    }
-    else {
+    } else {
       clearUserInfo();
       router.push('/');
     }
   }, [detailFromList]);
 
-        return(
-        <div className={isMailDetail?'flex':'hidden'}>
-        <div className={isExtend?'w-[calc(100vw-225px)] transition-all h-[100%]':'w-[38vw] transition-all h-[100%]'}>
-        <div className='w-full h-full bg-white flex flex-col font-poppins'>
-          <div className='h-[86%] w-0 border absolute top-54'/>
-          <header className='flex flex-col justify-between h-100 w-full px-16'>
-            <div className='py-11 flex justify-between w-full'>
-                <div className='h-14 flex gap-10'>
-                    {sixMail.map((item,index) => {
-                    return (
-                        <Icon
-                        url={item.src}
-                        key={index}
-                        checkedUrl={item?.checkedSrc}
-                        select={item?.onselect}
-                        className='w-13 h-auto self-center'
-                        onClick={item.handler}
-                        /> 
-                    );})}  
-                </div>
-                <div className='flex gap-10'>
+  return (
+    <div className={isMailDetail ? 'flex' : 'hidden'}>
+      <div className={isExtend ? 'w-[calc(100vw-225px)] transition-all h-[100%]' : 'w-[38vw] transition-all h-[100%]'}>
+        <div className="w-full h-full bg-white flex flex-col font-poppins">
+          <div className="h-[86%] w-0 border absolute top-54" />
+          <header className="flex flex-col justify-between h-100 w-full px-16">
+            <div className="py-11 flex justify-between w-full">
+              <div className="h-14 flex gap-10">
+                {sixMail.map((item, index) => {
+                  return (
+                    <Icon
+                      url={item.src}
+                      key={index}
+                      checkedUrl={item?.checkedSrc}
+                      select={item?.onselect}
+                      className="w-13 h-auto self-center"
+                      onClick={item.handler}
+                    />
+                  );
+                })}
+              </div>
+              <div className="flex gap-10">
                 <Icon
                   url={extend}
                   checkedUrl={extend}
-                  className='w-13 h-auto self-center '
-                  onClick={()=>setIsExtend(!isExtend)}/> 
+                  className="w-13 h-auto self-center "
+                  onClick={() => setIsExtend(!isExtend)}
+                />
                 <Icon
                   url={cancel}
-                  onClick={()=>setIsMailDetail(false)}
-                  className='w-13 scale-[120%] h-auto self-center'/> 
-                </div>
+                  onClick={() => setIsMailDetail(false)}
+                  className="w-13 scale-[120%] h-auto self-center"
+                />
+              </div>
             </div>
-            <div className='flex justify-between pr-21'>
-              <div className='flex gap-11'>
-                <Image
-                    src={tempMailSenderIcon}
-                    className='self-center w-40 h-auto' alt={'tempMailSenderIcon'}/> 
-                <div className='self-end'>
-                  <div className='text-[#0075EA] text-md'>{mail?.mail_from?.name ?? mail?.mail_from?.address}</div>
-                  <div className='flex text-xs gap-3 w-220'>to:
-                    <Image
-                      src={ifLock}
-                      className='self-center ' alt={'ifLock'}/>
-                    <div className='flex-1 omit'>{mail?.mail_to[0]?.address}</div>
+            <div className="flex justify-between pr-21">
+              <div className="flex gap-11">
+                <Image src={tempMailSenderIcon} className="self-center w-40 h-auto" alt={'tempMailSenderIcon'} />
+                <div className="self-end">
+                  <div className="text-[#0075EA] text-md">{mail?.mail_from?.name ?? mail?.mail_from?.address}</div>
+                  <div className="flex text-xs gap-3 w-220">
+                    to:
+                    <Image src={ifLock} className="self-center " alt={'ifLock'} />
+                    <div className="flex-1 omit">{mail?.mail_to[0]?.address}</div>
                   </div>
                 </div>
               </div>
-              <div className='flex flex-col self-end gap-6 stroke-current text-[#707070]'>
-                <div className='text-xs'>{moment(mail?.mail_date).format("ddd, MMM DD, Y LT") }</div>
-                <div className='flex gap-10 justify-end'>
-                {threeMail.map((item,index) => {
+              <div className="flex flex-col self-end gap-6 stroke-current text-[#707070]">
+                <div className="text-xs">{moment(mail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
+                <div className="flex gap-10 justify-end">
+                  {threeMail.map((item, index) => {
                     return (
-                        <Icon
+                      <Icon
                         url={item.src}
                         checkedUrl={item?.checkedSrc}
                         select={item?.onselect}
                         key={index}
                         onClick={item.handler}
-                        className='w-13 h-auto self-center'
-                        /> 
-                    );})} 
+                        className="w-13 h-auto self-center"
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </div>
           </header>
-          <h1 className='p-16 pl-[4%] w-[70%] h-48 omit text-2xl font-bold pb-0 mb-24'>{mail?.subject}</h1>
-          {loading?<div className='flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]'/>:
-          <h2 className='flex-1 overflow-auto ml-19'>{mail?.part_html
-            ? parse(DOMPurify.sanitize(mail?.part_html))
-            : mail?.part_text}
-          </h2>}
+          <h1 className="p-16 pl-[4%] w-[70%] h-48 omit text-2xl font-bold pb-0 mb-24">{mail?.subject}</h1>
+          {loading ? (
+            <div className="flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]" />
+          ) : (
+            <h2 className="flex-1 overflow-auto ml-19">
+              {mail?.part_html ? parse(DOMPurify.sanitize(mail?.part_html)) : mail?.part_text}
+            </h2>
+          )}
           {mail?.attachments && mail.attachments.length > 0 && (
-              <div className='flex'>
-                {mail?.attachments?.map((item, idx) => (
-                  <button className='m-22 mb-0 w-168 h-37 bg-[#F3F7FF] rounded-6' key={idx}/>
-                  ))}
-              </div>
-            )}
-          <button className='m-22 mb-9 w-105 h-36 '>
-            <Image src={replyBtn} alt={'reply'}/> 
+            <div className="flex">
+              {mail?.attachments?.map((item, idx) => (
+                <button className="m-22 mb-0 w-168 h-37 bg-[#F3F7FF] rounded-6" key={idx} />
+              ))}
+            </div>
+          )}
+          <button className="m-22 mb-9 w-105 h-36 ">
+            <Image src={replyBtn} alt={'reply'} />
           </button>
         </div>
-        </div>
-        </div>
-        )
+      </div>
+    </div>
+  );
 }
 
 Mail.getLayout = (page: ReactElement) => <Layout>{page}</Layout>;
 export default Mail;
-
