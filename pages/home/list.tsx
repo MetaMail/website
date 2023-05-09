@@ -109,7 +109,13 @@ function MailList() {
     });
     return res;
   };
+  const handleBlur = () => {
+    setIsFilterHidden(true);
+  };
 
+  const handleFocus = () => {
+    setIsFilterHidden(false);
+  };
   const fetchMailList = async (showLoading = true) => {
     if (showLoading) {
       setLoading(true);
@@ -286,15 +292,16 @@ function MailList() {
                 //deleteStorage('mailDetailStorage');
                 fetchMailList(true);}}
             />
-            <div className="dropdown inline-relative">
+            <div className="dropdown inline-relative"
+                tabIndex={0}
+                onBlur={handleBlur}
+                onFocus={handleFocus}>
             <Icon      ///////////最初设计稿的提示
-            url={filter}
-            onClick={()=>setIsFilterHidden(!isFilterHidden)}/>
+            url={filter}/>
                 <ul className={isFilterHidden?'hidden':'flex z-[2] menu absolute mt-6 shadow bg-base-100 rounded-5 '}>
                 {fourFilter.map((item,index) => {
                   return (
                     <li onClick={()=>{
-                      setIsFilterHidden(!isFilterHidden);
                       setFilter(Number(item.filter));                      
                     }}
                     key={index}><a className='px-12 py-4 text-xs modal-bg'>{item.content}</a></li>
