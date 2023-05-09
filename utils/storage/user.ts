@@ -8,6 +8,8 @@ interface IUserInfo {
   publicKey?: string;
   ensName?: string;
   address?: string;
+  privateKey?: string;
+  salt?: string;
 }
 
 interface IAllUserInfo extends IUserInfo {
@@ -26,6 +28,14 @@ export const saveUserInfo = (value: IUserInfo) => {
 
 export const getPublicKeyFromLocal = () => {
   return getStorage(UserInfoStoreKey, null)?.publicKey;
+};
+
+export const getPrivateKeyFromLocal = () => {
+  return getStorage(UserInfoStoreKey, null)?.privateKey;
+};
+
+export const getSaltFromLocal = () => {
+  return getStorage(UserInfoStoreKey, null)?.salt;
 };
 
 export const getWalletAddress = () => {

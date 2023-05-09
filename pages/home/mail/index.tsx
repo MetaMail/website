@@ -70,15 +70,12 @@ function Mail(props: any) {
   const router = useRouter()
   const [mail, setMail] = useState<IMailContentItem>();
   const [isExtend, setIsExtend] = useState(false);
-  //const { address, ensName } = getUserInfo();
   const [readable, setReadable] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isRead, setIsRead] = useState(true);
-  const randomBitsRef = useRef('');
-  const queryRef = useRef(0);
+  const randomBitsRef = useRef();
   const filterType = useStore((state:any) => state.filter)
   const isMailDetail = useStore((state:any) => state.isMailDetail)
-
   const detailFromList = useStore((state:any) => state.detailFromList);
   const setIsMailDetail = useStore((state:any) => state.setIsMailDetail) 
   console.log(detailFromList);
@@ -188,9 +185,9 @@ function Mail(props: any) {
 
   const handleLoad = async () => {
     setMail(undefined);
-    console.log('sssssssssssssss');
-    let ifIndex = false;
+    //let ifIndex = false;
     try {
+      //TODO:实现邮件数据预先加载
       //if (!router.query?.id && router?.query?.id?.length === 0 ) {
       //  throw new Error();
       //}
@@ -204,11 +201,11 @@ function Mail(props: any) {
       //  }
       //  })
       if(!loading) setLoading(true);
-      if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
+      //if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
       const { data } = await getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
       changeInnerHTML(data);
       setMail(data);
-    }
+    //}
     } catch (e) {
       console.log(e);
       console.log('mailError');
@@ -232,7 +229,7 @@ function Mail(props: any) {
       }
     ])
     setMark(detailFromList?.mark===1?true:false);
-    if (router.query?.type === MetaMailTypeEn.Encrypted + '') {
+    if (detailFromList?.meta_type === MetaMailTypeEn.Encrypted + '') {
       setReadable(false);
     }
     // handleMarkRead();
@@ -245,15 +242,6 @@ function Mail(props: any) {
     }
   }, [detailFromList]);
 
-  const handleClickDownload = () => {
-    //const downloadLink=document.createElement('a');
-    mail &&
-      mail.download &&
-      mail.download.url &&
-      window.open(mail?.download?.url);
-    //downloadLink.href=mail?.download?.url;
-    //downloadLink.click();
-  };
         return(
         <div className={isMailDetail?'flex':'hidden'}>
         <div className={isExtend?'w-[calc(100vw-225px)] transition-all h-[100%]':'w-[38vw] transition-all h-[100%]'}>

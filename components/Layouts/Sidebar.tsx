@@ -1,19 +1,15 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import logoBrand from '@assets/MetaMail.svg';
 import logo from '@assets/logo.svg';
 import showMore from '@assets/showMore.svg';
-import purpleTag from '@assets/purpleTag.svg';
 import {add, more} from '@assets/icons';
 import compose from '@assets/inbox_compose.svg';
 import {MailMenuItems } from '@constants/menu';
-//import { FilterTypeEn, MetaMailTypeEn } from '@constants/interfaces';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Icon from '@components/Icon';
 import { useRouter } from 'next/router';
-import { disconnect } from '@wagmi/core';
 import useStore from '@utils/storage/zustand';
-import { FilterTypeEn } from '@constants/interfaces';
+import { FilterTypeEn, MetaMailTypeEn } from '@constants/interfaces';
 import { createMail } from '@utils/crypto/crypt';
 import { getMailDetailByID } from '@services/home';
 
@@ -24,10 +20,8 @@ export default function Sidebar(props:any) {
   const unreadCount = useStore((state: any) => state.unreadCount)
   const [dropTag, setDropTag] = useState(false);
   const [dropFilter, setDropFilter] = useState(false);
-  //const setIsAlert = useStore((state:any) => state.setIsAlert)
   const setIsOnCompose = useStore((state:any) => state.setIsOnCompose)
   const setDetailFromNew = useStore((state:any) => state.setDetailFromNew)
-
   const router = useRouter()
   async function handleReturnHome(){
     router.push('/');
@@ -38,14 +32,15 @@ export default function Sidebar(props:any) {
     resetPage();
   }
   async function handleClickNewMail(){
-    const newMailID = await createMail(0);
+    const newMailID = await createMail(MetaMailTypeEn.Encrypted);
+    //const newMailID = await createMail(MetaMailTypeEn.Plain);
     console.log(newMailID)
     if (newMailID){
       setDetailFromNew((await getMailDetailByID(window.btoa(newMailID ?? ''))).data)
       setIsOnCompose(true);
     }
     else{
-      console.log('throw new Error');
+      console.log('throw new Error:no const newMailID = await createMail');
     }
   }
 
