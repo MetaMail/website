@@ -20,6 +20,7 @@ import { getUserInfo, getWalletAddress, saveUserInfo } from '@utils/storage/user
 import { disconnect } from '@wagmi/core';
 import keccak256 from 'keccak256';
 import crypto from 'crypto';
+import CryptoJS from 'crypto-js';
 import { getEncryptionKey, putEncryptionKey } from '@services/user';
 export default function Intro() {
   //const setIsAlert = useStore((state:any) => state.setIsAlert)
@@ -81,6 +82,9 @@ export default function Intro() {
     data.signature = keySignature;
     await putEncryptionKey({data:data});
     console.log('end')
+    return {
+      data:data
+    }
     }catch(e){
       console.log('encrytionkey error')
       console.log(e)
@@ -143,16 +147,18 @@ export default function Intro() {
         data: 'this is a test',        
       }*/
       //generateEncryptionKey();
-      const encryptionData = await getEncryptionKey(address??'');
+      let encryptionData = await getEncryptionKey(address??'');
       console.log(encryptionData)
-      if (encryptionData === 404) await generateEncryptionKey();
+      if (encryptionData == 404) encryptionData = await generateEncryptionKey();
       console.log('encrydt');
-      console.log(encryptionData);
+      console.log(encryptionData?.data?.message_encryption_public_key);
       const { data: user } = res ?? {};
       saveUserInfo({
         address,
         ensName: user?.user?.ens,
-        publicKey: user?.user?.public_key?.public_key,
+        publicKey: encryptionData?.data?.message_encryption_public_key,
+        privateKey: encryptionData?.data?.message_encryption_private_key,
+        salt: encryptionData?.data?.salt,
       });
       router.push('/home');
       await disconnect();

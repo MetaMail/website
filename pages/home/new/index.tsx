@@ -11,44 +11,39 @@ import BaseLine from '@components/BaseLine';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { IMailContentItem, IPersonItem, MetaMailTypeEn } from '@constants/interfaces';
-import { getUserInfo, getWalletAddress, saveUserInfo, setRandomBits } from '@utils/storage/user';
+import { getPrivateKeyFromLocal, getSaltFromLocal, getUserInfo, getWalletAddress, saveUserInfo, setRandomBits } from '@utils/storage/user';
 import { getMailDetailByID } from '@services/home';
 import { clearMailContent, getMailContent } from '@utils/storage/mail';
 import { createDraft, sendMail, updateMail } from '@services/mail';
 import { getPersonalSign } from '@utils/crypto/signature';
-import { handleGetReceiversInfos, metaPack } from './utils';
-import { useRouter } from 'next/router';
-import { pkEncrypt } from '@utils/crypto/crypt';
+import { metaPack } from './utils';
 import useInterval from '@utils/hooks';
 import { PostfixOfAddress } from '@utils/request';
 import FileUploader from '@components/FileUploader';
 import NameSelecter from '@components/NameSelecter';
 import EmailRecipientInput from './EmailRecipientInput';
-export default function NewMail(props: { randomBits: any; }) {
+import { getEncryptionKey } from '@services/user';
+export default function NewMail() {
     const [isExtend, setIsExtend] = useState(false);
     const isOnCompose = useStore((state: any) => state.isOnCompose)
     const setIsOnCompose = useStore((state:any) => state.setIsOnCompose)
-    const {randomBits} = props;
     const [subject, setSubject] = useState<string>('');
-    const router = useRouter()
-  
     const [receivers, setReceivers] = useState<IPersonItem[]>([]);
     const [content, setContent] = useState<string>('');
     const [temp,settemp] = useState<string>('');
     const [attList, setAttList] = useState<any[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [editable, setEditable] = useState<boolean>();
-
     const detailFromNew = useStore((state:any) => state.detailFromNew);
     const setDetailFromNew = useStore((state:any) => state.setDetailFromNew)
-    const draftID = detailFromNew?.message_id;
+    const draftID = detailFromNew?.message_id; 
     //const draftID = query?.id;    
     const type: MetaMailTypeEn = Number(detailFromNew?.meta_type);
     const myKeyRef = useRef<string>();
     //const currRandomBitsRef = useRef<string>(randomBits);
     const dateRef = useRef<string>();
     const allowSaveRef = useRef(true);
-    const currRandomBitsRef = useRef<string>(randomBits);
+    const currRandomBitsRef = useRef<string>();
     const reactQuillRef = useRef<ReactQuill>();
     const getQuill = () => {
       if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
@@ -189,17 +184,14 @@ export default function NewMail(props: { randomBits: any; }) {
     
       const handleClickSend = async () => {
         if (!draftID) return;
-        console.log(receivers?.length)
+
         if (receivers?.length < 1) {
-          // notification.error({
+          // TODO: notification.error({
             // message: 'No Receipt',
             // description: 'At lease 1 receipt',
           // });
-          /////////测试
-          console.log('receivers?.length < 1');
-          return;
-          //setReceivers([{address:temp??''}]);
 
+          return;
         }
         allowSaveRef.current = false;
         try {
@@ -208,40 +200,33 @@ export default function NewMail(props: { randomBits: any; }) {
               return;
             }
             const { address, ensName, showName, publicKey } = getUserInfo();
-            console.log(address)
             console.log(getUserInfo())
-            console.log(showName)
             if (!address || !showName) {
               console.warn('No address or name of current user, please check.');
               return;
             }
-            console.log(receivers)
-            console.log('here1')
             const { html, text } = obj;
     
             let keys: string[] = [];
             if (type === MetaMailTypeEn.Encrypted) {
               // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
               let pks: string[] = [publicKey!];
-              const receiverInfos = await handleGetReceiversInfos(receivers);
               for (var i = 0; i < receivers.length; i++) {
                 const receiverItem = receivers[i];
-                const receiverPrefix = receiverItem.address.split('@')[0];
-                let rpk = receiverInfos?.[receiverPrefix]?.public_key?.public_key;
-                if (!rpk) {
-                  // notification.error({
-                    // message: 'Failed Send',
-                    // description:
-                      // 'Can not find public key of ' +
-                      // receiverItem.address +
-                      // '. Please consider sending plain mail.',
-                  // });
-                  return;
-                }
-                pks.push(rpk);
+                const encryptionData = await getEncryptionKey(receiverItem.address.split('@')[0]);
+                const receriverPublicKey = encryptionData?.data?.message_encryption_public_key;
+                if (encryptionData == 404 || !receriverPublicKey || receriverPublicKey.length==0 ) {throw new Error('Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.')
+              
+              }
+                pks.push(receriverPublicKey);
               }
               console.log(pks, '--');
-              keys = pks.map((pk) => pkEncrypt(pk, currRandomBitsRef.current));
+              const mySalt = getSaltFromLocal();
+              console.log(mySalt);
+              if(!currRandomBitsRef.current){
+                console.log('error: no currrandombitsref.current')
+              }
+              else keys = pks.map((pk) => CryptoJS.AES.encrypt(currRandomBitsRef.current!, pk).toString());
             }
     
             const orderedAtt = attList;
@@ -304,6 +289,7 @@ export default function NewMail(props: { randomBits: any; }) {
 
 
       const handleSave = async () => {
+        if(!currRandomBitsRef.current) handleDecrypted();
         console.log(draftID);
         console.log(editable);
         if (!draftID) return;
@@ -331,11 +317,13 @@ export default function NewMail(props: { randomBits: any; }) {
           console.log(html)
         if (oldHtml == html && oldText == text) return { html, text }; //一样
         // 加密邮件
-        //if (type === MetaMailTypeEn.Encrypted) {
-        if(false){
-          html = CryptoJS.AES.encrypt(html, currRandomBitsRef.current).toString();
+        if (type === MetaMailTypeEn.Encrypted) {
+          if(!currRandomBitsRef.current){
+            console.log('error: no currrandombitsref.current')
+          }
+          else{html = CryptoJS.AES.encrypt(html, currRandomBitsRef.current).toString();
           text = CryptoJS.AES.encrypt(text, currRandomBitsRef.current).toString();
-        }
+          }}
         console.log(receivers)
         const { ensName, showName} = getUserInfo();
         const { data } =
@@ -401,6 +389,28 @@ export default function NewMail(props: { randomBits: any; }) {
       };
     
 
+      const handleDecrypted = async () => {
+        if (!myKeyRef.current) return;
+        const privateKey = getPrivateKeyFromLocal();
+        if(!privateKey||privateKey.length==0){
+          console.log('error: no privateKey in sesssion storage')
+        }
+        // @ts-ignore
+        let randomBits = CryptoJS.AES.decrypt(myKeyRef.current,privateKey).toString(CryptoJS.enc.Utf8);
+        if (!randomBits) {
+          console.log('error: no randombits') 
+          return;
+        }
+        currRandomBitsRef.current = randomBits;
+        const decryptedContent = CryptoJS.AES.decrypt(
+          content,
+          currRandomBitsRef.current,
+        ).toString(CryptoJS.enc.Utf8);
+        setContent(decryptedContent);
+        setEditable(true);
+        console.log('setEditable(true);');
+      };
+
     return(
     <div className={isOnCompose?'visible':'invisible'}>
     <div className={isExtend?'flex flex-col font-poppins bg-white p-18 h-full transition-all w-[calc(100vw-200px)] absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10':'flex flex-col font-poppins bg-white p-18 h-502 w-[45vw] absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 transition-all'}>
@@ -458,7 +468,7 @@ export default function NewMail(props: { randomBits: any; }) {
         </h1>
         <BaseLine/>
         </div>
-
+{editable?
         <ReactQuill
               ref={(el) => {
                 el ? (reactQuillRef.current = el) : void 0;
@@ -472,7 +482,7 @@ export default function NewMail(props: { randomBits: any; }) {
               onChange={(value) => {
                 handleChangeContent(value);
               }}
-            />
+            />:<button onClick={handleDecrypted}>Decrypt</button>}
         <div className='pt-17 flex gap-13'>
             <button onClick={handleClickSend}>
                 <Image alt={'sendMail'} src={sendMailIcon}/>

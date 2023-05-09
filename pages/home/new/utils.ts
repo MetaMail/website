@@ -1,21 +1,8 @@
-//import { pkEncrypt } from '@/layouts/SideMenu/utils';
-//import { getUserInfos } from '@/services/user';
-//import { PostfixOfAddress } from '@/utils/constants';
 import { IPersonItem } from '@constants/interfaces';
-import { getUserInfos } from '@services/user';
 import { PostfixOfAddress } from '@utils/request';
-
 
 const concatAddress = (item: IPersonItem) =>
   (item?.name ?? '') + ' ' + '<' + item.address + '>';
-
-export const handleGetReceiversInfos = async (to: IPersonItem[]) => {
-  const { data } = await getUserInfos(
-    to?.map((item) => item.address.split('@')[0]),
-  );
-
-  return data;
-};
 
 export const metaPack = async (data: {
   from: string;
