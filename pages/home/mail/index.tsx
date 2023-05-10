@@ -28,8 +28,7 @@ import { getUserInfo, getShowName, clearUserInfo } from '@utils/storage/user';
 import Layout from '@components/Layouts';
 import useStore from '@utils/storage/zustand';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
-import { deleteStorage, getStorage, updateStorage } from '@utils/storage';
-import { reverse } from 'dns';
+//import { reverse } from 'dns';
 import { clearMailListInfo } from '@utils/storage/mail';
 // allowed URI schemes
 var allowlist = ['http', 'https', 'ftp'];
@@ -152,6 +151,55 @@ function Mail(props: any) {
       },
     },
   ];
+
+  const handleDecrypted = async () => {
+    let keys = mail?.meta_header?.keys;
+    const { address, ensName } = getUserInfo();
+    if (keys && keys?.length > 0 && address) {
+      const addrList = [
+        mail?.mail_from.address,
+        ...(mail?.mail_to.map(item => item.address) || []),
+        ...(mail?.mail_cc.map(item => item.address) || []),
+        ...(mail?.mail_bcc.map(item => item.address) || []),
+      ];
+      const idx = addrList.findIndex(addr => {
+        const prefix = addr?.split('@')[0].toLocaleLowerCase();
+        return prefix === address || prefix === ensName;
+      });
+      if (idx < 0 || idx > keys.length - 1) {
+        console.log('not find index from address list');
+        return;
+      }
+      let key = keys[idx];
+
+      // @ts-ignore
+      const privateKey = getPrivateKey();
+      let randomBits = CryptoJS.AES.decrypt(key, privateKey).toString(CryptoJS.enc.Utf8);
+      if (!randomBits) {
+        console.log('error: no randombits');
+        return;
+      }
+
+      if (randomBits) {
+        //TODO: attachments randomBitsRef.current = randomBits;
+        const res = { ...mail };
+
+        if (res?.part_html) {
+          res.part_html = CryptoJS.AES.decrypt(res.part_html, randomBits).toString(CryptoJS.enc.Utf8);
+        }
+
+        if (res?.part_text) {
+          res.part_text = CryptoJS.AES.decrypt(res.part_text, randomBits).toString(CryptoJS.enc.Utf8);
+        }
+
+        setReadable(true);
+        setMail(res as IMailContentItem);
+        //message.success({ content: 'Mail decrypted', duration: 2 });
+      }
+    } else {
+      console.warn(`please check your keys ${keys} and address ${address}`);
+    }
+  };
 
   const changeInnerHTML = (data: IMailContentItem) => {
     if (data.part_html) {
@@ -301,21 +349,29 @@ function Mail(props: any) {
               </div>
             </div>
           </header>
-          <h1 className="p-16 pl-[4%] w-[70%] h-48 omit text-2xl font-bold pb-0 mb-24">{mail?.subject}</h1>
+
           {loading ? (
             <div className="flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]" />
+          ) : readable ? (
+            <>
+              <h1 className="p-16 pl-[4%] w-[70%] h-48 omit text-2xl font-bold pb-0 mb-24">{mail?.subject}</h1>
+              <h2 className="flex-1 overflow-auto ml-19">
+                {mail?.part_html ? parse(DOMPurify.sanitize(mail?.part_html)) : mail?.part_text}
+              </h2>
+              {mail?.attachments && mail.attachments.length > 0 && (
+                <div className="flex">
+                  {mail?.attachments?.map((item, idx) => (
+                    <button className="m-22 mb-0 w-168 h-37 bg-[#F3F7FF] rounded-6" key={idx} />
+                  ))}
+                </div>
+              )}
+            </>
           ) : (
-            <h2 className="flex-1 overflow-auto ml-19">
-              {mail?.part_html ? parse(DOMPurify.sanitize(mail?.part_html)) : mail?.part_text}
-            </h2>
+            <button className="flex-1" onClick={handleDecrypted}>
+              Decrypt
+            </button>
           )}
-          {mail?.attachments && mail.attachments.length > 0 && (
-            <div className="flex">
-              {mail?.attachments?.map((item, idx) => (
-                <button className="m-22 mb-0 w-168 h-37 bg-[#F3F7FF] rounded-6" key={idx} />
-              ))}
-            </div>
-          )}
+
           <button className="m-22 mb-9 w-105 h-36 ">
             <Image src={replyBtn} alt={'reply'} />
           </button>
