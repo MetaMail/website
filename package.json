@@ -9,8 +9,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier:check": "prettier --check \"./{pages,components,constants,sections,services,styles,typings,utils}/**/*.{ts,tsx}\"",
-    "prettier:write": "prettier --write \"./{pages,components,constants,sections,services,styles,typings,utils}/**/*.{ts,tsx}\""
+    "lint-staged": "lint-staged",
+    "prettier:check": "prettier --check \"**/*.{ts,tsx}\"",
+    "prettier:write": "prettier --write \"**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@metamask/eth-sig-util": "^5.0.2",
@@ -45,20 +46,21 @@
     "autoprefixer": "^10.4.13",
     "eslint": "8.29.0",
     "eslint-config-next": "13.0.6",
-    "husky": "^8.0.2",
-    "lint-staged": "^13.1.0",
+    "husky": "^4.0.0",
+    "lint-staged": "^10.1.2",
     "postcss": "^8.4.20",
     "prettier": "^2.8.1",
     "tailwindcss": "^3.2.4",
     "typescript": "4.9.4",
     "typescript-cookie": "^1.0.3"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-staged"
+    }
+  },
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "prettier --write",
-      "eslint --cache --fix"
-    ],
-    "*.json": [
+    "**/*.{json,js,ts,tsx}": [
       "prettier --write"
     ]
   }
