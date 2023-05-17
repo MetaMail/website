@@ -1,8 +1,8 @@
-import Alert from '@components/Alert';
-import Layout from '@components/Layouts';
-import { clearMailListInfo } from '@utils/storage/mail';
-import { clearUserInfo, getUserInfo } from '@utils/storage/user';
-import useStore from '@utils/storage/zustand';
+import Alert from 'components/Alert';
+import Layout from 'components/Layouts';
+import { clearMailListInfo } from 'storage/mail';
+import { clearUserInfo, getUserInfo } from 'storage/user';
+import useStore from 'storage/zustand';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import MailList from './list';
@@ -11,7 +11,7 @@ import NewMail from './new';
 import dynamic from 'next/dynamic';
 
 export default function HomePage() {
-  const JazziconGrid = dynamic(() => import('@components/JazziconAvatar'), { ssr: false });
+  const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const router = useRouter();
   const [address, setAddress] = useState<string>();
   const removeAll = useStore((state: any) => state.removeAll);

@@ -1,5 +1,5 @@
-import { IPersonItem, MetaMailTypeEn } from '@constants/interfaces';
-import request from '../utils/request';
+import { IPersonItem, MetaMailTypeEn } from 'constants/interfaces';
+import request from './request';
 
 const APIs = {
   createDraft: '/mails/draft', // 新建草稿

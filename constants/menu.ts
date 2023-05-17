@@ -1,4 +1,4 @@
-import { draft, encryptedInbox, inbox, read, sent, spam, trash, unread, markFavorite, starred } from '@assets/icons';
+import { draft, encryptedInbox, inbox, read, sent, spam, trash, unread, markFavorite, starred } from 'assets/icons';
 import { FilterTypeEn } from './interfaces';
 
 export const SiderFilterMap: Record<FilterTypeEn, { title: string; logo: string; hidden?: boolean }> = {

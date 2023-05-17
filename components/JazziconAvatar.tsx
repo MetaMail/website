@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import jazzicon from 'jazzicon';
-import { getUserInfo } from '@utils/storage/user';
+import { getUserInfo } from 'storage/user';
 
 const JazziconGrid = ({ size, addr }: { size: number; addr?: string }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);

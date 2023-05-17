@@ -1,5 +1,5 @@
-import { IPersonItem } from '@constants/interfaces';
-import { deleteStorage, getStorage, updateStorage } from '@utils/storage';
+import { IPersonItem } from 'constants/interfaces';
+import { deleteStorage, getStorage, updateStorage } from 'storage';
 
 const MailListInfo = 'MailListInfo';
 /*

@@ -1,4 +1,4 @@
-import { deleteStorage, getStorage, updateStorage } from '@utils/storage';
+import { deleteStorage, getStorage, updateStorage } from 'storage';
 
 const UserInfoStoreKey = 'MetaMailUserInfo';
 const ShowNameKey = 'MetaMailShowName';

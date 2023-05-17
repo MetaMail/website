@@ -1,6 +1,6 @@
-import encrypt from '@assets/encrypt.svg';
+import encrypt from 'assets/encrypt.svg';
 import moment from 'moment';
-import Icon from '@components/Icon';
+import Icon from 'components/Icon';
 import Image from 'next/image';
 import { IPersonItem, MarkTypeEn, MetaMailTypeEn } from 'constants/interfaces';
 import { checkbox, favorite, markFavorite, selected, white, trash, markUnread } from 'assets/icons';

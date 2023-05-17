@@ -1,8 +1,8 @@
-import Icon from '@components/Icon';
+import Icon from 'components/Icon';
 import Image from 'next/image';
-import tempMailSenderIcon from '@assets/tempMailSenderIcon.svg';
-import replyBtn from '@assets/replyButton.svg';
-import ifLock from '@assets/ifLock.svg';
+import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
+import replyBtn from 'assets/replyButton.svg';
+import ifLock from 'assets/ifLock.svg';
 import {
   extend,
   cancel,
@@ -19,18 +19,18 @@ import {
 } from 'assets/icons';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'constants/interfaces';
 import { useState, useEffect, useRef, ReactElement } from 'react';
-import { getMailDetailByID } from '@services/home';
+import { getMailDetailByID } from 'services/home';
 import DOMPurify from 'dompurify';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import parse from 'html-react-parser';
-import { getUserInfo, getShowName, clearUserInfo } from '@utils/storage/user';
-import Layout from '@components/Layouts';
-import useStore from '@utils/storage/zustand';
-import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
-//import { reverse } from 'dns';
-import { clearMailListInfo } from '@utils/storage/mail';
-// allowed URI schemes
+import { getUserInfo, getShowName, clearUserInfo } from 'storage/user';
+import Layout from 'components/Layouts';
+import useStore from 'storage/zustand';
+import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'utils/mail';
+//import { reverse } from 'dns';storage
+import { clearMailListInfo } from 'storage/mail';
+// allowed URI schemesstorage/mail
 var allowlist = ['http', 'https', 'ftp'];
 // build fitting regex
 var regex = RegExp('^(' + allowlist.join('|') + '):', 'gim');

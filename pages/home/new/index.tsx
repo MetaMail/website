@@ -1,16 +1,16 @@
-import { cancel, extend } from '@assets/icons';
-import Icon from '@components/Icon';
-import Layout from '@components/Layouts';
-import sendMailIcon from '@assets/sendMail.svg';
+import { cancel, extend } from 'assets/icons';
+import Icon from 'components/Icon';
+import Layout from 'components/Layouts';
+import sendMailIcon from 'assets/sendMail.svg';
 import { EditorFormats, EditorModules } from './constants';
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
-import useStore from '@utils/storage/zustand';
-import BaseLine from '@components/BaseLine';
+import useStore from 'storage/zustand';
+import BaseLine from 'components/BaseLine';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { IMailContentItem, IPersonItem, MetaMailTypeEn } from '@constants/interfaces';
+import { IMailContentItem, IPersonItem, MetaMailTypeEn } from 'constants/interfaces';
 import {
   getPrivateKeyFromLocal,
   getSaltFromLocal,
@@ -18,18 +18,18 @@ import {
   getWalletAddress,
   saveUserInfo,
   setRandomBits,
-} from '@utils/storage/user';
-import { getMailDetailByID } from '@services/home';
-import { clearMailContent, getMailContent } from '@utils/storage/mail';
-import { createDraft, sendMail, updateMail } from '@services/mail';
-import { getPersonalSign } from '@utils/crypto/signature';
+} from 'storage/user';
+import { getMailDetailByID } from 'services/home';
+import { clearMailContent, getMailContent } from 'storage/mail';
+import { createDraft, sendMail, updateMail } from 'services/mail';
+import { getPersonalSign } from 'utils/crypto/signature';
 import { metaPack } from './utils';
-import useInterval from '@utils/hooks';
-import { PostfixOfAddress } from '@utils/request';
-import FileUploader from '@components/FileUploader';
-import NameSelecter from '@components/NameSelecter';
+import useInterval from 'utils/hooks';
+import { PostfixOfAddress } from 'services/request';
+import FileUploader from 'components/FileUploader';
+import NameSelecter from 'components/NameSelecter';
 import EmailRecipientInput from './EmailRecipientInput';
-import { getEncryptionKey } from '@services/user';
+import { getEncryptionKey } from 'services/user';
 export default function NewMail() {
   const [isExtend, setIsExtend] = useState(false);
   const isOnCompose = useStore((state: any) => state.isOnCompose);

@@ -1,17 +1,17 @@
 import Image from 'next/image';
-import logoBrand from '@assets/MetaMail.svg';
-import logo from '@assets/logo.svg';
-import showMore from '@assets/showMore.svg';
-import { add, more } from '@assets/icons';
-import compose from '@assets/inbox_compose.svg';
-import { MailMenuItems } from '@constants/menu';
+import logoBrand from 'assets/MetaMail.svg';
+import logo from 'assets/logo.svg';
+import showMore from 'assets/showMore.svg';
+import { add, more } from 'assets/icons';
+import compose from 'assets/inbox_compose.svg';
+import { MailMenuItems } from 'constants/menu';
 import React, { useState } from 'react';
-import Icon from '@components/Icon';
+import Icon from 'components/Icon';
 import { useRouter } from 'next/router';
-import useStore from '@utils/storage/zustand';
-import { FilterTypeEn, MetaMailTypeEn } from '@constants/interfaces';
-import { createMail } from '@utils/crypto/crypt';
-import { getMailDetailByID } from '@services/home';
+import useStore from 'storage/zustand';
+import { FilterTypeEn, MetaMailTypeEn } from 'constants/interfaces';
+import { createMail } from 'utils/crypto/crypt';
+import { getMailDetailByID } from 'services/home';
 
 export default function Sidebar(props: any) {
   const setFilter = useStore((state: any) => state.setFilter);

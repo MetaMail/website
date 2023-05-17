@@ -1,5 +1,5 @@
-import { MailBoxTypeEn, MarkTypeEn, ReadStatusTypeEn } from '@constants/interfaces';
-import request from '../utils/request';
+import { MailBoxTypeEn, MarkTypeEn, ReadStatusTypeEn } from 'constants/interfaces';
+import request from './request';
 
 const APIs = {
   getMailList: '/mails/filter', //

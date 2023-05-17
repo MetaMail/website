@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { mergeUrlWithParams } from '@utils/url';
+import { mergeUrlWithParams } from 'utils/url';
 
 //const BASE_URL = 'https://api.metamail.ink/';
 //const BASE_URL = 'http://localhost:8080';

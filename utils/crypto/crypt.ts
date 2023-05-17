@@ -1,6 +1,6 @@
-import { MetaMailTypeEn } from '@constants/interfaces';
-import { createDraft } from '@services/mail';
-import { getPrivateKeyFromLocal, getUserInfo, saveUserInfo, setRandomBits } from '@utils/storage/user';
+import { MetaMailTypeEn } from 'constants/interfaces';
+import { createDraft } from 'services/mail';
+import { getPrivateKeyFromLocal, getUserInfo, saveUserInfo, setRandomBits } from 'storage/user';
 import { ethers } from 'ethers';
 import keccak256 from 'keccak256';
 

@@ -1,4 +1,4 @@
-import request from '../utils/request';
+import request from './request';
 
 const APIs = {
   getRandomString: '/auth/random', // 获取随机字符串，用户需要对这个字符串签名

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import addAttach from '@assets/addAttach.svg';
-import { uploadAttachment } from '@services/mail';
-import { AttachmentRelatedTypeEn } from '@pages/home/new/utils';
-import { MetaMailTypeEn } from '@constants/interfaces';
+import addAttach from 'assets/addAttach.svg';
+import { uploadAttachment } from 'services/mail';
+import { AttachmentRelatedTypeEn } from 'pages/home/new/utils';
+import { MetaMailTypeEn } from 'constants/interfaces';
 import CryptoJS from 'crypto-js';
 interface IFileUploader {
   draftID: string;

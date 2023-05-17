@@ -1,4 +1,4 @@
-import { IMailItem } from '@constants/interfaces';
+import { IMailItem } from 'constants/interfaces';
 import { create } from 'zustand';
 const useStore = create(set => ({
   filter: 0,

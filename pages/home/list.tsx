@@ -1,8 +1,8 @@
-import MailListItem from '@components/MailItem';
+import MailListItem from 'components/MailItem';
 import { useState, useEffect } from 'react';
-import Icon from '@components/Icon';
+import Icon from 'components/Icon';
 import { useRouter } from 'next/router';
-import useStore from '@utils/storage/zustand';
+import useStore from 'storage/zustand';
 
 import {
   FilterTypeEn,
@@ -16,11 +16,11 @@ import {
 } from 'constants/interfaces';
 import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'services/home';
 import { checkbox, trash, read, starred, markUnread, temp1, spam, filter, update, cancelSelected } from 'assets/icons';
-import { getUserInfo, setRandomBits } from 'utils/storage/user';
-import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from '@utils/mail';
-import { updateStorage } from '@utils/storage';
+import { getUserInfo, setRandomBits } from 'storage/user';
+import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'utils/mail';
+import { updateStorage } from 'storage';
 //import Link from 'next/link';
-import { clearMailListInfo, getMailListInfo } from '@utils/storage/mail';
+import { clearMailListInfo, getMailListInfo } from 'storage/mail';
 function MailList() {
   //const state = useStore()
   const setFilter = useStore((state: any) => state.setFilter);

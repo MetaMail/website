@@ -1,4 +1,4 @@
-import request from '../utils/request';
+import request from './request';
 
 const APIs = {
   getEncryptionKey: '/users/key/', //获取和消息加密密钥
