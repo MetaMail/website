@@ -384,11 +384,8 @@ export default function NewMail() {
 
   const handleDecrypted = async () => {
     if (!myKeyRef.current) return;
-    const privateKey = getPrivateKeyFromLocal();
-    if (!privateKey || privateKey.length == 0) {
-      console.log('error: no privateKey in sesssion storage');
-    }
     // @ts-ignore
+    const privateKey = getPrivateKey();
     let randomBits = CryptoJS.AES.decrypt(myKeyRef.current, privateKey).toString(CryptoJS.enc.Utf8);
     if (!randomBits) {
       console.log('error: no randombits');
@@ -483,7 +480,9 @@ export default function NewMail() {
             }}
           />
         ) : (
-          <button onClick={handleDecrypted}>Decrypt</button>
+          <button className="flex-1" onClick={handleDecrypted}>
+            Decrypt
+          </button>
         )}
         <div className="pt-17 flex gap-13">
           <button onClick={handleClickSend}>
