@@ -49,10 +49,11 @@ const FileUploader = (item: IFileUploader) => {
       form.append('related', related);
       cid && form.append('cid', cid);
 
-      const { data } = await uploadAttachment(item.draftID, form);
+      const data = await uploadAttachment(item.draftID, form);
+      const attachmentRes = data.attachment;
 
-      if (data?.attachment) {
-        item.onAttachment(data.attachment);
+      if (attachmentRes) {
+        item.onAttachment(attachmentRes);
         //message.success({ content: 'Uploaded', key: sha256 });
       }
     } catch {

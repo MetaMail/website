@@ -53,10 +53,8 @@ export enum FilterTypeEn {
   Sent,
   Trash,
   Draft,
-
   Starred,
   Spam,
-
   Read,
   Unread,
 }

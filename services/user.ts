@@ -1,11 +1,18 @@
-import request from './request';
+import { httpInstance } from 'lib/request';
 
 const APIs = {
   getEncryptionKey: '/users/key/', //获取和消息加密密钥
   postEncryptionKey: '/users/key', //上传签名和消息加密密钥
 };
-export function getEncryptionKey(address: string) {
-  return request(`${APIs.getEncryptionKey}${address}`).get();
+
+interface IGetEncryptionKeyResponse {
+  salt: string;
+  signing_private_key: string;
+  message_encryption_private_key: string;
+  signing_public_key: string;
+  message_encryption_public_key: string;
+  signature: string;
+  data: string;
 }
 
 interface IEncryptionKeyData {
@@ -19,10 +26,14 @@ interface IEncryptionKeyData {
   data: string;
   date: string;
 }
-interface IPutEncryptionKeyData {
+interface IPutEncryptionKeyParams {
   data: IEncryptionKeyData;
 }
 
-export function putEncryptionKey(data: IPutEncryptionKeyData) {
-  return request(APIs.postEncryptionKey).put(data);
+export async function getEncryptionKey(address: string) {
+  return httpInstance.get<void, IGetEncryptionKeyResponse>(`${APIs.getEncryptionKey}${address}`);
+}
+
+export async function putEncryptionKey(params: IPutEncryptionKeyParams) {
+  return httpInstance.put<IPutEncryptionKeyParams, void>(APIs.postEncryptionKey, params);
 }

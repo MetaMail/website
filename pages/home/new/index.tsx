@@ -25,7 +25,7 @@ import { createDraft, sendMail, updateMail } from 'services/mail';
 import { getPersonalSign } from 'utils/crypto/signature';
 import { metaPack } from './utils';
 import useInterval from 'utils/hooks';
-import { PostfixOfAddress } from 'services/request';
+import { PostfixOfAddress } from 'lib/request';
 import FileUploader from 'components/FileUploader';
 import NameSelecter from 'components/NameSelecter';
 import EmailRecipientInput from './EmailRecipientInput';
@@ -159,14 +159,14 @@ export default function NewMail() {
 
   const handleSend = async (keys: string[], packedResult: string, signature?: string) => {
     try {
-      const { data } = await sendMail(draftID, {
+      const { message_id } = await sendMail(draftID, {
         date: dateRef.current,
         signature: signature,
         keys,
         data: packedResult,
       });
 
-      if (data) {
+      if (message_id) {
         // notification.success({
         // message: 'Sent',
         // description: 'Your email has been sent successfully.',
@@ -321,7 +321,7 @@ export default function NewMail() {
     }
     console.log(receivers);
     const { ensName, showName } = getUserInfo();
-    const { data } =
+    const { message_id, mail_date } =
       (await updateMail(draftID, {
         subject: subject,
         mail_to: receivers,
@@ -333,13 +333,13 @@ export default function NewMail() {
         },
       })) ?? {};
 
-    if (data?.message_id !== draftID) {
+    if (message_id !== draftID) {
       console.warn('DANGER: wrong updating source');
     }
     sessionStorage.setItem('html', html);
     sessionStorage.setItem('text', text);
     console.log('save');
-    dateRef.current = data?.mail_date;
+    dateRef.current = mail_date;
     return { html, text };
   };
   const handleLoad = async (id?: string) => {
@@ -347,8 +347,8 @@ export default function NewMail() {
       //if (!query?.id && query.id.length === 0) {
       //  throw new Error();
       //}
-      const { data } = await getMailDetailByID(window.btoa(id ?? detailFromNew.message_id ?? ''));
-      const mail = data as IMailContentItem;
+      const { mail } = await getMailDetailByID(window.btoa(id ?? detailFromNew.message_id ?? ''));
+
       if (mail) {
         //const { subject, mail_to, part_html } = getMailContent();
         console.log(mail);

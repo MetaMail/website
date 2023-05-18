@@ -116,52 +116,25 @@ export default function Intro() {
       if (!window.ethereum) throw new Error('Your client does not support Ethereum');
       const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
       const signer = provider.getSigner();
-      //const lowAddr = address!.toLowerCase();
-      //console.log(`address: ${address}\nlowAddr: ${lowAddr}`);
-      const { data } = await getRandomStrToSign(address!);
-      const { randomStr, signMethod, tokenForRandom } = data;
+      const { randomStr, signMethod, tokenForRandom } = await getRandomStrToSign(address!);
       console.log('randomStr');
       console.log(crypto.randomBytes(256));
       console.log(Buffer.from(randomStr, 'utf8'));
       const signedMessage = await signer.signMessage(randomStr);
       console.log('signedMessage');
       console.log(signedMessage);
-
-      //console.log(await signer.signMessage('Hi there from MetaMail! Sign this message to prove you have access to this account. Sending and receiving mails are totally free, no gas fee.\n\nYour one-time nonce: zKKdqAaFMn8lQCQz0oZK3pabbJoOAZOx-KAjZKf4BjY'));
-      //const signedMessage = await window.ethereum.request({
-      //    method: 'personal_sign',
-      //    params: [
-      //      Buffer.from(randomStr, 'utf8').toString('hex'),
-      //      address,
-      //      'password',
-      //    ],
-      //  });
-      //console.log(signedMessage);
-      const res = await getJwtToken({
+      const { user } = await getJwtToken({
         tokenForRandom,
         signedMessage,
       });
-
-      /*const postData = {
-        salt: signedSalt,
-        addr: address??'',
-        signature: signedMessage,
-        message_encryption_public_key: Public_Store_Key,
-        message_encryption_private_key: Private_Store_Key,
-        signing_private_key: Private_Store_Key,
-        signing_public_key: Public_Store_Key,
-        data: 'this is a test',        
-      }*/
-      //generateEncryptionKey();
       let encryptionData = await getEncryptionKey(address ?? '');
       console.log(encryptionData);
       if (encryptionData == 404) encryptionData = await generateEncryptionKey();
       console.log('encrydt');
       console.log(encryptionData?.data?.message_encryption_public_key);
-      const { data: user } = res ?? {};
       saveUserInfo({
         address,
-        ensName: user?.user?.ens,
+        ensName: user.ens,
         publicKey: encryptionData?.data?.message_encryption_public_key,
         privateKey: encryptionData?.data?.message_encryption_private_key,
         salt: encryptionData?.data?.salt,

@@ -30,9 +30,9 @@ export const createMail = async (type: MetaMailTypeEn) => {
   if (type === MetaMailTypeEn.Encrypted && (!key || key?.length === 0)) {
     return;
   }
-  const { data } = await createDraft(type, key);
+  const { message_id } = await createDraft(type, key);
 
-  if (data && data?.message_id) return data?.message_id;
+  return message_id;
 };
 
 export const getPrivateKey = async () => {

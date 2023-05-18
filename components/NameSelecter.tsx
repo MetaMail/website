@@ -1,5 +1,5 @@
 import { swapAddr } from 'assets/icons';
-import { PostfixOfAddress } from 'services/request';
+import { PostfixOfAddress } from 'lib/request';
 import { getUserInfo, saveShowName } from 'storage/user';
 import { useState } from 'react';
 import Icon from './Icon';

@@ -36,7 +36,7 @@ export default function Sidebar(props: any) {
     //const newMailID = await createMail(MetaMailTypeEn.Plain);
     console.log(newMailID);
     if (newMailID) {
-      setDetailFromNew((await getMailDetailByID(window.btoa(newMailID ?? ''))).data);
+      setDetailFromNew(await getMailDetailByID(window.btoa(newMailID ?? '')));
       setIsOnCompose(true);
     } else {
       console.log('throw new Error:no const newMailID = await createMail');

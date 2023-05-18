@@ -1,5 +1,5 @@
 import { IPersonItem } from 'constants/interfaces';
-import { PostfixOfAddress } from 'services/request';
+import { PostfixOfAddress } from 'lib/request';
 
 const concatAddress = (item: IPersonItem) => (item?.name ?? '') + ' ' + '<' + item.address + '>';
 

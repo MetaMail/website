@@ -246,9 +246,9 @@ function Mail(props: any) {
       //  })
       if (!loading) setLoading(true);
       //if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
-      const { data } = await getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
-      changeInnerHTML(data);
-      setMail(data);
+      const { mail } = await getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
+      changeInnerHTML(mail);
+      setMail(mail);
       //}
     } catch (e) {
       console.log(e);

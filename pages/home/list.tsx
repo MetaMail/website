@@ -126,15 +126,16 @@ function MailList() {
         ////////不是缓存 重新取
         clearMailListInfo();
         console.log('meiyoulisthuancun');
-        const { data } = await getMailList({
+        const data = await getMailList({
           filter: filterType,
           page_index: pageIdx,
+          limit: 20,
         });
-        console.log(data);
-        console.log(data?.mails);
-        setList(data?.mails ?? []);
-        setPageNum(data?.page_num);
-        setUnreadCount(data.unread ?? 0);
+
+        const { mails, page_num, unread } = data;
+        setList(mails ?? []);
+        setPageNum(page_num);
+        setUnreadCount(unread ?? 0);
         const mailListStorage = {
           //设置邮件列表缓存
           data: data,
@@ -154,36 +155,6 @@ function MailList() {
       }
     }
   };
-  /*
-  const getMailDetail = ()=>{
-      const mailDetailStorage = getStorage('mailDetailStorage');
-      console.log('zzzzzzz');
-      console.log(mailDetailStorage)
-      const isMailDetailStorageExist = mailDetailStorage?.page_index===pageIdx && mailDetailStorage?.filter===filterType && mailDetailStorage?.mailDetails[list.length-1]?.message_id;
-      if (isMailDetailStorageExist){
-        console.log('detailhuancunle');
-        mailDetail = mailDetailStorage?.mailDetails;
-        console.log(mailDetailStorage);
-      }
-      else{
-        deleteStorage('mailDetailStorage');
-        try{
-        mailDetail = [];
-        list.map(async (item)=>{
-          const { data } = (await getMailDetailByID(window.btoa(item.message_id)))??{};
-          console.log(data);
-          mailDetail.push(data);
-          console.log(mailDetail);
-          })
-        }catch(e){
-          console.log(e);
-          console.log("ListError");
-          //setIsAlert(true);
-
-        }
-      }
-  }
-  */
 
   useEffect(() => {
     if (getUserInfo()?.address) fetchMailList(true);
