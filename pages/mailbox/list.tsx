@@ -202,18 +202,6 @@ function MailList() {
     //read: number,
     item: IMailItem
   ) => {
-    /*
-    const mailDetailStorage = {
-      mailDetails: mailDetail,
-      page_index: pageIdx,
-      filter: filterType,
-    }
-    console.log('mailDetailStorage');
-    console.log(mailDetailStorage);
-    updateStorage('MailListInfo',mailDetailStorage);
-    */
-    //const pathname =
-    //  filterType === FilterTypeEn.Draft ? '/home/new' : '/home/mail';
     setRandomBits(undefined); // clear random bits
     if (!read) {
       const mails = [{ message_id: item?.message_id, mailbox: Number(item.mailbox) }];
@@ -227,13 +215,6 @@ function MailList() {
       setDetailFromList(item);
       setIsMailDetail(true);
     }
-    /*router.push({
-    pathname,
-    query: {
-        id,
-        type: type + '',
-    },
-    }); */
   };
   return (
     <div className="flex flex-col flex-1 min-w-0">
@@ -327,10 +308,7 @@ function MailList() {
           <div className="flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]" />
         ) : (
           list.map((item, index) => {
-            //const url = ('/home/mail?id='+item.message_id.replaceAll('@','%40')+'&type='+item.meta_type);
-            //router.prefetch(url);
             return (
-              //<Link key={index} rel='prefetch' href={'/home/mail?id='+item.message_id+'&type='+item.meta_type}>
               <button
                 key={index}
                 className={

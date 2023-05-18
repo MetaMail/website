@@ -1,5 +1,19 @@
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
+import { useAccount } from 'wagmi';
+import { disconnect } from '@wagmi/core';
+import { ethers } from 'ethers';
+
+import ReviewInfo from 'components/ReviewInfo';
+import Footer from 'components/Footer';
+import RainbowLogin from 'components/RainbowLogin';
+import { getJwtToken, getRandomStrToSign } from 'services/login';
+import { getEncryptionKey, putEncryptionKey } from 'services/user';
+import { getUserInfo, saveUserInfo } from 'storage/user';
+import { generateEncryptionKey } from 'utils/crypto';
+
 import logoBrand from 'assets/logo_brand.svg';
 import computer from 'assets/computer.svg';
 import table from 'assets/Table.svg';
@@ -8,113 +22,31 @@ import pic1Left from 'assets/pic1left.svg';
 import pic2Right from 'assets/pic2Right.svg';
 import pic3Left from 'assets/pic3Left.svg';
 import gdL from 'assets/gdL.png';
-import ReviewInfo from 'components/ReviewInfo';
-import Footer from 'components/Footer';
-import RainbowLogin from 'components/RainbowLogin';
-import Head from 'next/head';
-import { useEffect } from 'react';
-import { ethers } from 'ethers';
-import { useAccount } from 'wagmi';
-import { getJwtToken, getRandomStrToSign } from 'services/login';
-import { getUserInfo, getWalletAddress, saveUserInfo } from 'storage/user';
-import { disconnect } from '@wagmi/core';
-import keccak256 from 'keccak256';
-import crypto from 'crypto';
-import CryptoJS from 'crypto-js';
-import { getEncryptionKey, putEncryptionKey } from 'services/user';
-export default function Intro() {
+
+export default function Welcome() {
   const router = useRouter();
   const isConnected = useAccount().isConnected;
   const address = useAccount().address?.toLowerCase();
-  const generateEncryptionKey = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-    const signer = provider.getSigner();
-    const salt = crypto.randomBytes(256).toString('hex');
-    const signedSalt = await signer.signMessage(
-      'Please sign this message to generate encrypted private key: \n \n' + salt
-    );
-    const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
 
-    const keyPair = await window.crypto.subtle.generateKey(
-      {
-        name: 'ECDSA',
-        //modulusLength: 2048, //can be 1024, 2048, or 4096
-        //publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-        //hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
-        namedCurve: 'P-256',
-      },
-      true, //whether the key is extractable (i.e. can be used in exportKey)
-      ['sign', 'verify'] //must be ["encrypt", "decrypt"] or ["wrapKey", "unwrapKey"]
-    );
-    const privateBuffer = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
-    const publicBuffer = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
-    const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
-    const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
-    const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(Private_Store_Key, Storage_Encryption_Key).toString();
-    const returnData = {
-      salt,
-      signing_private_key: Encrypted_Private_Store_Key,
-      message_encryption_private_key: Encrypted_Private_Store_Key,
-      signing_public_key: Public_Store_Key,
-      message_encryption_public_key: Public_Store_Key,
-      signature: '',
-      data: 'this is a test',
-    };
-    const keyData = keyPack({
-      ...returnData,
-      addr: address ? address.toString() : '',
-      date: new Date().toISOString(),
-    });
-    const keySignature = await signer.signMessage(keyData);
-    if (!keySignature) throw new Error('sign key error');
-    returnData.signature = keySignature;
-
-    await putEncryptionKey({
-      data: { ...returnData, addr: address ? address.toString() : '', date: new Date().toISOString() },
-    });
-    return returnData;
-  };
-  const keyPack = (keyData: any) => {
-    const {
-      addr,
-      date,
-      salt,
-      message_encryption_public_key,
-      message_encryption_private_key,
-      signing_public_key,
-      signing_private_key,
-      data,
-    } = keyData;
-    let parts = [
-      'Addr: ' + addr,
-      'Date: ' + date,
-      'Salt: ' + salt,
-      'Message-Encryption-Public-Key: ' + message_encryption_public_key,
-      'Message-Encryption-Private-Key: ' + message_encryption_private_key,
-      'Signing-Public-Key: ' + signing_public_key,
-      'Signing-Private-Key: ' + signing_private_key,
-      'Data: ' + data,
-    ];
-    return parts.join('\n');
-  };
-  const handleAuth = async () => {
+  const handleAutoLogin = async () => {
     try {
       if (!window.ethereum) throw new Error('Your client does not support Ethereum');
       const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
       const signer = provider.getSigner();
-      const { randomStr, signMethod, tokenForRandom } = await getRandomStrToSign(address!);
-      console.log('randomStr');
-      console.log(crypto.randomBytes(256));
-      console.log(Buffer.from(randomStr, 'utf8'));
+      const { randomStr, tokenForRandom } = await getRandomStrToSign(address!);
       const signedMessage = await signer.signMessage(randomStr);
-      console.log('signedMessage');
-      console.log(signedMessage);
       const { user } = await getJwtToken({
         tokenForRandom,
         signedMessage,
       });
       let encryptionData = await getEncryptionKey(address ?? '');
-      if (!encryptionData.message_encryption_public_key) encryptionData = await generateEncryptionKey();
+      if (!encryptionData.message_encryption_public_key) {
+        encryptionData = await generateEncryptionKey(address);
+        // do upload
+        await putEncryptionKey({
+          data: { ...encryptionData, addr: address ? address.toString() : '', date: new Date().toISOString() },
+        });
+      }
       saveUserInfo({
         address,
         ensName: user.ens,
@@ -122,22 +54,22 @@ export default function Intro() {
         privateKey: encryptionData.message_encryption_private_key,
         salt: encryptionData.salt,
       });
-      router.push('/home');
-      await disconnect();
-    } catch (e) {
-      console.log('aaaa');
-      //setIsAlert(true);
-      console.log(e);
+      router.push('/mailbox');
+    } catch (error) {
+      console.log(error);
+    } finally {
       await disconnect();
     }
   };
   useEffect(() => {
-    if (isConnected) {
-      if (getUserInfo().address === address) {
-        router.push('/home');
-        disconnect();
-      } else handleAuth();
-    }
+    (async () => {
+      if (!isConnected) return;
+      if (getUserInfo().address !== address) {
+        return handleAutoLogin();
+      }
+      await disconnect();
+      router.push('/mailbox');
+    })();
   });
   return (
     <div className="flex flex-col mx-auto max-w-[2000px]">
@@ -156,8 +88,6 @@ export default function Intro() {
             <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
               <RainbowLogin content="Connect Wallet" />
             </div>
-            {/*<button className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins" onClick={handleOpenConnectModal}>Connect Wallet</button>
-        <div className=' w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins'></div>*/}
           </header>
         </div>
         <div className="pt-78 lg:pt-136 relative left-174 2xl:left-[18%] w-399">

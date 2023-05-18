@@ -4,12 +4,11 @@
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
+  exportPathMap: async function (defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
+    return {
+      '/': { page: '/welcome' },
+    };
+  },
 };
-
-// module.exports = withImages({
-//   webpack(nextConfig) {
-//     return nextConfig;
-//   },
-// });
 
 module.exports = nextConfig;

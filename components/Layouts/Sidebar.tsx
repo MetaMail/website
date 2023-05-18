@@ -27,7 +27,7 @@ export default function Sidebar(props: any) {
     router.push('/');
   }
   function handleChangeFilter(filter: FilterTypeEn) {
-    if (router?.query?.id) router.push('/home');
+    if (router?.query?.id) router.push('/mailbox');
     setFilter(Number(filter));
     resetPage();
   }

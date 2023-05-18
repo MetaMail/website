@@ -35,29 +35,6 @@ var allowlist = ['http', 'https', 'ftp'];
 // build fitting regex
 var regex = RegExp('^(' + allowlist.join('|') + '):', 'gim');
 
-/*DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-  // set all elements owning target to target=_blank
-
-  if (node.hasAttribute('href')) {
-    node.setAttribute('target', '_blank');
-    node.setAttribute('rel', 'noopener noreferrer');
-    const originLink = (node as any).href;
-
-    let realLink;
-    if (originLink && originLink.includes('/home/')) {
-      const realLink = (node as any).href.split('/home/')[1];
-    } else {
-      const protocolName = originLink?.match(
-        /(http|https):\/\/([\w.]+\/?)\S*/
-//        ,
-//      )?.[1];
-//      if (originLink) realLink = originLink.replace(protocolName + '://', '');
-//    }
-
-//    (node as any).href = `/notification/?link=${realLink}`;
-//  }
-//});*/
-
 function Mail(props: any) {
   const router = useRouter();
   const [mail, setMail] = useState<IMailContentItem>();
