@@ -1,4 +1,4 @@
-import { MailBoxTypeEn, MarkTypeEn, ReadStatusTypeEn, IMailContentItem } from 'constants/interfaces';
+import { MailBoxTypeEn, MarkTypeEn, ReadStatusTypeEn, IMailContentItem, FilterTypeEn } from 'constants/interfaces';
 import { httpInstance } from 'lib/request';
 
 const APIs = {
@@ -10,11 +10,9 @@ interface IGetMailDetailResponse {
   mail: IMailContentItem;
 }
 
-type GetMailListFilterType = any;
-
 interface IGetMailListParams {
   limit: number;
-  filter: GetMailListFilterType;
+  filter: FilterTypeEn;
   page_index: number;
 }
 
