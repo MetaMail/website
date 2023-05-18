@@ -1,5 +1,5 @@
 import { MarkTypeEn, ReadStatusTypeEn } from 'constants/interfaces';
-import { IMailChangeParams, changeMailStatus } from 'services/home';
+import { IMailChangeParams, changeMailStatus } from 'services/mail';
 //import { deleteStorage } from "./storage";
 //import router from "next/router";
 

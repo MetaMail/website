@@ -23,70 +23,56 @@ import crypto from 'crypto';
 import CryptoJS from 'crypto-js';
 import { getEncryptionKey, putEncryptionKey } from 'services/user';
 export default function Intro() {
-  //const setIsAlert = useStore((state:any) => state.setIsAlert)
   const router = useRouter();
   const isConnected = useAccount().isConnected;
   const address = useAccount().address?.toLowerCase();
-  console.log('pages');
-  console.log(address);
-  console.log(isConnected);
   const generateEncryptionKey = async () => {
-    //if (!window.ethereum) throw new Error('Your client does not support Ethereum');
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-      const signer = provider.getSigner();
-      const salt = crypto.randomBytes(256).toString('hex');
-      const signedSalt = await signer.signMessage(
-        'Please sign this message to generate encrypted private key: \n \n' + salt
-      );
-      const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
+    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+    const signer = provider.getSigner();
+    const salt = crypto.randomBytes(256).toString('hex');
+    const signedSalt = await signer.signMessage(
+      'Please sign this message to generate encrypted private key: \n \n' + salt
+    );
+    const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
 
-      const keyPair = await window.crypto.subtle.generateKey(
-        {
-          name: 'ECDSA',
-          //modulusLength: 2048, //can be 1024, 2048, or 4096
-          //publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-          //hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
-          namedCurve: 'P-256',
-        },
-        true, //whether the key is extractable (i.e. can be used in exportKey)
-        ['sign', 'verify'] //must be ["encrypt", "decrypt"] or ["wrapKey", "unwrapKey"]
-      );
-      console.log(keyPair);
-      //if (keyPair){
-      const privateBuffer = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
-      const publicBuffer = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
-      //var privateKey = RSA2text(keydata1,1);
-      //var uint8private = new Uint8Array(privateBuffer);
-      const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
-      const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
-      const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(Private_Store_Key, Storage_Encryption_Key).toString();
-      let data = {
-        addr: address ? address.toString() : '',
-        date: new Date().toISOString(),
-        salt: salt,
-        message_encryption_public_key: Public_Store_Key,
-        message_encryption_private_key: Encrypted_Private_Store_Key,
-        signing_public_key: Public_Store_Key,
-        signing_private_key: Encrypted_Private_Store_Key,
-        data: 'this is a test',
-        signature: '',
-      };
-      const keyData = keyPack(data);
-      console.log(keyData);
-      const keySignature = await signer.signMessage(keyData);
-      console.log(keySignature);
-      if (!keySignature) throw new Error('sign key error');
-      data.signature = keySignature;
-      await putEncryptionKey({ data: data });
-      console.log('end');
-      return {
-        data: data,
-      };
-    } catch (e) {
-      console.log('encrytionkey error');
-      console.log(e);
-    }
+    const keyPair = await window.crypto.subtle.generateKey(
+      {
+        name: 'ECDSA',
+        //modulusLength: 2048, //can be 1024, 2048, or 4096
+        //publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+        //hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+        namedCurve: 'P-256',
+      },
+      true, //whether the key is extractable (i.e. can be used in exportKey)
+      ['sign', 'verify'] //must be ["encrypt", "decrypt"] or ["wrapKey", "unwrapKey"]
+    );
+    const privateBuffer = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
+    const publicBuffer = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
+    const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
+    const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
+    const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(Private_Store_Key, Storage_Encryption_Key).toString();
+    const returnData = {
+      salt,
+      signing_private_key: Encrypted_Private_Store_Key,
+      message_encryption_private_key: Encrypted_Private_Store_Key,
+      signing_public_key: Public_Store_Key,
+      message_encryption_public_key: Public_Store_Key,
+      signature: '',
+      data: 'this is a test',
+    };
+    const keyData = keyPack({
+      ...returnData,
+      addr: address ? address.toString() : '',
+      date: new Date().toISOString(),
+    });
+    const keySignature = await signer.signMessage(keyData);
+    if (!keySignature) throw new Error('sign key error');
+    returnData.signature = keySignature;
+
+    await putEncryptionKey({
+      data: { ...returnData, addr: address ? address.toString() : '', date: new Date().toISOString() },
+    });
+    return returnData;
   };
   const keyPack = (keyData: any) => {
     const {
@@ -128,16 +114,13 @@ export default function Intro() {
         signedMessage,
       });
       let encryptionData = await getEncryptionKey(address ?? '');
-      console.log(encryptionData);
-      if (encryptionData == 404) encryptionData = await generateEncryptionKey();
-      console.log('encrydt');
-      console.log(encryptionData?.data?.message_encryption_public_key);
+      if (!encryptionData.message_encryption_public_key) encryptionData = await generateEncryptionKey();
       saveUserInfo({
         address,
         ensName: user.ens,
-        publicKey: encryptionData?.data?.message_encryption_public_key,
-        privateKey: encryptionData?.data?.message_encryption_private_key,
-        salt: encryptionData?.data?.salt,
+        publicKey: encryptionData.message_encryption_public_key,
+        privateKey: encryptionData.message_encryption_private_key,
+        salt: encryptionData.salt,
       });
       router.push('/home');
       await disconnect();

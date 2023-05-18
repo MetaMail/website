@@ -24,15 +24,15 @@ interface IGetJwtTokenParams {
 interface IGetJwtTokenResponse {
   newUser: boolean;
   user: {
-    last_login: Date;
+    last_login: string;
     addr: string;
     chain: string;
-    created_at: Date;
+    created_at: string;
     account_status: AccountStatusTypeEn;
     ens: string;
     public_key: string;
   };
-  expireDate: Date;
+  expireDate: string;
 }
 
 export async function getRandomStrToSign(addr: string) {

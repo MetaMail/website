@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import useStore from 'storage/zustand';
 import { FilterTypeEn, MetaMailTypeEn } from 'constants/interfaces';
 import { createMail } from 'utils/crypto/crypt';
-import { getMailDetailByID } from 'services/home';
+import { getMailDetailByID } from 'services/mail';
 
 export default function Sidebar(props: any) {
   const setFilter = useStore((state: any) => state.setFilter);

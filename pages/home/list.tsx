@@ -14,7 +14,7 @@ import {
   MetaMailTypeEn,
   ReadStatusTypeEn,
 } from 'constants/interfaces';
-import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'services/home';
+import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'services/mail';
 import { checkbox, trash, read, starred, markUnread, temp1, spam, filter, update, cancelSelected } from 'assets/icons';
 import { getUserInfo, setRandomBits } from 'storage/user';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'utils/mail';

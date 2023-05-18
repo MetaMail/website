@@ -19,7 +19,7 @@ import {
 } from 'assets/icons';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'constants/interfaces';
 import { useState, useEffect, useRef, ReactElement } from 'react';
-import { getMailDetailByID } from 'services/home';
+import { getMailDetailByID } from 'services/mail';
 import DOMPurify from 'dompurify';
 import moment from 'moment';
 import { useRouter } from 'next/router';

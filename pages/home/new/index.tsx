@@ -19,9 +19,8 @@ import {
   saveUserInfo,
   setRandomBits,
 } from 'storage/user';
-import { getMailDetailByID } from 'services/home';
 import { clearMailContent, getMailContent } from 'storage/mail';
-import { createDraft, sendMail, updateMail } from 'services/mail';
+import { createDraft, sendMail, updateMail, getMailDetailByID } from 'services/mail';
 import { getPersonalSign } from 'utils/crypto/signature';
 import { metaPack } from './utils';
 import useInterval from 'utils/hooks';
@@ -216,8 +215,8 @@ export default function NewMail() {
           for (var i = 0; i < receivers.length; i++) {
             const receiverItem = receivers[i];
             const encryptionData = await getEncryptionKey(receiverItem.address.split('@')[0]);
-            const receriverPublicKey = encryptionData?.data?.message_encryption_public_key;
-            if (encryptionData == 404 || !receriverPublicKey || receriverPublicKey.length == 0) {
+            const receriverPublicKey = encryptionData.message_encryption_public_key;
+            if (!receriverPublicKey || receriverPublicKey.length == 0) {
               throw new Error(
                 'Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.'
               );

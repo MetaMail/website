@@ -1,7 +1,17 @@
-import { IPersonItem, MetaMailTypeEn } from 'constants/interfaces';
+import {
+  IPersonItem,
+  MetaMailTypeEn,
+  MailBoxTypeEn,
+  MarkTypeEn,
+  ReadStatusTypeEn,
+  IMailContentItem,
+  FilterTypeEn,
+} from 'constants/interfaces';
 import { httpInstance } from 'lib/request';
 
 const APIs = {
+  getMailList: '/mails/filter', // 根据筛选条件获取邮件列表
+  mailDetail: '/mails/', // 获取邮件详情
   createDraft: '/mails/draft', // 新建草稿
   updateMail: '/mails/{mail_id}', // patch方法，更新邮件内容
   sendMail: '/mails/{mail_id}/send', // 发送邮件
@@ -35,7 +45,7 @@ interface IUpdateMailResponse {
 }
 
 interface ISendMailParams {
-  date: Date;
+  date?: string;
   signature?: string;
   keys: string[];
   data: string;
@@ -56,16 +66,61 @@ interface IUploadAttachmentResponse {
     sha256: string;
     download: {
       url: string;
-      expire_at: Date;
+      expire_at: string;
     };
   };
-  date: Date;
+  date: string;
 }
 
 interface IDeleteAttachmentResponse {
   message_id: string;
   attachment_id: string;
-  date: Date;
+  date: string;
+}
+
+interface IGetMailDetailResponse {
+  mail: IMailContentItem;
+}
+
+interface IGetMailListParams {
+  limit: number;
+  filter: FilterTypeEn;
+  page_index: number;
+}
+
+interface IGetMailListResponse {
+  total: number;
+  unread: number;
+  page_num: number;
+  page_index: number;
+  mails: IMailContentItem[];
+}
+
+interface IChangeMailStatusParams {
+  mails: IMailChangeParams[];
+  mark?: MarkTypeEn;
+  read?: ReadStatusTypeEn;
+}
+
+export interface IMailChangeParams {
+  message_id: string;
+  mailbox?: MailBoxTypeEn;
+}
+
+export async function getMailDetailByID(id: string) {
+  return httpInstance.get<void, IGetMailDetailResponse>(`${APIs.mailDetail}${id}`);
+}
+
+export async function getMailList(params: IGetMailListParams) {
+  return httpInstance.post<IGetMailListParams, IGetMailListResponse>(APIs.getMailList, params);
+}
+
+export async function changeMailStatus(mails: IMailChangeParams[], mark?: MarkTypeEn, read?: ReadStatusTypeEn) {
+  return httpInstance.post<IChangeMailStatusParams, void>(APIs.mailDetail, {
+    mails,
+    mark,
+    read,
+  });
 }
 
 export async function createDraft(type: MetaMailTypeEn, key?: string) {
