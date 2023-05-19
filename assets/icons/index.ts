@@ -10,7 +10,7 @@ import sent from './sent.svg';
 import spam from './spam.svg';
 import add from './add.svg';
 import more from './more.svg';
-import swapAddr from './swapaddr.svg'
+import swapAddr from './swapaddr.svg';
 //import trash from './trash.svg';
 import unread from './unread.svg';
 
@@ -32,34 +32,33 @@ import cancel from './cancel.svg';
 import mailMore from './mailMore.svg';
 
 export {
-  mailMore,
-  back,
-  temp1,
-  filter,
-  white,
-  starred,
-  draft,
-  inbox,
-  update,
-  encryptedInbox,
-
-  markUnread,
-  cancel,
-  extend,
-  add,
-  more,
-  read,
-  sent,
-  spam,
-  trash,
-  unread,
-  swapAddr,
-  checkbox,
-  selected,
-  favorite,
-  markFavorite,
-  clipboard,
-  downloadMail,
-  cancelSelected,
-  reply,
+    mailMore,
+    back,
+    temp1,
+    filter,
+    white,
+    starred,
+    draft,
+    inbox,
+    update,
+    encryptedInbox,
+    markUnread,
+    cancel,
+    extend,
+    add,
+    more,
+    read,
+    sent,
+    spam,
+    trash,
+    unread,
+    swapAddr,
+    checkbox,
+    selected,
+    favorite,
+    markFavorite,
+    clipboard,
+    downloadMail,
+    cancelSelected,
+    reply,
 };
