@@ -1,8 +1,10 @@
-import { MetaMailTypeEn } from 'lib/constants/interfaces';
-import { createDraft } from 'lib/http/mail';
-import { getPrivateKeyFromLocal, getUserInfo, saveUserInfo, setRandomBits } from 'lib/storage/user';
 import { ethers } from 'ethers';
+import { ExternalProvider } from '@ethersproject/providers';
 import keccak256 from 'keccak256';
+
+import { MetaMailTypeEn } from 'lib/constants';
+import { createDraft } from 'lib/http';
+import { getPrivateKeyFromLocal, getUserInfo, saveUserInfo, setRandomBits } from 'lib/storage';
 
 export function generateRandom256Bits(address: string) {
     const rb = CryptoJS.lib.WordArray.random(256 / 8);
@@ -37,7 +39,7 @@ export const createMail = async (type: MetaMailTypeEn) => {
 
 export const getPrivateKey = async () => {
     try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+        const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
         const signer = provider.getSigner();
         const encryptedPrivateKey = getPrivateKeyFromLocal();
         if (!encryptedPrivateKey || encryptedPrivateKey.length == 0) {

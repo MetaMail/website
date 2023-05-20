@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { useAccount } from 'wagmi';
 import { disconnect } from '@wagmi/core';
 import { ethers } from 'ethers';
+import { ExternalProvider } from '@ethersproject/providers';
 
 import ReviewInfo from 'components/ReviewInfo';
 import Footer from 'components/Footer';
@@ -30,7 +31,7 @@ export default function Welcome() {
     const handleAutoLogin = async () => {
         try {
             if (!window.ethereum) throw new Error('Your client does not support Ethereum');
-            const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+            const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
             const signer = provider.getSigner();
             const { randomStr, tokenForRandom } = await getRandomStrToSign(address!);
             const signedMessage = await signer.signMessage(randomStr);

@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import keccak256 from 'keccak256';
 import { ethers } from 'ethers';
+import { ExternalProvider } from '@ethersproject/providers';
 
 export const pkPack = (data: any) => {
     const { addr, date, version, public_key } = data;
@@ -52,7 +53,7 @@ export const getPublicKey = async (account: string) => {
 };
 
 export const generateEncryptionKey = async (address?: string) => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+    const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
     const signer = provider.getSigner();
     const salt = crypto.randomBytes(256).toString('hex');
     const signedSalt = await signer.signMessage(
