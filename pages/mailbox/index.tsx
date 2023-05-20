@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 
 import { clearUserInfo, getUserInfo, clearMailListInfo } from 'lib/storage';
 import useStore from 'lib/storage/zustand';
-
 import Alert from 'components/Alert';
 import Layout from 'components/Layouts';
 import MailList from './MailList';

@@ -1,8 +1,8 @@
+import Image, { StaticImageData } from 'next/image';
 import suneal from 'assets/suneal.svg';
 import colin from 'assets/colin.png';
 import fiveStar from 'assets/5star.png';
-import Image from 'next/image';
-import { StaticImageData } from 'next/image';
+
 interface IReview {
     imgSrc: string | StaticImageData;
     content: string;

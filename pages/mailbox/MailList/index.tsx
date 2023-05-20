@@ -1,9 +1,11 @@
-import MailListItem from 'components/MailItem';
 import { useState, useEffect } from 'react';
-import Icon from 'components/Icon';
 import { useRouter } from 'next/router';
-import useStore from 'lib/storage/zustand';
 
+import useStore from 'lib/storage/zustand';
+import { getUserInfo, setRandomBits } from 'lib/storage/user';
+import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
+import { updateStorage } from 'lib/storage';
+import { clearMailListInfo, getMailListInfo } from 'lib/storage/mail';
 import {
     FilterTypeEn,
     getMailBoxType,
@@ -13,16 +15,14 @@ import {
     MarkTypeEn,
     MetaMailTypeEn,
     ReadStatusTypeEn,
-} from 'lib/constants/interfaces';
-import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'lib/http/mail';
+} from 'lib/constants';
+import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'lib/http';
+import MailListItem from 'components/MailItem';
+import Icon from 'components/Icon';
+
 import { checkbox, trash, read, starred, markUnread, temp1, spam, filter, update, cancelSelected } from 'assets/icons';
-import { getUserInfo, setRandomBits } from 'lib/storage/user';
-import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils/mail';
-import { updateStorage } from 'lib/storage';
-//import Link from 'next/link';
-import { clearMailListInfo, getMailListInfo } from 'lib/storage/mail';
+
 function MailList() {
-    //const state = useStore()
     const setFilter = useStore((state: any) => state.setFilter);
     const setIsAlert = useStore((state: any) => state.setIsAlert);
     const pageIdx = useStore((state: any) => state.page);
@@ -32,7 +32,6 @@ function MailList() {
     const setUnreadCount = useStore((state: any) => state.setUnreadCount);
     const setDetailFromList = useStore((state: any) => state.setDetailFromList);
     const setDetailFromNew = useStore((state: any) => state.setDetailFromNew);
-    //const isMailDetail = useStore((state:any) => state.isMailDetail)
     const setIsOnCompose = useStore((state: any) => state.setIsOnCompose);
     const setIsMailDetail = useStore((state: any) => state.setIsMailDetail);
     const detailFromNew = useStore((state: any) => state.detailFromNew);
@@ -41,7 +40,6 @@ function MailList() {
     let mailDetail: IMailContentItem[] = [];
     const [list, setList] = useState<IMailItem[]>([]);
     const [pageNum, setPageNum] = useState(0);
-    ///////const [inboxType, setInboxType] = useState(Number(mailBox));
     const [selectList, setSelectList] = useState<IMailItem[]>([]);
     const [isAll, setIsAll] = useState(false);
     const [isFilterHidden, setIsFilterHidden] = useState(true);

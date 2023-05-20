@@ -1,5 +1,3 @@
-//import { encryptedMail, signedMail } from '@/assets';
-
 export enum AccountStatusTypeEn {
     Normal = 0,
     Locked,

@@ -1,17 +1,18 @@
+import React, { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+
+import useStore from 'lib/storage/zustand';
+import { FilterTypeEn, MetaMailTypeEn, MailMenuItems } from 'lib/constants';
+import { createMail } from 'lib/utils/crypto';
+import { getMailDetailByID } from 'lib/http';
+import Icon from 'components/Icon';
+
 import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
 import showMore from 'assets/showMore.svg';
 import { add, more } from 'assets/icons';
 import compose from 'assets/inbox_compose.svg';
-import { MailMenuItems } from 'lib/constants/menu';
-import React, { useState } from 'react';
-import Icon from 'components/Icon';
-import { useRouter } from 'next/router';
-import useStore from 'lib/storage/zustand';
-import { FilterTypeEn, MetaMailTypeEn } from 'lib/constants/interfaces';
-import { createMail } from 'lib/utils/crypto/crypt';
-import { getMailDetailByID } from 'lib/http/mail';
 
 export default function Sidebar(props: any) {
     const setFilter = useStore((state: any) => state.setFilter);
@@ -23,7 +24,8 @@ export default function Sidebar(props: any) {
     const setIsOnCompose = useStore((state: any) => state.setIsOnCompose);
     const setDetailFromNew = useStore((state: any) => state.setDetailFromNew);
     const router = useRouter();
-    async function handleReturnHome() {
+
+    function handleReturnHome() {
         router.push('/');
     }
     function handleChangeFilter(filter: FilterTypeEn) {
@@ -33,7 +35,6 @@ export default function Sidebar(props: any) {
     }
     async function handleClickNewMail() {
         const newMailID = await createMail(MetaMailTypeEn.Encrypted);
-        //const newMailID = await createMail(MetaMailTypeEn.Plain);
         console.log(newMailID);
         if (newMailID) {
             setDetailFromNew(await getMailDetailByID(window.btoa(newMailID ?? '')));

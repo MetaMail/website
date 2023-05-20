@@ -1,14 +1,9 @@
-import { cancel, extend } from 'assets/icons';
-import Icon from 'components/Icon';
-import Layout from 'components/Layouts';
-import sendMailIcon from 'assets/sendMail.svg';
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import ReactQuill from 'react-quill';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
+
 import useStore from 'lib/storage/zustand';
-import BaseLine from 'components/BaseLine';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import { IMailContentItem, IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import {
     getPrivateKeyFromLocal,
@@ -19,13 +14,19 @@ import {
     setRandomBits,
 } from 'lib/storage/user';
 import { clearMailContent, getMailContent } from 'lib/storage/mail';
-import { createDraft, sendMail, updateMail, getMailDetailByID } from 'lib/http/mail';
+import { createDraft, sendMail, updateMail, getMailDetailByID, getEncryptionKey } from 'lib/http';
 import { getPersonalSign, metaPack, useInterval } from 'lib/utils';
-import { PostfixOfAddress } from 'lib/base/request';
+import { PostfixOfAddress } from 'lib/base';
 import FileUploader from 'components/FileUploader';
 import NameSelecter from 'components/NameSelecter';
 import EmailRecipientInput from './components/EmailRecipientInput';
-import { getEncryptionKey } from 'lib/http/user';
+import Icon from 'components/Icon';
+import Layout from 'components/Layouts';
+import BaseLine from 'components/BaseLine';
+
+import { cancel, extend } from 'assets/icons';
+import sendMailIcon from 'assets/sendMail.svg';
+import 'react-quill/dist/quill.snow.css';
 export default function NewMail() {
     const [isExtend, setIsExtend] = useState(false);
     const isOnCompose = useStore((state: any) => state.isOnCompose);

@@ -1,10 +1,11 @@
+import Link from 'next/link';
+import LinkItem from 'components/LinkItem';
 import twitter from 'assets/twitter.svg';
 import facebook from 'assets/facebook.svg';
 import discord from 'assets/discord.png';
 import tg from 'assets/telegram.svg';
 import git from 'assets/git.png';
-import LinkItem from 'components/LinkItem';
-import Link from 'next/link';
+
 const Links = [
     {
         href: '',

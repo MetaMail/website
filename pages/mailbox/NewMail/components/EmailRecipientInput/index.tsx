@@ -1,7 +1,7 @@
-import { add, cancel } from 'assets/icons';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { IPersonItem } from 'lib/constants/interfaces';
+import { add, cancel } from 'assets/icons';
 
 interface EmailRecipientInputProps {
     receivers: IPersonItem[];

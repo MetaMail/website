@@ -1,8 +1,11 @@
-import { swapAddr } from 'assets/icons';
-import { PostfixOfAddress } from 'lib/base/request';
-import { getUserInfo, saveShowName } from 'lib/storage/user';
 import { useState } from 'react';
+
+import { PostfixOfAddress } from 'lib/base';
+import { getUserInfo, saveShowName } from 'lib/storage';
+
+import { swapAddr } from 'assets/icons';
 import Icon from './Icon';
+
 function NameSelecter() {
     const { showName, ensName, address } = getUserInfo();
     const [activeName, setActiveName] = useState(showName);

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
+
 import { uploadAttachment } from 'lib/http';
 import { AttachmentRelatedTypeEn } from 'lib/utils';
 import { MetaMailTypeEn } from 'lib/constants';
+
 import addAttach from 'assets/addAttach.svg';
 interface IFileUploader {
     draftID: string;
@@ -37,32 +39,17 @@ const FileUploader = (item: IFileUploader) => {
         cid?: string
     ) => {
         try {
-            //message.loading({
-            //  content: `uploading ${file.name}...`,
-            //  key: sha256,
-            //  duration: 0,
-            //});
             const form = new FormData();
-
             form.append('attachment', attachment);
             form.append('sha256', sha256);
             form.append('related', related);
             cid && form.append('cid', cid);
-
             const data = await uploadAttachment(item.draftID, form);
             const attachmentRes = data.attachment;
-
             if (attachmentRes) {
                 item.onAttachment(attachmentRes);
-                //message.success({ content: 'Uploaded', key: sha256 });
             }
-        } catch {
-            //message.error({ content: 'Upload failed', key: sha256 });
-            // notification.error({
-            //   message: 'Upload Failed',
-            //   description: 'Sorry, attachment can not upload to the server.',
-            // });
-        }
+        } catch {}
     };
     const handleClickUpload = (e: any) => {
         const reader = new FileReader();

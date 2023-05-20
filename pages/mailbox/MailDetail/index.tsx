@@ -1,5 +1,19 @@
-import Icon from 'components/Icon';
+import { useState, useEffect, useRef, ReactElement } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import DOMPurify from 'dompurify';
+import moment from 'moment';
+import parse from 'html-react-parser';
+
+import useStore from 'lib/storage/zustand';
+import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
+import { clearMailListInfo } from 'lib/storage/mail';
+import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
+import { getMailDetailByID } from 'lib/http';
+import { getUserInfo, getShowName, clearUserInfo } from 'lib/storage';
+import Layout from 'components/Layouts';
+import Icon from 'components/Icon';
+
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
 import replyBtn from 'assets/replyButton.svg';
 import ifLock from 'assets/ifLock.svg';
@@ -17,19 +31,7 @@ import {
     markFavorite,
     markUnread,
 } from 'assets/icons';
-import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants/interfaces';
-import { useState, useEffect, useRef, ReactElement } from 'react';
-import { getMailDetailByID } from 'lib/http/mail';
-import DOMPurify from 'dompurify';
-import moment from 'moment';
-import { useRouter } from 'next/router';
-import parse from 'html-react-parser';
-import { getUserInfo, getShowName, clearUserInfo } from 'lib/storage/user';
-import Layout from 'components/Layouts';
-import useStore from 'lib/storage/zustand';
-import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils/mail';
-//import { reverse } from 'dns';storage
-import { clearMailListInfo } from 'lib/storage/mail';
+
 // allowed URI schemesstorage/mail
 var allowlist = ['http', 'https', 'ftp'];
 // build fitting regex
