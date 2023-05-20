@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosRequestConfig } from 'axios';
+import axios, { Axios, AxiosRequestConfig, AxiosError } from 'axios';
 import { MMObject } from './object';
 
 //const BASE_URL = 'https://api.metamail.ink/';
@@ -42,12 +42,19 @@ class MMHttp extends MMObject {
         // 请求拦截，后期可以在这里加上token之类的
         this.axios.interceptors.request.use(
             config => config,
-            (error: any) => Promise.reject(error)
+            (error: AxiosError) => Promise.reject(error)
         );
         //响应拦截
         this.axios.interceptors.response.use(
-            res => res,
-            (error: any) => Promise.reject(error)
+            res => {
+                return this.checkResponse(res);
+            },
+            (error: AxiosError) => {
+                if (error.response?.status === 404) {
+                    return Promise.resolve();
+                }
+                return Promise.reject(error);
+            }
         );
     }
 
@@ -59,13 +66,11 @@ class MMHttp extends MMObject {
     }
 
     async get<In, Out>(url: string, content?: In, config?: AxiosRequestConfig): Promise<Out> {
-        const res = await this.axios.get(url, { ...config, params: content });
-        return this.checkResponse(res) as Out;
+        return this.axios.get(url, { ...config, params: content });
     }
 
     async post<In, Out>(url: string, content?: In, config?: AxiosRequestConfig): Promise<Out> {
-        const res = await this.axios.post(url, content, config);
-        return this.checkResponse(res) as Out;
+        return this.axios.post(url, content, config);
     }
 
     async patch<In, Out>(url: string, content?: In, config?: AxiosRequestConfig): Promise<Out> {
@@ -73,13 +78,11 @@ class MMHttp extends MMObject {
     }
 
     async put<In, Out>(url: string, content?: In, config?: AxiosRequestConfig): Promise<Out> {
-        const res = await this.axios.put(url, content, config);
-        return this.checkResponse(res) as Out;
+        return this.axios.put(url, content, config);
     }
 
     async delete<In, Out>(url: string, content?: In, config?: AxiosRequestConfig): Promise<Out> {
-        const res = await this.axios.delete(url, { ...config, data: content });
-        return this.checkResponse(res) as Out;
+        return this.axios.delete(url, { ...config, data: content });
     }
 }
 

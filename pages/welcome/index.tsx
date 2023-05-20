@@ -7,12 +7,12 @@ import { disconnect } from '@wagmi/core';
 import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 
-import ReviewInfo from 'components/ReviewInfo';
-import Footer from 'components/Footer';
-import RainbowLogin from 'components/RainbowLogin';
 import { getJwtToken, getRandomStrToSign, getEncryptionKey, putEncryptionKey } from 'lib/http';
 import { getUserInfo, saveUserInfo } from 'lib/storage';
 import { generateEncryptionKey } from 'lib/utils';
+import ReviewInfo from 'components/ReviewInfo';
+import Footer from 'components/Footer';
+import RainbowLogin from 'components/RainbowLogin';
 
 import logoBrand from 'assets/logo_brand.svg';
 import computer from 'assets/computer.svg';
@@ -37,7 +37,7 @@ export default function Welcome() {
             const signedMessage = await signer.signMessage(randomStr);
             const { user } = await getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await getEncryptionKey(address ?? '');
-            if (!encryptionData.message_encryption_public_key) {
+            if (!encryptionData?.message_encryption_public_key) {
                 encryptionData = await generateEncryptionKey(address);
                 // do upload
                 await putEncryptionKey({
