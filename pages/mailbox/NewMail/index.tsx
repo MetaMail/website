@@ -3,7 +3,6 @@ import ReactQuill from 'react-quill';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 
-import useStore from 'lib/storage/zustand';
 import { IMailContentItem, IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import {
     getPrivateKeyFromLocal,
@@ -12,8 +11,11 @@ import {
     getWalletAddress,
     saveUserInfo,
     setRandomBits,
-} from 'lib/storage/user';
-import { clearMailContent, getMailContent } from 'lib/storage/mail';
+    clearMailContent,
+    getMailContent,
+    useMailDetailStore,
+    useNewMailStore,
+} from 'lib/storage';
 import { createDraft, sendMail, updateMail, getMailDetailByID, getEncryptionKey } from 'lib/http';
 import { getPersonalSign, metaPack, useInterval } from 'lib/utils';
 import { PostfixOfAddress } from 'lib/base';
@@ -28,9 +30,10 @@ import { cancel, extend } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 export default function NewMail() {
+    const { detailFromNew, setDetailFromNew } = useMailDetailStore();
+    const { isWriting, setIsWriting } = useNewMailStore();
+
     const [isExtend, setIsExtend] = useState(false);
-    const isOnCompose = useStore((state: any) => state.isOnCompose);
-    const setIsOnCompose = useStore((state: any) => state.setIsOnCompose);
     const [subject, setSubject] = useState<string>('');
     const [receivers, setReceivers] = useState<IPersonItem[]>([]);
     const [content, setContent] = useState<string>('');
@@ -38,8 +41,6 @@ export default function NewMail() {
     const [attList, setAttList] = useState<any[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [editable, setEditable] = useState<boolean>();
-    const detailFromNew = useStore((state: any) => state.detailFromNew);
-    const setDetailFromNew = useStore((state: any) => state.setDetailFromNew);
     const draftID = detailFromNew?.message_id;
     //const draftID = query?.id;
     const type: MetaMailTypeEn = Number(detailFromNew?.meta_type);
@@ -150,7 +151,7 @@ export default function NewMail() {
         };
     }, [detailFromNew]);
     useInterval(() => {
-        if (!allowSaveRef.current || isOnCompose === false) return;
+        if (!allowSaveRef.current || isWriting === false) return;
         try {
             //handleSave();
         } catch (err) {
@@ -174,7 +175,7 @@ export default function NewMail() {
                 // });
 
                 //router.push('/home');
-                setIsOnCompose(false);
+                setIsWriting(false);
             }
         } catch (error) {
             console.log(error);
@@ -348,7 +349,7 @@ export default function NewMail() {
             //if (!query?.id && query.id.length === 0) {
             //  throw new Error();
             //}
-            const { mail } = await getMailDetailByID(window.btoa(id ?? detailFromNew.message_id ?? ''));
+            const { mail } = await getMailDetailByID(window.btoa(id ?? detailFromNew?.message_id ?? ''));
 
             if (mail) {
                 //const { subject, mail_to, part_html } = getMailContent();
@@ -400,7 +401,7 @@ export default function NewMail() {
     };
 
     return (
-        <div className={isOnCompose ? 'visible' : 'invisible'}>
+        <div className={isWriting ? 'visible' : 'invisible'}>
             <div
                 className={
                     isExtend
@@ -423,9 +424,9 @@ export default function NewMail() {
                             url={cancel}
                             className="w-13 scale-[120%] h-auto self-center"
                             onClick={() => {
-                                setIsOnCompose(false);
+                                setIsWriting(false);
                                 handleSave();
-                                setDetailFromNew(undefined);
+                                setDetailFromNew(null);
                             }}
                         />
                     </div>
@@ -508,5 +509,3 @@ export default function NewMail() {
         </div>
     );
 }
-
-NewMail.getLayout = (page: ReactElement) => <Layout>{page}</Layout>;

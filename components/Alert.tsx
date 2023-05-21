@@ -1,4 +1,4 @@
-import useStore from 'lib/storage/zustand';
+import { useAlertStore } from 'lib/storage';
 
 interface IAlertProps {
     message: string;
@@ -6,9 +6,8 @@ interface IAlertProps {
 }
 
 export default function Alert(warnInfo: IAlertProps) {
-    const isAlert = useStore((state: any) => state.isAlert);
-    const setAlertClose = useStore((state: any) => state.setAlertClose);
-    console.log(isAlert);
+    const { isAlert, setIsAlert } = useAlertStore();
+
     return (
         <div
             className={
@@ -37,7 +36,7 @@ export default function Alert(warnInfo: IAlertProps) {
                     <button
                         className="btn btn-xs"
                         onClick={() => {
-                            setAlertClose();
+                            setIsAlert(false);
                         }}>
                         close
                     </button>

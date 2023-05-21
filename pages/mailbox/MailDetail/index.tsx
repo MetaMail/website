@@ -5,12 +5,10 @@ import DOMPurify from 'dompurify';
 import moment from 'moment';
 import parse from 'html-react-parser';
 
-import useStore from 'lib/storage/zustand';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
-import { clearMailListInfo } from 'lib/storage/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { getMailDetailByID } from 'lib/http';
-import { getUserInfo, getShowName, clearUserInfo } from 'lib/storage';
+import { getUserInfo, getShowName, clearUserInfo, clearMailListInfo, useMailDetailStore } from 'lib/storage';
 import Layout from 'components/Layouts';
 import Icon from 'components/Icon';
 
@@ -37,26 +35,24 @@ var allowlist = ['http', 'https', 'ftp'];
 // build fitting regex
 var regex = RegExp('^(' + allowlist.join('|') + '):', 'gim');
 
-function Mail(props: any) {
+export default function MailDetail() {
     const router = useRouter();
+    const { isMailDetail, detailFromList, setIsMailDetail } = useMailDetailStore();
+
     const [mail, setMail] = useState<IMailContentItem>();
     const [isExtend, setIsExtend] = useState(false);
     const [readable, setReadable] = useState(true);
     const [loading, setLoading] = useState(false);
     const [isRead, setIsRead] = useState(true);
     const randomBitsRef = useRef();
-    const filterType = useStore((state: any) => state.filter);
-    const isMailDetail = useStore((state: any) => state.isMailDetail);
-    const detailFromList = useStore((state: any) => state.detailFromList);
-    const setIsMailDetail = useStore((state: any) => state.setIsMailDetail);
-    console.log(detailFromList);
+
     const [mailInfo, setMailInfo] = useState([
         {
             message_id: detailFromList.message_id,
             mailbox: detailFromList.mailbox,
         },
     ]);
-    const [mark, setMark] = useState(detailFromList?.mark === 1 ? true : false);
+    const [mark, setMark] = useState(detailFromList.mark === 1 ? true : false);
     const sixMail = [
         {
             src: back,
@@ -249,8 +245,8 @@ function Mail(props: any) {
                 mailbox: detailFromList.mailbox,
             },
         ]);
-        setMark(detailFromList?.mark === 1 ? true : false);
-        if (detailFromList?.meta_type === MetaMailTypeEn.Encrypted + '') {
+        setMark(detailFromList.mark === 1 ? true : false);
+        if (detailFromList.meta_type === MetaMailTypeEn.Encrypted) {
             setReadable(false);
         }
         // handleMarkRead();
@@ -263,7 +259,7 @@ function Mail(props: any) {
     }, [detailFromList]);
 
     return (
-        <div className={isMailDetail ? 'flex' : 'hidden'}>
+        <div className="flex">
             <div
                 className={
                     isExtend ? 'w-[calc(100vw-225px)] transition-all h-[100%]' : 'w-[38vw] transition-all h-[100%]'
@@ -370,6 +366,3 @@ function Mail(props: any) {
         </div>
     );
 }
-
-Mail.getLayout = (page: ReactElement) => <Layout>{page}</Layout>;
-export default Mail;

@@ -1,36 +1,65 @@
 import { create } from 'zustand';
-import { IMailItem } from '../constants';
-const useStore = create(set => ({
-    filter: 0,
-    page: 1,
-    unreadCount: 0,
-    detailFromList: [],
-    detailFromNew: [],
-    isAlert: false,
-    AlertInfo: '',
-    isOnCompose: false,
-    isMailDetail: false,
-    removeAll: () =>
-        set({
-            filter: 0,
-            page: 1,
-            unReadCount: 0,
-            detailFromList: [],
-            detailFromNew: [],
-            isAlert: false,
-            AlertInfo: '',
-        }),
-    addPage: () => set((state: { page: number }) => ({ page: state.page + 1 })),
-    subPage: () => set((state: { page: number }) => ({ page: state.page - 1 })),
-    setFilter: (filterType: number) => set(() => ({ filter: filterType })),
-    setUnreadCount: (count: number) => set(() => ({ unreadCount: count })),
-    resetPage: () => set({ page: 1 }),
-    setDetailFromList: (item: IMailItem) => set(() => ({ detailFromList: item })),
-    setDetailFromNew: (item: IMailItem) => set(() => ({ detailFromNew: item })),
-    setAlertStart: (handler: string) => set(() => ({ isAlert: true, AlertInfo: handler })),
-    setAlertClose: () => set(() => ({ isAlert: false, AlertInfo: '' })),
-    setIsOnCompose: (compose: boolean) => set(() => ({ isOnCompose: compose })),
-    setIsMailDetail: (visible: boolean) => set(() => ({ isMailDetail: visible })),
+import { IMailItem, FilterTypeEn } from 'lib/constants';
+
+interface IMailListState {
+    filterType: FilterTypeEn;
+    pageIndex: number;
+    unReadCount: number;
+    setFilterType: (filterType: FilterTypeEn) => void;
+    addPageIndex: () => void;
+    subPageIndex: () => void;
+    resetPageIndex: () => void;
+    setUnreadCount: (unReadCount: number) => void;
+}
+export const useMailListStore = create<IMailListState>()(set => ({
+    filterType: FilterTypeEn.Inbox,
+    pageIndex: 1,
+    unReadCount: 0,
+    setFilterType: (filterType: FilterTypeEn) => set(() => ({ filterType })),
+    addPageIndex: () => set(state => ({ pageIndex: state.pageIndex + 1 })),
+    subPageIndex: () => set(state => ({ pageIndex: state.pageIndex - 1 })),
+    resetPageIndex: () => set({ pageIndex: 1 }),
+    setUnreadCount: (unReadCount: number) => set(() => ({ unReadCount })),
 }));
 
-export default useStore;
+interface IMailDetailState {
+    detailFromList: IMailItem;
+    detailFromNew: IMailItem;
+    isMailDetail: boolean;
+    setDetailFromList: (item: IMailItem) => void;
+    setDetailFromNew: (item: IMailItem) => void;
+    setIsMailDetail: (isMailDetail: boolean) => void;
+}
+
+export const useMailDetailStore = create<IMailDetailState>()(set => ({
+    detailFromList: null,
+    detailFromNew: null,
+    isMailDetail: false,
+    setDetailFromList: (detailFromList: IMailItem) => set(() => ({ detailFromList })),
+    setDetailFromNew: (detailFromNew: IMailItem) => set(() => ({ detailFromNew })),
+    setIsMailDetail: (isMailDetail: boolean) => set(() => ({ isMailDetail })),
+}));
+
+interface INewMailState {
+    isWriting: boolean;
+    setIsWriting: (isWriting: boolean) => void;
+}
+
+export const useNewMailStore = create<INewMailState>()(set => ({
+    isWriting: false,
+    setIsWriting: (isWriting: boolean) => set(() => ({ isWriting })),
+}));
+
+interface IAlertState {
+    isAlert: boolean;
+    alertInfo: string;
+    setIsAlert: (isAlert: boolean) => void;
+    setAlertInfo: (alertInfo: string) => void;
+}
+
+export const useAlertStore = create<IAlertState>()(set => ({
+    isAlert: false,
+    alertInfo: '',
+    setIsAlert: (isAlert: boolean) => set(() => ({ isAlert })),
+    setAlertInfo: (alertInfo: string) => set(() => ({ alertInfo })),
+}));

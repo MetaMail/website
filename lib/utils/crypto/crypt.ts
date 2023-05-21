@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 import keccak256 from 'keccak256';
+import CryptoJS from 'crypto-js';
 
 import { MetaMailTypeEn } from 'lib/constants';
 import { createDraft } from 'lib/http';

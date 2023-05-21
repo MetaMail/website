@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import useStore from 'lib/storage/zustand';
+import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/storage';
 import { FilterTypeEn, MetaMailTypeEn, MailMenuItems } from 'lib/constants';
 import { createMail } from 'lib/utils/crypto';
 import { getMailDetailByID } from 'lib/http';
@@ -15,14 +15,13 @@ import { add, more } from 'assets/icons';
 import compose from 'assets/inbox_compose.svg';
 
 export default function Sidebar(props: any) {
-    const setFilter = useStore((state: any) => state.setFilter);
-    const filterType = useStore((state: any) => state.filter);
-    const resetPage = useStore((state: any) => state.resetPage);
-    const unreadCount = useStore((state: any) => state.unreadCount);
+    const { filterType, setFilterType, resetPageIndex, unReadCount } = useMailListStore();
+    const { setIsWriting } = useNewMailStore();
+    const { setDetailFromNew } = useMailDetailStore();
+
     const [dropTag, setDropTag] = useState(false);
     const [dropFilter, setDropFilter] = useState(false);
-    const setIsOnCompose = useStore((state: any) => state.setIsOnCompose);
-    const setDetailFromNew = useStore((state: any) => state.setDetailFromNew);
+
     const router = useRouter();
 
     function handleReturnHome() {
@@ -30,15 +29,16 @@ export default function Sidebar(props: any) {
     }
     function handleChangeFilter(filter: FilterTypeEn) {
         if (router?.query?.id) router.push('/mailbox');
-        setFilter(Number(filter));
-        resetPage();
+        setFilterType(filter);
+        resetPageIndex();
     }
     async function handleClickNewMail() {
         const newMailID = await createMail(MetaMailTypeEn.Encrypted);
         console.log(newMailID);
         if (newMailID) {
-            setDetailFromNew(await getMailDetailByID(window.btoa(newMailID ?? '')));
-            setIsOnCompose(true);
+            const { mail } = await getMailDetailByID(window.btoa(newMailID ?? ''));
+            setDetailFromNew(mail);
+            setIsWriting(true);
         } else {
             console.log('throw new Error:no const newMailID = await createMail');
         }
@@ -83,7 +83,7 @@ export default function Sidebar(props: any) {
                                         <div className="flex w-full justify-between">
                                             <span className=""> {item.title}</span>
                                             {item.title === 'Inbox' ? (
-                                                <span className="">{unreadCount === 0 ? '' : unreadCount}</span>
+                                                <span className="">{unReadCount === 0 ? '' : unReadCount}</span>
                                             ) : null}
                                         </div>
                                     </button>

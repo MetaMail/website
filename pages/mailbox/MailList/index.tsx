@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 
-import useStore from 'lib/storage/zustand';
-import { getUserInfo, setRandomBits } from 'lib/storage/user';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
-import { updateStorage } from 'lib/storage';
-import { clearMailListInfo, getMailListInfo } from 'lib/storage/mail';
+import {
+    getUserInfo,
+    setRandomBits,
+    updateStorage,
+    clearMailListInfo,
+    getMailListInfo,
+    useMailListStore,
+    useAlertStore,
+    useMailDetailStore,
+    useNewMailStore,
+} from 'lib/storage';
 import {
     FilterTypeEn,
     getMailBoxType,
@@ -17,24 +24,18 @@ import {
     ReadStatusTypeEn,
 } from 'lib/constants';
 import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'lib/http';
+import MailBoxContext from 'pages/context';
 import MailListItem from 'components/MailItem';
 import Icon from 'components/Icon';
 
 import { checkbox, trash, read, starred, markUnread, temp1, spam, filter, update, cancelSelected } from 'assets/icons';
 
-function MailList() {
-    const setFilter = useStore((state: any) => state.setFilter);
-    const setIsAlert = useStore((state: any) => state.setIsAlert);
-    const pageIdx = useStore((state: any) => state.page);
-    const filterType = useStore((state: any) => state.filter);
-    const addPage = useStore((state: any) => state.addPage);
-    const subPage = useStore((state: any) => state.subPage);
-    const setUnreadCount = useStore((state: any) => state.setUnreadCount);
-    const setDetailFromList = useStore((state: any) => state.setDetailFromList);
-    const setDetailFromNew = useStore((state: any) => state.setDetailFromNew);
-    const setIsOnCompose = useStore((state: any) => state.setIsOnCompose);
-    const setIsMailDetail = useStore((state: any) => state.setIsMailDetail);
-    const detailFromNew = useStore((state: any) => state.detailFromNew);
+export default function MailList() {
+    const { filterType, setFilterType, pageIndex, addPageIndex, subPageIndex, setUnreadCount } = useMailListStore();
+    const { setIsAlert } = useAlertStore();
+    const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
+    const { setIsWriting } = useNewMailStore();
+    const { removeAllState } = useContext(MailBoxContext);
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     let mailDetail: IMailContentItem[] = [];
@@ -43,7 +44,7 @@ function MailList() {
     const [selectList, setSelectList] = useState<IMailItem[]>([]);
     const [isAll, setIsAll] = useState(false);
     const [isFilterHidden, setIsFilterHidden] = useState(true);
-    const removeAll = useStore((state: any) => state.removeAll);
+
     const sixList = [
         {
             src: trash,
@@ -113,7 +114,7 @@ function MailList() {
             const mailListStorage = getMailListInfo();
             console.log(mailListStorage);
             const isMailListStorageExist =
-                mailListStorage?.data?.page_index === pageIdx && mailListStorage?.filter === filterType;
+                mailListStorage?.data?.page_index === pageIndex && mailListStorage?.filter === filterType;
             if (isMailListStorageExist && showLoading) {
                 //showLoading=true的时候相同的邮件列表已经改变了，需要重新取
                 console.log('mailliststoragecunle');
@@ -126,7 +127,7 @@ function MailList() {
                 console.log('meiyoulisthuancun');
                 const data = await getMailList({
                     filter: filterType,
-                    page_index: pageIdx,
+                    page_index: pageIndex,
                     limit: 20,
                 });
 
@@ -157,7 +158,7 @@ function MailList() {
     useEffect(() => {
         if (getUserInfo()?.address) fetchMailList(true);
         //getMailDetail();  预加载feature abort
-    }, [pageIdx, filterType]);
+    }, [pageIndex, filterType]);
     useEffect(() => {
         if (getUserInfo()?.address) fetchMailList(false);
         //getMailDetail();  预加载feature abort
@@ -208,7 +209,7 @@ function MailList() {
         fetchMailList(false);
         if (filterType === FilterTypeEn.Draft) {
             setDetailFromNew(item);
-            setIsOnCompose(true);
+            setIsWriting(true);
         } else {
             setDetailFromList(item);
             setIsMailDetail(true);
@@ -230,7 +231,7 @@ function MailList() {
                     <Icon ///////////最初设计稿的提示
                         url={update}
                         onClick={() => {
-                            removeAll();
+                            removeAllState();
                             clearMailListInfo();
                             //deleteStorage('mailDetailStorage');
                             fetchMailList(true);
@@ -250,7 +251,7 @@ function MailList() {
                                 return (
                                     <li
                                         onClick={() => {
-                                            setFilter(Number(item.filter));
+                                            setFilterType(Number(item.filter));
                                         }}
                                         key={index}>
                                         <a className="px-12 py-4 text-xs modal-bg">{item.content}</a>
@@ -277,19 +278,19 @@ function MailList() {
 
                 <div className="flex flex-row justify-end space-x-20 text-xl text-[#7F7F7F]">
                     <button
-                        disabled={pageIdx === 1}
+                        disabled={pageIndex === 1}
                         className="w-24 disabled:opacity-40"
                         onClick={() => {
-                            if (pageIdx > 1) subPage();
+                            if (pageIndex > 1) subPageIndex();
                         }}>
                         {'<'}
                     </button>
                     {/*<span className='text-sm pt-3'>{pageIdx ?? '-'} /{pageNum ?? '-'}</span>//////显示邮件的数量*/}
                     <button
                         className="w-24 disabled:opacity-40"
-                        disabled={pageIdx === pageNum}
+                        disabled={pageIndex === pageNum}
                         onClick={() => {
-                            if (pageIdx < pageNum) addPage();
+                            if (pageIndex < pageNum) addPageIndex();
                         }}>
                         {'>'}
                     </button>
@@ -396,5 +397,3 @@ function MailList() {
         </div>
     );
 }
-
-export default MailList;

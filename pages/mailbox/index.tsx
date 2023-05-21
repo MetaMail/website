@@ -1,25 +1,36 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState, useContext } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-import { clearUserInfo, getUserInfo, clearMailListInfo } from 'lib/storage';
-import useStore from 'lib/storage/zustand';
+import {
+    useMailListStore,
+    useMailDetailStore,
+    useAlertStore,
+    clearUserInfo,
+    getUserInfo,
+    clearMailListInfo,
+    useNewMailStore,
+} from 'lib/storage';
+import MailBoxContext from 'pages/context';
+
 import Alert from 'components/Alert';
 import Layout from 'components/Layouts';
 import MailList from './MailList';
-import Mail from './MailDetail';
+import MailDetail from './MailDetail';
 import NewMail from './NewMail';
 
-export default function HomePage() {
+export default function MailBoxPage() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const router = useRouter();
     const [address, setAddress] = useState<string>();
-    const removeAll = useStore((state: any) => state.removeAll);
+    const { removeAllState } = useContext(MailBoxContext);
+    const { isMailDetail } = useMailDetailStore();
+    const { isWriting } = useNewMailStore();
+
     function getLogOut() {
         clearUserInfo();
         clearMailListInfo();
-        //clearMailListInfo();
-        removeAll();
+        removeAllState();
         router.push('/');
     }
     useEffect(() => {
@@ -51,13 +62,33 @@ export default function HomePage() {
                 </div>
                 <div className="flex flex-row flex-1 h-0 bg-white rounded-10">
                     <MailList />
-                    <Mail />
+                    {isMailDetail && <MailDetail />}
                 </div>
+                {isWriting && <NewMail />}
+
                 <Alert message={'Network Error'} description={'Can not fetch detail info of this email for now.'} />
-                <NewMail />
             </div>
         </div>
     );
 }
 
-HomePage.getLayout = (page: ReactElement) => <Layout>{page}</Layout>;
+MailBoxPage.getLayout = (page: ReactElement) => {
+    const { setFilterType, resetPageIndex, setUnreadCount } = useMailListStore();
+    const { setDetailFromList, setDetailFromNew } = useMailDetailStore();
+    const { setIsAlert, setAlertInfo } = useAlertStore();
+
+    const removeAllState = () => {
+        setFilterType(0);
+        resetPageIndex();
+        setUnreadCount(0);
+        setDetailFromList(null);
+        setDetailFromNew(null);
+        setIsAlert(false);
+        setAlertInfo('');
+    };
+    return (
+        <MailBoxContext.Provider value={{ removeAllState }}>
+            <Layout>{page}</Layout>
+        </MailBoxContext.Provider>
+    );
+};
