@@ -88,7 +88,7 @@ interface IGetMailListParams {
     page_index: number;
 }
 
-interface IGetMailListResponse {
+export interface IGetMailListResponse {
     total: number;
     unread: number;
     page_num: number;

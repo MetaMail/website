@@ -4,18 +4,7 @@ import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 
 import { IMailContentItem, IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
-import {
-    getPrivateKeyFromLocal,
-    getSaltFromLocal,
-    getUserInfo,
-    getWalletAddress,
-    saveUserInfo,
-    setRandomBits,
-    clearMailContent,
-    getMailContent,
-    useMailDetailStore,
-    useNewMailStore,
-} from 'lib/storage';
+import { userStorage, mailStorage, useMailDetailStore, useNewMailStore } from 'lib/storage';
 import { createDraft, sendMail, updateMail, getMailDetailByID, getEncryptionKey } from 'lib/http';
 import { getPersonalSign, metaPack, useInterval } from 'lib/utils';
 import { PostfixOfAddress } from 'lib/base';
@@ -23,7 +12,6 @@ import FileUploader from 'components/FileUploader';
 import NameSelecter from 'components/NameSelecter';
 import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
-import Layout from 'components/Layouts';
 import BaseLine from 'components/BaseLine';
 
 import { cancel, extend } from 'assets/icons';
@@ -147,7 +135,7 @@ export default function NewMail() {
     useEffect(() => {
         handleLoad();
         return () => {
-            clearMailContent();
+            mailStorage.clearMailContent();
         };
     }, [detailFromNew]);
     useInterval(() => {
@@ -203,8 +191,7 @@ export default function NewMail() {
                 if (!obj) {
                     return;
                 }
-                const { address, ensName, showName, publicKey } = getUserInfo();
-                console.log(getUserInfo());
+                const { address, ensName, showName, publicKey } = userStorage.getUserInfo();
                 if (!address || !showName) {
                     console.warn('No address or name of current user, please check.');
                     return;
@@ -227,7 +214,7 @@ export default function NewMail() {
                         pks.push(receriverPublicKey);
                     }
                     console.log(pks, '--');
-                    const mySalt = getSaltFromLocal();
+                    const mySalt = userStorage.getSaltFromLocal();
                     console.log(mySalt);
                     if (!currRandomBitsRef.current) {
                         console.log('error: no currrandombitsref.current');
@@ -251,7 +238,7 @@ export default function NewMail() {
                 console.log(packData);
                 metaPack(packData).then(async res => {
                     const { packedResult } = res ?? {};
-                    getPersonalSign(getWalletAddress(), packedResult).then(async signature => {
+                    getPersonalSign(userStorage.getWalletAddress(), packedResult).then(async signature => {
                         if (signature === false) {
                             // notification.error({
                             // message: 'Not Your Sign, Not your Mail',
@@ -322,7 +309,7 @@ export default function NewMail() {
             }
         }
         console.log(receivers);
-        const { ensName, showName } = getUserInfo();
+        const { ensName, showName } = userStorage.getUserInfo();
         const { message_id, mail_date } =
             (await updateMail(draftID, {
                 subject: subject,
@@ -368,7 +355,7 @@ export default function NewMail() {
 
                 if (mail?.meta_header?.keys) myKeyRef.current = mail?.meta_header?.keys?.[0];
                 if (sessionStorage.getItem('reply')) {
-                    const { subject, mail_to, part_html } = getMailContent();
+                    const { subject, mail_to, part_html } = mailStorage.getMailContent();
                     subject && setSubject(subject);
                     mail_to && setReceivers(mail_to);
                     part_html && setContent(part_html);

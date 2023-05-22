@@ -6,9 +6,8 @@ import {
     useMailListStore,
     useMailDetailStore,
     useAlertStore,
-    clearUserInfo,
-    getUserInfo,
-    clearMailListInfo,
+    userStorage,
+    mailStorage,
     useNewMailStore,
 } from 'lib/storage';
 import MailBoxContext from 'pages/context';
@@ -28,23 +27,24 @@ export default function MailBoxPage() {
     const { isWriting } = useNewMailStore();
 
     function getLogOut() {
-        clearUserInfo();
-        clearMailListInfo();
+        userStorage.clearUserInfo();
+        mailStorage.clearMailListInfo();
         removeAllState();
         router.push('/');
     }
     useEffect(() => {
-        if (!getUserInfo().address) {
+        const address = userStorage.getUserInfo()?.address;
+        if (!address) {
             getLogOut();
         }
-        setAddress(getUserInfo()?.address);
+        setAddress(address);
     }, []);
     return (
         <div>
             <div className="flex flex-col flex-1 h-screen pb-24 font-poppins pr-21 w-[calc(100vw-206px)] min-w-[700px]">
                 <div className="flex flex-row pt-10 justify-end">
                     <div className="flex flex-row justify-end gap-4">
-                        <JazziconGrid size={24} addr={getUserInfo().address} />
+                        <JazziconGrid size={24} addr={address} />
                         <button
                             className="flex text-md omit font-bold pb-6 mr-17 justify-between w-131"
                             onClick={getLogOut}>

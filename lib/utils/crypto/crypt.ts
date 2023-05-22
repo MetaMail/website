@@ -5,7 +5,7 @@ import CryptoJS from 'crypto-js';
 
 import { MetaMailTypeEn } from 'lib/constants';
 import { createDraft } from 'lib/http';
-import { getPrivateKeyFromLocal, getUserInfo, saveUserInfo, setRandomBits } from 'lib/storage';
+import { userStorage } from 'lib/storage';
 
 export function generateRandom256Bits(address: string) {
     const rb = CryptoJS.lib.WordArray.random(256 / 8);
@@ -15,7 +15,7 @@ export function generateRandom256Bits(address: string) {
 export const createMail = async (type: MetaMailTypeEn) => {
     let key;
     if (type === MetaMailTypeEn.Encrypted) {
-        const { publicKey, address } = getUserInfo();
+        const { publicKey, address } = userStorage.getUserInfo();
         if (!address) {
             console.warn('No address of current user, please check');
             return;
@@ -28,7 +28,7 @@ export const createMail = async (type: MetaMailTypeEn) => {
         const randomBits = generateRandom256Bits(address);
         key = CryptoJS.AES.encrypt(randomBits, publicKey).toString();
     } else {
-        setRandomBits(undefined);
+        userStorage.setRandomBits(undefined);
     }
     if (type === MetaMailTypeEn.Encrypted && (!key || key?.length === 0)) {
         return;
@@ -42,7 +42,7 @@ export const getPrivateKey = async () => {
     try {
         const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
         const signer = provider.getSigner();
-        const encryptedPrivateKey = getPrivateKeyFromLocal();
+        const encryptedPrivateKey = userStorage.getPrivateKeyFromLocal();
         if (!encryptedPrivateKey || encryptedPrivateKey.length == 0) {
             throw new Error('error: no privateKey in sesssion storage');
         }

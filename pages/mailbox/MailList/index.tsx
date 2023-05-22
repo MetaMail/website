@@ -3,11 +3,8 @@ import { useRouter } from 'next/router';
 
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
 import {
-    getUserInfo,
-    setRandomBits,
-    updateStorage,
-    clearMailListInfo,
-    getMailListInfo,
+    userStorage,
+    mailStorage,
     useMailListStore,
     useAlertStore,
     useMailDetailStore,
@@ -111,7 +108,7 @@ export default function MailList() {
             setLoading(true);
         }
         try {
-            const mailListStorage = getMailListInfo();
+            const mailListStorage = mailStorage.getMailListInfo();
             console.log(mailListStorage);
             const isMailListStorageExist =
                 mailListStorage?.data?.page_index === pageIndex && mailListStorage?.filter === filterType;
@@ -123,7 +120,7 @@ export default function MailList() {
                 setUnreadCount(mailListStorage.data?.unread ?? 0);
             } else {
                 ////////不是缓存 重新取
-                clearMailListInfo();
+                mailStorage.clearMailListInfo();
                 console.log('meiyoulisthuancun');
                 const data = await getMailList({
                     filter: filterType,
@@ -140,7 +137,7 @@ export default function MailList() {
                     data: data,
                     filter: filterType,
                 };
-                updateStorage('MailListInfo', mailListStorage);
+                mailStorage.updateMailListInfo(mailListStorage);
             }
         } catch (e) {
             //setIsAlert(true);
@@ -156,11 +153,11 @@ export default function MailList() {
     };
 
     useEffect(() => {
-        if (getUserInfo()?.address) fetchMailList(true);
+        if (userStorage.getUserInfo()?.address) fetchMailList(true);
         //getMailDetail();  预加载feature abort
     }, [pageIndex, filterType]);
     useEffect(() => {
-        if (getUserInfo()?.address) fetchMailList(false);
+        if (userStorage.getUserInfo()?.address) fetchMailList(false);
         //getMailDetail();  预加载feature abort
     }, [detailFromNew]);
 
@@ -201,7 +198,7 @@ export default function MailList() {
         //read: number,
         item: IMailItem
     ) => {
-        setRandomBits(undefined); // clear random bits
+        userStorage.setRandomBits(undefined); // clear random bits
         if (!read) {
             const mails = [{ message_id: item?.message_id, mailbox: Number(item.mailbox) }];
             await changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
@@ -232,7 +229,7 @@ export default function MailList() {
                         url={update}
                         onClick={() => {
                             removeAllState();
-                            clearMailListInfo();
+                            mailStorage.clearMailListInfo();
                             //deleteStorage('mailDetailStorage');
                             fetchMailList(true);
                         }}

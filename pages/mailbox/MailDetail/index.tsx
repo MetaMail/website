@@ -8,8 +8,7 @@ import parse from 'html-react-parser';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { getMailDetailByID } from 'lib/http';
-import { getUserInfo, getShowName, clearUserInfo, clearMailListInfo, useMailDetailStore } from 'lib/storage';
-import Layout from 'components/Layouts';
+import { userStorage, mailStorage, useMailDetailStore } from 'lib/storage';
 import Icon from 'components/Icon';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
@@ -63,7 +62,7 @@ export default function MailDetail() {
         {
             src: trash,
             handler: () => {
-                clearMailListInfo();
+                mailStorage.clearMailListInfo();
                 handleDelete(mailInfo);
                 router.back();
             },
@@ -75,7 +74,7 @@ export default function MailDetail() {
         {
             src: spam,
             handler: () => {
-                clearMailListInfo();
+                mailStorage.clearMailListInfo();
                 handleSpam(mailInfo);
                 router.back();
             },
@@ -84,7 +83,7 @@ export default function MailDetail() {
             src: read,
             checkedSrc: markUnread,
             handler: () => {
-                clearMailListInfo();
+                mailStorage.clearMailListInfo();
                 handleChangeReadStatus(mailInfo, isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read);
                 setIsRead(!isRead);
             },
@@ -94,7 +93,7 @@ export default function MailDetail() {
             src: starred,
             checkedSrc: markFavorite,
             handler: () => {
-                clearMailListInfo();
+                mailStorage.clearMailListInfo();
                 handleStar(mailInfo, mark);
                 setMark(!mark);
             },
@@ -107,7 +106,7 @@ export default function MailDetail() {
             src: starred,
             checkedSrc: markFavorite,
             handler: () => {
-                clearMailListInfo();
+                mailStorage.clearMailListInfo();
                 handleStar(mailInfo, mark);
                 setMark(!mark);
             },
@@ -129,7 +128,7 @@ export default function MailDetail() {
 
     const handleDecrypted = async () => {
         let keys = mail?.meta_header?.keys;
-        const { address, ensName } = getUserInfo();
+        const { address, ensName } = userStorage.getUserInfo();
         if (keys && keys?.length > 0 && address) {
             const addrList = [
                 mail?.mail_from.address,
@@ -250,10 +249,10 @@ export default function MailDetail() {
             setReadable(false);
         }
         // handleMarkRead();
-        if (getUserInfo()?.address) {
+        if (userStorage.getUserInfo()?.address) {
             if (isMailDetail) handleLoad();
         } else {
-            clearUserInfo();
+            userStorage.clearUserInfo();
             router.push('/');
         }
     }, [detailFromList]);
