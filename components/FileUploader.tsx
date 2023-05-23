@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 
-import { uploadAttachment } from 'lib/http';
+import { mailHttp } from 'lib/http';
 import { AttachmentRelatedTypeEn } from 'lib/utils';
 import { MetaMailTypeEn } from 'lib/constants';
 
@@ -44,7 +44,7 @@ const FileUploader = (item: IFileUploader) => {
             form.append('sha256', sha256);
             form.append('related', related);
             cid && form.append('cid', cid);
-            const data = await uploadAttachment(item.draftID, form);
+            const data = await mailHttp.uploadAttachment(item.draftID, form);
             const attachmentRes = data.attachment;
             if (attachmentRes) {
                 item.onAttachment(attachmentRes);

@@ -5,7 +5,7 @@ import CryptoJS from 'crypto-js';
 
 import { IMailContentItem, IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { userStorage, mailStorage, useMailDetailStore, useNewMailStore } from 'lib/storage';
-import { createDraft, sendMail, updateMail, getMailDetailByID, getEncryptionKey } from 'lib/http';
+import { mailHttp, userHttp } from 'lib/http';
 import { getPersonalSign, metaPack, useInterval } from 'lib/utils';
 import { PostfixOfAddress } from 'lib/base';
 import FileUploader from 'components/FileUploader';
@@ -149,7 +149,7 @@ export default function NewMail() {
 
     const handleSend = async (keys: string[], packedResult: string, signature?: string) => {
         try {
-            const { message_id } = await sendMail(draftID, {
+            const { message_id } = await mailHttp.sendMail(draftID, {
                 date: dateRef.current,
                 signature: signature,
                 keys,
@@ -204,7 +204,7 @@ export default function NewMail() {
                     let pks: string[] = [publicKey!];
                     for (var i = 0; i < receivers.length; i++) {
                         const receiverItem = receivers[i];
-                        const encryptionData = await getEncryptionKey(receiverItem.address.split('@')[0]);
+                        const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
                         const receriverPublicKey = encryptionData.message_encryption_public_key;
                         if (!receriverPublicKey || receriverPublicKey.length == 0) {
                             throw new Error(
@@ -311,7 +311,7 @@ export default function NewMail() {
         console.log(receivers);
         const { ensName, showName } = userStorage.getUserInfo();
         const { message_id, mail_date } =
-            (await updateMail(draftID, {
+            (await mailHttp.updateMail(draftID, {
                 subject: subject,
                 mail_to: receivers,
                 part_html: html,
@@ -336,7 +336,7 @@ export default function NewMail() {
             //if (!query?.id && query.id.length === 0) {
             //  throw new Error();
             //}
-            const { mail } = await getMailDetailByID(window.btoa(id ?? detailFromNew?.message_id ?? ''));
+            const { mail } = await mailHttp.getMailDetailByID(window.btoa(id ?? detailFromNew?.message_id ?? ''));
 
             if (mail) {
                 //const { subject, mail_to, part_html } = getMailContent();

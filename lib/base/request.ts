@@ -12,13 +12,13 @@ type MMHttpBaseResponse = {
     data: any;
 };
 
-class MMHttp extends MMObject {
+export abstract class MMHttp extends MMObject {
     private _baseUrl: string;
     private _axios: Axios;
 
-    constructor(baseUrl: string) {
+    constructor() {
         super();
-        this._baseUrl = baseUrl;
+        this._baseUrl = BASE_URL;
 
         this._axios = axios.create({
             baseURL: this._baseUrl,
@@ -85,5 +85,3 @@ class MMHttp extends MMObject {
         return this.axios.delete(url, { ...config, data: content });
     }
 }
-
-export const httpInstance = new MMHttp(BASE_URL);

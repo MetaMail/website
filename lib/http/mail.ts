@@ -7,7 +7,7 @@ import {
     IMailContentItem,
     FilterTypeEn,
 } from '../constants';
-import { httpInstance } from '../base';
+import { MMHttp } from '../base';
 
 const APIs = {
     getMailList: '/mails/filter', // 根据筛选条件获取邮件列表
@@ -107,55 +107,59 @@ export interface IMailChangeParams {
     mailbox?: MailBoxTypeEn;
 }
 
-export async function getMailDetailByID(id: string) {
-    return httpInstance.get<void, IGetMailDetailResponse>(`${APIs.mailDetail}${id}`);
+class MMMailHttp extends MMHttp {
+    async getMailDetailByID(id: string) {
+        return this.get<void, IGetMailDetailResponse>(`${APIs.mailDetail}${id}`);
+    }
+
+    async getMailList(params: IGetMailListParams) {
+        return this.post<IGetMailListParams, IGetMailListResponse>(APIs.getMailList, params);
+    }
+
+    async changeMailStatus(mails: IMailChangeParams[], mark?: MarkTypeEn, read?: ReadStatusTypeEn) {
+        return this.post<IChangeMailStatusParams, void>(APIs.mailDetail, {
+            mails,
+            mark,
+            read,
+        });
+    }
+
+    async createDraft(type: MetaMailTypeEn, key?: string) {
+        return this.post<ICreateDraftParams, ICreateDraftResponse>(APIs.createDraft, {
+            meta_type: type,
+            key,
+        });
+    }
+
+    async updateMail(mailId: string, params: IUpdateMailParams) {
+        return this.patch<IUpdateMailParams, IUpdateMailResponse>(
+            APIs.updateMail.replace('{mail_id}', window.btoa(mailId)),
+            params
+        );
+    }
+
+    async sendMail(mailId: string, params: ISendMailParams) {
+        return this.post<ISendMailParams, ISendMailResponse>(
+            APIs.sendMail.replace('{mail_id}', window.btoa(mailId)),
+            params
+        );
+    }
+
+    async uploadAttachment(mailId: string, data: FormData) {
+        return this.post<FormData, IUploadAttachmentResponse>(
+            APIs.uploadAttachment.replace('{mail_id}', window.btoa(mailId)),
+            data,
+            {
+                timeout: 60000,
+            }
+        );
+    }
+
+    async deleteAttachment(mailId: string, attachmentId: string) {
+        return this.delete<void, IDeleteAttachmentResponse>(
+            APIs.deleteAttachment.replace('{mail_id}', window.btoa(mailId)).replace('{attachment_id}', attachmentId)
+        );
+    }
 }
 
-export async function getMailList(params: IGetMailListParams) {
-    return httpInstance.post<IGetMailListParams, IGetMailListResponse>(APIs.getMailList, params);
-}
-
-export async function changeMailStatus(mails: IMailChangeParams[], mark?: MarkTypeEn, read?: ReadStatusTypeEn) {
-    return httpInstance.post<IChangeMailStatusParams, void>(APIs.mailDetail, {
-        mails,
-        mark,
-        read,
-    });
-}
-
-export async function createDraft(type: MetaMailTypeEn, key?: string) {
-    return httpInstance.post<ICreateDraftParams, ICreateDraftResponse>(APIs.createDraft, {
-        meta_type: type,
-        key,
-    });
-}
-
-export async function updateMail(mailId: string, params: IUpdateMailParams) {
-    return httpInstance.patch<IUpdateMailParams, IUpdateMailResponse>(
-        APIs.updateMail.replace('{mail_id}', window.btoa(mailId)),
-        params
-    );
-}
-
-export async function sendMail(mailId: string, params: ISendMailParams) {
-    return httpInstance.post<ISendMailParams, ISendMailResponse>(
-        APIs.sendMail.replace('{mail_id}', window.btoa(mailId)),
-        params
-    );
-}
-
-export async function uploadAttachment(mailId: string, data: FormData) {
-    return httpInstance.post<FormData, IUploadAttachmentResponse>(
-        APIs.uploadAttachment.replace('{mail_id}', window.btoa(mailId)),
-        data,
-        {
-            timeout: 60000,
-        }
-    );
-}
-
-export async function deleteAttachment(mailId: string, attachmentId: string) {
-    return httpInstance.delete<void, IDeleteAttachmentResponse>(
-        APIs.deleteAttachment.replace('{mail_id}', window.btoa(mailId)).replace('{attachment_id}', attachmentId)
-    );
-}
+export const mailHttp = new MMMailHttp();

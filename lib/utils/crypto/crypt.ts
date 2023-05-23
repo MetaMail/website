@@ -4,7 +4,7 @@ import keccak256 from 'keccak256';
 import CryptoJS from 'crypto-js';
 
 import { MetaMailTypeEn } from 'lib/constants';
-import { createDraft } from 'lib/http';
+import { mailHttp } from 'lib/http';
 import { userStorage } from 'lib/storage';
 
 export function generateRandom256Bits(address: string) {
@@ -33,7 +33,7 @@ export const createMail = async (type: MetaMailTypeEn) => {
     if (type === MetaMailTypeEn.Encrypted && (!key || key?.length === 0)) {
         return;
     }
-    const { message_id } = await createDraft(type, key);
+    const { message_id } = await mailHttp.createDraft(type, key);
 
     return message_id;
 };

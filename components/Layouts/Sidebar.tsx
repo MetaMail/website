@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/storage';
 import { FilterTypeEn, MetaMailTypeEn, MailMenuItems } from 'lib/constants';
 import { createMail } from 'lib/utils/crypto';
-import { getMailDetailByID } from 'lib/http';
+import { mailHttp } from 'lib/http';
 import Icon from 'components/Icon';
 
 import logoBrand from 'assets/MetaMail.svg';
@@ -36,7 +36,7 @@ export default function Sidebar(props: any) {
         const newMailID = await createMail(MetaMailTypeEn.Encrypted);
         console.log(newMailID);
         if (newMailID) {
-            const { mail } = await getMailDetailByID(window.btoa(newMailID ?? ''));
+            const { mail } = await mailHttp.getMailDetailByID(window.btoa(newMailID ?? ''));
             setDetailFromNew(mail);
             setIsWriting(true);
         } else {

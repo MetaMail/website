@@ -20,7 +20,7 @@ import {
     MetaMailTypeEn,
     ReadStatusTypeEn,
 } from 'lib/constants';
-import { changeMailStatus, getMailDetailByID, getMailList, IMailChangeParams } from 'lib/http';
+import { mailHttp, IMailChangeParams } from 'lib/http';
 import MailBoxContext from 'pages/context';
 import MailListItem from 'components/MailItem';
 import Icon from 'components/Icon';
@@ -122,7 +122,7 @@ export default function MailList() {
                 ////////不是缓存 重新取
                 mailStorage.clearMailListInfo();
                 console.log('meiyoulisthuancun');
-                const data = await getMailList({
+                const data = await mailHttp.getMailList({
                     filter: filterType,
                     page_index: pageIndex,
                     limit: 20,
@@ -179,7 +179,7 @@ export default function MailList() {
     ) => {
         const mails = inputMails ?? getMails();
         try {
-            await changeMailStatus(mails, mark, read);
+            await mailHttp.changeMailStatus(mails, mark, read);
         } catch (e) {
             //setIsAlert(true);
             //notification.error({
@@ -201,7 +201,7 @@ export default function MailList() {
         userStorage.setRandomBits(undefined); // clear random bits
         if (!read) {
             const mails = [{ message_id: item?.message_id, mailbox: Number(item.mailbox) }];
-            await changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
+            await mailHttp.changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
         }
         fetchMailList(false);
         if (filterType === FilterTypeEn.Draft) {

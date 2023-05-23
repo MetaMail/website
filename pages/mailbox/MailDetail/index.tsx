@@ -7,7 +7,7 @@ import parse from 'html-react-parser';
 
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
-import { getMailDetailByID } from 'lib/http';
+import { mailHttp } from 'lib/http';
 import { userStorage, mailStorage, useMailDetailStore } from 'lib/storage';
 import Icon from 'components/Icon';
 
@@ -220,7 +220,7 @@ export default function MailDetail() {
             //  })
             if (!loading) setLoading(true);
             //if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
-            const { mail } = await getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
+            const { mail } = await mailHttp.getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
             changeInnerHTML(mail);
             setMail(mail);
             //}

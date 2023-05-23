@@ -7,7 +7,7 @@ import { disconnect } from '@wagmi/core';
 import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 
-import { getJwtToken, getRandomStrToSign, getEncryptionKey, putEncryptionKey } from 'lib/http';
+import { userHttp } from 'lib/http';
 import { userStorage } from 'lib/storage';
 import { generateEncryptionKey } from 'lib/utils';
 import ReviewInfo from 'components/ReviewInfo';
@@ -33,14 +33,14 @@ export default function Welcome() {
             if (!window.ethereum) throw new Error('Your client does not support Ethereum');
             const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
             const signer = provider.getSigner();
-            const { randomStr, tokenForRandom } = await getRandomStrToSign(address!);
+            const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address!);
             const signedMessage = await signer.signMessage(randomStr);
-            const { user } = await getJwtToken({ tokenForRandom, signedMessage });
-            let encryptionData = await getEncryptionKey(address ?? '');
+            const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
+            let encryptionData = await userHttp.getEncryptionKey(address ?? '');
             if (!encryptionData?.message_encryption_public_key) {
                 encryptionData = await generateEncryptionKey(address);
                 // do upload
-                await putEncryptionKey({
+                await userHttp.putEncryptionKey({
                     data: {
                         ...encryptionData,
                         addr: address ? address.toString() : '',
