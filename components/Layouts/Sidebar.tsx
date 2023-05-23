@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/storage';
+import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/zustand-store';
 import { FilterTypeEn, MetaMailTypeEn, MailMenuItems } from 'lib/constants';
 import { createMail } from 'lib/utils/crypto';
 import { mailHttp } from 'lib/http';

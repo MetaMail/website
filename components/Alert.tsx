@@ -1,4 +1,4 @@
-import { useAlertStore } from 'lib/storage';
+import { useAlertStore } from 'lib/zustand-store';
 
 interface IAlertProps {
     message: string;

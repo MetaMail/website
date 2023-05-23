@@ -8,7 +8,8 @@ import parse from 'html-react-parser';
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { mailHttp } from 'lib/http';
-import { userStorage, mailStorage, useMailDetailStore } from 'lib/storage';
+import { userStorage, mailStorage } from 'lib/session-storage';
+import { useMailDetailStore } from 'lib/zustand-store';
 import Icon from 'components/Icon';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';

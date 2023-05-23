@@ -4,7 +4,8 @@ import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 
 import { IMailContentItem, IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
-import { userStorage, mailStorage, useMailDetailStore, useNewMailStore } from 'lib/storage';
+import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { userStorage, mailStorage } from 'lib/session-storage';
 import { mailHttp, userHttp } from 'lib/http';
 import { getPersonalSign, metaPack, useInterval } from 'lib/utils';
 import { PostfixOfAddress } from 'lib/base';

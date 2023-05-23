@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { PostfixOfAddress } from 'lib/base';
-import { userStorage } from 'lib/storage';
+import { userStorage } from 'lib/session-storage';
 
 import { swapAddr } from 'assets/icons';
 import Icon from './Icon';

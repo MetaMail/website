@@ -5,7 +5,7 @@ import CryptoJS from 'crypto-js';
 
 import { MetaMailTypeEn } from 'lib/constants';
 import { mailHttp } from 'lib/http';
-import { userStorage } from 'lib/storage';
+import { userStorage } from 'lib/session-storage';
 
 export function generateRandom256Bits(address: string) {
     const rb = CryptoJS.lib.WordArray.random(256 / 8);

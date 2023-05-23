@@ -8,7 +8,7 @@ import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 
 import { userHttp } from 'lib/http';
-import { userStorage } from 'lib/storage';
+import { userStorage } from 'lib/session-storage';
 import { generateEncryptionKey } from 'lib/utils';
 import ReviewInfo from 'components/ReviewInfo';
 import Footer from 'components/Footer';

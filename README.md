@@ -30,8 +30,9 @@ There you go. Check [localhost:3000](http://localhost:3000).
 ├───── base # 基础类库
 ├───── constants # 常量 - 不变的 & 配置性的
 ├───── http # 业务http请求
-├───── storage # 本地存储 - cookie & sessionStorage & 状态管理
+├───── session-storage # 本地存储 - sessionStorage
 ├───── utils # 工具函数集
+├───── zustand-store # 状态管理 - zustand
 ├── pages # 页面
 ├── public # 公共资源
 ├── styles # 样式

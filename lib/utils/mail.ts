@@ -2,7 +2,6 @@ import { MarkTypeEn, ReadStatusTypeEn, IPersonItem } from 'lib/constants';
 import { IMailChangeParams, mailHttp } from 'lib/http';
 import { PostfixOfAddress } from 'lib/base';
 
-//import { deleteStorage } from "./storage";
 //import router from "next/router";
 
 export const handleDelete = async (inputMails: IMailChangeParams[]) => {

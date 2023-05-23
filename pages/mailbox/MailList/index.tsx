@@ -2,14 +2,8 @@ import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 
 import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
-import {
-    userStorage,
-    mailStorage,
-    useMailListStore,
-    useAlertStore,
-    useMailDetailStore,
-    useNewMailStore,
-} from 'lib/storage';
+import { useMailListStore, useAlertStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { userStorage, mailStorage } from 'lib/session-storage';
 import {
     FilterTypeEn,
     getMailBoxType,

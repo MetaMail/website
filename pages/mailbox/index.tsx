@@ -2,14 +2,8 @@ import React, { ReactElement, useEffect, useState, useContext } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-import {
-    useMailListStore,
-    useMailDetailStore,
-    useAlertStore,
-    userStorage,
-    mailStorage,
-    useNewMailStore,
-} from 'lib/storage';
+import { useMailListStore, useMailDetailStore, useAlertStore, useNewMailStore } from 'lib/zustand-store';
+import { userStorage, mailStorage } from 'lib/session-storage';
 import MailBoxContext from 'pages/context';
 
 import Alert from 'components/Alert';
