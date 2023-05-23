@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
 import { useMailListStore, useMailDetailStore, useAlertStore, useNewMailStore } from 'lib/zustand-store';
-import { userStorage, mailStorage } from 'lib/session-storage';
+import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import MailBoxContext from 'pages/context';
 
 import Alert from 'components/Alert';
@@ -21,13 +21,13 @@ export default function MailBoxPage() {
     const { isWriting } = useNewMailStore();
 
     function getLogOut() {
-        userStorage.clearUserInfo();
-        mailStorage.clearMailListInfo();
+        userSessionStorage.clearUserInfo();
+        mailSessionStorage.clearMailListInfo();
         removeAllState();
         router.push('/');
     }
     useEffect(() => {
-        const address = userStorage.getUserInfo()?.address;
+        const address = userSessionStorage.getUserInfo()?.address;
         if (!address) {
             getLogOut();
         }

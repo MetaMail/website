@@ -3,63 +3,41 @@ import { ExternalProvider } from '@ethersproject/providers';
 import keccak256 from 'keccak256';
 import CryptoJS from 'crypto-js';
 
-import { MetaMailTypeEn } from 'lib/constants';
-import { mailHttp } from 'lib/http';
-import { userStorage } from 'lib/session-storage';
+import { userSessionStorage } from 'lib/session-storage';
 
 export function generateRandom256Bits(address: string) {
     const rb = CryptoJS.lib.WordArray.random(256 / 8);
     return 'Encryption key of this mail from ' + address + ' is ' + rb.toString(CryptoJS.enc.Base64);
 }
 
-export const createMail = async (type: MetaMailTypeEn) => {
-    let key;
-    if (type === MetaMailTypeEn.Encrypted) {
-        const { publicKey, address } = userStorage.getUserInfo();
-        if (!address) {
-            console.warn('No address of current user, please check');
-            return;
-        }
-        if (!publicKey || publicKey?.length === 0) {
-            console.log('error: !pKey || pKey?.length === 0');
-            return;
-        }
-
-        const randomBits = generateRandom256Bits(address);
-        key = CryptoJS.AES.encrypt(randomBits, publicKey).toString();
-    } else {
-        userStorage.setRandomBits(undefined);
+export const createMailKeyWithEncrypted = () => {
+    const { publicKey, address } = userSessionStorage.getUserInfo();
+    if (!address) {
+        throw new Error('No address of current user, please check');
     }
-    if (type === MetaMailTypeEn.Encrypted && (!key || key?.length === 0)) {
-        return;
+    if (!publicKey || publicKey?.length === 0) {
+        throw new Error('error: !pKey || pKey?.length === 0');
     }
-    const { message_id } = await mailHttp.createDraft(type, key);
-
-    return message_id;
+    const randomBits = generateRandom256Bits(address);
+    return CryptoJS.AES.encrypt(randomBits, publicKey).toString();
 };
 
 export const getPrivateKey = async () => {
-    try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
-        const signer = provider.getSigner();
-        const encryptedPrivateKey = userStorage.getPrivateKeyFromLocal();
-        if (!encryptedPrivateKey || encryptedPrivateKey.length == 0) {
-            throw new Error('error: no privateKey in sesssion storage');
-        }
-        // @ts-ignore
-        const salt = getSaltFromLocal();
-        if (!salt || salt.length == 0) {
-            throw new Error('error: no privateKey in sesssion storage');
-        }
-        const signedSalt = await signer.signMessage(
-            'Please sign this message to generate encrypted private key: \n \n' + salt
-        );
-        const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
-        const privateKey = CryptoJS.AES.decrypt(encryptedPrivateKey, Storage_Encryption_Key).toString(
-            CryptoJS.enc.Utf8
-        );
-        return privateKey;
-    } catch (e) {
-        console.log(e);
+    const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
+    const signer = provider.getSigner();
+    const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
+    if (!encryptedPrivateKey || encryptedPrivateKey.length == 0) {
+        throw new Error('error: no privateKey in sesssion storage');
     }
+    // @ts-ignore
+    const salt = getSaltFromLocal();
+    if (!salt || salt.length == 0) {
+        throw new Error('error: no privateKey in sesssion storage');
+    }
+    const signedSalt = await signer.signMessage(
+        'Please sign this message to generate encrypted private key: \n \n' + salt
+    );
+    const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
+    const privateKey = CryptoJS.AES.decrypt(encryptedPrivateKey, Storage_Encryption_Key).toString(CryptoJS.enc.Utf8);
+    return privateKey;
 };

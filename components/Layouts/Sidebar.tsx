@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/zustand-store';
 import { FilterTypeEn, MetaMailTypeEn, MailMenuItems } from 'lib/constants';
-import { createMail } from 'lib/utils/crypto';
+import { createMailKeyWithEncrypted } from 'lib/utils/crypto';
 import { mailHttp } from 'lib/http';
 import Icon from 'components/Icon';
 
@@ -33,15 +33,13 @@ export default function Sidebar(props: any) {
         resetPageIndex();
     }
     async function handleClickNewMail() {
-        const newMailID = await createMail(MetaMailTypeEn.Encrypted);
-        console.log(newMailID);
-        if (newMailID) {
-            const { mail } = await mailHttp.getMailDetailByID(window.btoa(newMailID ?? ''));
-            setDetailFromNew(mail);
-            setIsWriting(true);
-        } else {
-            console.log('throw new Error:no const newMailID = await createMail');
-        }
+        const key = createMailKeyWithEncrypted();
+        // 以前的代码中，如果不是MetaMailTypeEn.Encrypted，还会执行 userStorage.setRandomBits(undefined);
+        // 这里目前全都当MetaMailTypeEn.Encrypted处理，估计代码还没写完，写完以后把注释删除
+        const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key);
+        const { mail } = await mailHttp.getMailDetailByID(window.btoa(message_id ?? ''));
+        setDetailFromNew(mail);
+        setIsWriting(true);
     }
 
     return (

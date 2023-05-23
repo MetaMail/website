@@ -1,7 +1,7 @@
 import { draft, encryptedInbox, inbox, read, sent, spam, trash, unread, markFavorite, starred } from 'assets/icons';
 import { FilterTypeEn } from './interfaces';
 
-export const SiderFilterMap: Record<FilterTypeEn, { title: string; logo: string; hidden?: boolean }> = {
+export const SiderFilterMap: Partial<Record<FilterTypeEn, { title: string; logo: string; hidden?: boolean }>> = {
     [FilterTypeEn.Inbox]: { title: 'Inbox', logo: inbox, hidden: false },
     //[FilterTypeEn.Encrypted]: { title: 'Encrypted Inbox', logo: encryptedInbox,},
 

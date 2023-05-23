@@ -28,12 +28,6 @@ export enum MetaMailTypeEn {
     Encrypted = 2,
 }
 
-export const MailTypeIconMap = {
-    [MetaMailTypeEn.Signed]: undefined, //signedMail,
-    [MetaMailTypeEn.Encrypted]: undefined, //encryptedMail,
-    [MetaMailTypeEn.Plain]: undefined,
-};
-
 export const getMailBoxType = (filter: FilterTypeEn) => {
     switch (filter) {
         case FilterTypeEn.Draft:

@@ -1,9 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 
-import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
 import { useMailListStore, useAlertStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
-import { userStorage, mailStorage } from 'lib/session-storage';
+import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import {
     FilterTypeEn,
     getMailBoxType,
@@ -40,21 +39,21 @@ export default function MailList() {
         {
             src: trash,
             handler: async () => {
-                await handleDelete(getMails());
+                await mailHttp.changeMailStatus(getMails(), MarkTypeEn.Trash, undefined);
                 await fetchMailList(false);
             },
         },
         {
             src: starred,
             handler: async () => {
-                await handleStar(getMails());
+                await mailHttp.changeMailStatus(getMails(), MarkTypeEn.Starred, undefined);
                 await fetchMailList(false);
             },
         },
         {
             src: spam,
             handler: async () => {
-                await handleSpam(getMails());
+                await mailHttp.changeMailStatus(getMails(), MarkTypeEn.Spam, undefined);
                 await fetchMailList(false);
             },
         },
@@ -62,14 +61,14 @@ export default function MailList() {
         {
             src: read,
             handler: async () => {
-                await handleChangeReadStatus(getMails(), ReadStatusTypeEn.read);
+                await mailHttp.changeMailStatus(getMails(), undefined, ReadStatusTypeEn.read);
                 await fetchMailList(false);
             },
         },
         {
             src: markUnread,
             handler: async () => {
-                await handleChangeReadStatus(getMails(), ReadStatusTypeEn.unread);
+                await mailHttp.changeMailStatus(getMails(), undefined, ReadStatusTypeEn.unread);
                 await fetchMailList(false);
             },
         },
@@ -102,7 +101,7 @@ export default function MailList() {
             setLoading(true);
         }
         try {
-            const mailListStorage = mailStorage.getMailListInfo();
+            const mailListStorage = mailSessionStorage.getMailListInfo();
             console.log(mailListStorage);
             const isMailListStorageExist =
                 mailListStorage?.data?.page_index === pageIndex && mailListStorage?.filter === filterType;
@@ -114,7 +113,7 @@ export default function MailList() {
                 setUnreadCount(mailListStorage.data?.unread ?? 0);
             } else {
                 ////////不是缓存 重新取
-                mailStorage.clearMailListInfo();
+                mailSessionStorage.clearMailListInfo();
                 console.log('meiyoulisthuancun');
                 const data = await mailHttp.getMailList({
                     filter: filterType,
@@ -131,7 +130,7 @@ export default function MailList() {
                     data: data,
                     filter: filterType,
                 };
-                mailStorage.updateMailListInfo(mailListStorage);
+                mailSessionStorage.updateMailListInfo(mailListStorage);
             }
         } catch (e) {
             //setIsAlert(true);
@@ -147,11 +146,11 @@ export default function MailList() {
     };
 
     useEffect(() => {
-        if (userStorage.getUserInfo()?.address) fetchMailList(true);
+        if (userSessionStorage.getUserInfo()?.address) fetchMailList(true);
         //getMailDetail();  预加载feature abort
     }, [pageIndex, filterType]);
     useEffect(() => {
-        if (userStorage.getUserInfo()?.address) fetchMailList(false);
+        if (userSessionStorage.getUserInfo()?.address) fetchMailList(false);
         //getMailDetail();  预加载feature abort
     }, [detailFromNew]);
 
@@ -192,7 +191,7 @@ export default function MailList() {
         //read: number,
         item: IMailItem
     ) => {
-        userStorage.setRandomBits(undefined); // clear random bits
+        userSessionStorage.setRandomBits(undefined); // clear random bits
         if (!read) {
             const mails = [{ message_id: item?.message_id, mailbox: Number(item.mailbox) }];
             await mailHttp.changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
@@ -223,7 +222,7 @@ export default function MailList() {
                         url={update}
                         onClick={() => {
                             removeAllState();
-                            mailStorage.clearMailListInfo();
+                            mailSessionStorage.clearMailListInfo();
                             //deleteStorage('mailDetailStorage');
                             fetchMailList(true);
                         }}

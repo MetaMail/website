@@ -5,10 +5,9 @@ import DOMPurify from 'dompurify';
 import moment from 'moment';
 import parse from 'html-react-parser';
 
-import { handleChangeReadStatus, handleDelete, handleSpam, handleStar } from 'lib/utils';
-import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
+import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
 import { mailHttp } from 'lib/http';
-import { userStorage, mailStorage } from 'lib/session-storage';
+import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { useMailDetailStore } from 'lib/zustand-store';
 import Icon from 'components/Icon';
 
@@ -62,9 +61,9 @@ export default function MailDetail() {
         },
         {
             src: trash,
-            handler: () => {
-                mailStorage.clearMailListInfo();
-                handleDelete(mailInfo);
+            handler: async () => {
+                mailSessionStorage.clearMailListInfo();
+                await mailHttp.changeMailStatus(mailInfo, MarkTypeEn.Trash, undefined);
                 router.back();
             },
         },
@@ -74,18 +73,22 @@ export default function MailDetail() {
         },
         {
             src: spam,
-            handler: () => {
-                mailStorage.clearMailListInfo();
-                handleSpam(mailInfo);
+            handler: async () => {
+                mailSessionStorage.clearMailListInfo();
+                await mailHttp.changeMailStatus(mailInfo, MarkTypeEn.Spam, undefined);
                 router.back();
             },
         },
         {
             src: read,
             checkedSrc: markUnread,
-            handler: () => {
-                mailStorage.clearMailListInfo();
-                handleChangeReadStatus(mailInfo, isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read);
+            handler: async () => {
+                mailSessionStorage.clearMailListInfo();
+                await mailHttp.changeMailStatus(
+                    mailInfo,
+                    undefined,
+                    isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read
+                );
                 setIsRead(!isRead);
             },
             onselect: isRead,
@@ -93,9 +96,9 @@ export default function MailDetail() {
         {
             src: starred,
             checkedSrc: markFavorite,
-            handler: () => {
-                mailStorage.clearMailListInfo();
-                handleStar(mailInfo, mark);
+            handler: async () => {
+                mailSessionStorage.clearMailListInfo();
+                await mailHttp.changeMailStatus(mailInfo, mark ? MarkTypeEn.Normal : MarkTypeEn.Starred, undefined);
                 setMark(!mark);
             },
             onselect: mark,
@@ -106,9 +109,9 @@ export default function MailDetail() {
         {
             src: starred,
             checkedSrc: markFavorite,
-            handler: () => {
-                mailStorage.clearMailListInfo();
-                handleStar(mailInfo, mark);
+            handler: async () => {
+                mailSessionStorage.clearMailListInfo();
+                await mailHttp.changeMailStatus(mailInfo, mark ? MarkTypeEn.Normal : MarkTypeEn.Starred, undefined);
                 setMark(!mark);
             },
             onselect: mark,
@@ -129,7 +132,7 @@ export default function MailDetail() {
 
     const handleDecrypted = async () => {
         let keys = mail?.meta_header?.keys;
-        const { address, ensName } = userStorage.getUserInfo();
+        const { address, ensName } = userSessionStorage.getUserInfo();
         if (keys && keys?.length > 0 && address) {
             const addrList = [
                 mail?.mail_from.address,
@@ -250,10 +253,10 @@ export default function MailDetail() {
             setReadable(false);
         }
         // handleMarkRead();
-        if (userStorage.getUserInfo()?.address) {
+        if (userSessionStorage.getUserInfo()?.address) {
             if (isMailDetail) handleLoad();
         } else {
-            userStorage.clearUserInfo();
+            userSessionStorage.clearUserInfo();
             router.push('/');
         }
     }, [detailFromList]);

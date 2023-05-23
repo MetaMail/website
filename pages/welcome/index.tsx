@@ -8,7 +8,7 @@ import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 
 import { userHttp } from 'lib/http';
-import { userStorage } from 'lib/session-storage';
+import { userSessionStorage } from 'lib/session-storage';
 import { generateEncryptionKey } from 'lib/utils';
 import ReviewInfo from 'components/ReviewInfo';
 import Footer from 'components/Footer';
@@ -48,7 +48,7 @@ export default function Welcome() {
                     },
                 });
             }
-            userStorage.saveUserInfo({
+            userSessionStorage.saveUserInfo({
                 address,
                 ensName: user.ens,
                 publicKey: encryptionData.message_encryption_public_key,
@@ -65,7 +65,7 @@ export default function Welcome() {
     useEffect(() => {
         (async () => {
             if (!isConnected) return;
-            if (userStorage.getUserInfo().address !== address) return handleAutoLogin();
+            if (userSessionStorage.getUserInfo().address !== address) return handleAutoLogin();
 
             await disconnect();
             router.push('/mailbox');

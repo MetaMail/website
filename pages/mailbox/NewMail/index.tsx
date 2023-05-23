@@ -5,9 +5,10 @@ import CryptoJS from 'crypto-js';
 
 import { IMailContentItem, IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
-import { userStorage, mailStorage } from 'lib/session-storage';
+import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { mailHttp, userHttp } from 'lib/http';
-import { getPersonalSign, metaPack, useInterval } from 'lib/utils';
+import { getPersonalSign, metaPack } from 'lib/utils';
+import { useInterval } from 'pages/hooks';
 import { PostfixOfAddress } from 'lib/base';
 import FileUploader from 'components/FileUploader';
 import NameSelecter from 'components/NameSelecter';
@@ -136,7 +137,7 @@ export default function NewMail() {
     useEffect(() => {
         handleLoad();
         return () => {
-            mailStorage.clearMailContent();
+            mailSessionStorage.clearMailContent();
         };
     }, [detailFromNew]);
     useInterval(() => {
@@ -192,7 +193,7 @@ export default function NewMail() {
                 if (!obj) {
                     return;
                 }
-                const { address, ensName, showName, publicKey } = userStorage.getUserInfo();
+                const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
                 if (!address || !showName) {
                     console.warn('No address or name of current user, please check.');
                     return;
@@ -215,7 +216,7 @@ export default function NewMail() {
                         pks.push(receriverPublicKey);
                     }
                     console.log(pks, '--');
-                    const mySalt = userStorage.getSaltFromLocal();
+                    const mySalt = userSessionStorage.getSaltFromLocal();
                     console.log(mySalt);
                     if (!currRandomBitsRef.current) {
                         console.log('error: no currrandombitsref.current');
@@ -239,7 +240,7 @@ export default function NewMail() {
                 console.log(packData);
                 metaPack(packData).then(async res => {
                     const { packedResult } = res ?? {};
-                    getPersonalSign(userStorage.getWalletAddress(), packedResult).then(async signature => {
+                    getPersonalSign(userSessionStorage.getWalletAddress(), packedResult).then(async signature => {
                         if (signature === false) {
                             // notification.error({
                             // message: 'Not Your Sign, Not your Mail',
@@ -310,7 +311,7 @@ export default function NewMail() {
             }
         }
         console.log(receivers);
-        const { ensName, showName } = userStorage.getUserInfo();
+        const { ensName, showName } = userSessionStorage.getUserInfo();
         const { message_id, mail_date } =
             (await mailHttp.updateMail(draftID, {
                 subject: subject,
@@ -356,7 +357,7 @@ export default function NewMail() {
 
                 if (mail?.meta_header?.keys) myKeyRef.current = mail?.meta_header?.keys?.[0];
                 if (sessionStorage.getItem('reply')) {
-                    const { subject, mail_to, part_html } = mailStorage.getMailContent();
+                    const { subject, mail_to, part_html } = mailSessionStorage.getMailContent();
                     subject && setSubject(subject);
                     mail_to && setReceivers(mail_to);
                     part_html && setContent(part_html);

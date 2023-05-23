@@ -16,7 +16,7 @@ interface IAllUserInfo extends IUserInfo {
     showName?: string;
 }
 
-class MMUserStorage extends MMSessionStorage {
+class MMUserSessionStorage extends MMSessionStorage {
     constructor() {
         super('user');
     }
@@ -84,4 +84,4 @@ class MMUserStorage extends MMSessionStorage {
     }
 }
 
-export const userStorage = new MMUserStorage();
+export const userSessionStorage = new MMUserSessionStorage();

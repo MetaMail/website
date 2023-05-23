@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
 import { PostfixOfAddress } from 'lib/base';
-import { userStorage } from 'lib/session-storage';
+import { userSessionStorage } from 'lib/session-storage';
 
 import { swapAddr } from 'assets/icons';
 import Icon from './Icon';
 
 function NameSelecter() {
-    const { showName, ensName, address } = userStorage.getUserInfo();
+    const { showName, ensName, address } = userSessionStorage.getUserInfo();
     const [activeName, setActiveName] = useState(showName);
     const [isAddrListHidden, setIsAddrListHidden] = useState(true);
     const DropItem = ({ name }: { name?: string }) => {
@@ -15,7 +15,7 @@ function NameSelecter() {
             <div
                 className="hover:bg-[#DAE7FF] px-11 py-5 cursor-pointer"
                 onClick={() => {
-                    userStorage.saveShowName(name);
+                    userSessionStorage.saveShowName(name);
                     setActiveName(name);
                     setIsAddrListHidden(true);
                 }}>

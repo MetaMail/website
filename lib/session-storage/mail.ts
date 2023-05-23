@@ -17,7 +17,7 @@ interface IMailListInfo {
     filter: FilterTypeEn;
 }
 
-class MMMailStorage extends MMSessionStorage {
+class MMMailSessionStorage extends MMSessionStorage {
     constructor() {
         super('mail');
     }
@@ -47,4 +47,4 @@ class MMMailStorage extends MMSessionStorage {
     }
 }
 
-export const mailStorage = new MMMailStorage();
+export const mailSessionStorage = new MMMailSessionStorage();
