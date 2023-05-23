@@ -1,0 +1,65 @@
+import { create } from 'zustand';
+import { IMailItem, FilterTypeEn } from 'lib/constants';
+
+interface IMailListState {
+    filterType: FilterTypeEn;
+    pageIndex: number;
+    unReadCount: number;
+    setFilterType: (filterType: FilterTypeEn) => void;
+    addPageIndex: () => void;
+    subPageIndex: () => void;
+    resetPageIndex: () => void;
+    setUnreadCount: (unReadCount: number) => void;
+}
+export const useMailListStore = create<IMailListState>()(set => ({
+    filterType: FilterTypeEn.Inbox,
+    pageIndex: 1,
+    unReadCount: 0,
+    setFilterType: (filterType: FilterTypeEn) => set(() => ({ filterType })),
+    addPageIndex: () => set(state => ({ pageIndex: state.pageIndex + 1 })),
+    subPageIndex: () => set(state => ({ pageIndex: state.pageIndex - 1 })),
+    resetPageIndex: () => set({ pageIndex: 1 }),
+    setUnreadCount: (unReadCount: number) => set(() => ({ unReadCount })),
+}));
+
+interface IMailDetailState {
+    detailFromList: IMailItem;
+    detailFromNew: IMailItem;
+    isMailDetail: boolean;
+    setDetailFromList: (item: IMailItem) => void;
+    setDetailFromNew: (item: IMailItem) => void;
+    setIsMailDetail: (isMailDetail: boolean) => void;
+}
+
+export const useMailDetailStore = create<IMailDetailState>()(set => ({
+    detailFromList: null,
+    detailFromNew: null,
+    isMailDetail: false,
+    setDetailFromList: (detailFromList: IMailItem) => set(() => ({ detailFromList })),
+    setDetailFromNew: (detailFromNew: IMailItem) => set(() => ({ detailFromNew })),
+    setIsMailDetail: (isMailDetail: boolean) => set(() => ({ isMailDetail })),
+}));
+
+interface INewMailState {
+    isWriting: boolean;
+    setIsWriting: (isWriting: boolean) => void;
+}
+
+export const useNewMailStore = create<INewMailState>()(set => ({
+    isWriting: false,
+    setIsWriting: (isWriting: boolean) => set(() => ({ isWriting })),
+}));
+
+interface IAlertState {
+    isAlert: boolean;
+    alertInfo: string;
+    setIsAlert: (isAlert: boolean) => void;
+    setAlertInfo: (alertInfo: string) => void;
+}
+
+export const useAlertStore = create<IAlertState>()(set => ({
+    isAlert: false,
+    alertInfo: '',
+    setIsAlert: (isAlert: boolean) => set(() => ({ isAlert })),
+    setAlertInfo: (alertInfo: string) => set(() => ({ alertInfo })),
+}));

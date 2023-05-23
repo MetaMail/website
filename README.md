@@ -24,22 +24,25 @@ There you go. Check [localhost:3000](http://localhost:3000).
 
 ```bash
 .
-├── README.md
-├── assets # 资源
-├── components # 组件
-├── constants # 常量 - 不变的、配置性的
+├── assets # 资源 - img & icon
+├── components # 公共组件
+├── lib # 逻辑库
+├───── base # 基础类库
+├───── constants # 常量 - 不变的 & 配置性的
+├───── http # 业务http请求
+├───── session-storage # 本地存储 - sessionStorage
+├───── utils # 工具函数集
+├───── zustand-store # 状态管理 - zustand
+├── pages # 页面
+├── public # 公共资源
+├── styles # 样式
+├── .prettierrc # 代码格式化风格配置
 ├── next-env.d.ts # 环境配置
 ├── next.config.js # 工程配置
-├── node_modules # 依赖库
 ├── package.json # 依赖包
-├── pages # 页面
 ├── postcss.config.js # postcss配置文件
-├── public # 公共资源
-├── sections # 页面模块 首页only
-├── services # apis
-├── styles # 样式
+├── README.md # 工程介绍
 ├── tailwind.config.js # tailwindcss 配置文件
 ├── tsconfig.json # typescript配置文件
-├── utils # 各类工具函数
 └── yarn.lock # 锁文件 - yarn
 ```
