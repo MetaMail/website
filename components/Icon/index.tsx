@@ -5,7 +5,7 @@ interface IIconProps {
     url: any;
     checkedUrl?: any;
     onClick?: (isSelected: boolean) => void;
-    className?: any;
+    className?: string;
     style?: React.CSSProperties;
     imgStyle?: React.CSSProperties;
     select?: boolean;

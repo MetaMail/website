@@ -6,7 +6,7 @@ import discord from 'assets/discord.png';
 import tg from 'assets/telegram.svg';
 import git from 'assets/git.png';
 
-const Links = [
+const allLinks = [
     {
         href: '',
         logo: twitter,
@@ -34,7 +34,7 @@ const Links = [
     },
 ];
 
-export default function Footer({}) {
+export default function Footer() {
     return (
         <footer className="h-262 bg-white flex flex-row justify-between py-83 px-130 ">
             <div className="hidden lg:flex flex-col gap-21">
@@ -50,7 +50,7 @@ export default function Footer({}) {
                 </Link>
                 <div className="flex flex-col gap-23">
                     <div className="flex flex-row gap-10">
-                        {Links.map((link, index) => (
+                        {allLinks.map((link, index) => (
                             <LinkItem {...link} key={index} />
                         ))}
                     </div>

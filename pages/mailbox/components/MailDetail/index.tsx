@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, ReactElement } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import DOMPurify from 'dompurify';
@@ -29,30 +29,24 @@ import {
     markUnread,
 } from 'assets/icons';
 
-// allowed URI schemesstorage/mail
-var allowlist = ['http', 'https', 'ftp'];
-// build fitting regex
-var regex = RegExp('^(' + allowlist.join('|') + '):', 'gim');
-
 export default function MailDetail() {
     const router = useRouter();
     const { isMailDetail, detailFromList, setIsMailDetail } = useMailDetailStore();
 
-    const [mail, setMail] = useState<IMailContentItem>();
+    const [mailDetail, setMailDetail] = useState<IMailContentItem>();
     const [isExtend, setIsExtend] = useState(false);
     const [readable, setReadable] = useState(true);
     const [loading, setLoading] = useState(false);
     const [isRead, setIsRead] = useState(true);
-    const randomBitsRef = useRef();
-
     const [mailInfo, setMailInfo] = useState([
         {
             message_id: detailFromList.message_id,
             mailbox: detailFromList.mailbox,
         },
     ]);
-    const [mark, setMark] = useState(detailFromList.mark === 1 ? true : false);
-    const sixMail = [
+    const [mark, setMark] = useState(detailFromList.mark === 1);
+
+    const mailDetailTopActions = [
         {
             src: back,
             handler: () => {
@@ -131,14 +125,14 @@ export default function MailDetail() {
     ];
 
     const handleDecrypted = async () => {
-        let keys = mail?.meta_header?.keys;
+        let keys = mailDetail?.meta_header?.keys;
         const { address, ensName } = userSessionStorage.getUserInfo();
         if (keys && keys?.length > 0 && address) {
             const addrList = [
-                mail?.mail_from.address,
-                ...(mail?.mail_to.map(item => item.address) || []),
-                ...(mail?.mail_cc.map(item => item.address) || []),
-                ...(mail?.mail_bcc.map(item => item.address) || []),
+                mailDetail?.mail_from.address,
+                ...(mailDetail?.mail_to.map(item => item.address) || []),
+                ...(mailDetail?.mail_cc.map(item => item.address) || []),
+                ...(mailDetail?.mail_bcc.map(item => item.address) || []),
             ];
             const idx = addrList.findIndex(addr => {
                 const prefix = addr?.split('@')[0].toLocaleLowerCase();
@@ -160,19 +154,15 @@ export default function MailDetail() {
 
             if (randomBits) {
                 //TODO: attachments randomBitsRef.current = randomBits;
-                const res = { ...mail };
-
+                const res = { ...mailDetail };
                 if (res?.part_html) {
                     res.part_html = CryptoJS.AES.decrypt(res.part_html, randomBits).toString(CryptoJS.enc.Utf8);
                 }
-
                 if (res?.part_text) {
                     res.part_text = CryptoJS.AES.decrypt(res.part_text, randomBits).toString(CryptoJS.enc.Utf8);
                 }
-
                 setReadable(true);
-                setMail(res as IMailContentItem);
-                //message.success({ content: 'Mail decrypted', duration: 2 });
+                setMailDetail(res);
             }
         } else {
             console.warn(`please check your keys ${keys} and address ${address}`);
@@ -206,7 +196,7 @@ export default function MailDetail() {
     };
 
     const handleLoad = async () => {
-        setMail(undefined);
+        setMailDetail(null);
         //let ifIndex = false;
         try {
             //TODO:实现邮件数据预先加载
@@ -226,7 +216,7 @@ export default function MailDetail() {
             //if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
             const { mail } = await mailHttp.getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
             changeInnerHTML(mail);
-            setMail(mail);
+            setMailDetail(mail);
             //}
         } catch (e) {
             console.log(e);
@@ -235,7 +225,7 @@ export default function MailDetail() {
             //  message: 'Network Error',
             //  description: 'Can not fetch detail info of this email for now.',
             //});
-            setMail(undefined);
+            setMailDetail(null);
         } finally {
             setLoading(false);
         }
@@ -272,7 +262,7 @@ export default function MailDetail() {
                     <header className="flex flex-col justify-between h-100 w-full px-16">
                         <div className="py-11 flex justify-between w-full">
                             <div className="h-14 flex gap-10">
-                                {sixMail.map((item, index) => {
+                                {mailDetailTopActions.map((item, index) => {
                                     return (
                                         <Icon
                                             url={item.src}
@@ -308,17 +298,19 @@ export default function MailDetail() {
                                 />
                                 <div className="self-end">
                                     <div className="text-[#0075EA] text-md">
-                                        {mail?.mail_from?.name ?? mail?.mail_from?.address}
+                                        {mailDetail?.mail_from?.name ?? mailDetail?.mail_from?.address}
                                     </div>
                                     <div className="flex text-xs gap-3 w-220">
                                         to:
                                         <Image src={ifLock} className="self-center " alt={'ifLock'} />
-                                        <div className="flex-1 omit">{mail?.mail_to[0]?.address}</div>
+                                        <div className="flex-1 omit">{mailDetail?.mail_to[0]?.address}</div>
                                     </div>
                                 </div>
                             </div>
                             <div className="flex flex-col self-end gap-6 stroke-current text-[#707070]">
-                                <div className="text-xs">{moment(mail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
+                                <div className="text-xs">
+                                    {moment(mailDetail?.mail_date).format('ddd, MMM DD, Y LT')}
+                                </div>
                                 <div className="flex gap-10 justify-end">
                                     {threeMail.map((item, index) => {
                                         return (
@@ -342,14 +334,16 @@ export default function MailDetail() {
                     ) : readable ? (
                         <>
                             <h1 className="p-16 pl-[4%] w-[70%] h-48 omit text-2xl font-bold pb-0 mb-24">
-                                {mail?.subject}
+                                {mailDetail?.subject}
                             </h1>
                             <h2 className="flex-1 overflow-auto ml-19">
-                                {mail?.part_html ? parse(DOMPurify.sanitize(mail?.part_html)) : mail?.part_text}
+                                {mailDetail?.part_html
+                                    ? parse(DOMPurify.sanitize(mailDetail?.part_html))
+                                    : mailDetail?.part_text}
                             </h2>
-                            {mail?.attachments && mail.attachments.length > 0 && (
+                            {mailDetail?.attachments && mailDetail.attachments.length > 0 && (
                                 <div className="flex">
-                                    {mail?.attachments?.map((item, idx) => (
+                                    {mailDetail?.attachments?.map((item, idx) => (
                                         <button className="m-22 mb-0 w-168 h-37 bg-[#F3F7FF] rounded-6" key={idx} />
                                     ))}
                                 </div>

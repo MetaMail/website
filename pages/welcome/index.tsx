@@ -124,9 +124,7 @@ export default function Welcome() {
                 <Image src={gradientDot} alt="dot NE" className="absolute w-19 bottom-86 right-346" />
                 <div className="flex flex-col self-start justify-between gap-52 w-519 pt-0 lg:pt-140 ">
                     <div className="text-5xl font-medium leading-normal">Use your wallet or ens as email address</div>
-                    <div
-                        className="text-3xl font-normal leading-normal
-          ">
+                    <div className="text-3xl font-normal leading-normal">
                         Use the wallet to log in our mailbox directly, send and receive mails with users of our mailbox
                         and other common mainstream mailboxes. Totally free!
                     </div>
@@ -138,9 +136,7 @@ export default function Welcome() {
             <div className="relative h-820 description-bg2 flex flex-row justify-between px-141 gap-40 2xl:gap-200 2xl:justify-center">
                 <div className="hidden lg:flex flex-col self-start justify-between gap-52 w-519 pt-246">
                     <div className="text-5xl font-medium leading-normal">Sign every mail you send</div>
-                    <div
-                        className="text-3xl font-normal leading-normal
-          ">
+                    <div className="text-3xl font-normal leading-normal">
                         Sign evey mail digitally with your wallet. No forged mails anymore!
                     </div>
                     <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
@@ -155,9 +151,7 @@ export default function Welcome() {
                 <Image src={gradientDot} alt="dot" className="absolute w-32 bottom-97 left-388" />
                 <div className="flex flex-col self-start justify-between gap-52 w-519 pt-140">
                     <div className="text-5xl font-medium leading-normal">Protect mail with p2p encryption</div>
-                    <div
-                        className="text-3xl font-normal leading-normal
-          ">
+                    <div className="text-3xl font-normal leading-normal">
                         Mails sent and received by Metamail users could be optionally encrypted, and only the recipient
                         has the private key to decrypt the mails, ensuring the ultimate security.
                     </div>
