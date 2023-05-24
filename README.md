@@ -26,6 +26,8 @@ There you go. Check [localhost:3000](http://localhost:3000).
 .
 ├── assets # 资源 - img & icon
 ├── components # 公共组件
+├── context # 全局上下文 用于共享公共函数或变量
+├── hooks # 自定义hooks
 ├── lib # 逻辑库
 ├───── base # 基础类库
 ├───── constants # 常量 - 不变的 & 配置性的

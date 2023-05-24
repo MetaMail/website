@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import LinkItem from 'components/LinkItem';
+import LinkItem from './LinkItem';
 import twitter from 'assets/twitter.svg';
 import facebook from 'assets/facebook.svg';
 import discord from 'assets/discord.png';

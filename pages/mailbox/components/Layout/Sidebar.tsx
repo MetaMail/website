@@ -27,11 +27,13 @@ export default function Sidebar(props: any) {
     function handleReturnHome() {
         router.push('/');
     }
+
     function handleChangeFilter(filter: FilterTypeEn) {
         if (router?.query?.id) router.push('/mailbox');
         setFilterType(filter);
         resetPageIndex();
     }
+
     async function handleClickNewMail() {
         const key = createMailKeyWithEncrypted();
         // 以前的代码中，如果不是MetaMailTypeEn.Encrypted，还会执行 userStorage.setRandomBits(undefined);

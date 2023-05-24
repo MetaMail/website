@@ -8,17 +8,17 @@ import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { mailHttp, userHttp } from 'lib/http';
 import { getPersonalSign, metaPack } from 'lib/utils';
-import { useInterval } from 'pages/hooks';
+import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
-import FileUploader from 'components/FileUploader';
-import NameSelecter from 'components/NameSelecter';
+import FileUploader from './components/FileUploader';
+import NameSelector from './components/NameSelector';
 import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
-import BaseLine from 'components/BaseLine';
 
 import { cancel, extend } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
+
 export default function NewMail() {
     const { detailFromNew, setDetailFromNew } = useMailDetailStore();
     const { isWriting, setIsWriting } = useNewMailStore();
@@ -423,9 +423,9 @@ export default function NewMail() {
                 <div className="text-sm text-[#878787]">
                     <h1 className="flex mt-20 h-21 ">
                         From
-                        <NameSelecter />
+                        <NameSelector />
                     </h1>
-                    <BaseLine />
+                    <div className="divider"></div>
                     <h1 className="flex">
                         <div className="flex self-end ">To</div>
                         {/*<input type="text" placeholder="" className="flex pl-38 mt-12 h-21 input w-full max-w-xs text-sm text-[#878787] focus:outline-none" 
@@ -443,7 +443,7 @@ export default function NewMail() {
                             onRemoveReceiver={removeReceiver}
                         />
                     </h1>
-                    <BaseLine />
+                    <div className="divider"></div>
                     <h1 className="flex">
                         <div className="flex self-end ">Subject</div>
                         <input
@@ -457,7 +457,7 @@ export default function NewMail() {
                             }}
                         />
                     </h1>
-                    <BaseLine />
+                    <div className="divider"></div>
                 </div>
                 {editable ? (
                     <ReactQuill

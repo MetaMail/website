@@ -1,6 +1,6 @@
 import { useEffect, useRef, useLayoutEffect } from 'react';
 
-export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export function useInterval(callback: () => void, delay: number | null) {
     const savedCallback = useRef(callback);

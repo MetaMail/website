@@ -1,34 +1,22 @@
 import { useState, useEffect, useContext } from 'react';
-import { useRouter } from 'next/router';
 
-import { useMailListStore, useAlertStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
-import {
-    FilterTypeEn,
-    getMailBoxType,
-    IMailContentItem,
-    IMailItem,
-    MailBoxTypeEn,
-    MarkTypeEn,
-    MetaMailTypeEn,
-    ReadStatusTypeEn,
-} from 'lib/constants';
+import { FilterTypeEn, IMailItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeParams } from 'lib/http';
-import MailBoxContext from 'pages/context';
-import MailListItem from 'components/MailItem';
+import MailBoxContext from 'context';
+import MailListItem from './components/MailListItem';
 import Icon from 'components/Icon';
 
 import { checkbox, trash, read, starred, markUnread, temp1, spam, filter, update, cancelSelected } from 'assets/icons';
 
 export default function MailList() {
     const { filterType, setFilterType, pageIndex, addPageIndex, subPageIndex, setUnreadCount } = useMailListStore();
-    const { setIsAlert } = useAlertStore();
     const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
     const { setIsWriting } = useNewMailStore();
     const { removeAllState } = useContext(MailBoxContext);
-    const router = useRouter();
+
     const [loading, setLoading] = useState(false);
-    let mailDetail: IMailContentItem[] = [];
     const [list, setList] = useState<IMailItem[]>([]);
     const [pageNum, setPageNum] = useState(0);
     const [selectList, setSelectList] = useState<IMailItem[]>([]);
@@ -73,12 +61,14 @@ export default function MailList() {
             },
         },
     ];
+
     const fourFilter = [
         { content: 'All', filter: FilterTypeEn.Inbox },
         { content: 'Read', filter: FilterTypeEn.Read },
         { content: 'Unread', filter: FilterTypeEn.Unread },
         { content: 'Encrypted', filter: FilterTypeEn.Encrypted },
     ];
+
     const getMails = () => {
         const res: IMailChangeParams[] = [];
         selectList?.forEach(item => {
@@ -89,6 +79,7 @@ export default function MailList() {
         });
         return res;
     };
+
     const handleBlur = () => {
         setIsFilterHidden(true);
     };
@@ -96,6 +87,7 @@ export default function MailList() {
     const handleFocus = () => {
         setIsFilterHidden(false);
     };
+
     const fetchMailList = async (showLoading = true) => {
         if (showLoading) {
             setLoading(true);
@@ -149,6 +141,7 @@ export default function MailList() {
         if (userSessionStorage.getUserInfo()?.address) fetchMailList(true);
         //getMailDetail();  预加载feature abort
     }, [pageIndex, filterType]);
+
     useEffect(() => {
         if (userSessionStorage.getUserInfo()?.address) fetchMailList(false);
         //getMailDetail();  预加载feature abort

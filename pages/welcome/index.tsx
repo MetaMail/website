@@ -10,9 +10,9 @@ import { ExternalProvider } from '@ethersproject/providers';
 import { userHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/session-storage';
 import { generateEncryptionKey } from 'lib/utils';
-import ReviewInfo from 'components/ReviewInfo';
-import Footer from 'components/Footer';
-import RainbowLogin from 'components/RainbowLogin';
+import ReviewInfo from './components/ReviewInfo';
+import Footer from './components/Footer';
+import RainbowLogin from './components/RainbowLogin';
 
 import logoBrand from 'assets/logo_brand.svg';
 import computer from 'assets/computer.svg';
@@ -33,7 +33,7 @@ export default function Welcome() {
             if (!window.ethereum) throw new Error('Your client does not support Ethereum');
             const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
             const signer = provider.getSigner();
-            const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address!);
+            const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address);
             const signedMessage = await signer.signMessage(randomStr);
             const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await userHttp.getEncryptionKey(address ?? '');
@@ -57,7 +57,7 @@ export default function Welcome() {
             });
             router.push('/mailbox');
         } catch (error) {
-            console.log(error);
+            throw error;
         } finally {
             await disconnect();
         }
