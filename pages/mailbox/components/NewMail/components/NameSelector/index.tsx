@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { PostfixOfAddress } from 'lib/base';
 import { userSessionStorage } from 'lib/session-storage';
 
+import Icon from 'components/Icon';
 import { swapAddr } from 'assets/icons';
-import Icon from './Icon';
 
-function NameSelecter() {
+function NameSelector() {
     const { showName, ensName, address } = userSessionStorage.getUserInfo();
     const [activeName, setActiveName] = useState(showName);
     const [isAddrListHidden, setIsAddrListHidden] = useState(true);
@@ -47,4 +47,4 @@ function NameSelecter() {
         </div>
     );
 }
-export default NameSelecter;
+export default NameSelector;

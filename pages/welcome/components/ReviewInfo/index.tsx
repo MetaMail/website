@@ -27,13 +27,9 @@ function Review({ imgSrc, content, role, role2 }: IReview) {
     );
 }
 
-export default function ReviewInfo({}) {
+export default function ReviewInfo() {
     return (
-        <div
-            className="relative hidden lg:flex h-410 md:h-373 xl:h-343 flex-row w-11/12 xl:w-5/6 2xl:w-2/3 max-w-500 -top-200 mx-auto
-        border border-[#1e1e1e] 
-        bg-white
-        rounded-28 py-75 justify-around z-10">
+        <div className="relative hidden lg:flex h-410 md:h-373 xl:h-343 flex-row w-11/12 xl:w-5/6 2xl:w-2/3 max-w-500 -top-200 mx-auto border border-[#1e1e1e] bg-white rounded-28 py-75 justify-around z-10">
             <Review
                 imgSrc={suneal}
                 role={'Suneal'}

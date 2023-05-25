@@ -27,11 +27,13 @@ export default function Sidebar(props: any) {
     function handleReturnHome() {
         router.push('/');
     }
+
     function handleChangeFilter(filter: FilterTypeEn) {
         if (router?.query?.id) router.push('/mailbox');
         setFilterType(filter);
         resetPageIndex();
     }
+
     async function handleClickNewMail() {
         const key = createMailKeyWithEncrypted();
         // 以前的代码中，如果不是MetaMailTypeEn.Encrypted，还会执行 userStorage.setRandomBits(undefined);
@@ -51,9 +53,7 @@ export default function Sidebar(props: any) {
                 </button>
                 <button
                     className="my-19 flex h-35 bg-[#006AD4] rounded-5 justify-center gap-20 py-8"
-                    onClick={() => {
-                        handleClickNewMail();
-                    }}>
+                    onClick={handleClickNewMail}>
                     <Image src={compose} alt="new_mail" className="w-16 h-auto" />
                     <div className="text-white overflow-hidden">New Message</div>
                 </button>
@@ -80,9 +80,9 @@ export default function Sidebar(props: any) {
                                         />
                                         <div className="flex w-full justify-between">
                                             <span className=""> {item.title}</span>
-                                            {item.title === 'Inbox' ? (
+                                            {item.title === 'Inbox' && (
                                                 <span className="">{unReadCount === 0 ? '' : unReadCount}</span>
-                                            ) : null}
+                                            )}
                                         </div>
                                     </button>
                                 </li>
@@ -102,31 +102,30 @@ export default function Sidebar(props: any) {
                         </button>
                     </ul>
                     <ul className="text-[#7F7F7F]">
-                        {dropFilter
-                            ? MailMenuItems.map((item, index) => {
-                                  return (
-                                      <li key={index} className={item.hidden ? 'auto' : 'hidden'}>
-                                          <button
-                                              onClick={() => {
-                                                  handleChangeFilter(item.key);
-                                              }}
-                                              className={
-                                                  filterType === Number(item.key)
-                                                      ? 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold'
-                                                      : 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'
-                                              }>
-                                              <Image src={item?.logo} alt={item?.title} height="12.5" />
-                                              <div className="">
-                                                  <span className=""> {item.title}</span>
-                                                  {item.title === 'Inbox' ? (
-                                                      <span className="">{props?.unreadCount?.unread}</span>
-                                                  ) : null}
-                                              </div>
-                                          </button>
-                                      </li>
-                                  );
-                              })
-                            : null}
+                        {dropFilter &&
+                            MailMenuItems.map((item, index) => {
+                                return (
+                                    <li key={index} className={item.hidden ? 'auto' : 'hidden'}>
+                                        <button
+                                            onClick={() => {
+                                                handleChangeFilter(item.key);
+                                            }}
+                                            className={
+                                                filterType === Number(item.key)
+                                                    ? 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold'
+                                                    : 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'
+                                            }>
+                                            <Image src={item?.logo} alt={item?.title} height="12.5" />
+                                            <div className="">
+                                                <span className=""> {item.title}</span>
+                                                {item.title === 'Inbox' && (
+                                                    <span className="">{props?.unreadCount?.unread}</span>
+                                                )}
+                                            </div>
+                                        </button>
+                                    </li>
+                                );
+                            })}
                     </ul>
                     <div className="w-177 h-0 border"></div>
                     <ul>
@@ -146,7 +145,7 @@ export default function Sidebar(props: any) {
                             </div>
                         </button>
                     </ul>
-                    {dropTag ? (
+                    {dropTag && (
                         <div>
                             <div className="text-[#707070] flex flex-row gap-5 pl-12 pb-13">
                                 <svg
@@ -197,7 +196,7 @@ export default function Sidebar(props: any) {
                                 </div>
                             </div>
                         </div>
-                    ) : null}
+                    )}
                 </div>
             </div>
         </div>
