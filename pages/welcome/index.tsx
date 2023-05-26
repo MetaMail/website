@@ -152,7 +152,7 @@ export default function Welcome() {
                 <div className="flex flex-col self-start justify-between gap-52 w-519 pt-140">
                     <div className="text-5xl font-medium leading-normal">Protect mail with p2p encryption</div>
                     <div className="text-3xl font-normal leading-normal">
-                        Mails sent and received by Metamail users could be optionally encrypted, and only the recipient
+                        Mails sent and received by MetaMail users could be optionally encrypted, and only the recipient
                         has the private key to decrypt the mails, ensuring the ultimate security.
                     </div>
                     <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">

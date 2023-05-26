@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
-import { FilterTypeEn, IMailItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
+import { FilterTypeEn, IMailContentItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeParams } from 'lib/http';
 import MailBoxContext from 'context';
 import MailListItem from './components/MailListItem';
@@ -17,9 +17,9 @@ export default function MailList() {
     const { removeAllState } = useContext(MailBoxContext);
 
     const [loading, setLoading] = useState(false);
-    const [list, setList] = useState<IMailItem[]>([]);
+    const [list, setList] = useState<IMailContentItem[]>([]);
     const [pageNum, setPageNum] = useState(0);
-    const [selectList, setSelectList] = useState<IMailItem[]>([]);
+    const [selectList, setSelectList] = useState<IMailContentItem[]>([]);
     const [isAll, setIsAll] = useState(false);
     const [isFilterHidden, setIsFilterHidden] = useState(true);
 
@@ -147,7 +147,7 @@ export default function MailList() {
         //getMailDetail();  预加载feature abort
     }, [detailFromNew]);
 
-    const handleChangeSelectList = (item: IMailItem, isSelect?: boolean) => {
+    const handleChangeSelectList = (item: IMailContentItem, isSelect?: boolean) => {
         if (isSelect) {
             const nextList = selectList.slice();
             nextList.push(item);
@@ -182,7 +182,7 @@ export default function MailList() {
         //type: MetaMailTypeEn,
         //mailbox: MailBoxTypeEn,
         //read: number,
-        item: IMailItem
+        item: IMailContentItem
     ) => {
         userSessionStorage.setRandomBits(undefined); // clear random bits
         if (!read) {

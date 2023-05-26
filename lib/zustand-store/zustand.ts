@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { IMailItem, FilterTypeEn } from 'lib/constants';
+import { IMailContentItem, FilterTypeEn } from 'lib/constants';
 
 interface IMailListState {
     filterType: FilterTypeEn;
@@ -23,11 +23,11 @@ export const useMailListStore = create<IMailListState>()(set => ({
 }));
 
 interface IMailDetailState {
-    detailFromList: IMailItem;
-    detailFromNew: IMailItem;
+    detailFromList: IMailContentItem;
+    detailFromNew: IMailContentItem;
     isMailDetail: boolean;
-    setDetailFromList: (item: IMailItem) => void;
-    setDetailFromNew: (item: IMailItem) => void;
+    setDetailFromList: (item: IMailContentItem) => void;
+    setDetailFromNew: (item: IMailContentItem) => void;
     setIsMailDetail: (isMailDetail: boolean) => void;
 }
 
@@ -35,8 +35,8 @@ export const useMailDetailStore = create<IMailDetailState>()(set => ({
     detailFromList: null,
     detailFromNew: null,
     isMailDetail: false,
-    setDetailFromList: (detailFromList: IMailItem) => set(() => ({ detailFromList })),
-    setDetailFromNew: (detailFromNew: IMailItem) => set(() => ({ detailFromNew })),
+    setDetailFromList: (detailFromList: IMailContentItem) => set(() => ({ detailFromList })),
+    setDetailFromNew: (detailFromNew: IMailContentItem) => set(() => ({ detailFromNew })),
     setIsMailDetail: (isMailDetail: boolean) => set(() => ({ isMailDetail })),
 }));
 

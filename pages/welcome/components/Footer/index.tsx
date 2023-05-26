@@ -38,7 +38,7 @@ export default function Footer() {
     return (
         <footer className="h-262 bg-white flex flex-row justify-between py-83 px-130 ">
             <div className="hidden lg:flex flex-col gap-21">
-                <div className="text-[#0069E5] text-3xl font-black font-poppins">Metamail</div>
+                <div className="text-[#0069E5] text-3xl font-black font-poppins">MetaMail</div>
                 <div className="w-370 text-3xl font-light leading-tight ">Create And Use Your Crypto Email</div>
             </div>
             <div className="flex flex-row justify-between gap-30 font-poppins">
