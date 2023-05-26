@@ -56,36 +56,12 @@ export interface IPersonItem {
     name?: string;
 }
 
-export interface IMailItem {
-    digest: string;
-    in_reply_to?: string;
-    mail_bcc: string[];
-    mail_cc: string[];
-    mail_date: string;
-    mail_from: IPersonItem;
-    mail_reference: string[];
-    mail_to: string[];
-    mailbox: number;
-    mark: number;
-    message_id: string;
-    meta_type: MetaMailTypeEn;
-    metamail_headers: any;
-    read: number;
-    reply_to?: string;
-    subject: string;
-    meta_header: {
-        addr: string;
-        date: string;
-        data: string;
-        keys: string[];
-        signature: string;
-    };
-}
-
 export interface IMailContentItem {
+    read: ReadStatusTypeEn;
+    mailbox: MailBoxTypeEn;
+    mark?: MarkTypeEn;
     message_id: string;
     meta_type: MetaMailTypeEn;
-    metamail_headers: any;
     subject: string;
     mail_from: IPersonItem;
     mail_to: IPersonItem[];
@@ -98,9 +74,8 @@ export interface IMailContentItem {
     };
     in_reply_to?: IPersonItem;
     reply_to?: IPersonItem;
-    mail_reference: [];
     digest: string;
-    part_text: string;
+    part_text?: string;
     part_html?: string;
     attachments: {
         attachment_id: string;
