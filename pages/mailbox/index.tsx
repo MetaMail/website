@@ -58,22 +58,26 @@ export default function MailBoxPage() {
 }
 
 MailBoxPage.getLayout = (page: ReactElement) => {
-    const { setFilterType, resetPageIndex, setUnreadCount } = useMailListStore();
-    const { setDetailFromList, setDetailFromNew } = useMailDetailStore();
-    const { setIsAlert, setAlertInfo } = useAlertStore();
+    const RenderLayoutWithContext = () => {
+        const { setFilterType, resetPageIndex, setUnreadCount } = useMailListStore();
+        const { setDetailFromList, setDetailFromNew } = useMailDetailStore();
+        const { setIsAlert, setAlertInfo } = useAlertStore();
 
-    const removeAllState = () => {
-        setFilterType(0);
-        resetPageIndex();
-        setUnreadCount(0);
-        setDetailFromList(null);
-        setDetailFromNew(null);
-        setIsAlert(false);
-        setAlertInfo('');
+        const removeAllState = () => {
+            setFilterType(0);
+            resetPageIndex();
+            setUnreadCount(0);
+            setDetailFromList(null);
+            setDetailFromNew(null);
+            setIsAlert(false);
+            setAlertInfo('');
+        };
+        return (
+            <MailBoxContext.Provider value={{ removeAllState }}>
+                <Layout>{page}</Layout>
+            </MailBoxContext.Provider>
+        );
     };
-    return (
-        <MailBoxContext.Provider value={{ removeAllState }}>
-            <Layout>{page}</Layout>
-        </MailBoxContext.Provider>
-    );
+
+    return <RenderLayoutWithContext />;
 };
