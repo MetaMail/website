@@ -78,9 +78,7 @@ interface IDeleteAttachmentResponse {
     date: string;
 }
 
-interface IGetMailDetailResponse {
-    mail: IMailContentItem;
-}
+type IGetMailDetailResponse = IMailContentItem;
 
 interface IGetMailListParams {
     limit: number;
