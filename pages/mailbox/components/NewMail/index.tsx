@@ -338,7 +338,7 @@ export default function NewMail() {
             //if (!query?.id && query.id.length === 0) {
             //  throw new Error();
             //}
-            const { mail } = await mailHttp.getMailDetailByID(window.btoa(id ?? detailFromNew?.message_id ?? ''));
+            const mail = await mailHttp.getMailDetailByID(window.btoa(id ?? detailFromNew?.message_id ?? ''));
 
             if (mail) {
                 //const { subject, mail_to, part_html } = getMailContent();
