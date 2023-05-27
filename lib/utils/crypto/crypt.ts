@@ -30,7 +30,7 @@ export const getPrivateKey = async () => {
         throw new Error('error: no privateKey in sesssion storage');
     }
     // @ts-ignore
-    const salt = getSaltFromLocal();
+    const salt = userSessionStorage.getSaltFromLocal();
     if (!salt || salt.length == 0) {
         throw new Error('error: no privateKey in sesssion storage');
     }
