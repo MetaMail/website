@@ -253,10 +253,7 @@ export default function MailDetail() {
 
     return (
         <div className="flex">
-            <div
-                className={
-                    isExtend ? 'w-[calc(100vw-225px)] transition-all h-[100%]' : 'w-[38vw] transition-all h-[100%]'
-                }>
+            <div className={`transition-all h-[100%] ${isExtend ? 'w-[calc(100vw-225px)]' : ''}`}>
                 <div className="w-full h-full bg-white flex flex-col font-poppins">
                     <div className="h-[86%] w-0 border absolute top-54" />
                     <header className="flex flex-col justify-between h-100 w-full px-16">

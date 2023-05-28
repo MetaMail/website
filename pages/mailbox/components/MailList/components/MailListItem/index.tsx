@@ -72,11 +72,9 @@ export default function MailListItem({
                 </span>
             </span>
             <div
-                className={
-                    isRead
-                        ? 'bg-opacity-0 flex self-center w-4 h-4 rounded-full bg-[#006AD4] mx-7 mt-4'
-                        : 'flex self-center w-4 h-4 rounded-full bg-[#006AD4] mx-7 mt-4'
-                }
+                className={`flex self-center w-4 h-4 rounded-full bg-[#006AD4] mx-7 mt-4 ${
+                    isRead ? 'bg-opacity-0' : ''
+                }`}
             />
             <span className="pt-4 text-[#333333] omit w-120 " onClick={onClick}>
                 <span className={isRead ? 'text-black text-opacity-60' : ''}>{subject}</span>

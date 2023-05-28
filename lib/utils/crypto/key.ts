@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import keccak256 from 'keccak256';
+import CryptoJS from 'crypto-js';
 import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 
@@ -82,12 +83,10 @@ export const generateEncryptionKey = async (address?: string) => {
         message_encryption_public_key: Public_Store_Key,
         signature: '',
         data: 'this is a test',
-    };
-    const keyData = keyPack({
-        ...returnData,
         addr: address ? address.toString() : '',
         date: new Date().toISOString(),
-    });
+    };
+    const keyData = keyPack(returnData);
     const keySignature = await signer.signMessage(keyData);
     if (!keySignature) throw new Error('sign key error');
     returnData.signature = keySignature;

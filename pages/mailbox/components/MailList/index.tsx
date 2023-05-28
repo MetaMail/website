@@ -305,13 +305,13 @@ export default function MailList() {
                         return (
                             <button
                                 key={index}
-                                className={
+                                className={`text-left ${
                                     selectList.findIndex(
                                         i => i.message_id === item.message_id && i.mailbox === item.mailbox
                                     ) >= 0
-                                        ? 'text-left select-bg'
-                                        : 'text-left'
-                                }>
+                                        ? ''
+                                        : 'select-bg'
+                                }`}>
                                 <MailListItem
                                     mark={item?.mark}
                                     from={item.mail_from}

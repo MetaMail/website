@@ -41,11 +41,7 @@ export default function Welcome() {
                 encryptionData = await generateEncryptionKey(address);
                 // do upload
                 await userHttp.putEncryptionKey({
-                    data: {
-                        ...encryptionData,
-                        addr: address ? address.toString() : '',
-                        date: new Date().toISOString(),
-                    },
+                    data: encryptionData,
                 });
             }
             userSessionStorage.saveUserInfo({

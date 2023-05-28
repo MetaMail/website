@@ -8,6 +8,7 @@ const APIs = {
     getAuthToken: '/auth/token', // 上传签名后的字符串，获取jwt token
 };
 
+// 从服务器获取的加密信息和上传到服务器的加密信息格式 共用
 interface IGetEncryptionKeyResponse {
     salt: string;
     signing_private_key: string;
@@ -16,21 +17,12 @@ interface IGetEncryptionKeyResponse {
     message_encryption_public_key: string;
     signature: string;
     data: string;
+    addr?: string;
+    date?: string;
 }
 
-interface IEncryptionKeyData {
-    salt: string;
-    addr: string;
-    signature: string;
-    message_encryption_public_key: string;
-    message_encryption_private_key: string;
-    signing_private_key: string;
-    signing_public_key: string;
-    data: string;
-    date: string;
-}
 interface IPutEncryptionKeyParams {
-    data: IEncryptionKeyData;
+    data: IGetEncryptionKeyResponse;
 }
 
 interface IGetRandomStrToSignParams {
