@@ -1,8 +1,8 @@
 import { MMSessionStorage } from 'lib/base';
 
-const UserInfoStoreKey = 'MetaMailUserInfo';
-const ShowNameKey = 'MetaMailShowName';
-const RandomBitsKey = 'MetaMailRandomBits';
+const UserInfoStoreKey = 'MM_UserInfo';
+const ShowNameKey = 'MM_ShowName';
+const RandomBitsKey = 'MM_RandomBits';
 
 interface IUserInfo {
     publicKey?: string;

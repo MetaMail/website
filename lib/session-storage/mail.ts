@@ -2,8 +2,11 @@ import { MMSessionStorage } from 'lib/base';
 import { IPersonItem, FilterTypeEn } from 'lib/constants';
 import { IGetMailListResponse } from 'lib/http';
 
-const MailListInfo = 'MailListInfo';
-const TempMailStoreKey = 'MetaMailTemporalContent';
+const MailListInfo = 'MM_MailListInfo';
+const TempMailStoreKey = 'MM_TemporalContent';
+const QuillTextKey = 'MM_Text';
+const QuillHtmlKey = 'MM_Html';
+const MailReply = 'MM_Reply';
 
 interface IMailContent {
     subject?: string;
@@ -44,6 +47,30 @@ class MMMailSessionStorage extends MMSessionStorage {
 
     clearMailListInfo() {
         this.deleteStorage(MailListInfo);
+    }
+
+    getQuillHtml(): string {
+        return this.getStorage(QuillHtmlKey);
+    }
+
+    getQuillText(): string {
+        return this.getStorage(QuillTextKey);
+    }
+
+    setQuillHtml(html: string) {
+        this.updateStorage(QuillHtmlKey, html);
+    }
+
+    setQuillText(text: string) {
+        this.updateStorage(QuillTextKey, text);
+    }
+
+    getMailReply(): string {
+        return this.getStorage(MailReply);
+    }
+
+    clearMailReply() {
+        this.deleteStorage(MailReply);
     }
 }
 

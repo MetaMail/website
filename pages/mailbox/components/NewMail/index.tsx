@@ -227,8 +227,8 @@ export default function NewMail() {
         //setEditable(true) ////测试用
         //console.log(editable);
         if (!editable) return;
-        const oldHtml = sessionStorage.getItem('html');
-        const oldText = sessionStorage.getItem('text');
+        const oldHtml = mailSessionStorage.getQuillHtml();
+        const oldText = mailSessionStorage.getQuillText();
         const quill = getQuill();
         console.log(oldText);
         console.log(quill?.getHTML());
@@ -273,8 +273,8 @@ export default function NewMail() {
         if (message_id !== draftID) {
             console.warn('DANGER: wrong updating source');
         }
-        sessionStorage.setItem('html', html);
-        sessionStorage.setItem('text', text);
+        mailSessionStorage.setQuillHtml(html);
+        mailSessionStorage.setQuillText(text);
         console.log('save');
         dateRef.current = mail_date;
         return { html, text };
@@ -302,12 +302,12 @@ export default function NewMail() {
                 }
 
                 if (mail?.meta_header?.keys) myKeyRef.current = mail?.meta_header?.keys?.[0];
-                if (sessionStorage.getItem('reply')) {
+                if (mailSessionStorage.getMailReply()) {
                     const { subject, mail_to, part_html } = mailSessionStorage.getMailContent();
                     subject && setSubject(subject);
                     mail_to && setReceivers(mail_to);
                     part_html && setContent(part_html);
-                    sessionStorage.removeItem('reply');
+                    mailSessionStorage.clearMailReply();
                 }
                 setLoaded(true);
             }
