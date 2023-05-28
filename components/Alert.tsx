@@ -10,11 +10,9 @@ export default function Alert(warnInfo: IAlertProps) {
 
     return (
         <div
-            className={
-                isAlert
-                    ? 'transition-all duration-100 absolute top-25 right-50 alert alert-error shadow-lg w-350 h-70 p-8'
-                    : 'transition-all scale-0 duration-100 absolute top-25 right-50 alert alert-error shadow-lg w-350 h-70 p-8'
-            }>
+            className={`transition-all duration-100 absolute top-25 right-50 alert alert-error shadow-lg w-350 h-70 p-8 ${
+                isAlert ? '' : 'scale-0'
+            }`}>
             <div>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

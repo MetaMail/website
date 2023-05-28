@@ -67,11 +67,9 @@ export default function Sidebar(props: any) {
                                             handleChangeFilter(item.key);
                                             setDropFilter(false);
                                         }}
-                                        className={
-                                            filterType === Number(item.key)
-                                                ? 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold'
-                                                : 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'
-                                        }>
+                                        className={`w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5 ${
+                                            filterType === Number(item.key) ? 'active-bg font-bold' : ''
+                                        }`}>
                                         <Image
                                             src={item?.logo}
                                             alt={item?.title}
@@ -91,10 +89,7 @@ export default function Sidebar(props: any) {
                         <button
                             className="p-9 py-3 flex flex-row gap-10 rounded-5 text-[#BDBDBD] w-full"
                             onClick={() => setDropFilter(dropFilter === false)}>
-                            <Icon
-                                url={showMore}
-                                className={dropFilter ? 'mt-4 h-12 self-center rotate-90' : 'mt-4 h-12 self-center'}
-                            />
+                            <Icon url={showMore} className={`mt-4 h-12 self-center ${dropFilter ? 'rotate-90' : ''}`} />
                             <div className="flex justify-between w-full ">
                                 <span className="">More</span>
                                 <span className="">2</span>
@@ -110,11 +105,9 @@ export default function Sidebar(props: any) {
                                             onClick={() => {
                                                 handleChangeFilter(item.key);
                                             }}
-                                            className={
-                                                filterType === Number(item.key)
-                                                    ? 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 active-bg rounded-5 font-bold'
-                                                    : 'w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5'
-                                            }>
+                                            className={`w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5 ${
+                                                filterType === Number(item.key) ? 'active-bg font-bold' : ''
+                                            }`}>
                                             <Image src={item?.logo} alt={item?.title} height="12.5" />
                                             <div className="">
                                                 <span className=""> {item.title}</span>
@@ -132,10 +125,7 @@ export default function Sidebar(props: any) {
                         <button
                             className="p-9 flex flex-row gap-10 rounded-5 text-[#707070] w-full"
                             onClick={() => setDropTag(dropTag === false)}>
-                            <Icon
-                                url={showMore}
-                                className={dropTag ? 'mt-4 h-12 self-center rotate-90' : 'mt-4 h-12 self-center'}
-                            />
+                            <Icon url={showMore} className={`mt-4 h-12 self-center ${dropTag ? 'rotate-90' : ''}`} />
                             <div className="flex flex-row justify-between w-full ">
                                 <span className="">Tag</span>
                                 <div className="flex flex-row gap-5">

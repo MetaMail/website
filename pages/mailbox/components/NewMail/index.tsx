@@ -338,11 +338,9 @@ export default function NewMail() {
     return (
         <div className={isWriting ? 'visible' : 'invisible'}>
             <div
-                className={
-                    isExtend
-                        ? 'flex flex-col font-poppins bg-white p-18 h-full transition-all w-[calc(100vw-200px)] absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10'
-                        : 'flex flex-col font-poppins bg-white p-18 h-502 w-[45vw] absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 transition-all'
-                }>
+                className={`flex flex-col font-poppins bg-white p-18 transition-all absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 ${
+                    isExtend ? 'h-full w-[calc(100vw-200px)]' : 'h-502 w-[45vw]'
+                }`}>
                 <header className="flex justify-between">
                     <div className="flex flex-row">
                         <div className="w-6 h-24 bg-[#006AD4] rounded-4" />
