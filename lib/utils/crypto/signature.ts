@@ -8,10 +8,11 @@ export enum SignTypeEn {
     TypedDataV4 = 4,
 }
 
-const ethereum = window.ethereum as ExternalProvider;
+const getEthereum = () => window.ethereum as ExternalProvider;
 
 export const getPersonalSign = async (account: string, msg: string, password?: string) => {
     try {
+        const ethereum = getEthereum();
         const sign = await ethereum.request({
             method: 'personal_sign',
             params: [`0x${Buffer.from(msg, 'utf8').toString('hex')}`, account, password ?? ''],
@@ -28,6 +29,7 @@ export const getEthSign = async (account: string, msg: string) => {
         if (!msg.startsWith('0x')) {
             throw new Error('Invalid message, please hash it.');
         }
+        const ethereum = getEthereum();
         const sign = await ethereum.request({
             method: 'eth_sign',
             params: [account, msg],
@@ -47,6 +49,7 @@ type TypedMessage = {
 
 const getTypedDataSign = async (account: string, msgParams: TypedMessage[]) => {
     try {
+        const ethereum = getEthereum();
         const sign = await ethereum.request({
             method: 'eth_signTypedData',
             params: [msgParams, account],
