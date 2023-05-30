@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/zustand-store';
 import { FilterTypeEn, MetaMailTypeEn, MailMenuItems } from 'lib/constants';
-import { createMailKeyWithEncrypted } from 'lib/utils/crypto';
+import { createEncryptedMailKey } from 'lib/encrypt';
 import { mailHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/session-storage';
 import Icon from 'components/Icon';
@@ -37,7 +37,7 @@ export default function Sidebar(props: any) {
 
     async function handleClickNewMail() {
         const { publicKey, address } = userSessionStorage.getUserInfo();
-        const key = await createMailKeyWithEncrypted(publicKey, address);
+        const key = await createEncryptedMailKey(publicKey, address);
         // 以前的代码中，如果不是MetaMailTypeEn.Encrypted，还会执行 userStorage.setRandomBits(undefined);
         // 这里目前全都当MetaMailTypeEn.Encrypted处理，估计代码还没写完，写完以后把注释删除
         const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key);

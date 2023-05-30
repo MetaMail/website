@@ -1,5 +1,26 @@
-import { IPersonItem } from 'lib/constants';
-import { PostfixOfAddress } from 'lib/base';
+import CryptoJS from 'crypto-js';
+import { asymmetricEncryptInstance, PostfixOfAddress } from '../base';
+import { IPersonItem } from '../constants';
+
+function generateRandom256Bits(address: string) {
+    const rb = CryptoJS.lib.WordArray.random(256 / 8);
+    return 'Encryption key of this mail from ' + address + ' is ' + rb.toString(CryptoJS.enc.Base64);
+}
+
+export const createEncryptedMailKey = async (publicKey: string, address: string) => {
+    if (!address) {
+        throw new Error('No address of current user, please check');
+    }
+    if (!publicKey || publicKey?.length === 0) {
+        throw new Error('error: !pKey || pKey?.length === 0');
+    }
+    const randomBits = generateRandom256Bits(address);
+    return asymmetricEncryptInstance.encrypt(randomBits, publicKey);
+};
+
+export const decryptEncryptedMailKey = async (encryptedMailKey: string, privateKey: string) => {
+    return asymmetricEncryptInstance.decrypt(encryptedMailKey, privateKey);
+};
 
 const concatAddress = (item: IPersonItem) => (item?.name ?? '') + ' ' + '<' + item.address + '>';
 
@@ -43,8 +64,3 @@ export const metaPack = async (data: {
         packedResult: parts.join('\n'),
     });
 };
-
-export enum AttachmentRelatedTypeEn {
-    Embedded = '1',
-    Outside = '0',
-}

@@ -9,7 +9,7 @@ import { ExternalProvider } from '@ethersproject/providers';
 
 import { userHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/session-storage';
-import { generateEncryptionKey } from 'lib/utils';
+import { generateEncryptionUserKey } from 'lib/encrypt';
 import ReviewInfo from './components/ReviewInfo';
 import Footer from './components/Footer';
 import RainbowLogin from './components/RainbowLogin';
@@ -38,7 +38,7 @@ export default function Welcome() {
             const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await userHttp.getEncryptionKey(address ?? '');
             if (!encryptionData?.signature) {
-                encryptionData = await generateEncryptionKey(address);
+                encryptionData = await generateEncryptionUserKey(address);
                 // do upload
                 await userHttp.putEncryptionKey({
                     data: encryptionData,
@@ -58,6 +58,7 @@ export default function Welcome() {
             await disconnect();
         }
     };
+
     useEffect(() => {
         (async () => {
             if (!isConnected) return;
@@ -67,6 +68,7 @@ export default function Welcome() {
             router.push('/mailbox');
         })();
     });
+
     return (
         <div className="flex flex-col mx-auto max-w-[2000px]">
             <Head>

@@ -7,7 +7,8 @@ import { IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/c
 import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { mailHttp, userHttp } from 'lib/http';
-import { getPersonalSign, metaPack, getPrivateKey } from 'lib/utils';
+import { getPersonalSign } from 'lib/utils';
+import { getPrivateKey, decryptEncryptedMailKey, metaPack } from 'lib/encrypt';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
 import DynamicReactQuill from './components/DynamicReactQuill';
@@ -324,29 +325,7 @@ export default function NewMail() {
         const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
         const salt = userSessionStorage.getSaltFromLocal();
         const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
-
-        const privateKeyBuffer = Buffer.from(privateKey, 'hex');
-        const privateCryptoKey = await window.crypto.subtle.importKey(
-            'pkcs8',
-            privateKeyBuffer,
-            {
-                name: 'RSA-OAEP',
-                hash: { name: 'SHA-256' },
-            },
-            false,
-            ['decrypt']
-        );
-
-        const decryptBuffer = await window.crypto.subtle.decrypt(
-            {
-                name: 'RSA-OAEP',
-            },
-            privateCryptoKey,
-            Buffer.from(myKeyRef.current, 'hex')
-        );
-
-        const randomBits = Buffer.from(decryptBuffer).toString();
-
+        const randomBits = await decryptEncryptedMailKey(myKeyRef.current, privateKey);
         if (!randomBits) {
             console.log('error: no randombits');
             return;

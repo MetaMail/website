@@ -1,6 +1,6 @@
 import { ExternalProvider } from '@ethersproject/providers';
 
-export enum SignTypeEn {
+enum SignTypeEn {
     Personal = 0,
     Eth = 1,
     TypedData = 2,

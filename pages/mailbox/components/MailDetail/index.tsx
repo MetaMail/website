@@ -9,7 +9,7 @@ import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from '
 import { mailHttp } from 'lib/http';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { useMailDetailStore } from 'lib/zustand-store';
-import { getPrivateKey } from 'lib/utils';
+import { getPrivateKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';

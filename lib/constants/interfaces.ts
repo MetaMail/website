@@ -96,3 +96,8 @@ export interface IMailContentItem {
         signature: string;
     };
 }
+
+export enum AttachmentRelatedTypeEn {
+    Embedded = '1',
+    Outside = '0',
+}

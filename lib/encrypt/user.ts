@@ -4,11 +4,7 @@ import CryptoJS from 'crypto-js';
 import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 
-export const pkPack = (data: any) => {
-    const { addr, date, version, public_key } = data;
-    let parts = ['Addr: ' + addr, 'Date: ' + date, 'Version: ' + version, 'Public-Key: ' + public_key];
-    return parts.join('\n');
-};
+import { asymmetricEncryptInstance } from '../base';
 
 interface IKeyPackParams {
     addr: string;
@@ -19,7 +15,7 @@ interface IKeyPackParams {
     data: string;
 }
 
-export const keyPack = (keyData: IKeyPackParams) => {
+const keyPack = (keyData: IKeyPackParams) => {
     const { addr, date, salt, encryption_public_key, encryption_private_key, data } = keyData;
     const parts = [
         'Addr: ' + addr,
@@ -32,7 +28,7 @@ export const keyPack = (keyData: IKeyPackParams) => {
     return parts.join('\n');
 };
 
-export const generateEncryptionKey = async (address?: string) => {
+export const generateEncryptionUserKey = async (address?: string) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
     const signer = provider.getSigner();
     const salt = crypto.randomBytes(256).toString('hex');
@@ -40,26 +36,12 @@ export const generateEncryptionKey = async (address?: string) => {
         'Please sign this message to generate encrypted private key: \n \n' + salt
     );
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
-
-    const keyPair = await window.crypto.subtle.generateKey(
-        {
-            name: 'RSA-OAEP',
-            modulusLength: 2048,
-            publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-            hash: { name: 'SHA-256' },
-        },
-        true,
-        ['encrypt', 'decrypt']
-    );
-    const privateBuffer = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
-    const publicBuffer = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
-    const Private_Store_Key = Buffer.from(privateBuffer).toString('hex');
-    const Public_Store_Key = Buffer.from(publicBuffer).toString('hex');
-    const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(Private_Store_Key, Storage_Encryption_Key).toString();
+    const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
+    const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(privateKey, Storage_Encryption_Key).toString();
     const returnData = {
         salt,
         encryption_private_key: Encrypted_Private_Store_Key,
-        encryption_public_key: Public_Store_Key,
+        encryption_public_key: publicKey,
         signature: '',
         data: 'this is a test',
         addr: address ? address.toString() : '',
@@ -70,4 +52,21 @@ export const generateEncryptionKey = async (address?: string) => {
     if (!keySignature) throw new Error('sign key error');
     returnData.signature = keySignature;
     return returnData;
+};
+
+export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) => {
+    if (!encryptedPrivateKey || encryptedPrivateKey.length == 0) {
+        throw new Error('error: no privateKey in session storage');
+    }
+    if (!salt || salt.length == 0) {
+        throw new Error('error: no salt in session storage');
+    }
+    const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
+    const signer = provider.getSigner();
+    const signedSalt = await signer.signMessage(
+        'Please sign this message to generate encrypted private key: \n \n' + salt
+    );
+    const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
+    const privateKey = CryptoJS.AES.decrypt(encryptedPrivateKey, Storage_Encryption_Key).toString(CryptoJS.enc.Utf8);
+    return privateKey;
 };
