@@ -11,10 +11,8 @@ const APIs = {
 // 从服务器获取的加密信息和上传到服务器的加密信息格式 共用
 interface IGetEncryptionKeyResponse {
     salt: string;
-    signing_private_key: string;
-    message_encryption_private_key: string;
-    signing_public_key: string;
-    message_encryption_public_key: string;
+    encryption_private_key: string;
+    encryption_public_key: string;
     signature: string;
     data: string;
     addr?: string;

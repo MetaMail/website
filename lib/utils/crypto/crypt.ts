@@ -10,7 +10,7 @@ export function generateRandom256Bits(address: string) {
     return 'Encryption key of this mail from ' + address + ' is ' + rb.toString(CryptoJS.enc.Base64);
 }
 
-export const createMailKeyWithEncrypted = () => {
+export const createMailKeyWithEncrypted = async () => {
     const { publicKey, address } = userSessionStorage.getUserInfo();
     if (!address) {
         throw new Error('No address of current user, please check');
@@ -19,7 +19,29 @@ export const createMailKeyWithEncrypted = () => {
         throw new Error('error: !pKey || pKey?.length === 0');
     }
     const randomBits = generateRandom256Bits(address);
-    return CryptoJS.AES.encrypt(randomBits, publicKey).toString();
+
+    const publicKeyBuffer = Buffer.from(publicKey, 'hex');
+    const publicCryptoKey = await window.crypto.subtle.importKey(
+        'spki',
+        publicKeyBuffer,
+        {
+            name: 'RSA-OAEP',
+            hash: { name: 'SHA-256' },
+        },
+        false,
+        ['encrypt']
+    );
+
+    const randomBitsBuffer = Buffer.from(randomBits, 'utf-8');
+    const encryptData = await window.crypto.subtle.encrypt(
+        {
+            name: 'RSA-OAEP',
+        },
+        publicCryptoKey,
+        randomBitsBuffer
+    );
+    const returnStr = Buffer.from(encryptData).toString('hex');
+    return returnStr;
 };
 
 export const getPrivateKey = async () => {
