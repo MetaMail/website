@@ -321,8 +321,9 @@ export default function NewMail() {
 
     const handleDecrypted = async () => {
         if (!myKeyRef.current) return;
-        // @ts-ignore
-        const privateKey = await getPrivateKey();
+        const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
+        const salt = userSessionStorage.getSaltFromLocal();
+        const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
 
         const privateKeyBuffer = Buffer.from(privateKey, 'hex');
         const privateCryptoKey = await window.crypto.subtle.importKey(

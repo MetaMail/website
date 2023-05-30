@@ -32,14 +32,6 @@ export const keyPack = (keyData: IKeyPackParams) => {
     return parts.join('\n');
 };
 
-export const getPublicKey = async (account: string) => {
-    // @ts-ignore
-    return ethereum.request({
-        method: 'eth_getEncryptionPublicKey',
-        params: [account],
-    });
-};
-
 export const generateEncryptionKey = async (address?: string) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
     const signer = provider.getSigner();

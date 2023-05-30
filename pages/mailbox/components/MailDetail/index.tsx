@@ -9,6 +9,7 @@ import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from '
 import { mailHttp } from 'lib/http';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { useMailDetailStore } from 'lib/zustand-store';
+import { getPrivateKey } from 'lib/utils';
 import Icon from 'components/Icon';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
@@ -144,8 +145,9 @@ export default function MailDetail() {
             }
             let key = keys[idx];
 
-            // @ts-ignore
-            const privateKey = getPrivateKey();
+            const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
+            const salt = userSessionStorage.getSaltFromLocal();
+            const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
             let randomBits = CryptoJS.AES.decrypt(key, privateKey).toString(CryptoJS.enc.Utf8);
             if (!randomBits) {
                 console.log('error: no randombits');
