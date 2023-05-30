@@ -153,7 +153,7 @@ export default function NewMail() {
                     for (var i = 0; i < receivers.length; i++) {
                         const receiverItem = receivers[i];
                         const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
-                        const receriverPublicKey = encryptionData.message_encryption_public_key;
+                        const receriverPublicKey = encryptionData.encryption_public_key;
                         if (!receriverPublicKey || receriverPublicKey.length == 0) {
                             throw new Error(
                                 'Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.'
@@ -321,9 +321,32 @@ export default function NewMail() {
 
     const handleDecrypted = async () => {
         if (!myKeyRef.current) return;
-        // @ts-ignore
-        const privateKey = await getPrivateKey();
-        let randomBits = CryptoJS.AES.decrypt(myKeyRef.current, privateKey).toString(CryptoJS.enc.Utf8);
+        const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
+        const salt = userSessionStorage.getSaltFromLocal();
+        const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
+
+        const privateKeyBuffer = Buffer.from(privateKey, 'hex');
+        const privateCryptoKey = await window.crypto.subtle.importKey(
+            'pkcs8',
+            privateKeyBuffer,
+            {
+                name: 'RSA-OAEP',
+                hash: { name: 'SHA-256' },
+            },
+            false,
+            ['decrypt']
+        );
+
+        const decryptBuffer = await window.crypto.subtle.decrypt(
+            {
+                name: 'RSA-OAEP',
+            },
+            privateCryptoKey,
+            Buffer.from(myKeyRef.current, 'hex')
+        );
+
+        const randomBits = Buffer.from(decryptBuffer).toString();
+
         if (!randomBits) {
             console.log('error: no randombits');
             return;

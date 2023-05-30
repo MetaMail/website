@@ -14,43 +14,22 @@ interface IKeyPackParams {
     addr: string;
     date: string;
     salt: string;
-    message_encryption_public_key: string;
-    message_encryption_private_key: string;
-    signing_public_key: string;
-    signing_private_key: string;
+    encryption_public_key: string;
+    encryption_private_key: string;
     data: string;
 }
 
 export const keyPack = (keyData: IKeyPackParams) => {
-    const {
-        addr,
-        date,
-        salt,
-        message_encryption_public_key,
-        message_encryption_private_key,
-        signing_public_key,
-        signing_private_key,
-        data,
-    } = keyData;
+    const { addr, date, salt, encryption_public_key, encryption_private_key, data } = keyData;
     const parts = [
         'Addr: ' + addr,
         'Date: ' + date,
         'Salt: ' + salt,
-        'Message-Encryption-Public-Key: ' + message_encryption_public_key,
-        'Message-Encryption-Private-Key: ' + message_encryption_private_key,
-        'Signing-Public-Key: ' + signing_public_key,
-        'Signing-Private-Key: ' + signing_private_key,
+        'Encryption-Public-Key: ' + encryption_public_key,
+        'Encryption-Private-Key: ' + encryption_private_key,
         'Data: ' + data,
     ];
     return parts.join('\n');
-};
-
-export const getPublicKey = async (account: string) => {
-    // @ts-ignore
-    return ethereum.request({
-        method: 'eth_getEncryptionPublicKey',
-        params: [account],
-    });
 };
 
 export const generateEncryptionKey = async (address?: string) => {
@@ -64,11 +43,13 @@ export const generateEncryptionKey = async (address?: string) => {
 
     const keyPair = await window.crypto.subtle.generateKey(
         {
-            name: 'ECDSA',
-            namedCurve: 'P-256',
+            name: 'RSA-OAEP',
+            modulusLength: 2048,
+            publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+            hash: { name: 'SHA-256' },
         },
         true,
-        ['sign', 'verify']
+        ['encrypt', 'decrypt']
     );
     const privateBuffer = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
     const publicBuffer = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
@@ -77,10 +58,8 @@ export const generateEncryptionKey = async (address?: string) => {
     const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(Private_Store_Key, Storage_Encryption_Key).toString();
     const returnData = {
         salt,
-        signing_private_key: Encrypted_Private_Store_Key,
-        message_encryption_private_key: Encrypted_Private_Store_Key,
-        signing_public_key: Public_Store_Key,
-        message_encryption_public_key: Public_Store_Key,
+        encryption_private_key: Encrypted_Private_Store_Key,
+        encryption_public_key: Public_Store_Key,
         signature: '',
         data: 'this is a test',
         addr: address ? address.toString() : '',
