@@ -8,7 +8,14 @@ import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { mailHttp, userHttp } from 'lib/http';
 import { getPersonalSign } from 'lib/utils';
-import { getPrivateKey, decryptEncryptedMailKey, metaPack } from 'lib/encrypt';
+import {
+    getPrivateKey,
+    decryptMailKey,
+    metaPack,
+    createEncryptedMailKey,
+    encryptMailContent,
+    decryptMailContent,
+} from 'lib/encrypt';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
 import DynamicReactQuill from './components/DynamicReactQuill';
@@ -150,24 +157,27 @@ export default function NewMail() {
                 let keys: string[] = [];
                 if (type === MetaMailTypeEn.Encrypted) {
                     // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
-                    let pks: string[] = [publicKey!];
+                    let publicKeys: string[] = [publicKey];
                     for (var i = 0; i < receivers.length; i++) {
                         const receiverItem = receivers[i];
                         const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
-                        const receriverPublicKey = encryptionData.encryption_public_key;
-                        if (!receriverPublicKey || receriverPublicKey.length == 0) {
+                        const receiverPublicKey = encryptionData.encryption_public_key;
+                        if (!receiverPublicKey || receiverPublicKey.length == 0) {
                             throw new Error(
                                 'Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.'
                             );
                         }
-                        pks.push(receriverPublicKey);
+                        publicKeys.push(receiverPublicKey);
                     }
-                    console.log(pks, '--');
+                    console.log(publicKeys, '--');
                     const mySalt = userSessionStorage.getSaltFromLocal();
                     console.log(mySalt);
                     if (!currRandomBitsRef.current) {
                         console.log('error: no currrandombitsref.current');
-                    } else keys = pks.map(pk => CryptoJS.AES.encrypt(currRandomBitsRef.current!, pk).toString());
+                    } else
+                        keys = await Promise.all(
+                            publicKeys.map(publicKey => createEncryptedMailKey(currRandomBitsRef.current, publicKey))
+                        );
                 }
 
                 const orderedAtt = attList;
@@ -253,8 +263,8 @@ export default function NewMail() {
             if (!currRandomBitsRef.current) {
                 console.log('error: no currrandombitsref.current');
             } else {
-                html = CryptoJS.AES.encrypt(html, currRandomBitsRef.current).toString();
-                text = CryptoJS.AES.encrypt(text, currRandomBitsRef.current).toString();
+                html = encryptMailContent(html, currRandomBitsRef.current);
+                text = encryptMailContent(text, currRandomBitsRef.current);
             }
         }
         console.log(receivers);
@@ -325,13 +335,13 @@ export default function NewMail() {
         const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
         const salt = userSessionStorage.getSaltFromLocal();
         const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
-        const randomBits = await decryptEncryptedMailKey(myKeyRef.current, privateKey);
+        const randomBits = await decryptMailKey(myKeyRef.current, privateKey);
         if (!randomBits) {
             console.log('error: no randombits');
             return;
         }
         currRandomBitsRef.current = randomBits;
-        const decryptedContent = CryptoJS.AES.decrypt(content, currRandomBitsRef.current).toString(CryptoJS.enc.Utf8);
+        const decryptedContent = decryptMailContent(content, currRandomBitsRef.current);
         setContent(decryptedContent);
         setEditable(true);
         console.log('setEditable(true);');

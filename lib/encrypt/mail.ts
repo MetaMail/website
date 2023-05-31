@@ -1,5 +1,5 @@
 import CryptoJS from 'crypto-js';
-import { asymmetricEncryptInstance, PostfixOfAddress } from '../base';
+import { asymmetricEncryptInstance, symmetricEncryptInstance, PostfixOfAddress } from '../base';
 import { IPersonItem } from '../constants';
 
 function generateRandom256Bits(address: string) {
@@ -18,7 +18,13 @@ export const createEncryptedMailKey = async (publicKey: string, address: string)
     return asymmetricEncryptInstance.encrypt(randomBits, publicKey);
 };
 
-export const decryptEncryptedMailKey = async (encryptedMailKey: string, privateKey: string) => {
+/**
+ * Get RandomBits
+ * @param encryptedMailKey
+ * @param privateKey
+ * @returns randomBits
+ */
+export const decryptMailKey = async (encryptedMailKey: string, privateKey: string) => {
     return asymmetricEncryptInstance.decrypt(encryptedMailKey, privateKey);
 };
 
@@ -64,3 +70,13 @@ export const metaPack = async (data: {
         packedResult: parts.join('\n'),
     });
 };
+
+export const encryptMailContent = (mailContent: string, key: string) => {
+    return symmetricEncryptInstance.encrypt(mailContent, key);
+};
+
+export const decryptMailContent = (encryptedMailContent: string, key: string) => {
+    return symmetricEncryptInstance.decrypt(encryptedMailContent, key);
+};
+
+// TODO 所有的邮件相关的加密解密都放在这里

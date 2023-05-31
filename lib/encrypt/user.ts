@@ -1,10 +1,9 @@
 import crypto from 'crypto';
 import keccak256 from 'keccak256';
-import CryptoJS from 'crypto-js';
 import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 
-import { asymmetricEncryptInstance } from '../base';
+import { asymmetricEncryptInstance, symmetricEncryptInstance } from '../base';
 
 interface IKeyPackParams {
     addr: string;
@@ -37,7 +36,7 @@ export const generateEncryptionUserKey = async (address?: string) => {
     );
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
     const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
-    const Encrypted_Private_Store_Key = CryptoJS.AES.encrypt(privateKey, Storage_Encryption_Key).toString();
+    const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
     const returnData = {
         salt,
         encryption_private_key: Encrypted_Private_Store_Key,
@@ -67,6 +66,15 @@ export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) =
         'Please sign this message to generate encrypted private key: \n \n' + salt
     );
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
-    const privateKey = CryptoJS.AES.decrypt(encryptedPrivateKey, Storage_Encryption_Key).toString(CryptoJS.enc.Utf8);
-    return privateKey;
+    return decryptPrivateKey(encryptedPrivateKey, Storage_Encryption_Key);
 };
+
+export const encryptPrivateKey = (privateKey: string, key: string) => {
+    return symmetricEncryptInstance.encrypt(privateKey, key);
+};
+
+export const decryptPrivateKey = (encryptedPrivateKey: string, key: string) => {
+    return symmetricEncryptInstance.decrypt(encryptedPrivateKey, key);
+};
+
+// TODO 所有的用户相关的加密解密都放在这里

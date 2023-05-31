@@ -6,43 +6,26 @@ abstract class MMEncrypt extends MMObject {
     abstract decrypt(data: string): string | Promise<string>;
 }
 
-const DEFAULT_AES_KEY = '0123456789abcdef'; // 密钥, AES-128 需16个字符, AES-256 需要32个字符
-const DEFAULT_AES_IV = 'abcdef0123456789'; // 密钥偏移量，16个字符
-
 // 对称加密
 class MMSymmetricEncrypt extends MMEncrypt {
-    private _key: CryptoJS.lib.WordArray;
-    private _iv: CryptoJS.lib.WordArray;
+    private _key: string;
 
-    constructor(key?: string, iv?: string) {
+    constructor(key?: string) {
         super();
-        this._key = CryptoJS.enc.Utf8.parse(key || DEFAULT_AES_KEY);
-        this._iv = CryptoJS.enc.Utf8.parse(iv || DEFAULT_AES_IV);
+        this._key = key;
     }
 
     set key(value: string) {
-        this._key = CryptoJS.enc.Utf8.parse(value);
+        this._key = value;
     }
 
-    set iv(value: string) {
-        this._iv = CryptoJS.enc.Utf8.parse(value);
-    }
-
-    encrypt(data: string): string {
-        const encrypted = CryptoJS.AES.encrypt(data, this._key, {
-            iv: this._iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7,
-        });
+    encrypt(data: string, key?: string): string {
+        const encrypted = CryptoJS.AES.encrypt(data, key || this._key);
         return encrypted.toString();
     }
 
-    decrypt(data: string): string {
-        const decrypted = CryptoJS.AES.decrypt(data, this._key, {
-            iv: this._iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7,
-        });
+    decrypt(data: string, key?: string): string {
+        const decrypted = CryptoJS.AES.decrypt(data, key || this._key);
         return CryptoJS.enc.Utf8.stringify(decrypted).toString();
     }
 }
@@ -54,7 +37,16 @@ class MMAsymmetricEncrypt extends MMEncrypt {
     private _publicKey: string; // hex string
     private _privateKey: string; // hex string
 
+    set publicKey(value: string) {
+        this._publicKey = value;
+    }
+
+    set privateKey(value: string) {
+        this._privateKey = value;
+    }
+
     async encrypt(data: string, publicKey?: string): Promise<string> {
+        // incoming data is hex string
         const publicKeyBuffer = Buffer.from(publicKey || this._publicKey, 'hex');
         const publicCryptoKey = await window.crypto.subtle.importKey(
             'spki',
