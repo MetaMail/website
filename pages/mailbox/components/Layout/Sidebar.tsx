@@ -6,6 +6,7 @@ import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/zusta
 import { FilterTypeEn, MetaMailTypeEn, MailMenuItems } from 'lib/constants';
 import { createMailKeyWithEncrypted } from 'lib/utils/crypto';
 import { mailHttp } from 'lib/http';
+import { userSessionStorage } from 'lib/session-storage';
 import Icon from 'components/Icon';
 
 import logoBrand from 'assets/MetaMail.svg';
@@ -35,7 +36,8 @@ export default function Sidebar(props: any) {
     }
 
     async function handleClickNewMail() {
-        const key = createMailKeyWithEncrypted();
+        const { publicKey, address } = userSessionStorage.getUserInfo();
+        const key = await createMailKeyWithEncrypted(publicKey, address);
         // 以前的代码中，如果不是MetaMailTypeEn.Encrypted，还会执行 userStorage.setRandomBits(undefined);
         // 这里目前全都当MetaMailTypeEn.Encrypted处理，估计代码还没写完，写完以后把注释删除
         const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key);

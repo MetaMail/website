@@ -36,7 +36,7 @@ export default function Welcome() {
             const signedMessage = await signer.signMessage(randomStr);
             const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await userHttp.getEncryptionKey(address ?? '');
-            if (!encryptionData?.message_encryption_public_key) {
+            if (!encryptionData?.signature) {
                 encryptionData = await generateEncryptionKey(address);
                 // do upload
                 await userHttp.putEncryptionKey({
@@ -46,8 +46,8 @@ export default function Welcome() {
             userSessionStorage.saveUserInfo({
                 address,
                 ensName: user.ens,
-                publicKey: encryptionData.message_encryption_public_key,
-                privateKey: encryptionData.message_encryption_private_key,
+                publicKey: encryptionData.encryption_public_key,
+                privateKey: encryptionData.encryption_private_key,
                 salt: encryptionData.salt,
             });
             router.push('/mailbox');

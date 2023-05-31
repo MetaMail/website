@@ -1,3 +1,5 @@
+import { ExternalProvider } from '@ethersproject/providers';
+
 export enum SignTypeEn {
     Personal = 0,
     Eth = 1,
@@ -6,9 +8,11 @@ export enum SignTypeEn {
     TypedDataV4 = 4,
 }
 
+const getEthereum = () => window.ethereum as ExternalProvider;
+
 export const getPersonalSign = async (account: string, msg: string, password?: string) => {
     try {
-        // @ts-ignore
+        const ethereum = getEthereum();
         const sign = await ethereum.request({
             method: 'personal_sign',
             params: [`0x${Buffer.from(msg, 'utf8').toString('hex')}`, account, password ?? ''],
@@ -25,8 +29,7 @@ export const getEthSign = async (account: string, msg: string) => {
         if (!msg.startsWith('0x')) {
             throw new Error('Invalid message, please hash it.');
         }
-
-        // @ts-ignore
+        const ethereum = getEthereum();
         const sign = await ethereum.request({
             method: 'eth_sign',
             params: [account, msg],
@@ -46,7 +49,7 @@ type TypedMessage = {
 
 const getTypedDataSign = async (account: string, msgParams: TypedMessage[]) => {
     try {
-        // @ts-ignore
+        const ethereum = getEthereum();
         const sign = await ethereum.request({
             method: 'eth_signTypedData',
             params: [msgParams, account],
