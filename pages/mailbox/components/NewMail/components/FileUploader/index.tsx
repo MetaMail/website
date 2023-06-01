@@ -3,8 +3,7 @@ import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 
 import { mailHttp } from 'lib/http';
-import { AttachmentRelatedTypeEn } from 'lib/utils';
-import { MetaMailTypeEn } from 'lib/constants';
+import { MetaMailTypeEn, AttachmentRelatedTypeEn } from 'lib/constants';
 
 import addAttach from 'assets/addAttach.svg';
 interface IFileUploader {

@@ -4,12 +4,11 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useAccount } from 'wagmi';
 import { disconnect } from '@wagmi/core';
-import { ethers } from 'ethers';
-import { ExternalProvider } from '@ethersproject/providers';
 
 import { userHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/session-storage';
-import { generateEncryptionKey } from 'lib/utils';
+import { generateEncryptionUserKey } from 'lib/encrypt';
+import { ethSignMessage } from 'lib/utils';
 import ReviewInfo from './components/ReviewInfo';
 import Footer from './components/Footer';
 import RainbowLogin from './components/RainbowLogin';
@@ -29,15 +28,12 @@ export default function Welcome() {
 
     const handleAutoLogin = async () => {
         try {
-            if (!window.ethereum) throw new Error('Your client does not support Ethereum');
-            const provider = new ethers.providers.Web3Provider(window.ethereum as ExternalProvider, 'any');
-            const signer = provider.getSigner();
             const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address);
-            const signedMessage = await signer.signMessage(randomStr);
+            const signedMessage = await ethSignMessage(randomStr);
             const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await userHttp.getEncryptionKey(address ?? '');
             if (!encryptionData?.signature) {
-                encryptionData = await generateEncryptionKey(address);
+                encryptionData = await generateEncryptionUserKey(address);
                 // do upload
                 await userHttp.putEncryptionKey({
                     data: encryptionData,
@@ -57,6 +53,7 @@ export default function Welcome() {
             await disconnect();
         }
     };
+
     useEffect(() => {
         (async () => {
             if (!address) return;
@@ -65,6 +62,7 @@ export default function Welcome() {
             router.push('/mailbox');
         })();
     },[address]);
+
     return (
         <div className="flex flex-col mx-auto max-w-[2000px]">
             <Head>

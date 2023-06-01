@@ -1,6 +1,7 @@
+import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
 
-export enum SignTypeEn {
+enum SignTypeEn {
     Personal = 0,
     Eth = 1,
     TypedData = 2,
@@ -85,4 +86,12 @@ export const getSignResult = async (type: SignTypeEn, account: string, msg: any)
     }
 
     return signResult;
+};
+
+export const ethSignMessage = async (msg: string) => {
+    const ethereum = getEthereum();
+    if (!ethereum) throw new Error('Your client does not support Ethereum');
+    const provider = new ethers.providers.Web3Provider(ethereum, 'any');
+    const signer = provider.getSigner();
+    return signer.signMessage(msg);
 };
