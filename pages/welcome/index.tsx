@@ -25,7 +25,6 @@ import gdL from 'assets/gdL.png';
 
 export default function Welcome() {
     const router = useRouter();
-    const isConnected = useAccount().isConnected;
     const address = useAccount().address?.toLowerCase();
 
     const handleAutoLogin = async () => {
@@ -60,13 +59,12 @@ export default function Welcome() {
     };
     useEffect(() => {
         (async () => {
-            if (!isConnected) return;
+            if (!address) return;
             if (userSessionStorage.getUserInfo().address !== address) return handleAutoLogin();
-
             await disconnect();
             router.push('/mailbox');
         })();
-    });
+    },[address]);
     return (
         <div className="flex flex-col mx-auto max-w-[2000px]">
             <Head>
