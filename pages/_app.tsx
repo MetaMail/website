@@ -3,6 +3,8 @@ import type { AppProps } from 'next/app';
 import { ReactNode, ReactElement } from 'react';
 import '../styles/globals.css';
 import '../styles/quill.css';
+import '../styles/message.css';
+
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode;
 };
