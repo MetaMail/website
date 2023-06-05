@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useAccount } from 'wagmi';
 import { disconnect } from '@wagmi/core';
+import { toast } from 'react-toastify';
 
 import { userHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/session-storage';
@@ -48,7 +49,8 @@ export default function Welcome() {
             });
             router.push('/mailbox');
         } catch (error) {
-            throw error;
+            console.error(error);
+            toast.error('Login failed, please try again.');
         } finally {
             await disconnect();
         }
@@ -61,7 +63,7 @@ export default function Welcome() {
             await disconnect();
             router.push('/mailbox');
         })();
-    },[address]);
+    }, [address]);
 
     return (
         <div className="flex flex-col mx-auto max-w-[2000px]">
