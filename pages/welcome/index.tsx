@@ -29,7 +29,7 @@ export default function Welcome() {
     const handleAutoLogin = async () => {
         try {
             const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address);
-            const signedMessage = await ethSignMessage(randomStr);
+            const signedMessage = await ethSignMessage(randomStr, address);
             const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await userHttp.getEncryptionKey(address ?? '');
             if (!encryptionData?.signature) {
@@ -61,7 +61,7 @@ export default function Welcome() {
             await disconnect();
             router.push('/mailbox');
         })();
-    },[address]);
+    }, [address]);
 
     return (
         <div className="flex flex-col mx-auto max-w-[2000px]">

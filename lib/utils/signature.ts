@@ -88,10 +88,58 @@ export const getSignResult = async (type: SignTypeEn, account: string, msg: any)
     return signResult;
 };
 
-export const ethSignMessage = async (msg: string) => {
+export const ethSignMessage = async (msg: string, address: string) => {
     const ethereum = getEthereum();
     if (!ethereum) throw new Error('Your client does not support Ethereum');
-    const provider = new ethers.providers.Web3Provider(ethereum, 'any');
-    const signer = provider.getSigner();
-    return signer.signMessage(msg);
+
+    const msgData = JSON.stringify({
+        types: {
+            EIP712Domain: [
+                {
+                    name: 'name',
+                    type: 'string',
+                },
+                {
+                    name: 'version',
+                    type: 'string',
+                },
+            ],
+            Message: [
+                // 新增一个类型，代表消息数据
+                { name: 'title', type: 'string' },
+                { name: 'content', type: 'string' },
+            ],
+        },
+        domain: {
+            name: 'MetaMail',
+            version: '1',
+        },
+        primaryType: 'Message', // 将主类型设置为新定义的类型
+        message: {
+            title: 'Sign this message to login',
+            content: msg,
+        },
+    });
+
+    try {
+        const str = await ethereum.request({
+            method: 'eth_signTypedData_v4',
+            params: [address, msgData],
+        });
+
+        const typedData = JSON.parse(msgData);
+        const domain = typedData.domain;
+        const types = typedData.types;
+        const value = typedData.message;
+        const signature = str;
+
+        const verified = ethers.utils.verifyTypedData(domain, types, value, signature);
+        console.log(verified);
+        console.log(address);
+        console.log('Signature:', str);
+        return str;
+    } catch (error) {
+        console.error('Error:', error);
+        return error;
+    }
 };
