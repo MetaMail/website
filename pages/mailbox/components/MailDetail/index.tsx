@@ -9,7 +9,7 @@ import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from '
 import { mailHttp } from 'lib/http';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { useMailDetailStore } from 'lib/zustand-store';
-import { getPrivateKey } from 'lib/utils';
+import { getPrivateKey, decryptMailContent, decryptMailKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
@@ -143,29 +143,26 @@ export default function MailDetail() {
                 console.log('not find index from address list');
                 return;
             }
-            let key = keys[idx];
+            const key = keys[idx];
 
             const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
             const salt = userSessionStorage.getSaltFromLocal();
             const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
-            let randomBits = CryptoJS.AES.decrypt(key, privateKey).toString(CryptoJS.enc.Utf8);
+            const randomBits = await decryptMailKey(key, privateKey);
             if (!randomBits) {
                 console.log('error: no randombits');
                 return;
             }
-
-            if (randomBits) {
-                //TODO: attachments randomBitsRef.current = randomBits;
-                const res = { ...mailDetail };
-                if (res?.part_html) {
-                    res.part_html = CryptoJS.AES.decrypt(res.part_html, randomBits).toString(CryptoJS.enc.Utf8);
-                }
-                if (res?.part_text) {
-                    res.part_text = CryptoJS.AES.decrypt(res.part_text, randomBits).toString(CryptoJS.enc.Utf8);
-                }
-                setReadable(true);
-                setMailDetail(res);
+            //TODO: attachments randomBitsRef.current = randomBits;
+            const res = { ...mailDetail };
+            if (res?.part_html) {
+                res.part_html = decryptMailContent(res.part_html, randomBits);
             }
+            if (res?.part_text) {
+                res.part_text = decryptMailContent(res.part_html, randomBits);
+            }
+            setReadable(true);
+            setMailDetail(res);
         } else {
             console.warn(`please check your keys ${keys} and address ${address}`);
         }
