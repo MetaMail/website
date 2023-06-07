@@ -92,52 +92,30 @@ export const ethSignMessage = async (msg: string, address: string) => {
     const ethereum = getEthereum();
     if (!ethereum) throw new Error('Your client does not support Ethereum');
 
-    const msgData = JSON.stringify({
-        types: {
-            EIP712Domain: [
-                {
-                    name: 'name',
-                    type: 'string',
-                },
-                {
-                    name: 'version',
-                    type: 'string',
-                },
-            ],
+    try {
+        const metamaskProvider = new ethers.providers.Web3Provider(ethereum);
+        const signer = metamaskProvider.getSigner();
+
+        const domain = {
+            name: 'MetaMail',
+            version: '1',
+        };
+        const types = {
             Message: [
-                // 新增一个类型，代表消息数据
                 { name: 'title', type: 'string' },
                 { name: 'content', type: 'string' },
             ],
-        },
-        domain: {
-            name: 'MetaMail',
-            version: '1',
-        },
-        primaryType: 'Message', // 将主类型设置为新定义的类型
-        message: {
+        };
+        const message = {
             title: 'Sign this message to login',
             content: msg,
-        },
-    });
+        };
+        const signature = await signer._signTypedData(domain, types, message);
+        const expectedSignerAddress = address;
+        const recoveredAddress = ethers.utils.verifyTypedData(domain, types, message, signature);
+        const verified = recoveredAddress.toLowerCase() === expectedSignerAddress.toLowerCase();
 
-    try {
-        const str = await ethereum.request({
-            method: 'eth_signTypedData_v4',
-            params: [address, msgData],
-        });
-
-        const typedData = JSON.parse(msgData);
-        const domain = typedData.domain;
-        const types = typedData.types;
-        const value = typedData.message;
-        const signature = str;
-
-        const verified = ethers.utils.verifyTypedData(domain, types, value, signature);
-        console.log(verified);
-        console.log(address);
-        console.log('Signature:', str);
-        return str;
+        return verified ? signature : ''; // or throw error
     } catch (error) {
         console.error('Error:', error);
         return error;
