@@ -1,5 +1,7 @@
 import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
+import { useAccount } from 'wagmi';
+import { IPersonItem } from 'lib/constants/interfaces';
 
 enum SignTypeEn {
     Personal = 0,
@@ -7,6 +9,19 @@ enum SignTypeEn {
     TypedData = 2,
     TypedDataV3 = 3,
     TypedDataV4 = 4,
+}
+
+interface ISendMailInfo {
+    from: string;
+    to: IPersonItem[];
+    date: string;
+    subject: string;
+}
+export enum MessageNotificationTypeEn {
+    RandomStr = 0,
+    Salt = 1,
+    SendMailInfo = 2,
+    KeyData = 3,
 }
 
 const getEthereum = () => window.ethereum as ExternalProvider;
@@ -88,8 +103,9 @@ export const getSignResult = async (type: SignTypeEn, account: string, msg: any)
     return signResult;
 };
 
-export const ethSignMessage = async (msg: string, address: string) => {
+export const ethSignMessage = async (msg: string, type: MessageNotificationTypeEn, info?: ISendMailInfo) => {
     const ethereum = getEthereum();
+    const address = useAccount().address ?? '';
     if (!ethereum) throw new Error('Your client does not support Ethereum');
 
     try {
@@ -100,16 +116,57 @@ export const ethSignMessage = async (msg: string, address: string) => {
             name: 'MetaMail',
             version: '1',
         };
-        const types = {
-            Message: [
-                { name: 'title', type: 'string' },
-                { name: 'content', type: 'string' },
-            ],
-        };
-        const message = {
-            title: 'Sign this message to login',
-            content: msg,
-        };
+        let types, message;
+        if (type !== MessageNotificationTypeEn.SendMailInfo) {
+            types = {
+                Message: [
+                    { name: 'title', type: 'string' },
+                    { name: 'content', type: 'string' },
+                ],
+            };
+            let title;
+
+            switch (type) {
+                case MessageNotificationTypeEn.RandomStr:
+                    title = 'Sign this randomString to Login';
+                    break;
+                case MessageNotificationTypeEn.Salt:
+                    title = 'Sign this salt to generate encryption key';
+                    break;
+                case MessageNotificationTypeEn.KeyData:
+                    title = 'Sign this message to confirm your encryption key';
+                    break;
+                default:
+                    break;
+            }
+            message = {
+                title: title,
+                content: msg,
+            };
+        } else {
+            //TODO: sendmail
+            //types = ;
+            //message = ;
+            types = {
+                Message: [
+                    { name: 'mail_from', type: 'string' },
+                    { name: 'mail_to', type: 'string' },
+                    { name: 'date', type: 'string' },
+                    { name: 'subject', type: 'string' },
+                ],
+            };
+            message = {
+                mail_from: info?.from ?? '',
+                mail_to:
+                    info.to
+                        .map(item => {
+                            item.address;
+                        })
+                        .toString() ?? '',
+                date: info?.date ?? '',
+                subject: info?.subject ?? '',
+            };
+        }
         const signature = await signer._signTypedData(domain, types, message);
         const expectedSignerAddress = address;
         const recoveredAddress = ethers.utils.verifyTypedData(domain, types, message, signature);
