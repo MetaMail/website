@@ -147,7 +147,7 @@ export default function MailDetail() {
 
             const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
             const salt = userSessionStorage.getSaltFromLocal();
-            const privateKey = await getPrivateKey(userSessionStorage.getWalletAddress(), encryptedPrivateKey, salt);
+            const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
             const randomBits = await decryptMailKey(key, privateKey);
             if (!randomBits) {
                 console.log('error: no randombits');

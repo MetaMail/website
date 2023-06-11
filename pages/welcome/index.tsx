@@ -8,7 +8,7 @@ import { disconnect } from '@wagmi/core';
 import { userHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/session-storage';
 import { generateEncryptionUserKey } from 'lib/encrypt';
-import { MessageNotificationTypeEn, ethSignMessage } from 'lib/utils';
+import { randomStringSignInstance } from 'lib/sign';
 import ReviewInfo from './components/ReviewInfo';
 import Footer from './components/Footer';
 import RainbowLogin from './components/RainbowLogin';
@@ -29,7 +29,7 @@ export default function Welcome() {
     const handleAutoLogin = async () => {
         try {
             const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address);
-            const signedMessage = await ethSignMessage(address, randomStr, MessageNotificationTypeEn.RandomStr);
+            const signedMessage = await randomStringSignInstance.doSign(randomStr);
             const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await userHttp.getEncryptionKey(address ?? '');
             if (!encryptionData?.signature) {
