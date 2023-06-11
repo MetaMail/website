@@ -105,7 +105,6 @@ export const getSignResult = async (type: SignTypeEn, account: string, msg: any)
 
 export const ethSignMessage = async (msg: string, type: MessageNotificationTypeEn, info?: ISendMailInfo) => {
     const ethereum = getEthereum();
-    const address = useAccount().address ?? '';
     if (!ethereum) throw new Error('Your client does not support Ethereum');
 
     try {
@@ -144,9 +143,6 @@ export const ethSignMessage = async (msg: string, type: MessageNotificationTypeE
                 content: msg,
             };
         } else {
-            //TODO: sendmail
-            //types = ;
-            //message = ;
             types = {
                 Message: [
                     { name: 'mail_from', type: 'string' },
@@ -168,11 +164,7 @@ export const ethSignMessage = async (msg: string, type: MessageNotificationTypeE
             };
         }
         const signature = await signer._signTypedData(domain, types, message);
-        const expectedSignerAddress = address;
-        const recoveredAddress = ethers.utils.verifyTypedData(domain, types, message, signature);
-        const verified = recoveredAddress.toLowerCase() === expectedSignerAddress.toLowerCase();
-
-        return verified ? signature : ''; // or throw error
+        return signature ?? ''; // or throw error
     } catch (error) {
         console.error('Error:', error);
         return error;
