@@ -103,10 +103,15 @@ export const getSignResult = async (type: SignTypeEn, account: string, msg: any)
     return signResult;
 };
 
-export const ethSignMessage = async (msg: string, type: MessageNotificationTypeEn, info?: ISendMailInfo) => {
+export const ethSignMessage = async (
+    address: string,
+    msg: string,
+    type: MessageNotificationTypeEn,
+    info?: ISendMailInfo
+) => {
     const ethereum = getEthereum();
     if (!ethereum) throw new Error('Your client does not support Ethereum');
-
+    if (!address) throw new Error('no address provided');
     try {
         const metamaskProvider = new ethers.providers.Web3Provider(ethereum);
         const signer = metamaskProvider.getSigner();
@@ -164,7 +169,10 @@ export const ethSignMessage = async (msg: string, type: MessageNotificationTypeE
             };
         }
         const signature = await signer._signTypedData(domain, types, message);
-        return signature ?? ''; // or throw error
+        const expectedSignerAddress = address;
+        const recoveredAddress = ethers.utils.verifyTypedData(domain, types, message, signature);
+        const verified = recoveredAddress.toLowerCase() === expectedSignerAddress.toLowerCase();
+        return verified ? signature : ''; // or throw error
     } catch (error) {
         console.error('Error:', error);
         return error;

@@ -29,7 +29,7 @@ export default function Welcome() {
     const handleAutoLogin = async () => {
         try {
             const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address);
-            const signedMessage = await ethSignMessage(randomStr, MessageNotificationTypeEn.RandomStr);
+            const signedMessage = await ethSignMessage(address, randomStr, MessageNotificationTypeEn.RandomStr);
             const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await userHttp.getEncryptionKey(address ?? '');
             if (!encryptionData?.signature) {

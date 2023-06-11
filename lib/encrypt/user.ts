@@ -28,7 +28,7 @@ const keyPack = (keyData: IKeyPackParams) => {
 
 export const generateEncryptionUserKey = async (address?: string) => {
     const salt = crypto.randomBytes(256).toString('hex');
-    const signedSalt = await ethSignMessage(salt, MessageNotificationTypeEn.Salt);
+    const signedSalt = await ethSignMessage(address, salt, MessageNotificationTypeEn.Salt);
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
     const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
@@ -42,20 +42,20 @@ export const generateEncryptionUserKey = async (address?: string) => {
         date: new Date().toISOString(),
     };
     const keyData = keyPack(returnData);
-    const keySignature = await ethSignMessage(keyData, MessageNotificationTypeEn.KeyData);
+    const keySignature = await ethSignMessage(address, keyData, MessageNotificationTypeEn.KeyData);
     if (!keySignature) throw new Error('sign key error');
     returnData.signature = keySignature;
     return returnData;
 };
 
-export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) => {
+export const getPrivateKey = async (address: string, encryptedPrivateKey: string, salt: string) => {
     if (!encryptedPrivateKey || encryptedPrivateKey.length == 0) {
         throw new Error('error: no privateKey in session storage');
     }
     if (!salt || salt.length == 0) {
         throw new Error('error: no salt in session storage');
     }
-    const signedSalt = await ethSignMessage(salt, MessageNotificationTypeEn.Salt);
+    const signedSalt = await ethSignMessage(address, salt, MessageNotificationTypeEn.Salt);
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
     return decryptPrivateKey(encryptedPrivateKey, Storage_Encryption_Key);
 };
