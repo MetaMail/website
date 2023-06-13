@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { getAccount } from '@wagmi/core';
 import { ExternalProvider } from '@ethersproject/providers';
+import { userSessionStorage } from 'lib/session-storage';
 
 import { MMObject } from './object';
 
@@ -11,7 +12,8 @@ export abstract class MMSign extends MMObject {
 
     get address() {
         if (!this._address) {
-            this._address = getAccount().address?.toLowerCase();
+            // Relying on methods of other subclasses is unwilling, but no better choice yet
+            this._address = getAccount().address?.toLowerCase() || userSessionStorage.getUserInfo()?.address || '';
         }
         return this._address;
     }
