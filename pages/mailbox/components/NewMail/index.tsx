@@ -7,7 +7,6 @@ import { IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/c
 import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { mailHttp, userHttp } from 'lib/http';
-import { getPersonalSign } from 'lib/utils';
 import {
     getPrivateKey,
     decryptMailKey,
@@ -16,6 +15,7 @@ import {
     encryptMailContent,
     decryptMailContent,
 } from 'lib/encrypt';
+import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
 import DynamicReactQuill from './components/DynamicReactQuill';
@@ -195,25 +195,16 @@ export default function NewMail() {
                     keys: keys,
                 };
                 console.log(packData);
+                const sendMailInfo = {
+                    from: packData.from,
+                    to: packData.to,
+                    date: packData.date,
+                    subject: packData.subject,
+                };
                 metaPack(packData).then(async res => {
                     const { packedResult } = res ?? {};
-                    getPersonalSign(userSessionStorage.getWalletAddress(), packedResult).then(async signature => {
-                        if (signature === false) {
-                            // notification.error({
-                            // message: 'Not Your Sign, Not your Mail',
-                            // description:
-                            // "Please make sure that you have login MetaMask. It's totally free, no gas fee",
-                            // });
-                            // Modal.confirm({
-                            //   title: 'Failed to sign this mail',
-                            //   content: 'Would you like to send without signature?',
-                            //   okText: 'Yes, Send it',
-                            //   onOk: () => {
-                            //     handleSend(keys, packedResult);
-                            //     // handleSend(packedResult, date);
-                            //   },
-                            //   cancelText: 'No, I will try send it later',
-                            // });
+                    sendEmailInfoSignInstance.doSign(sendMailInfo).then(async signature => {
+                        if (signature) {
                         } else {
                             handleSend(keys, packedResult, signature);
                             // handleSend(packedResult, date, signature);
