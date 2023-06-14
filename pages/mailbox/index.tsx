@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 import { useMailListStore, useMailDetailStore, useAlertStore, useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
-import MailBoxContext from 'context';
+import { MailBoxContext } from 'context';
 
 import Alert from 'components/Alert';
 import Layout from './components/Layout';

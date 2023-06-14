@@ -4,7 +4,7 @@ import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zusta
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { FilterTypeEn, IMailContentItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeParams } from 'lib/http';
-import MailBoxContext from 'context';
+import { MailBoxContext } from 'context';
 import MailListItem from './components/MailListItem';
 import Icon from 'components/Icon';
 
