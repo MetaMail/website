@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import keccak256 from 'keccak256';
 
 import { asymmetricEncryptInstance, symmetricEncryptInstance } from '../base';
-import { ethSignMessage } from 'lib/utils';
+import { saltSignInstance, keyDataSignInstance } from 'lib/sign';
 
 interface IKeyPackParams {
     addr: string;
@@ -28,7 +28,7 @@ const keyPack = (keyData: IKeyPackParams) => {
 
 export const generateEncryptionUserKey = async (address?: string) => {
     const salt = crypto.randomBytes(256).toString('hex');
-    const signedSalt = await ethSignMessage('Please sign this message to generate encrypted private key: \n \n' + salt);
+    const signedSalt = await saltSignInstance.doSign(salt);
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
     const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
@@ -42,8 +42,7 @@ export const generateEncryptionUserKey = async (address?: string) => {
         date: new Date().toISOString(),
     };
     const keyData = keyPack(returnData);
-    const keySignature = await ethSignMessage(keyData);
-    if (!keySignature) throw new Error('sign key error');
+    const keySignature = await keyDataSignInstance.doSign(keyData);
     returnData.signature = keySignature;
     return returnData;
 };
@@ -55,7 +54,7 @@ export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) =
     if (!salt || salt.length == 0) {
         throw new Error('error: no salt in session storage');
     }
-    const signedSalt = await ethSignMessage('Please sign this message to generate encrypted private key: \n \n' + salt);
+    const signedSalt = await saltSignInstance.doSign(salt);
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
     return decryptPrivateKey(encryptedPrivateKey, Storage_Encryption_Key);
 };

@@ -53,14 +53,7 @@ class MMUserSessionStorage extends MMSessionStorage {
 
     getUserInfo(): IAllUserInfo {
         const basic = this.getStorage(UserInfoStoreKey, null);
-        return basic
-            ? {
-                  ...basic,
-                  showName: this.getShowName(),
-              }
-            : {
-                  showName: this.getShowName(),
-              };
+        return Object.assign(basic ?? {}, { showName: this.getShowName() });
     }
 
     clearUserInfo() {
