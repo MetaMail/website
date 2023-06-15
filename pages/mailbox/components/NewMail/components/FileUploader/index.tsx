@@ -72,16 +72,14 @@ const FileUploader = (item: IFileUploader) => {
 
                         // 加密邮件才需要对附件进行加密
                         if (item.metatype === MetaMailTypeEn.Encrypted) {
-                            const encrypted = CryptoJS.AES.encrypt(
-                                CryptoJS.lib.WordArray.create(input as any),
-                                currRandomBitsRef.current
-                            ).toString();
-
-                            const fileEncBlob = new Blob([encrypted]);
-
-                            finalFile = new File([fileEncBlob], file.name, {
-                                ...fileProps,
-                            });
+                            // const encrypted = CryptoJS.AES.encrypt(
+                            //     CryptoJS.lib.WordArray.create(input as any),
+                            //     currRandomBitsRef.current
+                            // ).toString();
+                            // const fileEncBlob = new Blob([encrypted]);
+                            // finalFile = new File([fileEncBlob], file.name, {
+                            //     ...fileProps,
+                            // });
                         }
 
                         handleFinalFileUpload(finalFile, file);

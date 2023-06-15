@@ -125,11 +125,6 @@ export default function MailList() {
                 mailSessionStorage.updateMailListInfo(mailListStorage);
             }
         } catch (e) {
-            //setIsAlert(true);
-            //notification.error({
-            //  message: 'Network Error',
-            //  description: 'Can not fetch mail list for now.',
-            //});
         } finally {
             if (showLoading) {
                 setLoading(false);
@@ -167,11 +162,6 @@ export default function MailList() {
         try {
             await mailHttp.changeMailStatus(mails, mark, read);
         } catch (e) {
-            //setIsAlert(true);
-            //notification.error({
-            //  message: 'Failed',
-            //  description: 'Sorry, network problem.',
-            //});
         } finally {
             fetchMailList(false);
         }
@@ -354,8 +344,8 @@ export default function MailList() {
                                                     message_id: item?.message_id,
                                                     mailbox: item?.mailbox,
                                                 },
-                                            ],
-                                            item?.mailbox === 3 ? MarkTypeEn.Deleted : MarkTypeEn.Trash
+                                            ]
+                                            // item?.mailbox === 3 ? MarkTypeEn.Deleted : MarkTypeEn.Trash
                                         );
                                     }}
                                     onUnread={() => {
