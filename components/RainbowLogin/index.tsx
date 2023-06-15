@@ -2,7 +2,7 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import { ConnectBtn } from './Custom';
+import ConnectBtn from './Custom';
 import '@rainbow-me/rainbowkit/styles.css';
 
 const { chains, provider } = configureChains([mainnet], [publicProvider()]);

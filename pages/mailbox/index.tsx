@@ -6,10 +6,10 @@ import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zusta
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { MailBoxContext } from 'context';
 
-import Layout from './components/Layout';
-import MailList from './components/MailList';
-import MailDetail from './components/MailDetail';
-import NewMail from './components/NewMail';
+import Layout from 'components/Layout';
+import MailList from 'components/MailList';
+import MailDetail from 'components/MailDetail';
+import NewMail from 'components/NewMail';
 
 export default function MailBoxPage() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });

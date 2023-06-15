@@ -10,9 +10,9 @@ import { userSessionStorage } from 'lib/session-storage';
 import { generateEncryptionUserKey } from 'lib/encrypt';
 import { randomStringSignInstance } from 'lib/sign';
 import { GlobalContext } from 'context';
-import ReviewInfo from './components/ReviewInfo';
-import Footer from './components/Footer';
-import RainbowLogin from './components/RainbowLogin';
+import ReviewInfo from 'components/ReviewInfo';
+import Footer from 'components/Footer';
+import RainbowLogin from 'components/RainbowLogin';
 
 import logoBrand from 'assets/logo_brand.svg';
 import computer from 'assets/computer.svg';
