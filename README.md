@@ -20,12 +20,23 @@ npm run dev
 yarn dev
 ```
 
-There you go. Check [localhost:3000](http://localhost:3000).
+There you go. Check [localhost:8000](http://localhost:8000).
+
+
+Deploy to server.
+```bash
+npm run build
+# or
+yarn build
+```
+Then generate **out** folder in root directory. put it on the server as static html
+
+---
 
 ```bash
 .
 ├── assets # 资源 - img & icon
-├── components # 公共组件
+├── components # 所有组件
 ├── context # 全局上下文 用于共享公共函数或变量
 ├── hooks # 自定义hooks
 ├── lib # 逻辑库
@@ -34,6 +45,7 @@ There you go. Check [localhost:3000](http://localhost:3000).
 ├───── http # 业务http请求
 ├───── session-storage # 本地存储 - sessionStorage
 ├───── utils # 工具函数集
+├───── sign # 签名
 ├───── zustand-store # 状态管理 - zustand
 ├── pages # 页面
 ├── public # 公共资源
