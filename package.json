@@ -6,7 +6,7 @@
     "description": "The website project of MetaMail",
     "scripts": {
         "dev": "next dev -p 8000",
-        "build": "next build",
+        "build": "next build && next export",
         "start": "next start",
         "lint": "next lint",
         "lint-staged": "lint-staged",
