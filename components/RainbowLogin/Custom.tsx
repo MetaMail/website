@@ -2,7 +2,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 interface IString {
     content: string;
 }
-export const ConnectBtn = ({ content }: IString) => {
+export default function ConnectBtn({ content }: IString) {
     return (
         <ConnectButton.Custom>
             {({
@@ -60,4 +60,4 @@ export const ConnectBtn = ({ content }: IString) => {
             }}
         </ConnectButton.Custom>
     );
-};
+}

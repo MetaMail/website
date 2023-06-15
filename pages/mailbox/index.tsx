@@ -2,15 +2,14 @@ import React, { ReactElement, useEffect, useState, useContext } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-import { useMailListStore, useMailDetailStore, useAlertStore, useNewMailStore } from 'lib/zustand-store';
+import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
-import MailBoxContext from 'context';
+import { MailBoxContext } from 'context';
 
-import Alert from 'components/Alert';
-import Layout from './components/Layout';
-import MailList from './components/MailList';
-import MailDetail from './components/MailDetail';
-import NewMail from './components/NewMail';
+import Layout from 'components/Layout';
+import MailList from 'components/MailList';
+import MailDetail from 'components/MailDetail';
+import NewMail from 'components/NewMail';
 
 export default function MailBoxPage() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
@@ -51,7 +50,6 @@ export default function MailBoxPage() {
                     {isMailDetail && <MailDetail />}
                     {isWriting && <NewMail />}
                 </div>
-                <Alert message={'Network Error'} description={'Can not fetch detail info of this email for now.'} />
             </div>
         </div>
     );
@@ -61,7 +59,6 @@ MailBoxPage.getLayout = (page: ReactElement) => {
     const RenderLayoutWithContext = () => {
         const { setFilterType, resetPageIndex, setUnreadCount } = useMailListStore();
         const { setDetailFromList, setDetailFromNew } = useMailDetailStore();
-        const { setIsAlert, setAlertInfo } = useAlertStore();
 
         const removeAllState = () => {
             setFilterType(0);
@@ -69,8 +66,6 @@ MailBoxPage.getLayout = (page: ReactElement) => {
             setUnreadCount(0);
             setDetailFromList(null);
             setDetailFromNew(null);
-            setIsAlert(false);
-            setAlertInfo('');
         };
         return (
             <MailBoxContext.Provider value={{ removeAllState }}>

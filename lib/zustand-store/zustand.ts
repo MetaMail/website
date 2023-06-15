@@ -49,17 +49,3 @@ export const useNewMailStore = create<INewMailState>()(set => ({
     isWriting: false,
     setIsWriting: (isWriting: boolean) => set(() => ({ isWriting })),
 }));
-
-interface IAlertState {
-    isAlert: boolean;
-    alertInfo: string;
-    setIsAlert: (isAlert: boolean) => void;
-    setAlertInfo: (alertInfo: string) => void;
-}
-
-export const useAlertStore = create<IAlertState>()(set => ({
-    isAlert: false,
-    alertInfo: '',
-    setIsAlert: (isAlert: boolean) => set(() => ({ isAlert })),
-    setAlertInfo: (alertInfo: string) => set(() => ({ alertInfo })),
-}));

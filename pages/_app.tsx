@@ -1,9 +1,9 @@
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { ReactNode, ReactElement } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { ChakraProvider, useToast } from '@chakra-ui/react';
+import { GlobalContext } from 'context';
 
-import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
 import '../styles/quill.css';
 
@@ -14,12 +14,17 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & { Component: NextPageWithLayout };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
+    const toast = useToast({
+        position: 'top',
+        isClosable: true,
+    });
     const getLayout = Component.getLayout ?? (page => page);
 
     return getLayout(
-        <>
-            <Component {...pageProps} />
-            <ToastContainer />
-        </>
+        <GlobalContext.Provider value={{ toast }}>
+            <ChakraProvider>
+                <Component {...pageProps} />
+            </ChakraProvider>
+        </GlobalContext.Provider>
     );
 }
