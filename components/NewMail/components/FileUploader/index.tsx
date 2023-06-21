@@ -8,9 +8,10 @@ import { MetaMailTypeEn, AttachmentRelatedTypeEn } from 'lib/constants';
 import addAttach from 'assets/addAttach.svg';
 interface IFileUploader {
     draftID: string;
-    metatype: number;
+    metaType: number;
     onAttachment: (attachment: any) => void;
     showList: any[];
+    currRandomBits: string;
 }
 const FileUploader = (item: IFileUploader) => {
     const [files, setFiles] = useState<File[]>([]);
@@ -71,15 +72,17 @@ const FileUploader = (item: IFileUploader) => {
                         });
 
                         // 加密邮件才需要对附件进行加密
-                        if (item.metatype === MetaMailTypeEn.Encrypted) {
-                            // const encrypted = CryptoJS.AES.encrypt(
-                            //     CryptoJS.lib.WordArray.create(input as any),
-                            //     currRandomBitsRef.current
-                            // ).toString();
-                            // const fileEncBlob = new Blob([encrypted]);
-                            // finalFile = new File([fileEncBlob], file.name, {
-                            //     ...fileProps,
-                            // });
+                        if (item.metaType === MetaMailTypeEn.Encrypted) {
+                            const encrypted = CryptoJS.AES.encrypt(
+                                CryptoJS.lib.WordArray.create(input as any),
+                                item.currRandomBits
+                            ).toString();
+
+                            const fileEncBlob = new Blob([encrypted]);
+
+                            finalFile = new File([fileEncBlob], file.name, {
+                                ...fileProps,
+                            });
                         }
 
                         handleFinalFileUpload(finalFile, file);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import DOMPurify from 'dompurify';
@@ -11,6 +11,7 @@ import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { useMailDetailStore } from 'lib/zustand-store';
 import { getPrivateKey, decryptMailContent, decryptMailKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
+import AttachmentItem from './components/AttachmentItem';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
 import replyBtn from 'assets/replyButton.svg';
@@ -46,7 +47,7 @@ export default function MailDetail() {
         },
     ]);
     const [mark, setMark] = useState(detailFromList.mark === 1);
-
+    const randomBitsRef = useRef('');
     const mailDetailTopActions = [
         {
             src: back,
@@ -153,7 +154,7 @@ export default function MailDetail() {
                 console.log('error: no randombits');
                 return;
             }
-            //TODO: attachments randomBitsRef.current = randomBits;
+            randomBitsRef.current = randomBits;
             const res = { ...mailDetail };
             if (res?.part_html) {
                 res.part_html = decryptMailContent(res.part_html, randomBits);
@@ -340,7 +341,13 @@ export default function MailDetail() {
                             {mailDetail?.attachments && mailDetail.attachments.length > 0 && (
                                 <div className="flex">
                                     {mailDetail?.attachments?.map((item, idx) => (
-                                        <button className="m-22 mb-0 w-168 h-37 bg-[#F3F7FF] rounded-6" key={idx} />
+                                        <AttachmentItem
+                                            idx={idx}
+                                            key={idx}
+                                            url={item?.download?.url}
+                                            name={item?.filename}
+                                            randomBits={randomBitsRef.current}
+                                        />
                                     ))}
                                 </div>
                             )}
