@@ -423,9 +423,10 @@ export default function NewMail() {
                 <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
                         <FileUploader
                             draftID={draftID}
-                            metatype={type}
+                            metaType={type}
                             onAttachment={handleSetAttachmentList}
                             showList={attList}
+                            currRandomBits={currRandomBitsRef.current}
                         />
                     </button>
                 </div>
