@@ -435,6 +435,7 @@ export default function NewMail() {
                             metatype={type}
                             onAttachment={handleSetAttachmentList}
                             showList={attList}
+                            currRandomBits={currRandomBitsRef.current}
                         />
                     </button>
                 </div>

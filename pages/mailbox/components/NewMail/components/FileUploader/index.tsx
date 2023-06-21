@@ -11,6 +11,7 @@ interface IFileUploader {
     metatype: number;
     onAttachment: (attachment: any) => void;
     showList: any[];
+    currRandomBits: string;
 }
 const FileUploader = (item: IFileUploader) => {
     const [files, setFiles] = useState<File[]>([]);
@@ -74,7 +75,7 @@ const FileUploader = (item: IFileUploader) => {
                         if (item.metatype === MetaMailTypeEn.Encrypted) {
                             const encrypted = CryptoJS.AES.encrypt(
                                 CryptoJS.lib.WordArray.create(input as any),
-                                currRandomBitsRef.current
+                                item.currRandomBits
                             ).toString();
 
                             const fileEncBlob = new Blob([encrypted]);
