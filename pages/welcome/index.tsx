@@ -31,7 +31,7 @@ export default function Welcome() {
         try {
             const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address);
             const signedMessage = await randomStringSignInstance.doSign(randomStr);
-            const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
+            // const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
             let encryptionData = await userHttp.getEncryptionKey(address ?? '');
             if (!encryptionData?.signature) {
                 encryptionData = await generateEncryptionUserKey(address);
@@ -42,7 +42,7 @@ export default function Welcome() {
             }
             userSessionStorage.saveUserInfo({
                 address,
-                ensName: user.ens,
+                // ensName: user.ens,
                 publicKey: encryptionData.encryption_public_key,
                 privateKey: encryptionData.encryption_private_key,
                 salt: encryptionData.salt,

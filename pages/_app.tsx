@@ -2,7 +2,6 @@ import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { ReactNode, ReactElement } from 'react';
 import { ToastContainer } from 'react-toastify';
-import { GlobalContext } from 'context';
 
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
@@ -18,9 +17,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     const getLayout = Component.getLayout ?? (page => page);
 
     return getLayout(
-        <GlobalContext.Provider value={{}}>
+        <>
             <Component {...pageProps} />
             <ToastContainer />
-        </GlobalContext.Provider>
+        </>
     );
 }

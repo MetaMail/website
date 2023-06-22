@@ -1,10 +1,9 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 
-import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { FilterTypeEn, IMailContentItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeParams } from 'lib/http';
-import { MailBoxContext } from 'context';
 import MailListItem from './components/MailListItem';
 import Icon from 'components/Icon';
 
@@ -14,7 +13,7 @@ export default function MailList() {
     const { filterType, setFilterType, pageIndex, addPageIndex, subPageIndex, setUnreadCount } = useMailListStore();
     const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
     const { setIsWriting } = useNewMailStore();
-    const { removeAllState } = useContext(MailBoxContext);
+    const { removeAllState } = useUtilsStore();
 
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<IMailContentItem[]>([]);

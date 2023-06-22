@@ -30,7 +30,6 @@ interface IMailDetailState {
     setDetailFromNew: (item: IMailContentItem) => void;
     setIsMailDetail: (isMailDetail: boolean) => void;
 }
-
 export const useMailDetailStore = create<IMailDetailState>()(set => ({
     detailFromList: null,
     detailFromNew: null,
@@ -44,8 +43,22 @@ interface INewMailState {
     isWriting: boolean;
     setIsWriting: (isWriting: boolean) => void;
 }
-
 export const useNewMailStore = create<INewMailState>()(set => ({
     isWriting: false,
     setIsWriting: (isWriting: boolean) => set(() => ({ isWriting })),
+}));
+
+interface IUtilsState {
+    removeAllState: () => void;
+}
+export const useUtilsStore = create<IUtilsState>()(set => ({
+    removeAllState: () => {
+        const { setFilterType, resetPageIndex, setUnreadCount } = useMailListStore();
+        const { setDetailFromList, setDetailFromNew } = useMailDetailStore();
+        setFilterType(0);
+        resetPageIndex();
+        setUnreadCount(0);
+        setDetailFromList(null);
+        setDetailFromNew(null);
+    },
 }));
