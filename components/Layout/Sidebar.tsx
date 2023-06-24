@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/zustand-store';
-import { FilterTypeEn, MetaMailTypeEn, MailMenuItems } from 'lib/constants';
+import { FilterTypeEn, MetaMailTypeEn, MenusMap } from 'lib/constants';
 import { createEncryptedMailKey } from 'lib/encrypt';
 import { mailHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/session-storage';
@@ -12,25 +12,23 @@ import Icon from 'components/Icon';
 import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
 import showMore from 'assets/showMore.svg';
-import { add, more } from 'assets/icons';
 import compose from 'assets/inbox_compose.svg';
+import { add, more } from 'assets/icons';
 
 export default function Sidebar(props: any) {
+    const router = useRouter();
     const { filterType, setFilterType, resetPageIndex, unReadCount } = useMailListStore();
     const { setIsWriting } = useNewMailStore();
     const { setDetailFromNew } = useMailDetailStore();
 
-    const [dropTag, setDropTag] = useState(false);
-    const [dropFilter, setDropFilter] = useState(false);
-
-    const router = useRouter();
+    const [showMoreMenu, setShowMoreMenu] = useState(false);
+    const [showTagMenu, setShowTagMenu] = useState(false);
 
     function handleReturnHome() {
         router.push('/');
     }
 
     function handleChangeFilter(filter: FilterTypeEn) {
-        if (router?.query?.id) router.push('/mailbox');
         setFilterType(filter);
         resetPageIndex();
     }
@@ -47,7 +45,7 @@ export default function Sidebar(props: any) {
     }
 
     return (
-        <div className="bg-[#F3F7FF] w-200 pl-15 pr-10 pt-12 flex flex-col justify-between font-poppins text-sm ">
+        <div className="bg-[#F3F7FF] w-200 pl-15 pr-10 pt-12 flex flex-col justify-between font-poppins text-sm">
             <div className="flex flex-col">
                 <button onClick={handleReturnHome} className="flex flex-row space-x-5">
                     <Image src={logo} alt="logo" className="w-auto h-24 " />
@@ -61,37 +59,37 @@ export default function Sidebar(props: any) {
                 </button>
                 <div className="">
                     <ul className="p-2 rounded-box w-full text-[#7F7F7F]">
-                        {MailMenuItems.map((item, index) => {
-                            return (
-                                <li key={index} className={item.hidden === false ? 'auto' : 'hidden'}>
-                                    <button
-                                        onClick={() => {
-                                            handleChangeFilter(item.key);
-                                            setDropFilter(false);
-                                        }}
-                                        className={`w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5 ${
-                                            filterType === Number(item.key) ? 'active-bg font-bold' : ''
-                                        }`}>
-                                        <Image
-                                            src={item?.logo}
-                                            alt={item?.title}
-                                            height="12.5"
-                                            className="self-center stroke-width-100"
-                                        />
-                                        <div className="flex w-full justify-between">
-                                            <span className=""> {item.title}</span>
-                                            {item.title === 'Inbox' && (
-                                                <span className="">{unReadCount === 0 ? '' : unReadCount}</span>
-                                            )}
-                                        </div>
-                                    </button>
-                                </li>
-                            );
-                        })}
+                        {MenusMap.filter(menu => menu.belong === 'basic').map(item => (
+                            <li key={item.key}>
+                                <button
+                                    onClick={() => {
+                                        handleChangeFilter(item.key);
+                                    }}
+                                    className={`w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5 ${
+                                        filterType === Number(item.key) ? 'active-bg font-bold' : ''
+                                    }`}>
+                                    <Image
+                                        src={item?.logo}
+                                        alt={item?.title}
+                                        height="12.5"
+                                        className="self-center stroke-width-100"
+                                    />
+                                    <div className="flex w-full justify-between">
+                                        <span className=""> {item.title}</span>
+                                        {item.title === 'Inbox' && (
+                                            <span className="">{unReadCount === 0 ? '' : unReadCount}</span>
+                                        )}
+                                    </div>
+                                </button>
+                            </li>
+                        ))}
                         <button
                             className="p-9 py-3 flex flex-row gap-10 rounded-5 text-[#BDBDBD] w-full"
-                            onClick={() => setDropFilter(dropFilter === false)}>
-                            <Icon url={showMore} className={`mt-4 h-12 self-center ${dropFilter ? 'rotate-90' : ''}`} />
+                            onClick={() => setShowMoreMenu(!showMoreMenu)}>
+                            <Icon
+                                url={showMore}
+                                className={`mt-4 h-12 self-center ${showMoreMenu ? 'rotate-90' : ''}`}
+                            />
                             <div className="flex justify-between w-full ">
                                 <span className="">More</span>
                                 <span className="">2</span>
@@ -99,35 +97,36 @@ export default function Sidebar(props: any) {
                         </button>
                     </ul>
                     <ul className="text-[#7F7F7F]">
-                        {dropFilter &&
-                            MailMenuItems.map((item, index) => {
-                                return (
-                                    <li key={index} className={item.hidden ? 'auto' : 'hidden'}>
-                                        <button
-                                            onClick={() => {
-                                                handleChangeFilter(item.key);
-                                            }}
-                                            className={`w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5 ${
-                                                filterType === Number(item.key) ? 'active-bg font-bold' : ''
-                                            }`}>
-                                            <Image src={item?.logo} alt={item?.title} height="12.5" />
-                                            <div className="">
-                                                <span className=""> {item.title}</span>
-                                                {item.title === 'Inbox' && (
-                                                    <span className="">{props?.unreadCount?.unread}</span>
-                                                )}
-                                            </div>
-                                        </button>
-                                    </li>
-                                );
-                            })}
+                        {showMoreMenu &&
+                            MenusMap.filter(menu => menu.belong === 'more').map(item => (
+                                <li key={item.key}>
+                                    <button
+                                        onClick={() => {
+                                            handleChangeFilter(item.key);
+                                        }}
+                                        className={`w-full hover:bg-[#DAE7FF] px-7 py-6 flex flex-row gap-7 rounded-5 ${
+                                            filterType === Number(item.key) ? 'active-bg font-bold' : ''
+                                        }`}>
+                                        <Image src={item?.logo} alt={item?.title} height="12.5" />
+                                        <div className="">
+                                            <span className=""> {item.title}</span>
+                                            {item.title === 'Inbox' && (
+                                                <span className="">{props?.unreadCount?.unread}</span>
+                                            )}
+                                        </div>
+                                    </button>
+                                </li>
+                            ))}
                     </ul>
                     <div className="w-177 h-0 border"></div>
                     <ul>
                         <button
                             className="p-9 flex flex-row gap-10 rounded-5 text-[#707070] w-full"
-                            onClick={() => setDropTag(dropTag === false)}>
-                            <Icon url={showMore} className={`mt-4 h-12 self-center ${dropTag ? 'rotate-90' : ''}`} />
+                            onClick={() => setShowTagMenu(!showTagMenu)}>
+                            <Icon
+                                url={showMore}
+                                className={`mt-4 h-12 self-center ${showTagMenu ? 'rotate-90' : ''}`}
+                            />
                             <div className="flex flex-row justify-between w-full ">
                                 <span className="">Tag</span>
                                 <div className="flex flex-row gap-5">
@@ -137,7 +136,7 @@ export default function Sidebar(props: any) {
                             </div>
                         </button>
                     </ul>
-                    {dropTag && (
+                    {showTagMenu && (
                         <div>
                             <div className="text-[#707070] flex flex-row gap-5 pl-12 pb-13">
                                 <svg

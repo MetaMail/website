@@ -95,7 +95,7 @@ export default function NewMail() {
         };
     }, [detailFromNew]);
     useInterval(() => {
-        if (!allowSaveRef.current || isWriting === false) return;
+        if (!allowSaveRef.current) return;
         try {
             //handleSave();
         } catch (err) {
@@ -339,97 +339,95 @@ export default function NewMail() {
     };
 
     return (
-        <div className={isWriting ? 'visible' : 'invisible'}>
-            <div
-                className={`flex flex-col font-poppins bg-white p-18 transition-all absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 ${
-                    isExtend ? 'h-full w-[calc(100vw-200px)]' : 'h-502 w-[45vw]'
-                }`}>
-                <header className="flex justify-between">
-                    <div className="flex flex-row">
-                        <div className="w-6 h-24 bg-[#006AD4] rounded-4" />
-                        <span className="pl-7 font-black text-xl">New Message</span>
-                    </div>
-                    <div className="flex gap-10 self-start">
-                        <Icon
-                            url={extend}
-                            checkedUrl={extend}
-                            className="w-13 h-auto self-center "
-                            onClick={() => setIsExtend(!isExtend)}
-                        />
-                        <Icon
-                            url={cancel}
-                            className="w-13 scale-[120%] h-auto self-center"
-                            onClick={() => {
-                                setIsWriting(false);
-                                handleSave();
-                                setDetailFromNew(null);
-                            }}
-                        />
-                    </div>
-                </header>
-                <div className="text-sm text-[#878787]">
-                    <h1 className="flex mt-20 h-21 ">
-                        From
-                        <NameSelector />
-                    </h1>
-                    <div className="divider"></div>
-                    <h1 className="flex">
-                        <div className="flex self-end ">To</div>
-
-                        <EmailRecipientInput
-                            receivers={receivers}
-                            onAddReceiver={addReceiver}
-                            onRemoveReceiver={removeReceiver}
-                        />
-                    </h1>
-                    <div className="divider"></div>
-                    <h1 className="flex">
-                        <div className="flex self-end ">Subject</div>
-                        <input
-                            type="text"
-                            placeholder=""
-                            className="flex pl-6 mt-14 h-21 input w-full max-w-xs text-sm text-[#878787] focus:outline-none"
-                            value={subject}
-                            onChange={e => {
-                                e.preventDefault();
-                                setSubject(e.target.value);
-                            }}
-                        />
-                    </h1>
-                    <div className="divider"></div>
+        <div
+            className={`flex flex-col font-poppins bg-white p-18 transition-all absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 ${
+                isExtend ? 'h-full w-[calc(100vw-200px)]' : 'h-502 w-[45vw]'
+            }`}>
+            <header className="flex justify-between">
+                <div className="flex flex-row">
+                    <div className="w-6 h-24 bg-[#006AD4] rounded-4" />
+                    <span className="pl-7 font-black text-xl">New Message</span>
                 </div>
-                {editable ? (
-                    <DynamicReactQuill
-                        forwardedRef={reactQuillRef}
-                        className="flex-1 flex flex-col-reverse overflow-hidden"
-                        theme="snow"
-                        placeholder={''}
-                        modules={EditorModules}
-                        formats={EditorFormats}
-                        value={content}
-                        onChange={handleChangeContent}
+                <div className="flex gap-10 self-start">
+                    <Icon
+                        url={extend}
+                        checkedUrl={extend}
+                        className="w-13 h-auto self-center "
+                        onClick={() => setIsExtend(!isExtend)}
                     />
-                ) : (
-                    <button className="flex-1" onClick={handleDecrypted}>
-                        Decrypt
-                    </button>
-                )}
-                <div className="pt-17 flex gap-13">
-                    <button onClick={handleClickSend}>
-                        <Image alt={'sendMail'} src={sendMailIcon} />
-                    </button>
-                    <button>
-                        {/*<Image alt={'addAttach'} src={addAttach}/>
-                <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
-                        <FileUploader
-                            draftID={draftID}
-                            metaType={type}
-                            onAttachment={handleSetAttachmentList}
-                            showList={attList}
-                            currRandomBits={currRandomBitsRef.current}
-                        />
-                    </button>
+                    <Icon
+                        url={cancel}
+                        className="w-13 scale-[120%] h-auto self-center"
+                        onClick={() => {
+                            setIsWriting(false);
+                            handleSave();
+                            setDetailFromNew(null);
+                        }}
+                    />
                 </div>
+            </header>
+            <div className="text-sm text-[#878787]">
+                <h1 className="flex mt-20 h-21 ">
+                    From
+                    <NameSelector />
+                </h1>
+                <div className="divider"></div>
+                <h1 className="flex">
+                    <div className="flex self-end ">To</div>
+
+                    <EmailRecipientInput
+                        receivers={receivers}
+                        onAddReceiver={addReceiver}
+                        onRemoveReceiver={removeReceiver}
+                    />
+                </h1>
+                <div className="divider"></div>
+                <h1 className="flex">
+                    <div className="flex self-end ">Subject</div>
+                    <input
+                        type="text"
+                        placeholder=""
+                        className="flex pl-6 mt-14 h-21 input w-full max-w-xs text-sm text-[#878787] focus:outline-none"
+                        value={subject}
+                        onChange={e => {
+                            e.preventDefault();
+                            setSubject(e.target.value);
+                        }}
+                    />
+                </h1>
+                <div className="divider"></div>
+            </div>
+            {editable ? (
+                <DynamicReactQuill
+                    forwardedRef={reactQuillRef}
+                    className="flex-1 flex flex-col-reverse overflow-hidden"
+                    theme="snow"
+                    placeholder={''}
+                    modules={EditorModules}
+                    formats={EditorFormats}
+                    value={content}
+                    onChange={handleChangeContent}
+                />
+            ) : (
+                <button className="flex-1" onClick={handleDecrypted}>
+                    Decrypt
+                </button>
+            )}
+            <div className="pt-17 flex gap-13">
+                <button onClick={handleClickSend}>
+                    <Image alt={'sendMail'} src={sendMailIcon} />
+                </button>
+                <button>
+                    {/*<Image alt={'addAttach'} src={addAttach}/>
+        <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
+                    <FileUploader
+                        draftID={draftID}
+                        metaType={type}
+                        onAttachment={handleSetAttachmentList}
+                        showList={attList}
+                        currRandomBits={currRandomBitsRef.current}
+                    />
+                </button>
             </div>
         </div>
     );

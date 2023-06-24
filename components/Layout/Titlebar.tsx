@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
 import { useUtilsStore } from 'lib/zustand-store';
 
-export default function Header() {
+export default function Titlebar() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const router = useRouter();
     const [address, setAddress] = useState<string>();

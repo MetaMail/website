@@ -53,8 +53,8 @@ interface IUtilsState {
 }
 export const useUtilsStore = create<IUtilsState>()(set => ({
     removeAllState: () => {
-        const { setFilterType, resetPageIndex, setUnreadCount } = useMailListStore();
-        const { setDetailFromList, setDetailFromNew } = useMailDetailStore();
+        const { setFilterType, resetPageIndex, setUnreadCount } = useMailListStore.getState();
+        const { setDetailFromList, setDetailFromNew } = useMailDetailStore.getState();
         setFilterType(0);
         resetPageIndex();
         setUnreadCount(0);
