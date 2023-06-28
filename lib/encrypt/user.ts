@@ -25,39 +25,41 @@ export const generateEncryptionUserKey = async () => {
     const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
 
-    const returnData = {
+    const signMethod = 'eth_signTypedData';
+    const domain = { name: 'MetaMail', version: '1.0.0' };
+    const signTypes = {
+        Message: [
+            { name: 'date', type: 'string' },
+            { name: 'salt', type: 'string' },
+            { name: 'encryption_private_key', type: 'string' },
+            { name: 'encryption_public_key', type: 'string' },
+        ],
+    };
+
+    const signMessages = {
         salt: salt,
         encryption_private_key: Encrypted_Private_Store_Key,
         encryption_public_key: publicKey,
-        data: 'TODO: add meta data',
         date: new Date().toISOString(),
-        signature: '',
     };
 
-    const keyDataSignData = {
-        signMethod: 'eth_signTypedData',
-        domain: { name: 'MetaMail', version: '1.0.0' },
-        signTypes: {
-            Message: [
-                { name: 'date', type: 'string' },
-                { name: 'data', type: 'string' },
-                { name: 'salt', type: 'string' },
-                { name: 'encryption_private_key', type: 'string' },
-                { name: 'encryption_public_key', type: 'string' },
-            ],
-        },
-        signMessages: {
-            salt: returnData.salt,
-            encryption_private_key: returnData.encryption_private_key,
-            encryption_public_key: returnData.encryption_public_key,
-            data: returnData.data,
-            date: returnData.date,
-        },
+    const signData = {
+        signMethod: signMethod,
+        domain: domain,
+        signTypes: signTypes,
+        signMessages: signMessages,
     };
 
-    const keySignature = await keyDataSignInstance.doSign(keyDataSignData);
-    returnData.signature = keySignature;
-    return returnData;
+    const keySignature = await keyDataSignInstance.doSign(signData);
+    const reqMessage = {
+        signature: keySignature,
+        data: JSON.stringify(signData),
+        salt: salt,
+        encryption_private_key: signMessages.encryption_private_key,
+        encryption_public_key: signMessages.encryption_public_key,
+        date: signMessages.date,
+    };
+    return reqMessage;
 };
 
 export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) => {
