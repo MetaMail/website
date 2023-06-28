@@ -1,7 +1,4 @@
 import { createContext } from 'react';
-import { CreateToastFnReturn } from '@chakra-ui/react';
 
-interface IGlobalContext {
-    toast?: CreateToastFnReturn;
-}
+interface IGlobalContext {}
 export const GlobalContext = createContext<IGlobalContext>({});

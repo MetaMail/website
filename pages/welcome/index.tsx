@@ -1,15 +1,15 @@
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useAccount } from 'wagmi';
 import { disconnect } from '@wagmi/core';
+import { toast } from 'react-toastify';
 
 import { userHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/session-storage';
 import { generateEncryptionUserKey } from 'lib/encrypt';
 import { randomStringSignInstance } from 'lib/sign';
-import { GlobalContext } from 'context';
 import ReviewInfo from 'components/ReviewInfo';
 import Footer from 'components/Footer';
 import RainbowLogin from 'components/RainbowLogin';
@@ -24,7 +24,6 @@ import pic3Left from 'assets/pic3Left.svg';
 import gdL from 'assets/gdL.png';
 
 export default function Welcome() {
-    const { toast } = useContext(GlobalContext);
     const router = useRouter();
     const address = useAccount().address?.toLowerCase();
 
@@ -53,11 +52,8 @@ export default function Welcome() {
             });
             router.push('/mailbox');
         } catch (error) {
-            console.error('Error during auto login:', error);
-            toast({
-                title: 'Login failed, please try again.',
-                status: 'error',
-            });
+            console.error(error);
+            toast.error('Login failed, please try again.');
         } finally {
             await disconnect();
             console.log('Disconnected');
