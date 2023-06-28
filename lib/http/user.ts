@@ -2,7 +2,7 @@ import { MMHttp } from '../base';
 import { AccountStatusTypeEn } from '../constants';
 
 const APIs = {
-    getEncryptionKey: '/users/key/', //获取和消息加密密钥
+    getEncryptionKey: '/users/key', //获取和消息加密密钥
     postEncryptionKey: '/users/key', //上传签名和消息加密密钥
     getRandomString: '/auth/random', // 获取随机字符串，用户需要对这个字符串签名
     getAuthToken: '/auth/token', // 上传签名后的字符串，获取jwt token
@@ -28,9 +28,11 @@ interface IGetRandomStrToSignParams {
 }
 
 interface IGetRandomStrToSignResponse {
-    randomStr: string;
     signMethod: string;
     tokenForRandom: string;
+    domain: any;
+    signTypes: any;
+    signMessages: any;
 }
 
 interface IGetJwtTokenParams {
@@ -47,14 +49,13 @@ interface IGetJwtTokenResponse {
         created_at: string;
         account_status: AccountStatusTypeEn;
         ens: string;
-        public_key: string;
     };
     expireDate: string;
 }
 
 class MMUserHttp extends MMHttp {
     async getEncryptionKey(address: string) {
-        return this.get<void, IGetEncryptionKeyResponse>(`${APIs.getEncryptionKey}${address}`);
+        return this.get<void, IGetEncryptionKeyResponse>(`${APIs.getEncryptionKey}/${address}`);
     }
 
     async putEncryptionKey(params: IPutEncryptionKeyParams) {
