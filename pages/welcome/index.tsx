@@ -29,12 +29,15 @@ export default function Welcome() {
 
     const handleAutoLogin = async () => {
         try {
-            const { randomStr, tokenForRandom } = await userHttp.getRandomStrToSign(address);
-            const signedMessage = await randomStringSignInstance.doSign(randomStr);
-            // const { user } = await userHttp.getJwtToken({ tokenForRandom, signedMessage });
-            let encryptionData = await userHttp.getEncryptionKey(address ?? '');
+            const signData = await userHttp.getRandomStrToSign(address);
+            const signedMessage = await randomStringSignInstance.doSign(signData);
+            const { user } = await userHttp.getJwtToken({
+                tokenForRandom: signData.tokenForRandom,
+                signedMessage,
+            });
+            let encryptionData = await userHttp.getEncryptionKey(address);
             if (!encryptionData?.signature) {
-                encryptionData = await generateEncryptionUserKey(address);
+                encryptionData = await generateEncryptionUserKey();
                 // do upload
                 await userHttp.putEncryptionKey({
                     data: encryptionData,
@@ -53,6 +56,7 @@ export default function Welcome() {
             toast.error('Login failed, please try again.');
         } finally {
             await disconnect();
+            console.log('Disconnected');
         }
     };
 
