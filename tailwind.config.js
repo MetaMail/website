@@ -20,6 +20,21 @@ module.exports = {
             backgroundColor: ['active'],
         },
     },
+    daisyui: {
+        themes: [
+            {
+                mytheme: {
+                    primary: '#3C6FF4',
+                    secondary: '#f6d860',
+                    accent: '#37cdbe',
+                    neutral: '#3d4451',
+                    'base-100': '#ffffff',
+                },
+            },
+            'dark',
+            'cupcake',
+        ],
+    },
     theme: {
         extend: {
             fontFamily: {
@@ -51,21 +66,8 @@ module.exports = {
                 ...theme('spacing'),
             }),
             borderRadius: {
-                // none: '0',
-                // xs: '2px',
-                // sm: '4px',
-                // default: '6px',
-                // lg: '8px',
-                // xl: '10px',
-                // '2xl': '12px',
-                // '3xl': '14px',
-                // '4xl': '16px',
-                // '5xl': '20px',
                 ...gen(v => `${v}px`)(PERCENT_SIZE),
             },
-            // backgroundImage: {
-            //   'landing-bg': "url('/static/landing_bg.svg')",
-            // },
         },
     },
     plugins: [require('daisyui')],

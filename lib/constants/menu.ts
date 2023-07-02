@@ -1,7 +1,7 @@
 import { draft, inbox, sent, spam, trash, starred } from 'assets/icons';
 import { FilterTypeEn } from './interfaces';
 
-interface IMenuItem {
+export interface IMenuItem {
     key: FilterTypeEn;
     title: string;
     logo: string;
