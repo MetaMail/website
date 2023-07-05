@@ -1,56 +1,18 @@
-import { draft, encryptedInbox, inbox, read, sent, spam, trash, unread, markFavorite, starred } from 'assets/icons';
+import { draft, inbox, sent, spam, trash, starred } from 'assets/icons';
 import { FilterTypeEn } from './interfaces';
 
-export const SiderFilterMap: Partial<Record<FilterTypeEn, { title: string; logo: string; hidden?: boolean }>> = {
-    [FilterTypeEn.Inbox]: { title: 'Inbox', logo: inbox, hidden: false },
-    //[FilterTypeEn.Encrypted]: { title: 'Encrypted Inbox', logo: encryptedInbox,},
-
-    [FilterTypeEn.Sent]: { title: 'Sent', logo: sent, hidden: false },
-    //[FilterTypeEn.Read]: { title: 'Read', logo: read },
-    [FilterTypeEn.Draft]: { title: 'Draft', logo: draft, hidden: false },
-    //[FilterTypeEn.Unread]: { title: 'Unread', logo: unread,},
-    [FilterTypeEn.Starred]: { title: 'Starred', logo: starred, hidden: false },
-    [FilterTypeEn.Trash]: { title: 'Deleted', logo: trash, hidden: true },
-    [FilterTypeEn.Spam]: { title: 'Spam', logo: spam, hidden: true },
-};
-
-export const MenuItems = {
-    mailbox: {
-        key: 'inbox',
-        title: 'Inbox',
-    },
-    contacts: {
-        key: 'contacts',
-        title: 'Contacts',
-    },
-    settings: {
-        key: 'settings',
-        title: 'Settings',
-    },
-};
-
-export const MailMenuItems: {
+export interface IMenuItem {
     key: FilterTypeEn;
     title: string;
     logo: string;
-    hidden?: boolean;
-}[] = Object.keys(SiderFilterMap).map((key: string) => {
-    const filterTypeKey = Number(key) as FilterTypeEn;
-    return {
-        key: filterTypeKey,
-        title: SiderFilterMap[filterTypeKey].title,
-        logo: SiderFilterMap[filterTypeKey].logo,
-        hidden: SiderFilterMap[filterTypeKey].hidden,
-    };
-});
+    belong: 'basic' | 'more';
+}
 
-export const ContactSubMenuItems = {
-    block: {
-        key: 'block',
-        title: 'Block List',
-    },
-    allow: {
-        key: 'allow',
-        title: 'Allow List',
-    },
-};
+export const MenusMap: IMenuItem[] = [
+    { key: FilterTypeEn.Inbox, title: 'Inbox', logo: inbox, belong: 'basic' },
+    { key: FilterTypeEn.Sent, title: 'Sent', logo: sent, belong: 'basic' },
+    { key: FilterTypeEn.Draft, title: 'Draft', logo: draft, belong: 'basic' },
+    { key: FilterTypeEn.Starred, title: 'Starred', logo: starred, belong: 'basic' },
+    { key: FilterTypeEn.Trash, title: 'Deleted', logo: trash, belong: 'more' },
+    { key: FilterTypeEn.Spam, title: 'Spam', logo: spam, belong: 'more' },
+];

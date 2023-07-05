@@ -81,7 +81,7 @@ interface IDeleteAttachmentResponse {
 type IGetMailDetailResponse = IMailContentItem;
 
 interface IGetMailListParams {
-    limit: number;
+    limit?: number;
     filter: FilterTypeEn;
     page_index: number;
 }

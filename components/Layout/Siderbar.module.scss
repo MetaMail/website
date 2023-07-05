@@ -1,0 +1,51 @@
+.mainMenu {
+    background-color: #f3f7ff;
+    width: 170px;
+    margin: 8px auto;
+    padding: 0;
+    .moreSummary {
+        color: rgba(84, 84, 84, 0.4);
+        font-size: 14px;
+        &:before {
+            justify-self: end;
+            display: block;
+            margin-top: -0.5rem;
+            height: 0.5rem;
+            width: 0.5rem;
+            transform: rotate(45deg);
+            transition-property: transform, margin-top;
+            transition-duration: 0.3s;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            content: '';
+            transform-origin: 75% 75%;
+            box-shadow: 2px 2px;
+            pointer-events: none;
+        }
+        &:after {
+            height: 0;
+            width: 0;
+        }
+        &:hover,
+        &:active {
+            background-color: #f3f7ff !important;
+        }
+    }
+    .menuLi {
+        width: 170px;
+        font-size: 16px;
+        :global {
+            .active {
+                background: #abc7ff;
+                color: #3c6ff4;
+                fill: #3c6ff4;
+            }
+            a:not(.active):hover {
+                background: rgba(171, 199, 255, 0.4);
+            }
+        }
+    }
+    details[open] > summary:before {
+        transform: rotate(225deg);
+        margin-top: 0;
+    }
+}

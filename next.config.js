@@ -19,6 +19,9 @@ const nextConfig = {
     images: {
         unoptimized: true,
     },
+    sassOptions: {
+        includePaths: ['**/*.scss'],
+    },
 };
 
 module.exports = nextConfig;

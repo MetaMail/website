@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-import { MailBoxContext } from 'context';
 import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
+import { useUtilsStore } from 'lib/zustand-store';
 
-export default function Header() {
+export default function Titlebar() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const router = useRouter();
     const [address, setAddress] = useState<string>();
 
-    const { removeAllState } = useContext(MailBoxContext);
+    const { removeAllState } = useUtilsStore();
 
     const getLogOut = () => {
         userSessionStorage.clearUserInfo();
