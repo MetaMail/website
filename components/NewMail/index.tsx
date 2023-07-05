@@ -5,7 +5,7 @@ import type ReactQuillType from 'react-quill';
 
 import { IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
-import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
+import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { mailHttp, userHttp } from 'lib/http';
 import {
     getPrivateKey,
@@ -170,7 +170,7 @@ export default function NewMail() {
                         publicKeys.push(receiverPublicKey);
                     }
                     console.log(publicKeys, '--');
-                    const mySalt = userSessionStorage.getSaltFromLocal();
+                    const mySalt = userSessionStorage.getUserInfo()?.salt;
                     console.log(mySalt);
                     if (!currRandomBitsRef.current) {
                         console.log('error: no currrandombitsref.current');
@@ -323,10 +323,9 @@ export default function NewMail() {
 
     const handleDecrypted = async () => {
         if (!myKeyRef.current) return;
-        const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
-        const salt = userSessionStorage.getSaltFromLocal();
-        const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
-        const randomBits = await decryptMailKey(myKeyRef.current, privateKey);
+        const { privateKey, salt } = userSessionStorage.getUserInfo();
+        const decryptPrivateKey = await getPrivateKey(privateKey, salt);
+        const randomBits = await decryptMailKey(myKeyRef.current, decryptPrivateKey);
         if (!randomBits) {
             console.log('error: no randombits');
             return;

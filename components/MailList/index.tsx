@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
-import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
+import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { FilterTypeEn, IMailContentItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeParams } from 'lib/http';
 import MailListItem from './components/MailListItem';
@@ -10,7 +10,15 @@ import Icon from 'components/Icon';
 import { checkbox, trash, read, starred, markUnread, temp1, spam, filter, update, cancelSelected } from 'assets/icons';
 
 export default function MailList() {
-    const { filterType, setFilterType, pageIndex, addPageIndex, subPageIndex, setUnreadCount } = useMailListStore();
+    const {
+        filterType,
+        setFilterType,
+        pageIndex,
+        addPageIndex,
+        subPageIndex,
+        setUnreadInboxCount,
+        setUnreadSpamCount,
+    } = useMailListStore();
     const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
     const { setIsWriting } = useNewMailStore();
     const { removeAllState } = useUtilsStore();
@@ -44,7 +52,6 @@ export default function MailList() {
                 await fetchMailList(false);
             },
         },
-        { src: temp1, handler: () => {} },
         {
             src: read,
             handler: async () => {
@@ -101,7 +108,7 @@ export default function MailList() {
                 console.log('mailliststoragecunle');
                 setList(mailListStorage?.data?.mails ?? []); //用缓存更新状态组件
                 setPageNum(mailListStorage?.data?.page_num);
-                setUnreadCount(mailListStorage.data?.unread ?? 0);
+                setUnreadInboxCount(mailListStorage.data?.unread ?? 0);
             } else {
                 ////////不是缓存 重新取
                 mailSessionStorage.clearMailListInfo();
@@ -115,13 +122,13 @@ export default function MailList() {
                 const { mails, page_num, unread } = data;
                 setList(mails ?? []);
                 setPageNum(page_num);
-                setUnreadCount(unread ?? 0);
+                setUnreadInboxCount(unread ?? 0);
                 const mailListStorage = {
                     //设置邮件列表缓存
                     data: data,
                     filter: filterType,
                 };
-                mailSessionStorage.updateMailListInfo(mailListStorage);
+                mailSessionStorage.setMailListInfo(mailListStorage);
             }
         } catch (e) {
         } finally {
@@ -173,7 +180,7 @@ export default function MailList() {
         //read: number,
         item: IMailContentItem
     ) => {
-        userSessionStorage.setRandomBits(undefined); // clear random bits
+        userSessionStorage.setRandomBits(''); // clear random bits
         if (!read) {
             const mails = [{ message_id: item?.message_id, mailbox: Number(item.mailbox) }];
             await mailHttp.changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
@@ -268,24 +275,7 @@ export default function MailList() {
                     </button>
                 </div>
             </div>
-            {/*<div className='h-28 flex flex-row pb-6 px-18 justify-between text-sm gap-35 text-[#999999] text-center'>
-        <div className='flex flex-row justify-around w-102 px-5'>
-            <Icon      ///////////最初设计稿的提示
-            url={checkbox}
-            checkedUrl={selected}
-            onClick={(res: boolean) => {
-                setSelectList(res ? list?.map((item) => item) : []);
-                setIsAll(res);
-            }}
-            select={isAll}/>
-            <div className=''>Option</div>
-        </div>
-        <span className='w-120 '>Address</span>
-        <span className='w-135 '>Theme</span>
-        {/*<div className='h-14 w-1 rounded-1 bg-[#333333] align-center'/>
-        <div className='min-w-0 flex-1 overflow-hidden'>Abstract</div>
-        <div className='w-120'>Date</div>
-    </div>*/}
+
             <div className="flex flex-col overflow-auto flex-1 h-0 pl-8 relative">
                 {loading ? (
                     <div className="flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]" />

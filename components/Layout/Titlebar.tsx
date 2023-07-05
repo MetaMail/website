@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
+import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { useUtilsStore } from 'lib/zustand-store';
 
 export default function Titlebar() {
@@ -14,6 +14,7 @@ export default function Titlebar() {
 
     const getLogOut = () => {
         userSessionStorage.clearUserInfo();
+        userSessionStorage.clearToken();
         mailSessionStorage.clearMailListInfo();
         removeAllState();
         router.push('/');

@@ -1,5 +1,6 @@
-import axios, { Axios, AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { Axios, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { MMObject } from './object';
+import { userSessionStorage } from 'lib/utils';
 
 //const BASE_URL = 'https://api.metamail.ink/';
 //const BASE_URL = 'http://localhost:8080';
@@ -7,11 +8,6 @@ import { MMObject } from './object';
 const BASE_URL = 'https://api-v2.mmail-test.ink/';
 
 export const PostfixOfAddress = '@mmail.ink';
-
-type MMHttpBaseResponse = {
-    status: number;
-    data: any;
-};
 
 export abstract class MMHttp extends MMObject {
     private _baseUrl: string;
@@ -40,9 +36,15 @@ export abstract class MMHttp extends MMObject {
     }
 
     private setInterceptors() {
-        // 请求拦截，后期可以在这里加上token之类的
         this.axios.interceptors.request.use(
-            config => config,
+            config => {
+                const token = userSessionStorage.getToken();
+                if (token) {
+                    config.headers.authorization = `Bearer ${token}`;
+                }
+
+                return config;
+            },
             (error: AxiosError) => Promise.reject(error)
         );
         //响应拦截
@@ -59,7 +61,7 @@ export abstract class MMHttp extends MMObject {
         );
     }
 
-    private checkResponse(res: MMHttpBaseResponse) {
+    private checkResponse(res: AxiosResponse) {
         if (res && (res.status === 200 || res.status === 304)) {
             return res.data.data;
         }

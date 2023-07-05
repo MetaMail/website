@@ -1,5 +1,6 @@
 import { MMHttp } from '../base';
 import { AccountStatusTypeEn } from '../constants';
+import { userSessionStorage } from 'lib/utils';
 
 const APIs = {
     getEncryptionKey: '/users/key', //获取和消息加密密钥
@@ -51,6 +52,7 @@ interface IGetJwtTokenResponse {
         ens: string;
     };
     expireDate: string;
+    token: string;
 }
 
 class MMUserHttp extends MMHttp {
@@ -67,7 +69,9 @@ class MMUserHttp extends MMHttp {
     }
 
     async getJwtToken(params: IGetJwtTokenParams) {
-        return this.post<IGetJwtTokenParams, IGetJwtTokenResponse>(APIs.getAuthToken, params);
+        const data = await this.post<IGetJwtTokenParams, IGetJwtTokenResponse>(APIs.getAuthToken, params);
+        userSessionStorage.setToken(data.token || '');
+        return data;
     }
 
     async getLogout() {

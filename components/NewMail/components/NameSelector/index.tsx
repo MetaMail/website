@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { PostfixOfAddress } from 'lib/base';
-import { userSessionStorage } from 'lib/session-storage';
+import { userSessionStorage } from 'lib/utils';
 
 import Icon from 'components/Icon';
 import { swapAddr } from 'assets/icons';
@@ -15,7 +15,7 @@ function NameSelector() {
             <div
                 className="hover:bg-[#DAE7FF] px-11 py-5 cursor-pointer"
                 onClick={() => {
-                    userSessionStorage.saveShowName(name);
+                    userSessionStorage.setShowName(name);
                     setActiveName(name);
                     setIsAddrListHidden(true);
                 }}>
