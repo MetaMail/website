@@ -6,7 +6,7 @@ import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/zusta
 import { FilterTypeEn, MetaMailTypeEn, MenusMap, IMenuItem } from 'lib/constants';
 import { createEncryptedMailKey } from 'lib/encrypt';
 import { mailHttp } from 'lib/http';
-import { userSessionStorage } from 'lib/session-storage';
+import { userSessionStorage } from 'lib/utils';
 import Icon from 'components/Icon';
 
 import logoBrand from 'assets/MetaMail.svg';

@@ -16,3 +16,5 @@ export function convertWordArrayToUint8Array(wordArray: CryptoJS.lib.WordArray) 
     }
     return uInt8Array;
 }
+
+export * from './session-storage';

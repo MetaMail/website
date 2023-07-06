@@ -7,7 +7,7 @@ import parse from 'html-react-parser';
 
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
 import { mailHttp } from 'lib/http';
-import { userSessionStorage, mailSessionStorage } from 'lib/session-storage';
+import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { useMailDetailStore } from 'lib/zustand-store';
 import { getPrivateKey, decryptMailContent, decryptMailKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
@@ -146,10 +146,9 @@ export default function MailDetail() {
             }
             const key = keys[idx];
 
-            const encryptedPrivateKey = userSessionStorage.getPrivateKeyFromLocal();
-            const salt = userSessionStorage.getSaltFromLocal();
-            const privateKey = await getPrivateKey(encryptedPrivateKey, salt);
-            const randomBits = await decryptMailKey(key, privateKey);
+            const { privateKey, salt } = userSessionStorage.getUserInfo();
+            const decryptPrivateKey = await getPrivateKey(privateKey, salt);
+            const randomBits = await decryptMailKey(key, decryptPrivateKey);
             if (!randomBits) {
                 console.log('error: no randombits');
                 return;
