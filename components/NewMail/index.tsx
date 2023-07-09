@@ -395,38 +395,38 @@ export default function NewMail() {
                     />
                 </h1>
                 <div className="divider"></div>
-            </div>
-            {editable ? (
-                <DynamicReactQuill
-                    forwardedRef={reactQuillRef}
-                    className="flex-1 flex flex-col-reverse overflow-hidden"
-                    theme="snow"
-                    placeholder={''}
-                    modules={EditorModules}
-                    formats={EditorFormats}
-                    value={content}
-                    onChange={handleChangeContent}
-                />
-            ) : (
-                <button className="flex-1" onClick={handleDecrypted}>
-                    Decrypt
-                </button>
-            )}
-            <div className="pt-17 flex gap-13">
-                <button onClick={handleClickSend}>
-                    <Image alt={'sendMail'} src={sendMailIcon} />
-                </button>
-                <button>
-                    {/*<Image alt={'addAttach'} src={addAttach}/>
-        <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
-                    <FileUploader
-                        draftID={draftID}
-                        metaType={type}
-                        onAttachment={handleSetAttachmentList}
-                        showList={attList}
-                        currRandomBits={currRandomBitsRef.current}
+                {editable ? (
+                    <DynamicReactQuill
+                        forwardedRef={reactQuillRef}
+                        className="flex-1 flex flex-col-reverse overflow-hidden"
+                        theme="snow"
+                        placeholder={''}
+                        modules={EditorModules}
+                        formats={EditorFormats}
+                        value={content}
+                        onChange={handleChangeContent}
                     />
-                </button>
+                ) : (
+                    <button className="flex-1" onClick={handleDecrypted}>
+                        Decrypt
+                    </button>
+                )}
+                <div className="pt-17 flex gap-13">
+                    <button onClick={handleClickSend}>
+                        <Image alt={'sendMail'} src={sendMailIcon} />
+                    </button>
+                    <button>
+                        {/*<Image alt={'addAttach'} src={addAttach}/>
+                    <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
+                        <FileUploader
+                            draftID={draftID}
+                            metaType={type}
+                            onAttachment={handleSetAttachmentList}
+                            showList={attList}
+                            currRandomBits={currRandomBitsRef.current}
+                        />
+                    </button>
+                </div>
             </div>
         </div>
     );
