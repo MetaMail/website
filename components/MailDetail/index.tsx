@@ -30,6 +30,7 @@ import {
     markFavorite,
     markUnread,
 } from 'assets/icons';
+import AttachmentItem from './components';
 
 export default function MailDetail() {
     const router = useRouter();
