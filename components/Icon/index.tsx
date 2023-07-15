@@ -19,7 +19,7 @@ export default function Icon({ url, checkedUrl, onClick, className, style, selec
 
     return (
         <div onClick={handleClick} style={onClick ? { cursor: 'pointer', ...style } : style} className={className}>
-            <Image src={!select ? url : checkedUrl ?? url} alt="" />
+            <Image className="w-full h-full" src={!select ? url : checkedUrl ?? url} alt="" />
         </div>
     );
 }

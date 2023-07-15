@@ -1,0 +1,8 @@
+.mailListItem {
+    &:hover {
+        background: rgb(240, 240, 240);
+    }
+    &.selected {
+        background: #dae7ff;
+    }
+}

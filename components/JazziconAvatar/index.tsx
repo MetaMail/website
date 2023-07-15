@@ -15,7 +15,7 @@ const JazziconGrid = ({ size, addr }: { size: number; addr?: string }) => {
         };
     }, []);
 
-    return <div ref={containerRef} />;
+    return <div className="flex items-center" ref={containerRef} />;
 };
 
 export default JazziconGrid;
