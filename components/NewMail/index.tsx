@@ -291,6 +291,7 @@ export default function NewMail() {
         dateRef.current = mail_date;
         return { html, text };
     };
+
     const handleLoad = async (id?: string) => {
         try {
             //if (!query?.id && query.id.length === 0) {
