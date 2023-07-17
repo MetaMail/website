@@ -59,7 +59,9 @@ export default function MailDetail() {
             src: trash,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, MarkTypeEn.Trash, undefined);
+                await mailHttp.changeMailStatus(mailInfo, {
+                    mark: MarkTypeEn.Trash,
+                });
                 router.back();
             },
         },
@@ -71,7 +73,9 @@ export default function MailDetail() {
             src: spam,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, MarkTypeEn.Spam, undefined);
+                await mailHttp.changeMailStatus(mailInfo, {
+                    mark: MarkTypeEn.Spam,
+                });
                 router.back();
             },
         },
@@ -80,11 +84,9 @@ export default function MailDetail() {
             checkedSrc: markUnread,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(
-                    mailInfo,
-                    undefined,
-                    isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read
-                );
+                await mailHttp.changeMailStatus(mailInfo, {
+                    read: isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read,
+                });
                 setIsRead(!isRead);
             },
             onselect: isRead,
@@ -94,7 +96,9 @@ export default function MailDetail() {
             checkedSrc: markFavorite,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, mark ? MarkTypeEn.Normal : MarkTypeEn.Starred, undefined);
+                await mailHttp.changeMailStatus(mailInfo, {
+                    mark: mark ? MarkTypeEn.Normal : MarkTypeEn.Starred,
+                });
                 setMark(!mark);
             },
             onselect: mark,
@@ -107,7 +111,9 @@ export default function MailDetail() {
             checkedSrc: markFavorite,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, mark ? MarkTypeEn.Normal : MarkTypeEn.Starred, undefined);
+                await mailHttp.changeMailStatus(mailInfo, {
+                    mark: mark ? MarkTypeEn.Normal : MarkTypeEn.Starred,
+                });
                 setMark(!mark);
             },
             onselect: mark,

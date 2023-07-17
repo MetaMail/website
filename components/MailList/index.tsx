@@ -1,83 +1,79 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { FilterTypeEn, IMailContentItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
-import { mailHttp, IMailChangeParams } from 'lib/http';
-import MailListItem from './components/MailListItem';
+import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
+import MailListItem, { MailListItemType } from './components/MailListItem';
 import Icon from 'components/Icon';
 
 import { checkbox, trash, read, starred, markUnread, temp1, spam, filter, update, cancelSelected } from 'assets/icons';
 
-let isFetching = false;
-const MailListFilterMap: Partial<Record<FilterTypeEn, string>> = {
-    [FilterTypeEn.Inbox]: 'All',
-    [FilterTypeEn.Read]: 'Read',
-    [FilterTypeEn.Unread]: 'Unread',
-    [FilterTypeEn.Encrypted]: 'Encrypted',
-};
+const MailListFilters = ['All', 'None', 'Read', 'Unread', 'Encrypted', 'UnEncrypted', 'Star', 'No Star'] as const;
+type MailListFiltersType = (typeof MailListFilters)[number];
 
 export default function MailList() {
-    const {
-        filterType,
-        setFilterType,
-        pageIndex,
-        addPageIndex,
-        subPageIndex,
-        setUnreadInboxCount,
-        setUnreadSpamCount,
-    } = useMailListStore();
+    const { filterType, pageIndex, addPageIndex, subPageIndex, setUnreadInboxCount, setUnreadSpamCount } =
+        useMailListStore();
     const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
     const { setIsWriting } = useNewMailStore();
     const { removeAllState } = useUtilsStore();
 
     const [loading, setLoading] = useState(false);
-    const [list, setList] = useState<IMailContentItem[]>([]);
+    const [list, setList] = useState<MailListItemType[]>([]);
     const [pageNum, setPageNum] = useState(0);
-    const [selectList, setSelectList] = useState<IMailContentItem[]>([]);
-    const [isAll, setIsAll] = useState(false);
+    const [selectedAll, setSelectedAll] = useState(false);
+    const [filter, setFilter] = useState<MailListFiltersType>('All');
 
-    const sixList = [
+    const handleFilterChange = (currentFilter: MailListFiltersType) => {
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+        if (filter === currentFilter) return;
+        setFilter(currentFilter);
+    };
+
+    const mailActions = [
         {
             src: trash,
-            handler: async () => {
-                await mailHttp.changeMailStatus(getMails(), MarkTypeEn.Trash, undefined);
-                await fetchMailList(false);
-            },
+            httpParams: { mark: MarkTypeEn.Trash },
         },
         {
             src: starred,
-            handler: async () => {
-                await mailHttp.changeMailStatus(getMails(), MarkTypeEn.Starred, undefined);
-                await fetchMailList(false);
-            },
+            httpParams: { mark: MarkTypeEn.Starred },
         },
         {
             src: spam,
-            handler: async () => {
-                await mailHttp.changeMailStatus(getMails(), MarkTypeEn.Spam, undefined);
-                await fetchMailList(false);
-            },
+            httpParams: { mark: MarkTypeEn.Spam },
         },
         {
             src: read,
-            handler: async () => {
-                await mailHttp.changeMailStatus(getMails(), undefined, ReadStatusTypeEn.read);
-                await fetchMailList(false);
-            },
+            httpParams: { read: ReadStatusTypeEn.read },
         },
         {
             src: markUnread,
-            handler: async () => {
-                await mailHttp.changeMailStatus(getMails(), undefined, ReadStatusTypeEn.unread);
-                await fetchMailList(false);
-            },
+            httpParams: { read: ReadStatusTypeEn.unread },
         },
     ];
 
-    const getMails = () => {
+    const handleMailActionsClick = async (httpParams: IMailChangeOptions) => {
+        try {
+            await mailHttp.changeMailStatus(getSelectedMailsParams(), httpParams);
+        } catch (error) {
+            console.error(error);
+            toast.error('Operation failed, please try again later.');
+        }
+        await fetchMailList(false);
+    };
+
+    const getSelectedList = () => {
+        return list.filter(item => item.selected);
+    };
+
+    const getSelectedMailsParams = () => {
         const res: IMailChangeParams[] = [];
-        selectList?.forEach(item => {
+        getSelectedList().forEach(item => {
             res.push({
                 message_id: item.message_id,
                 mailbox: item.mailbox,
@@ -87,81 +83,96 @@ export default function MailList() {
     };
 
     const fetchMailList = async (showLoading = true) => {
-        if (isFetching) return;
         if (showLoading) setLoading(true);
         try {
-            isFetching = true;
-            const mailListStorage = mailSessionStorage.getMailListInfo();
-            const isMailListStorageExist =
-                mailListStorage?.data?.page_index === pageIndex && mailListStorage?.filter === filterType;
-            if (isMailListStorageExist && showLoading) {
-                //showLoading=true的时候相同的邮件列表已经改变了，需要重新取
-                console.log('mail list from storage');
-                setList(mailListStorage?.data?.mails ?? []); //用缓存更新状态组件
-                setPageNum(mailListStorage?.data?.page_num);
-                setUnreadInboxCount(mailListStorage.data?.unread ?? 0);
-            } else {
-                ////////不是缓存 重新取
-                mailSessionStorage.clearMailListInfo();
-                console.log('mail list from server');
-                const data = await mailHttp.getMailList({
-                    filter: filterType,
-                    page_index: pageIndex,
-                    limit: 20,
-                });
+            const data = await mailHttp.getMailList({
+                filter: filterType,
+                page_index: pageIndex,
+                limit: 20,
+            });
 
-                const { mails, page_num, unread } = data;
-                setList(mails ?? []);
-                setPageNum(page_num);
-                setUnreadInboxCount(unread ?? 0);
-                const mailListStorage = {
-                    //设置邮件列表缓存
-                    data: data,
-                    filter: filterType,
-                };
-                mailSessionStorage.setMailListInfo(mailListStorage);
-            }
+            const { mails, page_num, unread } = data;
+            const mailsList = mails as MailListItemType[];
+            mailsList.forEach(item => {
+                item['selected'] = false;
+            });
+            setList(mailsList ?? []);
+            setPageNum(page_num);
+            setUnreadInboxCount(unread ?? 0);
         } catch (error) {
+            console.error(error);
+            toast.error('Fetch mail list failed, please try again later.');
         } finally {
             if (showLoading) setLoading(false);
-            isFetching = false;
         }
+    };
+
+    const handleSelectItem = (item: MailListItemType) => {
+        item.selected = !item.selected;
+        setList([...list]);
+        setSelectedAll(list.every(item => item.selected));
+    };
+
+    const handleSelectedAllChange = () => {
+        list.map(item => {
+            item.selected = !selectedAll;
+        });
+        setList([...list]);
+        setSelectedAll(!selectedAll);
     };
 
     useEffect(() => {
         if (userSessionStorage.getUserInfo()?.address) fetchMailList(true);
-        //getMailDetail();  预加载feature abort
     }, [pageIndex, filterType]);
 
     useEffect(() => {
-        if (userSessionStorage.getUserInfo()?.address) fetchMailList(false);
-        //getMailDetail();  预加载feature abort
-    }, [detailFromNew]);
-
-    const handleChangeSelectList = (item: IMailContentItem, isSelect?: boolean) => {
-        if (isSelect) {
-            const nextList = selectList.slice();
-            nextList.push(item);
-            setSelectList(nextList);
-        } else {
-            const nextList = selectList.filter(i => i.message_id !== item.message_id && i.mailbox !== item.mailbox);
-            setSelectList(nextList);
+        switch (filter) {
+            case 'All':
+                list.map(item => {
+                    item.selected = true;
+                });
+                break;
+            case 'None':
+                list.map(item => {
+                    item.selected = false;
+                });
+                break;
+            case 'Read':
+                list.map(item => {
+                    item.selected = item.read === ReadStatusTypeEn.read;
+                });
+                break;
+            case 'Unread':
+                list.map(item => {
+                    item.selected = item.read === ReadStatusTypeEn.unread;
+                });
+                break;
+            case 'Encrypted':
+                list.map(item => {
+                    item.selected = item.meta_type === MetaMailTypeEn.Encrypted;
+                });
+                break;
+            case 'UnEncrypted':
+                list.map(item => {
+                    item.selected = item.meta_type === MetaMailTypeEn.Plain;
+                });
+                break;
+            case 'Star':
+                list.map(item => {
+                    item.selected = item.mark === MarkTypeEn.Starred;
+                });
+                break;
+            case 'No Star':
+                list.map(item => {
+                    item.selected = item.mark !== MarkTypeEn.Starred;
+                });
+                break;
+            default:
+                break;
         }
-    };
-
-    const handleChangeMailStatus = async (
-        inputMails?: IMailChangeParams[],
-        mark?: MarkTypeEn,
-        read?: ReadStatusTypeEn
-    ) => {
-        const mails = inputMails ?? getMails();
-        try {
-            await mailHttp.changeMailStatus(mails, mark, read);
-        } catch (e) {
-        } finally {
-            fetchMailList(false);
-        }
-    };
+        setList([...list]);
+        setSelectedAll(list.every(item => item.selected));
+    }, [filter]);
 
     return (
         <div className="flex flex-col flex-1 min-w-0 h-full">
@@ -169,11 +180,8 @@ export default function MailList() {
                 <div className="flex flex-row space-x-14 pt-4 items-center">
                     <input
                         type="checkbox"
-                        checked={isAll}
-                        onClick={() => {
-                            setIsAll(!isAll);
-                        }}
-                        onChange={() => {}}
+                        checked={selectedAll}
+                        onChange={handleSelectedAllChange}
                         className="checkbox checkbox-sm"
                     />
                     <Icon
@@ -188,24 +196,19 @@ export default function MailList() {
                     <div className="dropdown dropdown-bottom">
                         <label tabIndex={0} className="cursor-pointer flex items-center">
                             <Icon url={filter} className="w-20 h-20" />
-                            <span className="text-[14px]">{MailListFilterMap[filterType]}</span>
+                            <span className="text-[14px]">{filter}</span>
                         </label>
                         <ul
                             tabIndex={0}
                             className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-110">
-                            {Object.keys(MailListFilterMap).map((key, index) => {
-                                const filter = Number(key) as FilterTypeEn;
+                            {MailListFilters.map((item, index) => {
                                 return (
                                     <li
-                                        onClick={e => {
-                                            if (document.activeElement instanceof HTMLElement) {
-                                                document.activeElement.blur();
-                                            }
-                                            if (filter === filterType) return;
-                                            setFilterType(filter);
+                                        onClick={() => {
+                                            handleFilterChange(item);
                                         }}
                                         key={index}>
-                                        <a>{MailListFilterMap[filter]}</a>
+                                        <a>{item}</a>
                                     </li>
                                 );
                             })}
@@ -213,18 +216,19 @@ export default function MailList() {
                     </div>
 
                     <div className="h-14 flex gap-10">
-                        {selectList.length
-                            ? sixList.map((item, index) => {
-                                  return (
-                                      <Icon
-                                          url={item.src}
-                                          key={index}
-                                          onClick={item.handler}
-                                          className="w-13 h-auto self-center"
-                                      />
-                                  );
-                              })
-                            : null}
+                        {getSelectedList().length &&
+                            mailActions.map((item, index) => {
+                                return (
+                                    <Icon
+                                        url={item.src}
+                                        key={index}
+                                        onClick={async () => {
+                                            await handleMailActionsClick(item.httpParams);
+                                        }}
+                                        className="w-13 h-auto self-center"
+                                    />
+                                );
+                            })}
                     </div>
                 </div>
 
@@ -237,7 +241,6 @@ export default function MailList() {
                         }}>
                         {'<'}
                     </button>
-                    {/*<span className='text-sm pt-3'>{pageIdx ?? '-'} /{pageNum ?? '-'}</span>//////显示邮件的数量*/}
                     <button
                         className="w-24 disabled:opacity-40"
                         disabled={pageIndex === pageNum}
@@ -254,19 +257,23 @@ export default function MailList() {
                     <div className="flex items-center justify-center pt-200">
                         <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
                     </div>
-                ) : (
+                ) : list.length ? (
                     list.map((item, index) => {
                         return (
                             <MailListItem
                                 key={index}
                                 mail={item}
-                                onSelect={() => {}}
+                                onSelect={() => {
+                                    handleSelectItem(item);
+                                }}
                                 onRefresh={async () => {
                                     await fetchMailList(false);
                                 }}
                             />
                         );
                     })
+                ) : (
+                    '<No Mail>'
                 )}
             </div>
         </div>

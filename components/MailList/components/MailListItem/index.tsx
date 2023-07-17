@@ -2,20 +2,37 @@ import moment from 'moment';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 
-import { IPersonItem, MarkTypeEn, MetaMailTypeEn, IMailContentItem, ReadStatusTypeEn } from 'lib/constants';
-import { mailHttp, IMailChangeParams } from 'lib/http';
+import {
+    IPersonItem,
+    MarkTypeEn,
+    MetaMailTypeEn,
+    IMailContentItem,
+    ReadStatusTypeEn,
+    FilterTypeEn,
+} from 'lib/constants';
+import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
+import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import Icon from 'components/Icon';
 import Dot from 'components/Dot';
 import { checkbox, favorite, markFavorite, selected, white, trash, markUnread } from 'assets/icons';
 import styles from './index.module.scss';
+
+export type MailListItemType = IMailContentItem & {
+    selected: boolean;
+};
+
 interface IMailItemProps {
-    mail: IMailContentItem;
-    onSelect: (mail: IMailContentItem) => void;
+    mail: MailListItemType;
+    onSelect: () => void;
     onRefresh: () => Promise<void>;
 }
 
 export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemProps) {
+    const { filterType } = useMailListStore();
+    const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
+    const { setIsWriting } = useNewMailStore();
+
     const getIsRead = (mail: IMailContentItem) => {
         return mail.read == ReadStatusTypeEn.read;
     };
@@ -24,49 +41,56 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
     };
 
-    const handleStar = async () => {};
-
-    const handleDelete = async () => {};
-
-    const handleUnread = async () => {};
-
-    const handleClick = async () => {
-        // userSessionStorage.setRandomBits(''); // clear random bits
-        // if (!getIsRead(mail)) {
-        //     const mails = [{ message_id: mail?.message_id, mailbox: Number(mail.mailbox) }];
-        //     await mailHttp.changeMailStatus(mails, undefined, ReadStatusTypeEn.read);
-        // }
-        // fetchMailList(false);
-        // if (filterType === FilterTypeEn.Draft) {
-        //     setDetailFromNew(item);
-        //     setIsWriting(true);
-        // } else {
-        //     setDetailFromList(item);
-        //     setIsMailDetail(true);
-        // }
-    };
-
-    const handleChangeMailStatus = async (
-        inputMails?: IMailChangeParams[],
-        mark?: MarkTypeEn,
-        read?: ReadStatusTypeEn
-    ) => {
-        const mails = inputMails ?? getMails();
+    const handleChangeMailStatus = async (options: IMailChangeOptions) => {
         try {
-            await mailHttp.changeMailStatus(mails, mark, read);
+            await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
         } catch (error) {
             console.error(error);
-            toast.error('Operation failed, please try again later');
+            toast.error('Operation failed, please try again later.');
         } finally {
             onRefresh();
         }
     };
 
+    const handleStar = async () => {
+        await handleChangeMailStatus({
+            mark: MarkTypeEn.Starred,
+        });
+    };
+
+    const handleDelete = async () => {
+        await handleChangeMailStatus({
+            mark: MarkTypeEn.Deleted,
+        });
+    };
+
+    const handleUnread = async () => {
+        await handleChangeMailStatus({
+            read: ReadStatusTypeEn.unread,
+        });
+    };
+
+    const handleClick = async () => {
+        if (mail.read == ReadStatusTypeEn.unread) {
+            await handleChangeMailStatus({ read: ReadStatusTypeEn.read });
+        }
+        if (filterType === FilterTypeEn.Draft) {
+            setDetailFromNew(mail);
+            setIsWriting(true);
+        } else {
+            setDetailFromList(mail);
+            setIsMailDetail(true);
+        }
+    };
+
     return (
         <div
-            className={`text-[14px] flex flex-row px-20 items-center group h-36 cursor-pointer ${styles.mailListItem}`}>
+            onClick={handleClick}
+            className={`text-[14px] flex flex-row px-20 items-center group h-36 cursor-pointer ${styles.mailListItem} ${
+                mail.selected ? 'bg-[#DAE7FF]' : ''
+            }`}>
             <div className="flex flex-row gap-14">
-                <input type="checkbox" className="checkbox checkbox-sm" />
+                <input type="checkbox" className="checkbox checkbox-sm" checked={mail.selected} onChange={onSelect} />
                 <Icon
                     url={favorite}
                     checkedUrl={markFavorite}
