@@ -8,7 +8,18 @@ import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import MailListItem, { MailListItemType } from './components/MailListItem';
 import Icon from 'components/Icon';
 
-import { checkbox, trash, read, starred, markUnread, temp1, spam, filter, update, cancelSelected } from 'assets/icons';
+import {
+    checkbox,
+    trash,
+    read,
+    starred,
+    markUnread,
+    temp1,
+    spam,
+    filter as filterIcon,
+    update,
+    cancelSelected,
+} from 'assets/icons';
 
 const MailListFilters = ['All', 'None', 'Read', 'Unread', 'Encrypted', 'UnEncrypted', 'Star', 'No Star'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
@@ -36,22 +47,27 @@ export default function MailList() {
 
     const mailActions = [
         {
+            title: 'Delete',
             src: trash,
             httpParams: { mark: MarkTypeEn.Trash },
         },
         {
+            title: 'Star',
             src: starred,
             httpParams: { mark: MarkTypeEn.Starred },
         },
         {
+            title: 'Spam',
             src: spam,
             httpParams: { mark: MarkTypeEn.Spam },
         },
         {
+            title: 'Read',
             src: read,
             httpParams: { read: ReadStatusTypeEn.read },
         },
         {
+            title: 'Unread',
             src: markUnread,
             httpParams: { read: ReadStatusTypeEn.unread },
         },
@@ -110,7 +126,7 @@ export default function MailList() {
     const handleSelectItem = (item: MailListItemType) => {
         item.selected = !item.selected;
         setList([...list]);
-        setSelectedAll(list.every(item => item.selected));
+        setSelectedAll(list.length && list.every(item => item.selected));
     };
 
     const handleSelectedAllChange = () => {
@@ -171,7 +187,7 @@ export default function MailList() {
                 break;
         }
         setList([...list]);
-        setSelectedAll(list.every(item => item.selected));
+        setSelectedAll(list.length && list.every(item => item.selected));
     }, [filter]);
 
     return (
@@ -188,19 +204,17 @@ export default function MailList() {
                         url={update}
                         className="w-20 h-20"
                         onClick={() => {
-                            removeAllState();
-                            mailSessionStorage.clearMailListInfo();
                             fetchMailList(true);
                         }}
                     />
                     <div className="dropdown dropdown-bottom">
                         <label tabIndex={0} className="cursor-pointer flex items-center">
-                            <Icon url={filter} className="w-20 h-20" />
+                            <Icon url={filterIcon} className="w-20 h-20" />
                             <span className="text-[14px]">{filter}</span>
                         </label>
                         <ul
                             tabIndex={0}
-                            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-110">
+                            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-130">
                             {MailListFilters.map((item, index) => {
                                 return (
                                     <li
@@ -215,21 +229,23 @@ export default function MailList() {
                         </ul>
                     </div>
 
-                    <div className="h-14 flex gap-10">
-                        {getSelectedList().length &&
-                            mailActions.map((item, index) => {
+                    {getSelectedList().length > 0 && (
+                        <div className="flex gap-10">
+                            {mailActions.map((item, index) => {
                                 return (
                                     <Icon
+                                        title={item.title}
                                         url={item.src}
                                         key={index}
                                         onClick={async () => {
                                             await handleMailActionsClick(item.httpParams);
                                         }}
-                                        className="w-13 h-auto self-center"
+                                        className="w-20 h-20 self-center"
                                     />
                                 );
                             })}
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex flex-row justify-end space-x-20 text-xl text-[#7F7F7F]">
@@ -273,7 +289,7 @@ export default function MailList() {
                         );
                     })
                 ) : (
-                    '<No Mail>'
+                    <div className="text-center pt-24">{'<No Mail>'}</div>
                 )}
             </div>
         </div>

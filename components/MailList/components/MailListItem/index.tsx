@@ -87,18 +87,31 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         <div
             onClick={handleClick}
             className={`text-[14px] flex flex-row px-20 items-center group h-36 cursor-pointer ${styles.mailListItem} ${
-                mail.selected ? 'bg-[#DAE7FF]' : ''
+                mail.selected ? `bg-[#DAE7FF] ${styles.selectedItem}` : ''
             }`}>
             <div className="flex flex-row gap-14">
-                <input type="checkbox" className="checkbox checkbox-sm" checked={mail.selected} onChange={onSelect} />
-                <Icon
-                    url={favorite}
-                    checkedUrl={markFavorite}
-                    onClick={handleStar}
-                    className="w-20 h-20"
-                    select={mail.mark === MarkTypeEn.Starred}
-                    tip={'star'}
+                <input
+                    type="checkbox"
+                    className="checkbox checkbox-sm"
+                    checked={mail.selected}
+                    onClick={e => {
+                        e.stopPropagation();
+                    }}
+                    onChange={onSelect}
                 />
+                <div
+                    onClick={async e => {
+                        e.stopPropagation();
+                        await handleStar();
+                    }}>
+                    <Icon
+                        url={favorite}
+                        checkedUrl={markFavorite}
+                        className="w-20 h-20"
+                        select={mail.mark === MarkTypeEn.Starred}
+                        tip={'star'}
+                    />
+                </div>
             </div>
             <div className="text-[#333333] font-bold w-140 ml-14 omit">
                 <span className={`${getIsRead(mail) ? 'text-black text-opacity-60' : ''}`} title={getMailFrom(mail)}>
@@ -119,10 +132,21 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
             <div className="w-100 text-right">
                 <div className="text-[#999999] group-hover:hidden">{moment(mail.mail_date).format('MMM D')}</div>
                 <div className="hidden group-hover:flex items-center justify-end">
-                    <div onClick={handleDelete} title="delete mail">
+                    <div
+                        onClick={async e => {
+                            e.stopPropagation();
+                            await handleDelete();
+                        }}
+                        title="delete mail">
                         <Image src={trash} alt="delete mail" />
                     </div>
-                    <div onClick={handleUnread} title="mark unread mail" className="ml-12">
+                    <div
+                        onClick={async e => {
+                            e.stopPropagation();
+                            await handleUnread();
+                        }}
+                        title="mark unread mail"
+                        className="ml-12">
                         <Image src={markUnread} alt="markUnread mail" className="scale-125" />
                     </div>
                 </div>
