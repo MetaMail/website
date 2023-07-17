@@ -101,15 +101,14 @@ export default function NewMail() {
         } catch (err) {
             console.log('failed to auto save mail');
         }
-    }, 2000);
+    }, 30000);
 
-    const handleSend = async (keys: string[], packedResult: string, signature?: string) => {
+    const handleSend = async (keys: string[], signature?: string) => {
         try {
             const { message_id } = await mailHttp.sendMail(draftID, {
                 date: dateRef.current,
                 signature: signature,
                 keys,
-                data: packedResult,
             });
 
             if (message_id) {
@@ -196,20 +195,31 @@ export default function NewMail() {
                 };
                 console.log(packData);
                 const sendMailInfo = {
-                    from: packData.from,
-                    to: packData.to,
-                    date: packData.date,
-                    subject: packData.subject,
+                    signMethod: 'eth_signTypedData',
+                    domain: { name: 'MetaMail', version: '1.0.0' },
+                    signTypes: {
+                        Sign_Mail: [
+                            { name: 'from', type: 'string' },
+                            { name: 'to', type: 'string[]' },
+                            { name: 'date', type: 'string' },
+                            { name: 'subject', type: 'string' },
+                            { name: 'text_hash', type: 'string' },
+                            { name: 'html_hash', type: 'string' },
+                            { name: 'attachments_hash', type: 'string[]' },
+                            { name: 'name', type: 'string' },
+                            { name: 'keys', type: 'string[]' },
+                        ],
+                    },
+                    signMessages: {
+                        ...packData,
+                    },
                 };
-                metaPack(packData).then(async res => {
-                    const { packedResult } = res ?? {};
-                    sendEmailInfoSignInstance.doSign(sendMailInfo).then(async signature => {
-                        if (signature) {
-                        } else {
-                            handleSend(keys, packedResult, signature);
-                            // handleSend(packedResult, date, signature);
-                        }
-                    });
+                sendEmailInfoSignInstance.doSign(sendMailInfo).then(async signature => {
+                    if (signature) {
+                        handleSend(keys, signature);
+                    } else {
+                        console.error('doSign failed');
+                    }
                 });
             });
         } catch (error) {

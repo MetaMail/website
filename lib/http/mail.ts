@@ -48,7 +48,6 @@ interface ISendMailParams {
     date?: string;
     signature?: string;
     keys: string[];
-    data: string;
 }
 
 interface ISendMailResponse {

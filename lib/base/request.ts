@@ -3,9 +3,8 @@ import { MMObject } from './object';
 import { userSessionStorage } from 'lib/utils';
 
 //const BASE_URL = 'https://api.metamail.ink/';
-//const BASE_URL = 'http://localhost:8080';
-// const BASE_URL = 'https://api-v2.metamail.ink/';
-const BASE_URL = 'https://api-v2.mmail-test.ink/';
+const BASE_URL = 'http://localhost:8080';
+//const BASE_URL = 'https://api-v2.mmail-test.ink/';
 
 export const PostfixOfAddress = '@mmail.ink';
 
