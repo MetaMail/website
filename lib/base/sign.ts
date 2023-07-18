@@ -26,17 +26,17 @@ export abstract class MMSign extends MMObject {
         if (!ethereum) throw new Error('Your client does not support Ethereum');
         if (!this.address) throw new Error('No address provided');
 
+        console.log('Sign Method:', signData.signMethod);
+        console.log('Domain:', signData.domain);
+        console.log('Sign Types:', signData.signTypes);
+        console.log('Sign Messages:', signData.signMessages);
+
         if (signData.signMethod !== 'eth_signTypedData') {
             throw new Error('Unsupported sign method');
         }
 
         const walletProvider = new ethers.providers.Web3Provider(ethereum);
         const signer = walletProvider.getSigner();
-
-        console.log('Sign Method:', signData.signMethod);
-        console.log('Domain:', signData.domain);
-        console.log('Sign Types:', signData.signTypes);
-        console.log('Sign Messages:', signData.signMessages);
 
         const signature = await signer._signTypedData(signData.domain, signData.signTypes, signData.signMessages);
         const expectedSignerAddress = this.address;

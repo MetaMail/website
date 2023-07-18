@@ -101,15 +101,14 @@ export default function NewMail() {
         } catch (err) {
             console.log('failed to auto save mail');
         }
-    }, 2000);
+    }, 30000);
 
-    const handleSend = async (keys: string[], packedResult: string, signature?: string) => {
+    const handleSend = async (keys: string[], signature?: string) => {
         try {
             const { message_id } = await mailHttp.sendMail(draftID, {
                 date: dateRef.current,
                 signature: signature,
                 keys,
-                data: packedResult,
             });
 
             if (message_id) {
@@ -196,20 +195,31 @@ export default function NewMail() {
                 };
                 console.log(packData);
                 const sendMailInfo = {
-                    from: packData.from,
-                    to: packData.to,
-                    date: packData.date,
-                    subject: packData.subject,
+                    signMethod: 'eth_signTypedData',
+                    domain: { name: 'MetaMail', version: '1.0.0' },
+                    signTypes: {
+                        Sign_Mail: [
+                            { name: 'from', type: 'string' },
+                            { name: 'to', type: 'string[]' },
+                            { name: 'date', type: 'string' },
+                            { name: 'subject', type: 'string' },
+                            { name: 'text_hash', type: 'string' },
+                            { name: 'html_hash', type: 'string' },
+                            { name: 'attachments_hash', type: 'string[]' },
+                            { name: 'name', type: 'string' },
+                            { name: 'keys', type: 'string[]' },
+                        ],
+                    },
+                    signMessages: {
+                        ...packData,
+                    },
                 };
-                metaPack(packData).then(async res => {
-                    const { packedResult } = res ?? {};
-                    sendEmailInfoSignInstance.doSign(sendMailInfo).then(async signature => {
-                        if (signature) {
-                        } else {
-                            handleSend(keys, packedResult, signature);
-                            // handleSend(packedResult, date, signature);
-                        }
-                    });
+                sendEmailInfoSignInstance.doSign(sendMailInfo).then(async signature => {
+                    if (signature) {
+                        handleSend(keys, signature);
+                    } else {
+                        console.error('doSign failed');
+                    }
                 });
             });
         } catch (error) {
@@ -281,6 +291,7 @@ export default function NewMail() {
         dateRef.current = mail_date;
         return { html, text };
     };
+
     const handleLoad = async (id?: string) => {
         try {
             //if (!query?.id && query.id.length === 0) {
@@ -390,38 +401,38 @@ export default function NewMail() {
                     />
                 </h1>
                 <div className="divider"></div>
-                {editable ? (
-                    <DynamicReactQuill
-                        forwardedRef={reactQuillRef}
-                        className="flex-1 flex flex-col-reverse overflow-hidden"
-                        theme="snow"
-                        placeholder={''}
-                        modules={EditorModules}
-                        formats={EditorFormats}
-                        value={content}
-                        onChange={handleChangeContent}
+            </div>
+            {editable ? (
+                <DynamicReactQuill
+                    forwardedRef={reactQuillRef}
+                    className="flex-1 flex flex-col-reverse overflow-hidden"
+                    theme="snow"
+                    placeholder={''}
+                    modules={EditorModules}
+                    formats={EditorFormats}
+                    value={content}
+                    onChange={handleChangeContent}
+                />
+            ) : (
+                <button className="flex-1" onClick={handleDecrypted}>
+                    Decrypt
+                </button>
+            )}
+            <div className="pt-17 flex gap-13">
+                <button onClick={handleClickSend}>
+                    <Image alt={'sendMail'} src={sendMailIcon} />
+                </button>
+                <button>
+                    {/*<Image alt={'addAttach'} src={addAttach}/>
+        <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
+                    <FileUploader
+                        draftID={draftID}
+                        metaType={type}
+                        onAttachment={handleSetAttachmentList}
+                        showList={attList}
+                        currRandomBits={currRandomBitsRef.current}
                     />
-                ) : (
-                    <button className="flex-1" onClick={handleDecrypted}>
-                        Decrypt
-                    </button>
-                )}
-                <div className="pt-17 flex gap-13">
-                    <button onClick={handleClickSend}>
-                        <Image alt={'sendMail'} src={sendMailIcon} />
-                    </button>
-                    <button>
-                        {/*<Image alt={'addAttach'} src={addAttach}/>
-                    <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
-                        <FileUploader
-                            draftID={draftID}
-                            metaType={type}
-                            onAttachment={handleSetAttachmentList}
-                            showList={attList}
-                            currRandomBits={currRandomBitsRef.current}
-                        />
-                    </button>
-                </div>
+                </button>
             </div>
         </div>
     );

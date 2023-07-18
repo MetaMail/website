@@ -10,14 +10,14 @@ export const generateEncryptionUserKey = async () => {
         signMethod: 'eth_signTypedData',
         domain: { name: 'MetaMail', version: '1.0.0' },
         signTypes: {
-            Message: [
-                { name: 'title', type: 'string' },
-                { name: 'content', type: 'string' },
+            Sign_Salt: [
+                { name: 'hint', type: 'string' },
+                { name: 'salt', type: 'string' },
             ],
         },
         signMessages: {
-            title: 'Sign this salt to generate encryption key',
-            content: salt,
+            hint: 'Sign this salt to generate encryption key',
+            salt: salt,
         },
     };
     const signedSalt = await saltSignInstance.doSign(saltSignData);
@@ -28,7 +28,7 @@ export const generateEncryptionUserKey = async () => {
     const signMethod = 'eth_signTypedData';
     const domain = { name: 'MetaMail', version: '1.0.0' };
     const signTypes = {
-        Message: [
+        Sign_KeyData: [
             { name: 'date', type: 'string' },
             { name: 'salt', type: 'string' },
             { name: 'encryption_private_key', type: 'string' },
