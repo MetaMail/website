@@ -104,6 +104,11 @@ export interface IMailChangeParams {
     mailbox?: MailBoxTypeEn;
 }
 
+export interface IMailChangeOptions {
+    mark?: MarkTypeEn;
+    read?: ReadStatusTypeEn;
+}
+
 class MMMailHttp extends MMHttp {
     async getMailDetailByID(id: string) {
         return this.get<void, IGetMailDetailResponse>(`${APIs.mailDetail}${id}`);
@@ -113,12 +118,8 @@ class MMMailHttp extends MMHttp {
         return this.post<IGetMailListParams, IGetMailListResponse>(APIs.getMailList, params);
     }
 
-    async changeMailStatus(mails: IMailChangeParams[], mark?: MarkTypeEn, read?: ReadStatusTypeEn) {
-        return this.post<IChangeMailStatusParams, void>(APIs.mailDetail, {
-            mails,
-            mark,
-            read,
-        });
+    async changeMailStatus(mails: IMailChangeParams[], options: IMailChangeOptions) {
+        return this.post<IChangeMailStatusParams, void>(APIs.mailDetail, { mails, ...options });
     }
 
     async createDraft(type: MetaMailTypeEn, key?: string) {

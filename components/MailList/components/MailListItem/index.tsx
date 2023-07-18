@@ -1,101 +1,148 @@
 import moment from 'moment';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
 
-import { IPersonItem, MarkTypeEn, MetaMailTypeEn } from 'lib/constants';
+import {
+    IPersonItem,
+    MarkTypeEn,
+    MetaMailTypeEn,
+    IMailContentItem,
+    ReadStatusTypeEn,
+    FilterTypeEn,
+} from 'lib/constants';
+import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
+import { userSessionStorage, mailSessionStorage } from 'lib/utils';
+import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import Icon from 'components/Icon';
+import Dot from 'components/Dot';
 import { checkbox, favorite, markFavorite, selected, white, trash, markUnread } from 'assets/icons';
+import styles from './index.module.scss';
+
+export type MailListItemType = IMailContentItem & {
+    selected: boolean;
+};
+
 interface IMailItemProps {
-    subject: string;
-    from: IPersonItem;
-    date: string;
-    isRead: boolean;
-    select?: boolean;
-    mark?: MarkTypeEn;
-    metaType?: MetaMailTypeEn;
-    abstract?: string;
-    onClick: () => void;
-    onSelect: (isSelected: boolean) => void;
-    onFavorite: (isSelected: boolean) => void;
-    onDelete: () => void;
-    onUnread: () => void;
+    mail: MailListItemType;
+    onSelect: () => void;
+    onRefresh: () => Promise<void>;
 }
 
-export default function MailListItem({
-    subject,
-    from,
-    date,
-    isRead,
-    onClick,
-    onSelect,
-    onFavorite,
-    select,
-    mark,
-    metaType,
-    abstract,
-    onDelete,
-    onUnread,
-}: IMailItemProps) {
+export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemProps) {
+    const { filterType } = useMailListStore();
+    const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
+    const { setIsWriting } = useNewMailStore();
+
+    const getIsRead = (mail: IMailContentItem) => {
+        return mail.read == ReadStatusTypeEn.read;
+    };
+
+    const getMailFrom = (mail: IMailContentItem): string => {
+        return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
+    };
+
+    const handleChangeMailStatus = async (options: IMailChangeOptions) => {
+        try {
+            await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
+        } catch (error) {
+            console.error(error);
+            toast.error('Operation failed, please try again later.');
+        } finally {
+            onRefresh();
+        }
+    };
+
+    const handleStar = async () => {
+        await handleChangeMailStatus({
+            mark: MarkTypeEn.Starred,
+        });
+    };
+
+    const handleDelete = async () => {
+        await handleChangeMailStatus({
+            mark: MarkTypeEn.Deleted,
+        });
+    };
+
+    const handleUnread = async () => {
+        await handleChangeMailStatus({
+            read: ReadStatusTypeEn.unread,
+        });
+    };
+
+    const handleClick = async () => {
+        if (mail.read == ReadStatusTypeEn.unread) {
+            await handleChangeMailStatus({ read: ReadStatusTypeEn.read });
+        }
+        if (filterType === FilterTypeEn.Draft) {
+            setDetailFromNew(mail);
+            setIsWriting(true);
+        } else {
+            setDetailFromList(mail);
+            setIsMailDetail(true);
+        }
+    };
+
     return (
-        <div className="flex flex-row pt-1 pb-5 px-18 justify-between text-sm hover:bg-[#DAE7FF] hover:shadow-sm group">
-            <div className="flex flex-row gap-9">
-                <div className="pt-7">
-                    <Icon
-                        url={checkbox}
-                        checkedUrl={selected}
-                        onClick={onSelect}
-                        select={select}
-                        tip={'select'}
-                        className="w-13"
-                    />
-                </div>
-                <div className="pt-7">
-                    <Icon
-                        url={favorite}
-                        checkedUrl={markFavorite}
-                        onClick={onFavorite}
-                        className="w-13"
-                        select={mark === MarkTypeEn.Starred}
-                        tip={'star'}
-                    />
-                </div>
-                {/*<Icon    显示加密状态
-              url={white}
-              checkedUrl={encrypt}
-              onClick={onFavorite}
-              //select={metaType === MetaMailTypeEn.Encrypted}
-              select={isRead === false}
-    tip={'star'}/>*/}
+        <div
+            onClick={handleClick}
+            className={`text-[14px] flex flex-row px-20 items-center group h-36 cursor-pointer ${styles.mailListItem} ${
+                mail.selected ? `bg-[#DAE7FF] ${styles.selectedItem}` : ''
+            }`}>
+            <div className="flex flex-row gap-14">
+                <input
+                    type="checkbox"
+                    className="checkbox checkbox-sm"
+                    checked={mail.selected}
+                    onClick={e => {
+                        e.stopPropagation();
+                    }}
+                    onChange={onSelect}
+                />
+
+                <Icon
+                    url={mail.mark === MarkTypeEn.Starred ? markFavorite : favorite}
+                    className="w-20 h-20"
+                    title={'star'}
+                    onClick={async e => {
+                        e.stopPropagation();
+                        await handleStar();
+                    }}
+                />
             </div>
-            <span className="pt-4 text-[#333333] omit w-105 pl-25" onClick={onClick}>
-                <span className={isRead ? 'text-black text-opacity-60' : ''}>
-                    {from?.name && from.name.length > 0 ? from.name : from.address}
+            <div className="text-[#333333] font-bold w-140 ml-14 omit">
+                <span className={`${getIsRead(mail) ? 'text-black text-opacity-60' : ''}`} title={getMailFrom(mail)}>
+                    {getMailFrom(mail)}
                 </span>
-            </span>
-            <div
-                className={`flex self-center w-4 h-4 rounded-full bg-[#006AD4] mx-7 mt-4 ${
-                    isRead ? 'bg-opacity-0' : ''
-                }`}
-            />
-            <span className="pt-4 text-[#333333] omit w-120 " onClick={onClick}>
-                <span className={isRead ? 'text-black text-opacity-60' : ''}>{subject}</span>
-            </span>
-            {/*<div className='h-14 w-1 rounded-1 bg-[#333333] align-center'/>*/}
-            <span className="pt-4 pl-2 pr-7 text-[#333333] omit" onClick={onClick}>
-                {'-'}
-            </span>
-            <div className="pt-4 text-[#999999] omit min-w-0 flex-1" onClick={onClick}>
-                {abstract}
             </div>
-            <div className="flex flex-row text-[#999999] pl-45 pt-4 group-hover:hidden">
-                {moment(date).format('MMM ')}
-                <div className="flex justify-center w-20">{moment(date).format('D ')}</div>
+            <div className="text-[#333333] flex-1 w-0 ml-14 omit">
+                <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : '#fff'} />
+                <span className={`ml-8 ${getIsRead(mail) ? 'text-black text-opacity-60' : ''}`}>
+                    {mail.subject || '( no subject )'}
+                </span>
+                <span className="pt-4 pl-2 pr-7 text-[#333333]">{'-'}</span>
+                <span className="pt-4 text-[#999999] min-w-0 flex-1">{mail.digest || '( no abstract )'}</span>
             </div>
-            <div className="hidden flex-row group-hover:flex ">
-                <div onClick={onDelete} className="self-center">
-                    <Image src={trash} alt="delete mail" />
-                </div>
-                <div onClick={onUnread} className="self-center mx-8">
-                    <Image src={markUnread} alt="markUnread mail" className="scale-125" />
+            <div className="w-100 text-right">
+                <div className="text-[#999999] group-hover:hidden">{moment(mail.mail_date).format('MMM D')}</div>
+                <div className="hidden group-hover:flex items-center justify-end">
+                    <div
+                        onClick={async e => {
+                            e.stopPropagation();
+                            await handleDelete();
+                        }}
+                        title="delete mail">
+                        <Image src={trash} alt="delete mail" />
+                    </div>
+                    <div
+                        onClick={async e => {
+                            e.stopPropagation();
+                            await handleUnread();
+                        }}
+                        title="mark unread mail"
+                        className="ml-12">
+                        <Image src={markUnread} alt="markUnread mail" className="scale-125" />
+                    </div>
                 </div>
             </div>
         </div>

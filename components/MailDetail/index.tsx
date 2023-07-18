@@ -59,7 +59,9 @@ export default function MailDetail() {
             src: trash,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, MarkTypeEn.Trash, undefined);
+                await mailHttp.changeMailStatus(mailInfo, {
+                    mark: MarkTypeEn.Trash,
+                });
                 router.back();
             },
         },
@@ -71,7 +73,9 @@ export default function MailDetail() {
             src: spam,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, MarkTypeEn.Spam, undefined);
+                await mailHttp.changeMailStatus(mailInfo, {
+                    mark: MarkTypeEn.Spam,
+                });
                 router.back();
             },
         },
@@ -80,11 +84,9 @@ export default function MailDetail() {
             checkedSrc: markUnread,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(
-                    mailInfo,
-                    undefined,
-                    isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read
-                );
+                await mailHttp.changeMailStatus(mailInfo, {
+                    read: isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read,
+                });
                 setIsRead(!isRead);
             },
             onselect: isRead,
@@ -94,7 +96,9 @@ export default function MailDetail() {
             checkedSrc: markFavorite,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, mark ? MarkTypeEn.Normal : MarkTypeEn.Starred, undefined);
+                await mailHttp.changeMailStatus(mailInfo, {
+                    mark: mark ? MarkTypeEn.Normal : MarkTypeEn.Starred,
+                });
                 setMark(!mark);
             },
             onselect: mark,
@@ -107,7 +111,9 @@ export default function MailDetail() {
             checkedSrc: markFavorite,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, mark ? MarkTypeEn.Normal : MarkTypeEn.Starred, undefined);
+                await mailHttp.changeMailStatus(mailInfo, {
+                    mark: mark ? MarkTypeEn.Normal : MarkTypeEn.Starred,
+                });
                 setMark(!mark);
             },
             onselect: mark,
@@ -263,8 +269,6 @@ export default function MailDetail() {
                                         <Icon
                                             url={item.src}
                                             key={index}
-                                            checkedUrl={item?.checkedSrc}
-                                            select={item?.onselect}
                                             className="w-13 h-auto self-center"
                                             onClick={item.handler}
                                         />
@@ -274,7 +278,6 @@ export default function MailDetail() {
                             <div className="flex gap-10">
                                 <Icon
                                     url={extend}
-                                    checkedUrl={extend}
                                     className="w-13 h-auto self-center "
                                     onClick={() => setIsExtend(!isExtend)}
                                 />
@@ -311,10 +314,8 @@ export default function MailDetail() {
                                     {threeMail.map((item, index) => {
                                         return (
                                             <Icon
-                                                url={item.src}
-                                                checkedUrl={item?.checkedSrc}
-                                                select={item?.onselect}
                                                 key={index}
+                                                url={item.src}
                                                 onClick={item.handler}
                                                 className="w-13 h-auto self-center"
                                             />

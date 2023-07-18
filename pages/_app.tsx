@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
-import '../styles/quill.css';
+// import '../styles/quill.css';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode;
@@ -19,7 +19,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     return getLayout(
         <>
             <Component {...pageProps} />
-            <ToastContainer />
+            <ToastContainer autoClose={1000} hideProgressBar={true} />
         </>
     );
 }

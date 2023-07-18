@@ -78,7 +78,7 @@ export default function Sidebar() {
     useEffect(() => {
         const getUnreadCountPromise = async (type: FilterTypeEn) => {
             const data = await mailHttp.getMailList({
-                filter: filterType,
+                filter: type,
                 page_index: 1,
             });
             return data.unread;

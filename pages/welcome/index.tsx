@@ -53,7 +53,7 @@ export default function Welcome() {
             router.push('/mailbox');
         } catch (error) {
             console.error(error);
-            toast.error('Login failed, please try again.');
+            toast.error('Login failed, please try again later.');
         } finally {
             await disconnect();
             console.log('Disconnected');
