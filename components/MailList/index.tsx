@@ -24,7 +24,13 @@ import {
 const MailListFilters = ['All', 'None', 'Read', 'Unread', 'Encrypted', 'UnEncrypted', 'Star', 'No Star'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
-export default function MailList() {
+export type ListMode = 'normal' | 'selected';
+interface IMailListProps {
+    mode: ListMode;
+    onSelectMail: (mail: MailListItemType) => void;
+}
+
+export default function MailList({ mode, onSelectMail }: IMailListProps) {
     const { filterType, pageIndex, addPageIndex, subPageIndex, setUnreadInboxCount, setUnreadSpamCount } =
         useMailListStore();
     const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();

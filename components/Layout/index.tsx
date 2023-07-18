@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Sidebar />
             <div className="flex flex-col flex-1 pr-28 pb-28">
                 <Titlebar />
-                <main className="h-[calc(100vh-45px)] bg-white w-[calc(100%)] rounded-10">{children}</main>
+                <main className="h-[calc(100vh-45px)] bg-white w-[calc(100%)] rounded-10 relative">{children}</main>
             </div>
         </div>
     );

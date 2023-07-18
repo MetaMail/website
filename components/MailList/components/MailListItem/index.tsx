@@ -116,7 +116,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                 </span>
             </div>
             <div className="text-[#333333] flex-1 w-0 ml-14 omit">
-                <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : '#fff'} />
+                <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
                 <span className={`ml-8 ${getIsRead(mail) ? 'text-black text-opacity-60' : ''}`}>
                     {mail.subject || '( no subject )'}
                 </span>

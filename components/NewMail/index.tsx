@@ -28,6 +28,8 @@ import { cancel, extend } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
+import styles from './index.module.scss';
+
 export default function NewMail() {
     const { detailFromNew, setDetailFromNew } = useMailDetailStore();
     const { isWriting, setIsWriting } = useNewMailStore();
@@ -321,9 +323,9 @@ export default function NewMail() {
 
     return (
         <div
-            className={`flex flex-col font-poppins bg-white p-18 transition-all absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 ${
-                isExtend ? 'h-full w-[calc(100vw-200px)]' : 'h-502 w-[45vw]'
-            }`}>
+            className={`flex flex-col font-poppins bg-white p-18 transition-all absolute bottom-0 right-0 rounded-10 ${
+                isExtend ? 'h-full w-full' : 'h-502 w-[45vw]'
+            } ${styles.newMailWrap}`}>
             <header className="flex justify-between">
                 <div className="flex flex-row">
                     <div className="w-6 h-24 bg-[#006AD4] rounded-4" />

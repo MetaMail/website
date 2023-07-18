@@ -11,6 +11,7 @@ import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { useMailDetailStore } from 'lib/zustand-store';
 import { getPrivateKey, decryptMailContent, decryptMailKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
+import { MailListItemType } from 'components/MailList/components/MailListItem';
 import AttachmentItem from './components/AttachmentItem';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
@@ -31,7 +32,11 @@ import {
     markUnread,
 } from 'assets/icons';
 
-export default function MailDetail() {
+interface IMailDetailProps {
+    mail: MailListItemType;
+}
+
+export default function MailDetail({ mail }: IMailDetailProps) {
     const router = useRouter();
     const { isMailDetail, detailFromList, setIsMailDetail } = useMailDetailStore();
 
