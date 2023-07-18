@@ -3,23 +3,15 @@ import Image from 'next/image';
 
 interface IIconProps {
     url: any;
-    checkedUrl?: any;
-    onClick?: (isSelected: boolean) => void;
     className?: string;
-    style?: React.CSSProperties;
-    imgStyle?: React.CSSProperties;
-    select?: boolean;
-    tip?: string;
+    title?: string;
+    onClick?: (e: React.MouseEvent) => void;
 }
 
-export default function Icon({ url, checkedUrl, onClick, className, style, select }: IIconProps) {
-    const handleClick = () => {
-        onClick?.(!select);
-    };
-
+export default function Icon({ url, title, className, onClick }: IIconProps) {
     return (
-        <div onClick={handleClick} style={onClick ? { cursor: 'pointer', ...style } : style} className={className}>
-            <Image className="w-full h-full" src={!select ? url : checkedUrl ?? url} alt="" />
+        <div className={className} title={title} onClick={onClick}>
+            <Image className="w-full h-full cursor-pointer" src={url} alt="" />
         </div>
     );
 }

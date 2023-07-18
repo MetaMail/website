@@ -348,12 +348,7 @@ export default function NewMail() {
                     <span className="pl-7 font-black text-xl">New Message</span>
                 </div>
                 <div className="flex gap-10 self-start">
-                    <Icon
-                        url={extend}
-                        checkedUrl={extend}
-                        className="w-13 h-auto self-center "
-                        onClick={() => setIsExtend(!isExtend)}
-                    />
+                    <Icon url={extend} className="w-13 h-auto self-center " onClick={() => setIsExtend(!isExtend)} />
                     <Icon
                         url={cancel}
                         className="w-13 scale-[120%] h-auto self-center"

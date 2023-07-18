@@ -269,8 +269,6 @@ export default function MailDetail() {
                                         <Icon
                                             url={item.src}
                                             key={index}
-                                            checkedUrl={item?.checkedSrc}
-                                            select={item?.onselect}
                                             className="w-13 h-auto self-center"
                                             onClick={item.handler}
                                         />
@@ -280,7 +278,6 @@ export default function MailDetail() {
                             <div className="flex gap-10">
                                 <Icon
                                     url={extend}
-                                    checkedUrl={extend}
                                     className="w-13 h-auto self-center "
                                     onClick={() => setIsExtend(!isExtend)}
                                 />
@@ -317,10 +314,8 @@ export default function MailDetail() {
                                     {threeMail.map((item, index) => {
                                         return (
                                             <Icon
-                                                url={item.src}
-                                                checkedUrl={item?.checkedSrc}
-                                                select={item?.onselect}
                                                 key={index}
+                                                url={item.src}
                                                 onClick={item.handler}
                                                 className="w-13 h-auto self-center"
                                             />

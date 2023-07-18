@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
@@ -35,7 +35,9 @@ export default function MailList() {
     const [list, setList] = useState<MailListItemType[]>([]);
     const [pageNum, setPageNum] = useState(0);
     const [selectedAll, setSelectedAll] = useState(false);
-    const [filter, setFilter] = useState<MailListFiltersType>('All');
+    const [filter, setFilter] = useState<MailListFiltersType>();
+
+    const inputCheckBoxRef = useRef<HTMLInputElement>();
 
     const handleFilterChange = (currentFilter: MailListFiltersType) => {
         if (document.activeElement instanceof HTMLElement) {
@@ -76,11 +78,11 @@ export default function MailList() {
     const handleMailActionsClick = async (httpParams: IMailChangeOptions) => {
         try {
             await mailHttp.changeMailStatus(getSelectedMailsParams(), httpParams);
+            await fetchMailList(false);
         } catch (error) {
             console.error(error);
             toast.error('Operation failed, please try again later.');
         }
-        await fetchMailList(false);
     };
 
     const getSelectedList = () => {
@@ -136,6 +138,13 @@ export default function MailList() {
         setList([...list]);
         setSelectedAll(!selectedAll);
     };
+
+    useEffect(() => {
+        const selectedListNum = getSelectedList().length;
+        const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
+        inputCheckBoxRef.current.indeterminate = isIndeterminate;
+        setSelectedAll(list.length && list.every(item => item.selected));
+    }, [list]);
 
     useEffect(() => {
         if (userSessionStorage.getUserInfo()?.address) fetchMailList(true);
@@ -196,6 +205,7 @@ export default function MailList() {
                 <div className="flex flex-row space-x-14 pt-4 items-center">
                     <input
                         type="checkbox"
+                        ref={inputCheckBoxRef}
                         checked={selectedAll}
                         onChange={handleSelectedAllChange}
                         className="checkbox checkbox-sm"
@@ -230,7 +240,7 @@ export default function MailList() {
                     </div>
 
                     {getSelectedList().length > 0 && (
-                        <div className="flex gap-10">
+                        <div className="flex gap-14">
                             {mailActions.map((item, index) => {
                                 return (
                                     <Icon
