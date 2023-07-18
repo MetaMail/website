@@ -11,26 +11,17 @@ export interface ISendMailInfo {
 class MMSendEmailInfoSign extends MMSign {
     getSignTypes() {
         return {
-            Message: [
-                { name: 'mail_from', type: 'string' },
-                { name: 'mail_to', type: 'string' },
+            Sign_Mail: [
+                { name: 'from', type: 'string' },
+                { name: 'to', type: 'string[]' },
                 { name: 'date', type: 'string' },
                 { name: 'subject', type: 'string' },
+                { name: 'text_hash', type: 'string' },
+                { name: 'html_hash', type: 'string' },
+                { name: 'attachments_hash', type: 'string[]' },
+                { name: 'name', type: 'string' },
+                { name: 'keys', type: 'string[]' },
             ],
-        };
-    }
-
-    getSignMessage(pureInfo: ISendMailInfo) {
-        return {
-            mail_from: pureInfo?.from ?? '',
-            mail_to:
-                pureInfo.to
-                    .map(item => {
-                        item.address;
-                    })
-                    .toString() ?? '',
-            date: pureInfo?.date ?? '',
-            subject: pureInfo?.subject ?? '',
         };
     }
 }

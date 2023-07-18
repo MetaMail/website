@@ -30,7 +30,7 @@ export const decryptMailKey = async (encryptedMailKey: string, privateKey: strin
 
 const concatAddress = (item: IPersonItem) => (item?.name ?? '') + ' ' + '<' + item.address + '>';
 
-export const metaPack = async (data: {
+export const metaPack = (data: {
     from: string;
     to: IPersonItem[];
     cc?: IPersonItem[];
@@ -66,9 +66,7 @@ export const metaPack = async (data: {
         parts.push('Keys: ' + keys.join(' '));
     }
 
-    return Promise.resolve({
-        packedResult: parts.join('\n'),
-    });
+    return parts.join('\n');
 };
 
 export const encryptMailContent = (mailContent: string, key: string) => {

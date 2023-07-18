@@ -142,86 +142,57 @@ export default function NewMail() {
         }
         allowSaveRef.current = false;
         try {
-            handleSave().then(async obj => {
-                if (!obj) {
-                    return;
-                }
-                const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
-                if (!address || !showName) {
-                    console.warn('No address or name of current user, please check.');
-                    return;
-                }
-                const { html, text } = obj;
+            const saveResult = await handleSave();
+            if (!saveResult) return;
+            const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
+            if (!address || !showName) {
+                console.warn('No address or name of current user, please check.');
+                return;
+            }
+            const { html, text } = saveResult;
 
-                let keys: string[] = [];
-                if (type === MetaMailTypeEn.Encrypted) {
-                    // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
-                    let publicKeys: string[] = [publicKey];
-                    for (var i = 0; i < receivers.length; i++) {
-                        const receiverItem = receivers[i];
-                        const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
-                        const receiverPublicKey = encryptionData.encryption_public_key;
-                        if (!receiverPublicKey || receiverPublicKey.length == 0) {
-                            throw new Error(
-                                'Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.'
-                            );
-                        }
-                        publicKeys.push(receiverPublicKey);
-                    }
-                    console.log(publicKeys, '--');
-                    const mySalt = userSessionStorage.getUserInfo()?.salt;
-                    console.log(mySalt);
-                    if (!currRandomBitsRef.current) {
-                        console.log('error: no currrandombitsref.current');
-                    } else
-                        keys = await Promise.all(
-                            publicKeys.map(publicKey => createEncryptedMailKey(currRandomBitsRef.current, publicKey))
+            let keys: string[] = [];
+            if (type === MetaMailTypeEn.Encrypted) {
+                // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
+                let publicKeys: string[] = [publicKey];
+                for (var i = 0; i < receivers.length; i++) {
+                    const receiverItem = receivers[i];
+                    const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
+                    const receiverPublicKey = encryptionData.encryption_public_key;
+                    if (!receiverPublicKey || receiverPublicKey.length == 0) {
+                        throw new Error(
+                            'Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.'
                         );
-                }
-
-                const orderedAtt = attList;
-                orderedAtt.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
-                dateRef.current = new Date().toISOString();
-                let packData = {
-                    from: showName,
-                    to: receivers,
-                    date: dateRef.current,
-                    subject,
-                    text_hash: CryptoJS.SHA256(text).toString(),
-                    html_hash: CryptoJS.SHA256(html).toString(),
-                    attachments_hash: orderedAtt.map(att => att.sha256),
-                    name: ensName,
-                    keys: keys,
-                };
-                console.log(packData);
-                const sendMailInfo = {
-                    signMethod: 'eth_signTypedData',
-                    domain: { name: 'MetaMail', version: '1.0.0' },
-                    signTypes: {
-                        Sign_Mail: [
-                            { name: 'from', type: 'string' },
-                            { name: 'to', type: 'string[]' },
-                            { name: 'date', type: 'string' },
-                            { name: 'subject', type: 'string' },
-                            { name: 'text_hash', type: 'string' },
-                            { name: 'html_hash', type: 'string' },
-                            { name: 'attachments_hash', type: 'string[]' },
-                            { name: 'name', type: 'string' },
-                            { name: 'keys', type: 'string[]' },
-                        ],
-                    },
-                    signMessages: {
-                        ...packData,
-                    },
-                };
-                sendEmailInfoSignInstance.doSign(sendMailInfo).then(async signature => {
-                    if (signature) {
-                        handleSend(keys, signature);
-                    } else {
-                        console.error('doSign failed');
                     }
-                });
+                    publicKeys.push(receiverPublicKey);
+                }
+                console.log(publicKeys, '--');
+                const mySalt = userSessionStorage.getUserInfo()?.salt;
+                console.log(mySalt);
+                if (!currRandomBitsRef.current) {
+                    console.log('error: no currrandombitsref.current');
+                } else
+                    keys = await Promise.all(
+                        publicKeys.map(publicKey => createEncryptedMailKey(currRandomBitsRef.current, publicKey))
+                    );
+            }
+
+            const orderedAtt = attList;
+            orderedAtt.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
+            dateRef.current = new Date().toISOString();
+
+            const signature = await sendEmailInfoSignInstance.doSign({
+                from: showName,
+                to: receivers,
+                date: dateRef.current,
+                subject,
+                text_hash: CryptoJS.SHA256(text).toString(),
+                html_hash: CryptoJS.SHA256(html).toString(),
+                attachments_hash: orderedAtt.map(att => att.sha256),
+                name: ensName,
+                keys: keys,
             });
+            await handleSend(keys, signature);
         } catch (error) {
             console.error('handleclicksenderror');
             // notification.error({
