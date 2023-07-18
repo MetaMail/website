@@ -28,7 +28,7 @@ interface IGetRandomStrToSignParams {
     addr: string;
 }
 
-interface IGetRandomStrToSignResponse {
+export interface IGetRandomStrToSignResponse {
     signMethod: string;
     tokenForRandom: string;
     domain: any;

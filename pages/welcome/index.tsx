@@ -30,7 +30,8 @@ export default function Welcome() {
     const handleAutoLogin = async () => {
         try {
             const signData = await userHttp.getRandomStrToSign(address);
-            const signedMessage = await randomStringSignInstance.doSign(signData);
+            randomStringSignInstance.signData = signData;
+            const signedMessage = await randomStringSignInstance.doSign(signData.signMessages);
             const { user } = await userHttp.getJwtToken({
                 tokenForRandom: signData.tokenForRandom,
                 signedMessage,
