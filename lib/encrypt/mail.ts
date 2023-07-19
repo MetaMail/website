@@ -28,7 +28,7 @@ export const decryptMailKey = async (encryptedMailKey: string, privateKey: strin
     return asymmetricEncryptInstance.decrypt(encryptedMailKey, privateKey);
 };
 
-const concatAddress = (item: IPersonItem) => (item?.name ?? '') + ' ' + '<' + item.address + '>';
+export const concatAddress = (item: IPersonItem) => (item?.name ?? '') + ' ' + '<' + item.address + '>';
 
 export const metaPack = (data: {
     from: string;

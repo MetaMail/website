@@ -10,7 +10,7 @@ import { mailHttp, userHttp } from 'lib/http';
 import {
     getPrivateKey,
     decryptMailKey,
-    metaPack,
+    concatAddress,
     createEncryptedMailKey,
     encryptMailContent,
     decryptMailContent,
@@ -185,16 +185,45 @@ export default function NewMail() {
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
-                from: showName,
-                to: receivers.map(receiver => JSON.stringify(receiver)),
+                from: concatAddress({
+                    address: showName + PostfixOfAddress,
+                    name: ensName,
+                }),
+                to: receivers.map(receiver =>
+                    concatAddress({
+                        address: receiver.address,
+                        name: receiver.name || '',
+                    })
+                ),
                 date: dateRef.current,
                 subject,
                 text_hash: CryptoJS.SHA256(text).toString(),
                 html_hash: CryptoJS.SHA256(html).toString(),
                 attachments_hash: orderedAtt.map(att => att.sha256),
-                name: ensName || showName,
+                name: ensName || '',
                 keys: keys,
             });
+
+            console.log('Front end values: ', {
+                from: concatAddress({
+                    address: showName + PostfixOfAddress,
+                    name: ensName,
+                }),
+                to: receivers.map(receiver =>
+                    concatAddress({
+                        address: receiver.address,
+                        name: receiver.name || '',
+                    })
+                ),
+                date: dateRef.current,
+                subject,
+                text_hash: CryptoJS.SHA256(text).toString(),
+                html_hash: CryptoJS.SHA256(html).toString(),
+                attachments_hash: orderedAtt.map(att => att.sha256),
+                name: ensName || '',
+                keys: keys,
+            });
+
             await handleSend(keys, signature);
         } catch (error) {
             console.error(error);
