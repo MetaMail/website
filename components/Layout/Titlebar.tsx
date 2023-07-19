@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { useUtilsStore } from 'lib/zustand-store';
+import { PostfixOfAddress } from 'lib/base/request';
 
 import copy from 'assets/mailbox/copy.svg';
 import right from 'assets/mailbox/right.svg';
@@ -52,9 +53,9 @@ export default function Titlebar() {
                         tabIndex={0}
                         className="mt-3 z-[1] px-24 py-12 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-270">
                         <div className="text-[#93989A] flex flex-row items-center my-4">
-                            <p className="flex-1 flex mr-4 cursor-default" title={`${address}@mmail.ink`}>
+                            <p className="flex-1 flex mr-4 cursor-default" title={`${address}@${PostfixOfAddress}`}>
                                 <span className="flex-1 omit w-0">{address}</span>
-                                <span>@mmail.ink</span>
+                                <span>@{PostfixOfAddress}</span>
                             </p>
                             <Image
                                 src={copy}
@@ -67,7 +68,7 @@ export default function Titlebar() {
                             />
                         </div>
                         <div className="text-[#93989A] flex flex-row items-center my-8">
-                            <span className="flex-1 omit mr-4 cursor-default">mvsovo@mmail.ink</span>
+                            <span className="flex-1 omit mr-4 cursor-default">mvsovo@{PostfixOfAddress}</span>
                             <Image
                                 src={copy}
                                 alt="copy"

@@ -37,6 +37,7 @@ interface IUpdateMailParams {
     in_reply_to?: string;
     part_text?: string;
     part_html?: string;
+    meta_type?: MetaMailTypeEn;
 }
 
 interface IUpdateMailResponse {

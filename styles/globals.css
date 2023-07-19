@@ -68,3 +68,29 @@ body {
 .modal-bg:active {
     background-color: #006ad4;
 }
+
+.ql-container.ql-snow {
+    @apply flex border-0 min-h-0 flex-1;
+    border: none !important;
+}
+.ql-toolbar.ql-snow {
+    @apply flex bg-white;
+    border: none !important;
+}
+.ql-snow .ql-picker.ql-header {
+    @apply hidden;
+}
+.ql-editor {
+    @apply flex-1;
+    padding: 0 !important;
+}
+.ql-snow .ql-tooltip {
+    @apply ml-150;
+}
+.ql-toolbar.ql-snow .ql-formats {
+    margin-right: 0px !important;
+}
+
+ql-snow .ql-toolbar button {
+    @apply w-12 h-12;
+}

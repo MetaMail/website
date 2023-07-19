@@ -25,7 +25,7 @@ function NameSelector() {
     };
 
     return (
-        <div className="pl-[4%]">
+        <div className="">
             <span className="dropdown inline-relative gap-10">
                 <div className="flex gap-10">
                     <span>{activeName + PostfixOfAddress}</span>

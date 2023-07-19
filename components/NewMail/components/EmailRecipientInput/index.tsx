@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
+import { toast } from 'react-toastify';
+
 import { IPersonItem } from 'lib/constants/interfaces';
+import Icon from 'components/Icon';
 import { add, cancel } from 'assets/icons';
 
 interface EmailRecipientInputProps {
@@ -27,7 +29,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
             onAddReceiver(emailInput);
             setEmailInput('');
         } else {
-            alert('Invalid Email Address!');
+            toast.error('Invalid Email Address.');
         }
     };
 
@@ -42,7 +44,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
     };
 
     return (
-        <div className="flex pl-38 mt-12 h-21 w-full text-sm text-[#878787] ">
+        <div className="flex h-40 text-[#878787] items-center gap-10">
             <input
                 type="email"
                 placeholder="Add Receipients"
@@ -52,15 +54,15 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
                 className="focus:outline-none "
             />
             <button onClick={addRecipient}>
-                <Image src={add} alt="add receivers" />
+                <Icon url={add} title="add receivers" className="w-20 h-20" />
             </button>
-            {receivers && receivers.length > 0 ? <div>Receipients:</div> : null}
+            {receivers && receivers.length > 0 ? <div>Recipients:</div> : null}
             <ul>
                 {receivers.map((email, index) => (
                     <li key={index} className="flex">
                         <div>{email.address}</div>
                         <button onClick={() => removeRecipient(email.address)}>
-                            <Image src={cancel} alt="cancel" />
+                            <Icon url={cancel} title="cancel" className="w-20 h-20" />
                         </button>
                     </li>
                 ))}
