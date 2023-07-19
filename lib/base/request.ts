@@ -6,7 +6,7 @@ import { userSessionStorage } from 'lib/utils';
 //const BASE_URL = 'http://localhost:8080';
 const BASE_URL = 'https://api-v2.mmail-test.ink/';
 
-export const PostfixOfAddress = '@mmail.ink';
+export const PostfixOfAddress = '@mmail-test.ink';
 
 export abstract class MMHttp extends MMObject {
     private _baseUrl: string;

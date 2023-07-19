@@ -30,8 +30,8 @@ interface IMailItemProps {
 
 export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemProps) {
     const { filterType } = useMailListStore();
-    const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
-    const { setIsWriting } = useNewMailStore();
+    const { setSelectedMail } = useMailDetailStore();
+    const { setSelectedDraft } = useNewMailStore();
 
     const getIsRead = (mail: IMailContentItem) => {
         return mail.read == ReadStatusTypeEn.read;
@@ -75,11 +75,9 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
             await handleChangeMailStatus({ read: ReadStatusTypeEn.read });
         }
         if (filterType === FilterTypeEn.Draft) {
-            setDetailFromNew(mail);
-            setIsWriting(true);
+            setSelectedDraft(mail);
         } else {
-            setDetailFromList(mail);
-            setIsMailDetail(true);
+            setSelectedMail(mail);
         }
     };
 
@@ -116,7 +114,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                 </span>
             </div>
             <div className="text-[#333333] flex-1 w-0 ml-14 omit">
-                <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : '#fff'} />
+                <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
                 <span className={`ml-8 ${getIsRead(mail) ? 'text-black text-opacity-60' : ''}`}>
                     {mail.subject || '( no subject )'}
                 </span>

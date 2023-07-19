@@ -10,7 +10,7 @@ import { mailHttp, userHttp } from 'lib/http';
 import {
     getPrivateKey,
     decryptMailKey,
-    metaPack,
+    concatAddress,
     createEncryptedMailKey,
     encryptMailContent,
     decryptMailContent,
@@ -28,9 +28,10 @@ import { cancel, extend } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
+import styles from './index.module.scss';
+
 export default function NewMail() {
-    const { detailFromNew, setDetailFromNew } = useMailDetailStore();
-    const { isWriting, setIsWriting } = useNewMailStore();
+    const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
     const [subject, setSubject] = useState<string>('');
@@ -40,8 +41,8 @@ export default function NewMail() {
     const [attList, setAttList] = useState<any[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [editable, setEditable] = useState<boolean>();
-    const draftID = detailFromNew?.message_id;
-    const type: MetaMailTypeEn = Number(detailFromNew?.meta_type);
+    const draftID = selectedDraft?.message_id;
+    const type: MetaMailTypeEn = Number(selectedDraft?.meta_type);
     const myKeyRef = useRef<string>();
     const dateRef = useRef<string>();
     const allowSaveRef = useRef(true);
@@ -93,7 +94,7 @@ export default function NewMail() {
         return () => {
             mailSessionStorage.clearMailContent();
         };
-    }, [detailFromNew]);
+    }, [selectedDraft]);
     useInterval(() => {
         if (!allowSaveRef.current) return;
         try {
@@ -118,7 +119,7 @@ export default function NewMail() {
                 // });
 
                 //router.push('/home');
-                setIsWriting(false);
+                setSelectedDraft(null);
             }
         } catch (error) {
             console.log(error);
@@ -178,23 +179,27 @@ export default function NewMail() {
             }
 
             const orderedAtt = attList;
-            orderedAtt.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
+            if (orderedAtt.length) {
+                orderedAtt.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
+            }
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
-                from: showName,
-                to: receivers,
+                from_address: showName + PostfixOfAddress,
+                from_name: ensName || '',
+                to_address: receivers.map(receiver => receiver.address),
+                to_name: receivers.map(receiver => receiver.name || ''),
                 date: dateRef.current,
-                subject,
+                subject: subject,
                 text_hash: CryptoJS.SHA256(text).toString(),
                 html_hash: CryptoJS.SHA256(html).toString(),
                 attachments_hash: orderedAtt.map(att => att.sha256),
-                name: ensName,
                 keys: keys,
             });
+
             await handleSend(keys, signature);
         } catch (error) {
-            console.error('handleclicksenderror');
+            console.error(error);
             // notification.error({
             // message: 'Failed Send',
             // description: '' + error,
@@ -268,7 +273,7 @@ export default function NewMail() {
             //if (!query?.id && query.id.length === 0) {
             //  throw new Error();
             //}
-            const mail = await mailHttp.getMailDetailByID(window.btoa(id ?? detailFromNew?.message_id ?? ''));
+            const mail = await mailHttp.getMailDetailByID(window.btoa(id ?? selectedDraft?.message_id ?? ''));
 
             if (mail) {
                 //const { subject, mail_to, part_html } = getMailContent();
@@ -321,9 +326,9 @@ export default function NewMail() {
 
     return (
         <div
-            className={`flex flex-col font-poppins bg-white p-18 transition-all absolute bottom-0 right-0 border border-[#EFEFEF] rounded-10 ${
-                isExtend ? 'h-full w-[calc(100vw-200px)]' : 'h-502 w-[45vw]'
-            }`}>
+            className={`flex flex-col font-poppins bg-white p-18 transition-all absolute bottom-0 right-0 rounded-10 ${
+                isExtend ? 'h-full w-full' : 'h-502 w-[45vw]'
+            } ${styles.newMailWrap}`}>
             <header className="flex justify-between">
                 <div className="flex flex-row">
                     <div className="w-6 h-24 bg-[#006AD4] rounded-4" />
@@ -335,9 +340,8 @@ export default function NewMail() {
                         url={cancel}
                         className="w-13 scale-[120%] h-auto self-center"
                         onClick={() => {
-                            setIsWriting(false);
                             handleSave();
-                            setDetailFromNew(null);
+                            setSelectedDraft(null);
                         }}
                     />
                 </div>

@@ -53,6 +53,10 @@ export abstract class MMSign extends MMObject {
         const walletProvider = new ethers.providers.Web3Provider(ethereum);
         const signer = walletProvider.getSigner();
 
+        console.log('this.domain: ', this.domain);
+        console.log('signTypes: ', signTypes);
+        console.log('signMessages: ', signMessages);
+
         const signature = await signer._signTypedData(this.domain, signTypes, signMessages);
         const expectedSignerAddress = this.address;
         const recoveredAddress = ethers.utils.verifyTypedData(this.domain, signTypes, signMessages, signature);

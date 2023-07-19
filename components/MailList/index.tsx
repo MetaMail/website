@@ -25,11 +25,16 @@ const MailListFilters = ['All', 'None', 'Read', 'Unread', 'Encrypted', 'UnEncryp
 type MailListFiltersType = (typeof MailListFilters)[number];
 
 export default function MailList() {
-    const { filterType, pageIndex, addPageIndex, subPageIndex, setUnreadInboxCount, setUnreadSpamCount } =
-        useMailListStore();
-    const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
-    const { setIsWriting } = useNewMailStore();
-    const { removeAllState } = useUtilsStore();
+    const {
+        filterType,
+        pageIndex,
+        addPageIndex,
+        subPageIndex,
+        setUnreadInboxCount,
+        setUnreadSpamCount,
+        mode,
+        setMode,
+    } = useMailListStore();
 
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<MailListItemType[]>([]);

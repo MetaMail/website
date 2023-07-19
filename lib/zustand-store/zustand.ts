@@ -1,11 +1,15 @@
 import { create } from 'zustand';
 import { IMailContentItem, FilterTypeEn } from 'lib/constants';
 
+type MailListMode = 'normal' | 'selected';
+
 interface IMailListState {
+    mode: MailListMode;
     filterType: FilterTypeEn;
     pageIndex: number;
     unreadInboxCount: number;
     unreadSpamCount: number;
+    setMode: (mode: MailListMode) => void;
     setFilterType: (filterType: FilterTypeEn) => void;
     addPageIndex: () => void;
     subPageIndex: () => void;
@@ -14,11 +18,13 @@ interface IMailListState {
     setUnreadSpamCount: (unreadSpamCount: number) => void;
 }
 export const useMailListStore = create<IMailListState>()(set => ({
+    mode: 'normal',
     filterType: FilterTypeEn.Inbox,
     pageIndex: 1,
     unreadInboxCount: 0,
     unreadSpamCount: 0,
     setFilterType: (filterType: FilterTypeEn) => set(() => ({ filterType })),
+    setMode: (mode: MailListMode) => set(() => ({ mode })),
     addPageIndex: () => set(state => ({ pageIndex: state.pageIndex + 1 })),
     subPageIndex: () => set(state => ({ pageIndex: state.pageIndex - 1 })),
     resetPageIndex: () => set({ pageIndex: 1 }),
@@ -27,29 +33,21 @@ export const useMailListStore = create<IMailListState>()(set => ({
 }));
 
 interface IMailDetailState {
-    detailFromList: IMailContentItem;
-    detailFromNew: IMailContentItem;
-    isMailDetail: boolean;
-    setDetailFromList: (item: IMailContentItem) => void;
-    setDetailFromNew: (item: IMailContentItem) => void;
-    setIsMailDetail: (isMailDetail: boolean) => void;
+    selectedMail: IMailContentItem;
+    setSelectedMail: (selectedMail: IMailContentItem) => void;
 }
 export const useMailDetailStore = create<IMailDetailState>()(set => ({
-    detailFromList: null,
-    detailFromNew: null,
-    isMailDetail: false,
-    setDetailFromList: (detailFromList: IMailContentItem) => set(() => ({ detailFromList })),
-    setDetailFromNew: (detailFromNew: IMailContentItem) => set(() => ({ detailFromNew })),
-    setIsMailDetail: (isMailDetail: boolean) => set(() => ({ isMailDetail })),
+    selectedMail: null,
+    setSelectedMail: (selectedMail: IMailContentItem) => set(() => ({ selectedMail })),
 }));
 
 interface INewMailState {
-    isWriting: boolean;
-    setIsWriting: (isWriting: boolean) => void;
+    selectedDraft: IMailContentItem;
+    setSelectedDraft: (selectedDraft: IMailContentItem) => void;
 }
 export const useNewMailStore = create<INewMailState>()(set => ({
-    isWriting: false,
-    setIsWriting: (isWriting: boolean) => set(() => ({ isWriting })),
+    selectedDraft: null,
+    setSelectedDraft: (selectedDraft: IMailContentItem) => set(() => ({ selectedDraft })),
 }));
 
 interface IUtilsState {
@@ -58,12 +56,13 @@ interface IUtilsState {
 export const useUtilsStore = create<IUtilsState>()(set => ({
     removeAllState: () => {
         const { setFilterType, resetPageIndex, setUnreadInboxCount, setUnreadSpamCount } = useMailListStore.getState();
-        const { setDetailFromList, setDetailFromNew } = useMailDetailStore.getState();
+        const { setSelectedMail } = useMailDetailStore.getState();
+        const { setSelectedDraft } = useNewMailStore.getState();
         setFilterType(0);
         resetPageIndex();
         setUnreadInboxCount(0);
         setUnreadSpamCount(0);
-        setDetailFromList(null);
-        setDetailFromNew(null);
+        setSelectedMail(null);
+        setSelectedDraft(null);
     },
 }));
