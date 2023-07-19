@@ -179,23 +179,25 @@ export default function NewMail() {
             }
 
             const orderedAtt = attList;
-            orderedAtt.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
+            if (orderedAtt.length) {
+                orderedAtt.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
+            }
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
                 from: showName,
-                to: receivers,
+                to: receivers.map(receiver => JSON.stringify(receiver)),
                 date: dateRef.current,
                 subject,
                 text_hash: CryptoJS.SHA256(text).toString(),
                 html_hash: CryptoJS.SHA256(html).toString(),
                 attachments_hash: orderedAtt.map(att => att.sha256),
-                name: ensName,
+                name: ensName || showName,
                 keys: keys,
             });
             await handleSend(keys, signature);
         } catch (error) {
-            console.error('handleclicksenderror');
+            console.error(error);
             // notification.error({
             // message: 'Failed Send',
             // description: '' + error,
