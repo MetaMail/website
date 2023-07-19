@@ -32,13 +32,9 @@ import {
     markUnread,
 } from 'assets/icons';
 
-interface IMailDetailProps {
-    mail: MailListItemType;
-}
-
-export default function MailDetail({ mail }: IMailDetailProps) {
+export default function MailDetail() {
     const router = useRouter();
-    const { isMailDetail, detailFromList, setIsMailDetail } = useMailDetailStore();
+    const { selectedMail, setSelectedMail } = useMailDetailStore();
 
     const [mailDetail, setMailDetail] = useState<IMailContentItem>();
     const [isExtend, setIsExtend] = useState(false);
@@ -47,17 +43,17 @@ export default function MailDetail({ mail }: IMailDetailProps) {
     const [isRead, setIsRead] = useState(true);
     const [mailInfo, setMailInfo] = useState([
         {
-            message_id: detailFromList.message_id,
-            mailbox: detailFromList.mailbox,
+            message_id: selectedMail.message_id,
+            mailbox: selectedMail.mailbox,
         },
     ]);
-    const [mark, setMark] = useState(detailFromList.mark === 1);
+    const [mark, setMark] = useState(selectedMail.mark === 1);
     const randomBitsRef = useRef('');
     const mailDetailTopActions = [
         {
             src: back,
             handler: () => {
-                setIsMailDetail(false);
+                setSelectedMail(null);
             },
         },
         {
@@ -224,7 +220,7 @@ export default function MailDetail({ mail }: IMailDetailProps) {
             //  })
             if (!loading) setLoading(true);
             //if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
-            const mail = await mailHttp.getMailDetailByID(window.btoa(detailFromList.message_id ?? ''));
+            const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id ?? ''));
             changeInnerHTML(mail);
             setMailDetail(mail);
             //}
@@ -241,25 +237,25 @@ export default function MailDetail({ mail }: IMailDetailProps) {
         }
     };
 
-    useEffect(() => {
-        setMailInfo([
-            {
-                message_id: detailFromList.message_id,
-                mailbox: detailFromList.mailbox,
-            },
-        ]);
-        setMark(detailFromList.mark === 1 ? true : false);
-        if (detailFromList.meta_type === MetaMailTypeEn.Encrypted) {
-            setReadable(false);
-        }
-        // handleMarkRead();
-        if (userSessionStorage.getUserInfo()?.address) {
-            if (isMailDetail) handleLoad();
-        } else {
-            userSessionStorage.clearUserInfo();
-            router.push('/');
-        }
-    }, [detailFromList]);
+    // useEffect(() => {
+    //     setMailInfo([
+    //         {
+    //             message_id: selectedMail.message_id,
+    //             mailbox: selectedMail.mailbox,
+    //         },
+    //     ]);
+    //     setMark(selectedMail.mark === 1 ? true : false);
+    //     if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
+    //         setReadable(false);
+    //     }
+    //     // handleMarkRead();
+    //     if (userSessionStorage.getUserInfo()?.address) {
+    //         if (isMailDetail) handleLoad();
+    //     } else {
+    //         userSessionStorage.clearUserInfo();
+    //         router.push('/');
+    //     }
+    // }, [selectedMail]);
 
     return (
         <div className="flex">
@@ -288,7 +284,7 @@ export default function MailDetail({ mail }: IMailDetailProps) {
                                 />
                                 <Icon
                                     url={cancel}
-                                    onClick={() => setIsMailDetail(false)}
+                                    onClick={() => setSelectedMail(null)}
                                     className="w-13 scale-[120%] h-auto self-center"
                                 />
                             </div>

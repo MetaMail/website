@@ -26,8 +26,7 @@ export default function Sidebar() {
         setUnreadSpamCount,
         unreadSpamCount,
     } = useMailListStore();
-    const { setIsWriting } = useNewMailStore();
-    const { setDetailFromNew } = useMailDetailStore();
+    const { setSelectedDraft } = useNewMailStore();
 
     function handleReturnHome() {
         router.push('/');
@@ -41,12 +40,9 @@ export default function Sidebar() {
     async function handleClickNewMail() {
         const { publicKey, address } = userSessionStorage.getUserInfo();
         const key = await createEncryptedMailKey(publicKey, address);
-        // 以前的代码中，如果不是MetaMailTypeEn.Encrypted，还会执行 userStorage.setRandomBits(undefined);
-        // 这里目前全都当MetaMailTypeEn.Encrypted处理，估计代码还没写完，写完以后把注释删除
         const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key);
         const mail = await mailHttp.getMailDetailByID(window.btoa(message_id ?? ''));
-        setDetailFromNew(mail);
-        setIsWriting(true);
+        setSelectedDraft(mail);
     }
 
     const renderBadge = (type: FilterTypeEn) => {

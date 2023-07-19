@@ -31,8 +31,7 @@ import 'react-quill/dist/quill.snow.css';
 import styles from './index.module.scss';
 
 export default function NewMail() {
-    const { detailFromNew, setDetailFromNew } = useMailDetailStore();
-    const { isWriting, setIsWriting } = useNewMailStore();
+    const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
     const [subject, setSubject] = useState<string>('');
@@ -42,8 +41,8 @@ export default function NewMail() {
     const [attList, setAttList] = useState<any[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [editable, setEditable] = useState<boolean>();
-    const draftID = detailFromNew?.message_id;
-    const type: MetaMailTypeEn = Number(detailFromNew?.meta_type);
+    const draftID = selectedDraft?.message_id;
+    const type: MetaMailTypeEn = Number(selectedDraft?.meta_type);
     const myKeyRef = useRef<string>();
     const dateRef = useRef<string>();
     const allowSaveRef = useRef(true);
@@ -95,7 +94,7 @@ export default function NewMail() {
         return () => {
             mailSessionStorage.clearMailContent();
         };
-    }, [detailFromNew]);
+    }, [selectedDraft]);
     useInterval(() => {
         if (!allowSaveRef.current) return;
         try {
@@ -120,7 +119,7 @@ export default function NewMail() {
                 // });
 
                 //router.push('/home');
-                setIsWriting(false);
+                setSelectedDraft(null);
             }
         } catch (error) {
             console.log(error);
@@ -270,7 +269,7 @@ export default function NewMail() {
             //if (!query?.id && query.id.length === 0) {
             //  throw new Error();
             //}
-            const mail = await mailHttp.getMailDetailByID(window.btoa(id ?? detailFromNew?.message_id ?? ''));
+            const mail = await mailHttp.getMailDetailByID(window.btoa(id ?? selectedDraft?.message_id ?? ''));
 
             if (mail) {
                 //const { subject, mail_to, part_html } = getMailContent();
@@ -337,9 +336,8 @@ export default function NewMail() {
                         url={cancel}
                         className="w-13 scale-[120%] h-auto self-center"
                         onClick={() => {
-                            setIsWriting(false);
                             handleSave();
-                            setDetailFromNew(null);
+                            setSelectedDraft(null);
                         }}
                     />
                 </div>

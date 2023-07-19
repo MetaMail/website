@@ -30,8 +30,8 @@ interface IMailItemProps {
 
 export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemProps) {
     const { filterType } = useMailListStore();
-    const { setDetailFromList, setDetailFromNew, setIsMailDetail, detailFromNew } = useMailDetailStore();
-    const { setIsWriting } = useNewMailStore();
+    const { setSelectedMail } = useMailDetailStore();
+    const { setSelectedDraft } = useNewMailStore();
 
     const getIsRead = (mail: IMailContentItem) => {
         return mail.read == ReadStatusTypeEn.read;
@@ -75,11 +75,9 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
             await handleChangeMailStatus({ read: ReadStatusTypeEn.read });
         }
         if (filterType === FilterTypeEn.Draft) {
-            setDetailFromNew(mail);
-            setIsWriting(true);
+            setSelectedDraft(mail);
         } else {
-            setDetailFromList(mail);
-            setIsMailDetail(true);
+            setSelectedMail(mail);
         }
     };
 
