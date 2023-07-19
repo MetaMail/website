@@ -185,42 +185,15 @@ export default function NewMail() {
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
-                from: concatAddress({
-                    address: showName + PostfixOfAddress,
-                    name: ensName,
-                }),
-                to: receivers.map(receiver =>
-                    concatAddress({
-                        address: receiver.address,
-                        name: receiver.name || '',
-                    })
-                ),
+                from_address: showName + PostfixOfAddress,
+                from_name: ensName || '',
+                to_address: receivers.map(receiver => receiver.address),
+                to_name: receivers.map(receiver => receiver.name || ''),
                 date: dateRef.current,
-                subject,
+                subject: subject,
                 text_hash: CryptoJS.SHA256(text).toString(),
                 html_hash: CryptoJS.SHA256(html).toString(),
                 attachments_hash: orderedAtt.map(att => att.sha256),
-                name: ensName || '',
-                keys: keys,
-            });
-
-            console.log('Front end values: ', {
-                from: concatAddress({
-                    address: showName + PostfixOfAddress,
-                    name: ensName,
-                }),
-                to: receivers.map(receiver =>
-                    concatAddress({
-                        address: receiver.address,
-                        name: receiver.name || '',
-                    })
-                ),
-                date: dateRef.current,
-                subject,
-                text_hash: CryptoJS.SHA256(text).toString(),
-                html_hash: CryptoJS.SHA256(html).toString(),
-                attachments_hash: orderedAtt.map(att => att.sha256),
-                name: ensName || '',
                 keys: keys,
             });
 

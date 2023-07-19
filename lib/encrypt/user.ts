@@ -42,7 +42,7 @@ export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) =
         throw new Error('error: no salt in session storage');
     }
     const signedSalt = await saltSignInstance.doSign({
-        salt,
+        salt: salt,
         hint: 'Sign this salt to generate encryption key',
     });
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
