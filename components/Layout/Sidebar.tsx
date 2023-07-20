@@ -39,10 +39,10 @@ export default function Sidebar() {
 
     async function handleClickNewMail() {
         const { publicKey, address } = userSessionStorage.getUserInfo();
-        const key = await createEncryptedMailKey(publicKey, address);
+        const { key, randomBits } = await createEncryptedMailKey(publicKey, address);
         const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Signed, key);
         const mail = await mailHttp.getMailDetailByID(window.btoa(message_id ?? ''));
-        setSelectedDraft(mail);
+        setSelectedDraft({ ...mail, randomBits });
     }
 
     const renderBadge = (type: FilterTypeEn) => {

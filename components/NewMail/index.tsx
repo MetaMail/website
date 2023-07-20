@@ -31,6 +31,18 @@ import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
 
+/**整体收发流程（加密邮件）
+ * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
+ * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
+ * 3. 解密邮件时，用自己的私钥先解出原始的randomBits，然后用randomBits对称解密邮件内容
+ */
+
+/**
+ * 1. 用途是加密邮件内容（对称加密）
+ * 2. 如果是新建邮件，selectedDraft中会带有原始的randomBits（这样就不用在新建邮件时去签名解密了），如果是从草稿中加载，需要先通过私钥解一下randomBits
+ */
+let randomBits: string = '';
+
 export default function NewMail() {
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
@@ -45,7 +57,6 @@ export default function NewMail() {
     const myKeyRef = useRef<string>();
     const dateRef = useRef<string>();
     const allowSaveRef = useRef(true);
-    const currRandomBitsRef = useRef<string>();
     const reactQuillRef = useRef<ReactQuillType>();
 
     const getQuill = () => {
@@ -80,35 +91,25 @@ export default function NewMail() {
     };
 
     const checkEncryptable = (receivers: IPersonItem[]) => {
-        return true;
+        return receivers.every(receiver => receiver.address.split('@')[1] === PostfixOfAddress);
     };
 
-    const handleSend = async (keys: string[], signature?: string) => {
-        try {
-            const { message_id } = await mailHttp.sendMail(draftID, {
-                date: dateRef.current,
-                signature: signature,
-                keys,
-            });
-            if (message_id) {
-                toast.success('Your email has been sent successfully.');
-                setSelectedDraft(null);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Failed to send mail.');
-        }
+    const postSignature = async (keys: string[], signature?: string) => {
+        const { message_id } = await mailHttp.sendMail(draftID, {
+            date: dateRef.current,
+            signature: signature,
+            keys,
+        });
+        return message_id;
     };
 
     const handleClickSend = async () => {
-        if (!draftID) return;
         if (receivers?.length < 1) {
             return toast.error("Can't send mail without receivers.");
         }
         allowSaveRef.current = false;
         try {
             const saveResult = await handleSave();
-            if (!saveResult) return;
             const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
             if (!address || !showName) {
                 console.warn('No address or name of current user, please check.');
@@ -119,7 +120,12 @@ export default function NewMail() {
             let keys: string[] = [];
             if (metaType === MetaMailTypeEn.Encrypted) {
                 // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
-                let publicKeys: string[] = [publicKey];
+                const receiversInfo: { publicKey: string; address: string }[] = [
+                    {
+                        publicKey,
+                        address,
+                    },
+                ];
                 for (var i = 0; i < receivers.length; i++) {
                     const receiverItem = receivers[i];
                     const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
@@ -129,17 +135,15 @@ export default function NewMail() {
                             'Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.'
                         );
                     }
-                    publicKeys.push(receiverPublicKey);
+                    receiversInfo.push({
+                        publicKey: receiverPublicKey,
+                        address: receiverItem.address,
+                    });
                 }
-                console.log(publicKeys, '--');
-                const mySalt = userSessionStorage.getUserInfo()?.salt;
-                console.log(mySalt);
-                if (!currRandomBitsRef.current) {
-                    console.log('error: no currrandombitsref.current');
-                } else
-                    keys = await Promise.all(
-                        publicKeys.map(publicKey => createEncryptedMailKey(currRandomBitsRef.current, publicKey))
-                    );
+                const result = await Promise.all(
+                    receiversInfo.map(item => createEncryptedMailKey(item.publicKey, item.address))
+                );
+                keys = result.map(item => item.key);
             }
 
             const orderedAtt = attList;
@@ -161,36 +165,38 @@ export default function NewMail() {
                 keys: keys,
             });
 
-            await handleSend(keys, signature);
+            const messageId = await postSignature(keys, signature);
+            if (messageId) {
+                toast.success('Your email has been sent successfully.');
+                setSelectedDraft(null);
+            } else {
+                throw new Error('No message id returned.');
+            }
         } catch (error) {
             console.error(error);
-            // notification.error({
-            // message: 'Failed Send',
-            // description: '' + error,
-            // });
+            toast.error('Failed to send mail.');
         }
     };
 
     const handleSave = async () => {
-        if (!currRandomBitsRef.current) handleDecrypted();
-        if (!draftID || !editable) return;
+        if (!randomBits) handleDecrypted();
+        if (!editable) return;
 
         const oldHtml = mailSessionStorage.getQuillHtml();
         const oldText = mailSessionStorage.getQuillText();
         const quill = getQuill();
         if (!quill || !quill?.getHTML || !quill?.getText) {
-            toast.error('Failed to get message content');
-            return;
+            throw new Error('Failed to get message content');
         }
         let html = quill?.getHTML(),
             text = quill?.getText();
         if (oldHtml == html && oldText == text) return { html, text };
         if (type === MetaMailTypeEn.Encrypted) {
-            if (!currRandomBitsRef.current) {
+            if (!randomBits) {
                 console.log('error: no currrandombitsref.current');
             } else {
-                html = encryptMailContent(html, currRandomBitsRef.current);
-                text = encryptMailContent(text, currRandomBitsRef.current);
+                html = encryptMailContent(html, randomBits);
+                text = encryptMailContent(text, randomBits);
             }
         }
         console.log(receivers);
@@ -223,21 +229,21 @@ export default function NewMail() {
         if (!myKeyRef.current) return;
         const { privateKey, salt } = userSessionStorage.getUserInfo();
         const decryptPrivateKey = await getPrivateKey(privateKey, salt);
-        const randomBits = await decryptMailKey(myKeyRef.current, decryptPrivateKey);
+        randomBits = await decryptMailKey(myKeyRef.current, decryptPrivateKey);
         if (!randomBits) {
             console.log('error: no randombits');
             return;
         }
-        currRandomBitsRef.current = randomBits;
-        const decryptedContent = decryptMailContent(content, currRandomBitsRef.current);
+        const decryptedContent = decryptMailContent(content, randomBits);
         setContent(decryptedContent);
         setEditable(true);
         console.log('setEditable(true);');
     };
 
     useEffect(() => {
-        setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!currRandomBitsRef.current);
+        setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
         if (selectedDraft.meta_header?.keys) myKeyRef.current = selectedDraft.meta_header?.keys?.[0];
+        randomBits = selectedDraft.randomBits;
     }, [selectedDraft]);
 
     useInterval(() => {
@@ -264,8 +270,8 @@ export default function NewMail() {
                     <Icon
                         url={cancel}
                         className="w-20 scale-[120%] h-auto self-center"
-                        onClick={() => {
-                            handleSave();
+                        onClick={async () => {
+                            await handleSave();
                             setSelectedDraft(null);
                         }}
                     />
@@ -326,7 +332,7 @@ export default function NewMail() {
                         metaType={type}
                         onAttachment={handleSetAttachmentList}
                         showList={attList}
-                        currRandomBits={currRandomBitsRef.current}
+                        currRandomBits={randomBits}
                     />
                 </button>
             </div>
