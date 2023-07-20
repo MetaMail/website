@@ -91,7 +91,7 @@ export default function NewMail() {
     };
 
     const checkEncryptable = (receivers: IPersonItem[]) => {
-        return receivers.every(receiver => receiver.address.split('@')[1] === PostfixOfAddress);
+        return receivers.every(receiver => receiver.address.endsWith(PostfixOfAddress));
     };
 
     const postSignature = async (keys: string[], signature?: string) => {
