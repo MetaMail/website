@@ -43,20 +43,15 @@ import styles from './index.module.scss';
  */
 let randomBits: string = '';
 
+let selectedDraftKey: string = ''; // 当前选中的草稿的randomBits的公钥加密结果
+let autoSaveMail = true;
+
 export default function NewMail() {
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
-    const [subject, setSubject] = useState<string>('');
-    const [receivers, setReceivers] = useState<IPersonItem[]>([]);
-    const [content, setContent] = useState<string>('');
-    const [attList, setAttList] = useState<any[]>([]);
     const [editable, setEditable] = useState<boolean>();
-    const draftID = selectedDraft?.message_id;
-    const type: MetaMailTypeEn = Number(selectedDraft?.meta_type);
-    const myKeyRef = useRef<string>();
     const dateRef = useRef<string>();
-    const allowSaveRef = useRef(true);
     const reactQuillRef = useRef<ReactQuillType>();
 
     const getQuill = () => {
@@ -65,7 +60,8 @@ export default function NewMail() {
     };
 
     const handleSetAttachmentList = (attachment: any) => {
-        setAttList([...attList, attachment]);
+        const newAttachment = [...selectedDraft.attachments, attachment];
+        setSelectedDraft({ ...selectedDraft, attachments: newAttachment });
     };
 
     const addReceiver = (address: string) => {
@@ -73,15 +69,19 @@ export default function NewMail() {
             address: address,
             name: address.split('@')[0],
         };
-        setReceivers([...receivers, newReceiver]);
+        const newReceivers = [...selectedDraft.mail_to, newReceiver];
+        setSelectedDraft({ ...selectedDraft, mail_to: newReceivers });
     };
 
     const removeReceiver = (email: string) => {
-        setReceivers(receivers.filter(receiver => receiver.address !== email));
+        setSelectedDraft({
+            ...selectedDraft,
+            mail_to: selectedDraft.mail_to.filter(receiver => receiver.address !== email),
+        });
     };
 
     const handleChangeContent = (content: string) => {
-        setContent(content);
+        setSelectedDraft({ ...selectedDraft, part_html: content });
         const quill = getQuill();
         if (!quill || !quill?.getHTML || !quill?.getText) {
             return toast.error('Failed to get message content');
@@ -95,7 +95,7 @@ export default function NewMail() {
     };
 
     const postSignature = async (keys: string[], signature?: string) => {
-        const { message_id } = await mailHttp.sendMail(draftID, {
+        const { message_id } = await mailHttp.sendMail(selectedDraft.message_id, {
             date: dateRef.current,
             signature: signature,
             keys,
@@ -104,30 +104,21 @@ export default function NewMail() {
     };
 
     const handleClickSend = async () => {
-        if (receivers?.length < 1) {
+        if (selectedDraft.mail_to?.length < 1) {
             return toast.error("Can't send mail without receivers.");
         }
-        allowSaveRef.current = false;
+        autoSaveMail = false;
         try {
             const saveResult = await handleSave();
-            const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
-            if (!address || !showName) {
-                console.warn('No address or name of current user, please check.');
-                return;
-            }
             const { html, text, metaType } = saveResult;
+            const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
 
             let keys: string[] = [];
             if (metaType === MetaMailTypeEn.Encrypted) {
                 // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
-                const receiversInfo: { publicKey: string; address: string }[] = [
-                    {
-                        publicKey,
-                        address,
-                    },
-                ];
-                for (var i = 0; i < receivers.length; i++) {
-                    const receiverItem = receivers[i];
+                const receiversInfo: { publicKey: string; address: string }[] = [{ publicKey, address }];
+                for (var i = 0; i < selectedDraft.mail_to.length; i++) {
+                    const receiverItem = selectedDraft.mail_to[i];
                     const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
                     const receiverPublicKey = encryptionData.encryption_public_key;
                     if (!receiverPublicKey || receiverPublicKey.length == 0) {
@@ -146,22 +137,21 @@ export default function NewMail() {
                 keys = result.map(item => item.key);
             }
 
-            const orderedAtt = attList;
-            if (orderedAtt.length) {
-                orderedAtt.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
+            if (selectedDraft.attachments?.length) {
+                selectedDraft.attachments.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
             }
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
                 from_address: showName + PostfixOfAddress,
                 from_name: ensName || '',
-                to_address: receivers.map(receiver => receiver.address),
-                to_name: receivers.map(receiver => receiver.name || ''),
+                to_address: selectedDraft.mail_to.map(receiver => receiver.address),
+                to_name: selectedDraft.mail_to.map(receiver => receiver.name || ''),
                 date: dateRef.current,
-                subject: subject,
+                subject: selectedDraft.subject,
                 text_hash: CryptoJS.SHA256(text).toString(),
                 html_hash: CryptoJS.SHA256(html).toString(),
-                attachments_hash: orderedAtt.map(att => att.sha256),
+                attachments_hash: selectedDraft.attachments.map(att => att.sha256),
                 keys: keys,
             });
 
@@ -179,34 +169,28 @@ export default function NewMail() {
     };
 
     const handleSave = async () => {
-        if (!randomBits) handleDecrypted();
+        // TODO 判断是否有改动
         if (!editable) return;
+        if (selectedDraft.meta_type === MetaMailTypeEn.Encrypted && !randomBits) handleDecrypted();
 
-        const oldHtml = mailSessionStorage.getQuillHtml();
-        const oldText = mailSessionStorage.getQuillText();
         const quill = getQuill();
         if (!quill || !quill?.getHTML || !quill?.getText) {
             throw new Error('Failed to get message content');
         }
         let html = quill?.getHTML(),
             text = quill?.getText();
-        if (oldHtml == html && oldText == text) return { html, text };
-        if (type === MetaMailTypeEn.Encrypted) {
-            if (!randomBits) {
-                console.log('error: no currrandombitsref.current');
-            } else {
-                html = encryptMailContent(html, randomBits);
-                text = encryptMailContent(text, randomBits);
-            }
+
+        if (selectedDraft.meta_type === MetaMailTypeEn.Encrypted) {
+            html = encryptMailContent(html, randomBits);
+            text = encryptMailContent(text, randomBits);
         }
-        console.log(receivers);
-        const metaType = checkEncryptable(receivers) ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
+        const metaType = checkEncryptable(selectedDraft.mail_to) ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
         const { ensName, showName } = userSessionStorage.getUserInfo();
         const { message_id, mail_date } =
-            (await mailHttp.updateMail(draftID, {
+            (await mailHttp.updateMail(selectedDraft.message_id, {
                 meta_type: metaType,
-                subject: subject,
-                mail_to: receivers,
+                subject: selectedDraft.subject,
+                mail_to: selectedDraft.mail_to,
                 part_html: html,
                 part_text: text,
                 mail_from: {
@@ -215,39 +199,38 @@ export default function NewMail() {
                 },
             })) ?? {};
 
-        if (message_id !== draftID) {
-            console.warn('DANGER: wrong updating source');
-        }
         mailSessionStorage.setQuillHtml(html);
         mailSessionStorage.setQuillText(text);
-        console.log('save');
         dateRef.current = mail_date;
         return { html, text, metaType };
     };
 
     const handleDecrypted = async () => {
-        if (!myKeyRef.current) return;
+        if (!selectedDraftKey) return;
         const { privateKey, salt } = userSessionStorage.getUserInfo();
         const decryptPrivateKey = await getPrivateKey(privateKey, salt);
-        randomBits = await decryptMailKey(myKeyRef.current, decryptPrivateKey);
+        randomBits = await decryptMailKey(selectedDraftKey, decryptPrivateKey);
         if (!randomBits) {
-            console.log('error: no randombits');
-            return;
+            return toast.error('No randomBits.');
         }
-        const decryptedContent = decryptMailContent(content, randomBits);
-        setContent(decryptedContent);
+        const decryptedContent = decryptMailContent(selectedDraft.part_html || '', randomBits);
+        setSelectedDraft({ ...selectedDraft, part_html: decryptedContent });
         setEditable(true);
-        console.log('setEditable(true);');
     };
 
     useEffect(() => {
         setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
-        if (selectedDraft.meta_header?.keys) myKeyRef.current = selectedDraft.meta_header?.keys?.[0];
+        selectedDraftKey = selectedDraft.meta_header?.keys?.[0];
         randomBits = selectedDraft.randomBits;
-    }, [selectedDraft]);
+        return () => {
+            randomBits = '';
+            selectedDraftKey = '';
+            autoSaveMail = true;
+        };
+    }, [selectedDraft.message_id]);
 
     useInterval(() => {
-        if (!allowSaveRef.current) return;
+        if (!autoSaveMail) return;
         try {
             //handleSave();
         } catch (err) {
@@ -285,7 +268,7 @@ export default function NewMail() {
                 <div className="flex h-40 items-center">
                     <span className="w-78">To</span>
                     <EmailRecipientInput
-                        receivers={receivers}
+                        receivers={selectedDraft.mail_to}
                         onAddReceiver={addReceiver}
                         onRemoveReceiver={removeReceiver}
                     />
@@ -295,11 +278,12 @@ export default function NewMail() {
                     <input
                         type="text"
                         placeholder=""
-                        className="flex pl-0 h-40 input max-w-xs text-[#878787] focus:outline-none"
-                        value={subject}
+                        className="flex pl-0 h-40 input flex-1 text-[#878787] focus:outline-none"
+                        value={selectedDraft.subject}
                         onChange={e => {
+                            // TODO 所有的输入做节流
                             e.preventDefault();
-                            setSubject(e.target.value);
+                            setSelectedDraft({ ...selectedDraft, subject: e.target.value });
                         }}
                     />
                 </div>
@@ -312,7 +296,7 @@ export default function NewMail() {
                     placeholder={''}
                     modules={EditorModules}
                     formats={EditorFormats}
-                    value={content}
+                    value={selectedDraft.part_html}
                     onChange={handleChangeContent}
                 />
             ) : (
@@ -325,13 +309,11 @@ export default function NewMail() {
                     <Image alt={'sendMail'} src={sendMailIcon} />
                 </button>
                 <button>
-                    {/*<Image alt={'addAttach'} src={addAttach}/>
-        <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
                     <FileUploader
-                        draftID={draftID}
-                        metaType={type}
+                        draftID={selectedDraft.message_id}
+                        metaType={selectedDraft.meta_type}
                         onAttachment={handleSetAttachmentList}
-                        showList={attList}
+                        showList={selectedDraft.attachments ?? []}
                         currRandomBits={randomBits}
                     />
                 </button>

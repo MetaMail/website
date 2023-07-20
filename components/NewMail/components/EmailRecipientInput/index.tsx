@@ -60,7 +60,11 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
             <ul>
                 {receivers.map((email, index) => (
                     <li key={index} className="flex">
-                        <div>{email.address}</div>
+                        <div
+                            className="w-100 omit px-6 py-2 bg-[#e6e6e6] rounded-8 cursor-pointer"
+                            title={email.address}>
+                            {email.address}
+                        </div>
                         <button onClick={() => removeRecipient(email.address)}>
                             <Icon url={cancel} title="cancel" className="w-20 h-20" />
                         </button>
