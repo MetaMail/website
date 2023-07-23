@@ -96,7 +96,7 @@ export default function Sidebar() {
                 </button>
                 <button className="btn btn-primary text-white mt-5" onClick={handleClickNewMail}>
                     <Image src={write} alt="new_mail" className="w-16 h-auto" />
-                    <span>New Message</span>
+                    <span>New Mail</span>
                 </button>
                 <div>
                     <ul className={`menu ${styles.mainMenu}`}>

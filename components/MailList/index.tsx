@@ -74,12 +74,12 @@ export default function MailList() {
         {
             title: 'Read',
             src: read,
-            httpParams: { read: ReadStatusTypeEn.read },
+            httpParams: { read: ReadStatusTypeEn.Read },
         },
         {
             title: 'Unread',
             src: markUnread,
-            httpParams: { read: ReadStatusTypeEn.unread },
+            httpParams: { read: ReadStatusTypeEn.Unread },
         },
     ];
 
@@ -172,12 +172,12 @@ export default function MailList() {
                 break;
             case 'Read':
                 list.map(item => {
-                    item.selected = item.read === ReadStatusTypeEn.read;
+                    item.selected = item.read === ReadStatusTypeEn.Read;
                 });
                 break;
             case 'Unread':
                 list.map(item => {
-                    item.selected = item.read === ReadStatusTypeEn.unread;
+                    item.selected = item.read === ReadStatusTypeEn.Unread;
                 });
                 break;
             case 'Encrypted':

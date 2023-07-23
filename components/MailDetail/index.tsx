@@ -24,7 +24,6 @@ import {
     trash,
     read,
     starred,
-    temp1,
     spam,
     back,
     mailMore,
@@ -67,10 +66,6 @@ export default function MailDetail() {
             },
         },
         {
-            src: temp1,
-            handler: () => {},
-        },
-        {
             src: spam,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
@@ -86,7 +81,7 @@ export default function MailDetail() {
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
                 await mailHttp.changeMailStatus(mailInfo, {
-                    read: isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read,
+                    read: isRead ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
                 });
                 setIsRead(!isRead);
             },
@@ -103,33 +98,6 @@ export default function MailDetail() {
                 setMark(!mark);
             },
             onselect: mark,
-        },
-    ];
-
-    const threeMail = [
-        {
-            src: starred,
-            checkedSrc: markFavorite,
-            handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    mark: mark ? MarkTypeEn.Normal : MarkTypeEn.Starred,
-                });
-                setMark(!mark);
-            },
-            onselect: mark,
-        },
-        {
-            src: sent,
-            handler: () => {
-                //handleStar(mailInfo);
-            },
-        },
-        {
-            src: mailMore,
-            handler: () => {
-                //handleStar(mailInfo);
-            },
         },
     ];
 
@@ -174,88 +142,6 @@ export default function MailDetail() {
             console.warn(`please check your keys ${keys} and address ${address}`);
         }
     };
-
-    const changeInnerHTML = (data: IMailContentItem) => {
-        if (data.part_html) {
-            var el = document.createElement('html');
-            el.innerHTML = data.part_html;
-            {
-                data?.attachments?.map(
-                    (item: {
-                        filename: string;
-                        download: {
-                            expire_at: string;
-                            url: string;
-                        };
-                    }) => {
-                        //imgReplace = document.getElementById(item.filename);
-                        el.querySelectorAll('img').forEach(function (element) {
-                            if (element.alt == item.filename) {
-                                element.src = item.download.url;
-                                data.part_html = el.innerHTML;
-                            }
-                        });
-                    }
-                );
-            }
-        }
-    };
-
-    const handleLoad = async () => {
-        setMailDetail(null);
-        //let ifIndex = false;
-        try {
-            //TODO:实现邮件数据预先加载
-            //if (!router.query?.id && router?.query?.id?.length === 0 ) {
-            //  throw new Error();
-            //}
-            //const mailDetail = getStorage('mailDetailStorage')?.mailDetails;
-            //console.log(mailDetail);
-            //mailDetail.map(async (item: IMailContentItem)=>{ ////search
-            //  if (String(item?.message_id??'') === String(router.query.id)){
-            //    changeInnerHTML(item);
-            //    setMail(item);
-            //    ifIndex = true;
-            //  }
-            //  })
-            if (!loading) setLoading(true);
-            //if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
-            const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id ?? ''));
-            changeInnerHTML(mail);
-            setMailDetail(mail);
-            //}
-        } catch (e) {
-            console.log(e);
-            console.log('mailError');
-            //notification.error({
-            //  message: 'Network Error',
-            //  description: 'Can not fetch detail info of this email for now.',
-            //});
-            setMailDetail(null);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // useEffect(() => {
-    //     setMailInfo([
-    //         {
-    //             message_id: selectedMail.message_id,
-    //             mailbox: selectedMail.mailbox,
-    //         },
-    //     ]);
-    //     setMark(selectedMail.mark === 1 ? true : false);
-    //     if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
-    //         setReadable(false);
-    //     }
-    //     // handleMarkRead();
-    //     if (userSessionStorage.getUserInfo()?.address) {
-    //         if (isMailDetail) handleLoad();
-    //     } else {
-    //         userSessionStorage.clearUserInfo();
-    //         router.push('/');
-    //     }
-    // }, [selectedMail]);
 
     return (
         <div className="flex">
@@ -305,23 +191,6 @@ export default function MailDetail() {
                                         <Image src={ifLock} className="self-center " alt={'ifLock'} />
                                         <div className="flex-1 omit">{mailDetail?.mail_to[0]?.address}</div>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="flex flex-col self-end gap-6 stroke-current text-[#707070]">
-                                <div className="text-xs">
-                                    {moment(mailDetail?.mail_date).format('ddd, MMM DD, Y LT')}
-                                </div>
-                                <div className="flex gap-10 justify-end">
-                                    {threeMail.map((item, index) => {
-                                        return (
-                                            <Icon
-                                                key={index}
-                                                url={item.src}
-                                                onClick={item.handler}
-                                                className="w-13 h-auto self-center"
-                                            />
-                                        );
-                                    })}
                                 </div>
                             </div>
                         </div>

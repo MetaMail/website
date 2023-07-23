@@ -34,7 +34,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
     const { setSelectedDraft } = useNewMailStore();
 
     const getIsRead = (mail: IMailContentItem) => {
-        return mail.read == ReadStatusTypeEn.read;
+        return mail.read == ReadStatusTypeEn.Read;
     };
 
     const getMailFrom = (mail: IMailContentItem): string => {
@@ -66,13 +66,13 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
 
     const handleUnread = async () => {
         await handleChangeMailStatus({
-            read: ReadStatusTypeEn.unread,
+            read: ReadStatusTypeEn.Unread,
         });
     };
 
     const handleClick = async () => {
-        if (mail.read == ReadStatusTypeEn.unread) {
-            await handleChangeMailStatus({ read: ReadStatusTypeEn.read });
+        if (mail.read == ReadStatusTypeEn.Unread) {
+            await handleChangeMailStatus({ read: ReadStatusTypeEn.Read });
         }
         if (filterType === FilterTypeEn.Draft) {
             setSelectedDraft(mail);

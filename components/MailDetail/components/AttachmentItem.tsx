@@ -13,7 +13,6 @@ export default function AttachmentItem({
     idx: number;
     randomBits: string;
 }) {
-    const key = url;
     const decrypting = useRef(false);
 
     const handleClick = () => {
