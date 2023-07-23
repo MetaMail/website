@@ -144,9 +144,9 @@ export default function NewMail() {
 
             const signature = await sendEmailInfoSignInstance.doSign({
                 from_address: showName + PostfixOfAddress,
-                from_name: ensName || '',
+                from_name: ensName || address,
                 to_address: selectedDraft.mail_to.map(receiver => receiver.address),
-                to_name: selectedDraft.mail_to.map(receiver => receiver.name || ''),
+                to_name: selectedDraft.mail_to.map(receiver => receiver.name),
                 date: dateRef.current,
                 subject: selectedDraft.subject,
                 text_hash: CryptoJS.SHA256(text).toString(),
@@ -185,7 +185,7 @@ export default function NewMail() {
             text = encryptMailContent(text, randomBits);
         }
         const metaType = checkEncryptable(selectedDraft.mail_to) ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
-        const { ensName, showName } = userSessionStorage.getUserInfo();
+        const { address, ensName, showName } = userSessionStorage.getUserInfo();
         const { message_id, mail_date } =
             (await mailHttp.updateMail(selectedDraft.message_id, {
                 meta_type: metaType,
@@ -195,7 +195,7 @@ export default function NewMail() {
                 part_text: text,
                 mail_from: {
                     address: showName + PostfixOfAddress,
-                    name: ensName ?? '',
+                    name: ensName ?? address,
                 },
             })) ?? {};
 
