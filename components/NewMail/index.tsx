@@ -90,8 +90,22 @@ export default function NewMail() {
         //  text = quill?.getText();
     };
 
-    const checkEncryptable = (receivers: IPersonItem[]) => {
-        return receivers.every(receiver => receiver.address.endsWith(PostfixOfAddress));
+    const checkEncryptable = async (receivers: IPersonItem[]) => {
+        const getSinglePublicKey = async (receiver: IPersonItem) => {
+            try {
+                const encryptionData = await userHttp.getEncryptionKey(receiver.address.split('@')[0]);
+                return encryptionData.encryption_public_key;
+            } catch (error) {
+                console.error('Failed to get public key of receiver: ', receiver.address);
+                console.error(error);
+                return '';
+            }
+        };
+        const publicKeys = await Promise.all(receivers.map(receiver => getSinglePublicKey(receiver)));
+        return {
+            encryptable: publicKeys.every(key => key?.length),
+            publicKeys,
+        };
     };
 
     const postSignature = async (keys: string[], signature?: string) => {
@@ -109,25 +123,16 @@ export default function NewMail() {
         }
         autoSaveMail = false;
         try {
-            const saveResult = await handleSave();
-            const { html, text, metaType } = saveResult;
+            const { html, text, metaType, publicKeys } = await handleSave();
             const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
-
             let keys: string[] = [];
             if (metaType === MetaMailTypeEn.Encrypted) {
                 // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
                 const receiversInfo: { publicKey: string; address: string }[] = [{ publicKey, address }];
                 for (var i = 0; i < selectedDraft.mail_to.length; i++) {
                     const receiverItem = selectedDraft.mail_to[i];
-                    const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
-                    const receiverPublicKey = encryptionData.encryption_public_key;
-                    if (!receiverPublicKey || receiverPublicKey.length == 0) {
-                        throw new Error(
-                            'Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.'
-                        );
-                    }
                     receiversInfo.push({
-                        publicKey: receiverPublicKey,
+                        publicKey: publicKeys[i],
                         address: receiverItem.address,
                     });
                 }
@@ -186,7 +191,8 @@ export default function NewMail() {
             html = encryptMailContent(html, randomBits);
             text = encryptMailContent(text, randomBits);
         }
-        const metaType = checkEncryptable(selectedDraft.mail_to) ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
+        const { encryptable, publicKeys } = await checkEncryptable(selectedDraft.mail_to);
+        const metaType = encryptable ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
         const { address, ensName, showName } = userSessionStorage.getUserInfo();
         const { message_id, mail_date } =
             (await mailHttp.updateMail(selectedDraft.message_id, {
@@ -204,7 +210,7 @@ export default function NewMail() {
         mailSessionStorage.setQuillHtml(html);
         mailSessionStorage.setQuillText(text);
         dateRef.current = mail_date;
-        return { html, text, metaType };
+        return { html, text, metaType, publicKeys };
     };
 
     const handleDecrypted = async () => {
@@ -256,7 +262,7 @@ export default function NewMail() {
                         url={cancel}
                         className="w-20 scale-[120%] h-auto self-center"
                         onClick={async () => {
-                            await handleSave();
+                            handleSave();
                             setSelectedDraft(null);
                         }}
                     />
