@@ -145,8 +145,10 @@ export default function NewMail() {
             const signature = await sendEmailInfoSignInstance.doSign({
                 from_address: showName + PostfixOfAddress,
                 from_name: ensName || address,
-                to_address: selectedDraft.mail_to.map(receiver => receiver.address),
-                to_name: selectedDraft.mail_to.map(receiver => receiver.name),
+                to_address: selectedDraft.mail_to.map(to => to.address),
+                to_name: selectedDraft.mail_to.map(to => to.name),
+                cc_address: selectedDraft.mail_cc.map(cc => cc.address),
+                cc_name: selectedDraft.mail_cc.map(cc => cc.name),
                 date: dateRef.current,
                 subject: selectedDraft.subject,
                 text_hash: CryptoJS.SHA256(text).toString(),
