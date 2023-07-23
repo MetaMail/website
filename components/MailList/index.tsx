@@ -24,6 +24,8 @@ import {
 const MailListFilters = ['All', 'None', 'Read', 'Unread', 'Encrypted', 'UnEncrypted', 'Star', 'No Star'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
+let lastDraftId = '';
+
 export default function MailList() {
     const {
         filterType,
@@ -35,12 +37,13 @@ export default function MailList() {
         mode,
         setMode,
     } = useMailListStore();
+    const { selectedDraft } = useNewMailStore();
 
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<MailListItemType[]>([]);
     const [pageNum, setPageNum] = useState(0);
     const [selectedAll, setSelectedAll] = useState(false);
-    const [filter, setFilter] = useState<MailListFiltersType>();
+    const [filter, setFilter] = useState<MailListFiltersType>('None');
 
     const inputCheckBoxRef = useRef<HTMLInputElement>();
 
@@ -203,6 +206,18 @@ export default function MailList() {
         setList([...list]);
         setSelectedAll(list.length && list.every(item => item.selected));
     }, [filter]);
+
+    useEffect(() => {
+        setFilter('None');
+    }, [filterType]);
+
+    useEffect(() => {
+        if (!!lastDraftId && !selectedDraft?.message_id) {
+            // 代表从草稿组件出来，此时需要刷新列表
+            fetchMailList(false);
+        }
+        lastDraftId = selectedDraft?.message_id;
+    }, [selectedDraft?.message_id]);
 
     return (
         <div className="flex flex-col flex-1 min-w-0 h-full">

@@ -19,7 +19,7 @@ export abstract class MMHttp extends MMObject {
         this._axios = axios.create({
             baseURL: this._baseUrl,
             withCredentials: true,
-            timeout: 5000,
+            timeout: 10000,
         });
 
         // 设置拦截器

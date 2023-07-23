@@ -41,13 +41,17 @@ export const useMailDetailStore = create<IMailDetailState>()(set => ({
     setSelectedMail: (selectedMail: IMailContentItem) => set(() => ({ selectedMail })),
 }));
 
+interface ISelectedDraftItem extends IMailContentItem {
+    randomBits?: string;
+}
+
 interface INewMailState {
-    selectedDraft: IMailContentItem;
-    setSelectedDraft: (selectedDraft: IMailContentItem) => void;
+    selectedDraft: ISelectedDraftItem;
+    setSelectedDraft: (selectedDraft: ISelectedDraftItem) => void;
 }
 export const useNewMailStore = create<INewMailState>()(set => ({
     selectedDraft: null,
-    setSelectedDraft: (selectedDraft: IMailContentItem) => set(() => ({ selectedDraft })),
+    setSelectedDraft: (selectedDraft: ISelectedDraftItem) => set(() => ({ selectedDraft })),
 }));
 
 interface IUtilsState {

@@ -15,12 +15,15 @@ export const createEncryptedMailKey = async (publicKey: string, address: string)
         throw new Error('error: !pKey || pKey?.length === 0');
     }
     const randomBits = generateRandom256Bits(address);
-    return asymmetricEncryptInstance.encrypt(randomBits, publicKey);
+    return {
+        key: await asymmetricEncryptInstance.encrypt(randomBits, publicKey),
+        randomBits,
+    };
 };
 
 /**
  * Get RandomBits
- * @param encryptedMailKey
+ * @param encryptedMailKey 非对称加密之后的randomBits
  * @param privateKey
  * @returns randomBits
  */

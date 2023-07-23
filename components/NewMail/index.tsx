@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 import type ReactQuillType from 'react-quill';
+import { toast } from 'react-toastify';
 
 import { IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
@@ -30,23 +31,27 @@ import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
 
+/**整体收发流程（加密邮件）
+ * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
+ * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
+ * 3. 解密邮件时，用自己的私钥先解出原始的randomBits，然后用randomBits对称解密邮件内容
+ */
+
+/**
+ * 1. 用途是加密邮件内容（对称加密）
+ * 2. 如果是新建邮件，selectedDraft中会带有原始的randomBits（这样就不用在新建邮件时去签名解密了），如果是从草稿中加载，需要先通过私钥解一下randomBits
+ */
+let randomBits: string = '';
+
+let selectedDraftKey: string = ''; // 当前选中的草稿的randomBits的公钥加密结果
+let autoSaveMail = true;
+
 export default function NewMail() {
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
-    const [subject, setSubject] = useState<string>('');
-    const [receivers, setReceivers] = useState<IPersonItem[]>([]);
-    const [content, setContent] = useState<string>('');
-    const [temp, setTemp] = useState<string>('');
-    const [attList, setAttList] = useState<any[]>([]);
-    const [loaded, setLoaded] = useState<boolean>(false);
     const [editable, setEditable] = useState<boolean>();
-    const draftID = selectedDraft?.message_id;
-    const type: MetaMailTypeEn = Number(selectedDraft?.meta_type);
-    const myKeyRef = useRef<string>();
     const dateRef = useRef<string>();
-    const allowSaveRef = useRef(true);
-    const currRandomBitsRef = useRef<string>();
     const reactQuillRef = useRef<ReactQuillType>();
 
     const getQuill = () => {
@@ -55,7 +60,8 @@ export default function NewMail() {
     };
 
     const handleSetAttachmentList = (attachment: any) => {
-        setAttList([...attList, attachment]);
+        const newAttachment = [...selectedDraft.attachments, attachment];
+        setSelectedDraft({ ...selectedDraft, attachments: newAttachment });
     };
 
     const addReceiver = (address: string) => {
@@ -63,101 +69,56 @@ export default function NewMail() {
             address: address,
             name: address.split('@')[0],
         };
-        setReceivers([...receivers, newReceiver]);
+        const newReceivers = [...selectedDraft.mail_to, newReceiver];
+        setSelectedDraft({ ...selectedDraft, mail_to: newReceivers });
     };
 
     const removeReceiver = (email: string) => {
-        setReceivers(receivers.filter(receiver => receiver.address !== email));
+        setSelectedDraft({
+            ...selectedDraft,
+            mail_to: selectedDraft.mail_to.filter(receiver => receiver.address !== email),
+        });
     };
 
-    const handleChangeContent = (content: any) => {
-        setContent(content);
+    const handleChangeContent = (content: string) => {
+        setSelectedDraft({ ...selectedDraft, part_html: content });
         const quill = getQuill();
-
         if (!quill || !quill?.getHTML || !quill?.getText) {
-            //notification.error({
-            //  message: 'ERROR',
-            //  description: 'Failed to get message content',
-            //});
-
-            return;
+            return toast.error('Failed to get message content');
         }
-
         //let html = quill?.getHTML(),
         //  text = quill?.getText();
-
-        console.log('set');
     };
 
-    useEffect(() => {
-        handleLoad();
-        return () => {
-            mailSessionStorage.clearMailContent();
-        };
-    }, [selectedDraft]);
-    useInterval(() => {
-        if (!allowSaveRef.current) return;
-        try {
-            //handleSave();
-        } catch (err) {
-            console.log('failed to auto save mail');
-        }
-    }, 30000);
+    const checkEncryptable = (receivers: IPersonItem[]) => {
+        return receivers.every(receiver => receiver.address.endsWith(PostfixOfAddress));
+    };
 
-    const handleSend = async (keys: string[], signature?: string) => {
-        try {
-            const { message_id } = await mailHttp.sendMail(draftID, {
-                date: dateRef.current,
-                signature: signature,
-                keys,
-            });
-
-            if (message_id) {
-                // notification.success({
-                // message: 'Sent',
-                // description: 'Your email has been sent successfully.',
-                // });
-
-                //router.push('/home');
-                setSelectedDraft(null);
-            }
-        } catch (error) {
-            console.log(error);
-            // notification.error({
-            // message: 'Failed Send',
-            // description: 'Looks like we have a network problem.',
-            // });
-        }
+    const postSignature = async (keys: string[], signature?: string) => {
+        const { message_id } = await mailHttp.sendMail(selectedDraft.message_id, {
+            date: dateRef.current,
+            signature: signature,
+            keys,
+        });
+        return message_id;
     };
 
     const handleClickSend = async () => {
-        if (!draftID) return;
-
-        if (receivers?.length < 1) {
-            // TODO: notification.error({
-            // message: 'No Receipt',
-            // description: 'At lease 1 receipt',
-            // });
-
-            return;
+        if (selectedDraft.mail_to?.length < 1) {
+            return toast.error("Can't send mail without receivers.");
         }
-        allowSaveRef.current = false;
+        autoSaveMail = false;
         try {
             const saveResult = await handleSave();
-            if (!saveResult) return;
+            const { html, text, metaType } = saveResult;
             const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
-            if (!address || !showName) {
-                console.warn('No address or name of current user, please check.');
-                return;
-            }
-            const { html, text } = saveResult;
 
             let keys: string[] = [];
-            if (type === MetaMailTypeEn.Encrypted) {
+            if (metaType === MetaMailTypeEn.Encrypted) {
                 // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
-                let publicKeys: string[] = [publicKey];
-                for (var i = 0; i < receivers.length; i++) {
-                    const receiverItem = receivers[i];
+                const receiversInfo: { publicKey: string; address: string }[] = [{ publicKey, address }];
+                for (var i = 0; i < selectedDraft.mail_to.length; i++) {
+                    const receiverItem = selectedDraft.mail_to[i];
                     const encryptionData = await userHttp.getEncryptionKey(receiverItem.address.split('@')[0]);
                     const receiverPublicKey = encryptionData.encryption_public_key;
                     if (!receiverPublicKey || receiverPublicKey.length == 0) {
@@ -165,164 +126,119 @@ export default function NewMail() {
                             'Can not find public key of getEncryptionKey(receiverItem.address), Please consider sending plain mail.'
                         );
                     }
-                    publicKeys.push(receiverPublicKey);
+                    receiversInfo.push({
+                        publicKey: receiverPublicKey,
+                        address: receiverItem.address,
+                    });
                 }
-                console.log(publicKeys, '--');
-                const mySalt = userSessionStorage.getUserInfo()?.salt;
-                console.log(mySalt);
-                if (!currRandomBitsRef.current) {
-                    console.log('error: no currrandombitsref.current');
-                } else
-                    keys = await Promise.all(
-                        publicKeys.map(publicKey => createEncryptedMailKey(currRandomBitsRef.current, publicKey))
-                    );
+                const result = await Promise.all(
+                    receiversInfo.map(item => createEncryptedMailKey(item.publicKey, item.address))
+                );
+                keys = result.map(item => item.key);
             }
 
-            const orderedAtt = attList;
-            if (orderedAtt.length) {
-                orderedAtt.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
+            if (selectedDraft.attachments?.length) {
+                selectedDraft.attachments.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
             }
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
                 from_address: showName + PostfixOfAddress,
-                from_name: ensName || '',
-                to_address: receivers.map(receiver => receiver.address),
-                to_name: receivers.map(receiver => receiver.name || ''),
+                from_name: ensName || address,
+                to_address: selectedDraft.mail_to.map(to => to.address),
+                to_name: selectedDraft.mail_to.map(to => to.name),
+                cc_address: selectedDraft.mail_cc.map(cc => cc.address),
+                cc_name: selectedDraft.mail_cc.map(cc => cc.name),
                 date: dateRef.current,
-                subject: subject,
+                subject: selectedDraft.subject,
                 text_hash: CryptoJS.SHA256(text).toString(),
                 html_hash: CryptoJS.SHA256(html).toString(),
-                attachments_hash: orderedAtt.map(att => att.sha256),
+                attachments_hash: selectedDraft.attachments.map(att => att.sha256),
                 keys: keys,
             });
 
-            await handleSend(keys, signature);
+            const messageId = await postSignature(keys, signature);
+            if (messageId) {
+                toast.success('Your email has been sent successfully.');
+                setSelectedDraft(null);
+            } else {
+                throw new Error('No message id returned.');
+            }
         } catch (error) {
             console.error(error);
-            // notification.error({
-            // message: 'Failed Send',
-            // description: '' + error,
-            // });
+            toast.error('Failed to send mail.');
         }
     };
 
     const handleSave = async () => {
-        if (!currRandomBitsRef.current) handleDecrypted();
-        console.log(draftID);
-        console.log(editable);
-        if (!draftID) return;
-        //setEditable(true) ////测试用
-        //console.log(editable);
+        // TODO 判断是否有改动
         if (!editable) return;
-        const oldHtml = mailSessionStorage.getQuillHtml();
-        const oldText = mailSessionStorage.getQuillText();
-        const quill = getQuill();
-        console.log(oldText);
-        console.log(quill?.getHTML());
-        console.log(quill?.getText());
-        if (!quill || !quill?.getHTML || !quill?.getText) {
-            // notification.error({
-            // message: 'ERROR',
-            // description: 'Failed to get message content',
-            // });
-            console.log('no');
-            return;
-        }
+        if (selectedDraft.meta_type === MetaMailTypeEn.Encrypted && !randomBits) handleDecrypted();
 
+        const quill = getQuill();
+        if (!quill || !quill?.getHTML || !quill?.getText) {
+            throw new Error('Failed to get message content');
+        }
         let html = quill?.getHTML(),
             text = quill?.getText();
-        console.log(text);
-        console.log(html);
-        if (oldHtml == html && oldText == text) return { html, text }; //一样
-        // 加密邮件
-        if (type === MetaMailTypeEn.Encrypted) {
-            if (!currRandomBitsRef.current) {
-                console.log('error: no currrandombitsref.current');
-            } else {
-                html = encryptMailContent(html, currRandomBitsRef.current);
-                text = encryptMailContent(text, currRandomBitsRef.current);
-            }
+
+        if (selectedDraft.meta_type === MetaMailTypeEn.Encrypted) {
+            html = encryptMailContent(html, randomBits);
+            text = encryptMailContent(text, randomBits);
         }
-        console.log(receivers);
-        const { ensName, showName } = userSessionStorage.getUserInfo();
+        const metaType = checkEncryptable(selectedDraft.mail_to) ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
+        const { address, ensName, showName } = userSessionStorage.getUserInfo();
         const { message_id, mail_date } =
-            (await mailHttp.updateMail(draftID, {
-                subject: subject,
-                mail_to: receivers,
+            (await mailHttp.updateMail(selectedDraft.message_id, {
+                meta_type: metaType,
+                subject: selectedDraft.subject,
+                mail_to: selectedDraft.mail_to,
                 part_html: html,
                 part_text: text,
                 mail_from: {
                     address: showName + PostfixOfAddress,
-                    name: ensName ?? '',
+                    name: ensName ?? address,
                 },
             })) ?? {};
 
-        if (message_id !== draftID) {
-            console.warn('DANGER: wrong updating source');
-        }
         mailSessionStorage.setQuillHtml(html);
         mailSessionStorage.setQuillText(text);
-        console.log('save');
         dateRef.current = mail_date;
-        return { html, text };
-    };
-
-    const handleLoad = async (id?: string) => {
-        try {
-            //if (!query?.id && query.id.length === 0) {
-            //  throw new Error();
-            //}
-            const mail = await mailHttp.getMailDetailByID(window.btoa(id ?? selectedDraft?.message_id ?? ''));
-
-            if (mail) {
-                //const { subject, mail_to, part_html } = getMailContent();
-                console.log(mail);
-                setSubject(mail?.subject);
-                setReceivers(mail?.mail_to);
-                setTemp(mail?.mail_to[0]?.address ?? '');
-                setContent(mail?.part_html ?? mail?.part_text);
-                setAttList(mail?.attachments);
-
-                if (type === MetaMailTypeEn.Encrypted && !currRandomBitsRef.current) {
-                    setEditable(false);
-                } else {
-                    setEditable(true);
-                }
-
-                if (mail?.meta_header?.keys) myKeyRef.current = mail?.meta_header?.keys?.[0];
-                if (mailSessionStorage.getMailReply()) {
-                    const { subject, mail_to, part_html } = mailSessionStorage.getMailContent();
-                    subject && setSubject(subject);
-                    mail_to && setReceivers(mail_to);
-                    part_html && setContent(part_html);
-                    mailSessionStorage.clearMailReply();
-                }
-                setLoaded(true);
-            }
-        } catch {
-            //notification.error({
-            //  message: 'Network Error',
-            //  description: 'Can not fetch detail info of this email for now.',
-            //});
-        }
+        return { html, text, metaType };
     };
 
     const handleDecrypted = async () => {
-        if (!myKeyRef.current) return;
+        if (!selectedDraftKey) return;
         const { privateKey, salt } = userSessionStorage.getUserInfo();
         const decryptPrivateKey = await getPrivateKey(privateKey, salt);
-        const randomBits = await decryptMailKey(myKeyRef.current, decryptPrivateKey);
+        randomBits = await decryptMailKey(selectedDraftKey, decryptPrivateKey);
         if (!randomBits) {
-            console.log('error: no randombits');
-            return;
+            return toast.error('No randomBits.');
         }
-        currRandomBitsRef.current = randomBits;
-        const decryptedContent = decryptMailContent(content, currRandomBitsRef.current);
-        setContent(decryptedContent);
+        const decryptedContent = decryptMailContent(selectedDraft.part_html || '', randomBits);
+        setSelectedDraft({ ...selectedDraft, part_html: decryptedContent });
         setEditable(true);
-        console.log('setEditable(true);');
     };
+
+    useEffect(() => {
+        setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
+        selectedDraftKey = selectedDraft.meta_header?.keys?.[0];
+        randomBits = selectedDraft.randomBits;
+        return () => {
+            randomBits = '';
+            selectedDraftKey = '';
+            autoSaveMail = true;
+        };
+    }, [selectedDraft.message_id]);
+
+    useInterval(() => {
+        if (!autoSaveMail) return;
+        try {
+            //handleSave();
+        } catch (err) {
+            console.log('failed to auto save mail');
+        }
+    }, 30000);
 
     return (
         <div
@@ -330,62 +246,59 @@ export default function NewMail() {
                 isExtend ? 'h-full w-full' : 'h-502 w-[45vw]'
             } ${styles.newMailWrap}`}>
             <header className="flex justify-between">
-                <div className="flex flex-row">
+                <div className="flex items-center">
                     <div className="w-6 h-24 bg-[#006AD4] rounded-4" />
                     <span className="pl-7 font-black text-xl">New Message</span>
                 </div>
                 <div className="flex gap-10 self-start">
-                    <Icon url={extend} className="w-13 h-auto self-center " onClick={() => setIsExtend(!isExtend)} />
+                    <Icon url={extend} className="w-20 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
                     <Icon
                         url={cancel}
-                        className="w-13 scale-[120%] h-auto self-center"
-                        onClick={() => {
-                            handleSave();
+                        className="w-20 scale-[120%] h-auto self-center"
+                        onClick={async () => {
+                            await handleSave();
                             setSelectedDraft(null);
                         }}
                     />
                 </div>
             </header>
-            <div className="text-sm text-[#878787]">
-                <h1 className="flex mt-20 h-21 ">
-                    From
+            <div className="text-[#878787] mt-20">
+                <div className="flex h-40 items-center">
+                    <span className="w-78">From</span>
                     <NameSelector />
-                </h1>
-                <div className="divider"></div>
-                <h1 className="flex">
-                    <div className="flex self-end ">To</div>
-
+                </div>
+                <div className="flex h-40 items-center">
+                    <span className="w-78">To</span>
                     <EmailRecipientInput
-                        receivers={receivers}
+                        receivers={selectedDraft.mail_to}
                         onAddReceiver={addReceiver}
                         onRemoveReceiver={removeReceiver}
                     />
-                </h1>
-                <div className="divider"></div>
-                <h1 className="flex">
-                    <div className="flex self-end ">Subject</div>
+                </div>
+                <div className="flex h-40 items-center">
+                    <span className="w-78">Subject</span>
                     <input
                         type="text"
                         placeholder=""
-                        className="flex pl-6 mt-14 h-21 input w-full max-w-xs text-sm text-[#878787] focus:outline-none"
-                        value={subject}
+                        className="flex pl-0 h-40 input flex-1 text-[#878787] focus:outline-none"
+                        value={selectedDraft.subject}
                         onChange={e => {
+                            // TODO 所有的输入做节流
                             e.preventDefault();
-                            setSubject(e.target.value);
+                            setSelectedDraft({ ...selectedDraft, subject: e.target.value });
                         }}
                     />
-                </h1>
-                <div className="divider"></div>
+                </div>
             </div>
             {editable ? (
                 <DynamicReactQuill
                     forwardedRef={reactQuillRef}
-                    className="flex-1 flex flex-col-reverse overflow-hidden"
+                    className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
                     theme="snow"
                     placeholder={''}
                     modules={EditorModules}
                     formats={EditorFormats}
-                    value={content}
+                    value={selectedDraft.part_html}
                     onChange={handleChangeContent}
                 />
             ) : (
@@ -398,14 +311,12 @@ export default function NewMail() {
                     <Image alt={'sendMail'} src={sendMailIcon} />
                 </button>
                 <button>
-                    {/*<Image alt={'addAttach'} src={addAttach}/>
-        <input type="file" className="file-input w-full max-w-xs text-transparent" />*/}
                     <FileUploader
-                        draftID={draftID}
-                        metaType={type}
+                        draftID={selectedDraft.message_id}
+                        metaType={selectedDraft.meta_type}
                         onAttachment={handleSetAttachmentList}
-                        showList={attList}
-                        currRandomBits={currRandomBitsRef.current}
+                        showList={selectedDraft.attachments ?? []}
+                        currRandomBits={randomBits}
                     />
                 </button>
             </div>

@@ -16,6 +16,8 @@ class MMSendEmailInfoSign extends MMSign {
                 { name: 'from_name', type: 'string' },
                 { name: 'to_address', type: 'string[]' },
                 { name: 'to_name', type: 'string[]' },
+                { name: 'cc_address', type: 'string[]' },
+                { name: 'cc_name', type: 'string[]' },
                 { name: 'date', type: 'string' },
                 { name: 'subject', type: 'string' },
                 { name: 'text_hash', type: 'string' },
