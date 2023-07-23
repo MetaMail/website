@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import DOMPurify from 'dompurify';
 import moment from 'moment';
 import parse from 'html-react-parser';
+import { toast } from 'react-toastify';
 
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
 import { mailHttp } from 'lib/http';
@@ -11,7 +12,6 @@ import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { useMailDetailStore } from 'lib/zustand-store';
 import { getPrivateKey, decryptMailContent, decryptMailKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
-import { MailListItemType } from 'components/MailList/components/MailListItem';
 import AttachmentItem from './components/AttachmentItem';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
@@ -201,76 +201,46 @@ export default function MailDetail() {
         }
     };
 
+    const getMailFrom = (mail: IMailContentItem): string => {
+        return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
+    };
+
     const handleLoad = async () => {
-        setMailDetail(null);
-        //let ifIndex = false;
         try {
-            //TODO:实现邮件数据预先加载
-            //if (!router.query?.id && router?.query?.id?.length === 0 ) {
-            //  throw new Error();
-            //}
-            //const mailDetail = getStorage('mailDetailStorage')?.mailDetails;
-            //console.log(mailDetail);
-            //mailDetail.map(async (item: IMailContentItem)=>{ ////search
-            //  if (String(item?.message_id??'') === String(router.query.id)){
-            //    changeInnerHTML(item);
-            //    setMail(item);
-            //    ifIndex = true;
-            //  }
-            //  })
-            if (!loading) setLoading(true);
-            //if (!ifIndex){ //如果没找到，(逻辑上不会找不到，可能是手动输入query或者是fetch的时候error了)
+            setLoading(true);
             const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id ?? ''));
-            changeInnerHTML(mail);
-            setMailDetail(mail);
-            //}
-        } catch (e) {
-            console.log(e);
-            console.log('mailError');
-            //notification.error({
-            //  message: 'Network Error',
-            //  description: 'Can not fetch detail info of this email for now.',
-            //});
-            setMailDetail(null);
+            setSelectedMail({
+                ...selectedMail,
+                attachments: mail.attachments,
+                part_html: mail.part_html,
+                part_text: mail.part_text,
+                download: mail.download,
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Can't get mail detail, please try again later.");
         } finally {
             setLoading(false);
         }
     };
 
-    // useEffect(() => {
-    //     setMailInfo([
-    //         {
-    //             message_id: selectedMail.message_id,
-    //             mailbox: selectedMail.mailbox,
-    //         },
-    //     ]);
-    //     setMark(selectedMail.mark === 1 ? true : false);
-    //     if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
-    //         setReadable(false);
-    //     }
-    //     // handleMarkRead();
-    //     if (userSessionStorage.getUserInfo()?.address) {
-    //         if (isMailDetail) handleLoad();
-    //     } else {
-    //         userSessionStorage.clearUserInfo();
-    //         router.push('/');
-    //     }
-    // }, [selectedMail]);
+    useEffect(() => {
+        handleLoad();
+    }, [selectedMail.message_id]);
 
     return (
-        <div className="flex">
+        <div className="flex-1">
             <div className={`transition-all h-[100%] ${isExtend ? 'w-[calc(100vw-225px)]' : ''}`}>
-                <div className="w-full h-full bg-white flex flex-col font-poppins">
-                    <div className="h-[86%] w-0 border absolute top-54" />
-                    <header className="flex flex-col justify-between h-100 w-full px-16">
-                        <div className="py-11 flex justify-between w-full">
-                            <div className="h-14 flex gap-10">
+                <div className="w-full h-full bg-white flex flex-col font-poppins p-20">
+                    <header className="flex flex-col justify-between w-full mb-20">
+                        <div className="flex justify-between w-full">
+                            <div className="flex gap-10">
                                 {mailDetailTopActions.map((item, index) => {
                                     return (
                                         <Icon
                                             url={item.src}
                                             key={index}
-                                            className="w-13 h-auto self-center"
+                                            className="w-20 h-20 self-center"
                                             onClick={item.handler}
                                         />
                                     );
@@ -279,35 +249,32 @@ export default function MailDetail() {
                             <div className="flex gap-10">
                                 <Icon
                                     url={extend}
-                                    className="w-13 h-auto self-center "
+                                    className="w-20 h-20 self-center "
                                     onClick={() => setIsExtend(!isExtend)}
                                 />
                                 <Icon
                                     url={cancel}
                                     onClick={() => setSelectedMail(null)}
-                                    className="w-13 scale-[120%] h-auto self-center"
+                                    className="w-20 h-20 scale-[120%] self-center"
                                 />
                             </div>
                         </div>
-                        <div className="flex justify-between pr-21">
+                        <h1 className="omit text-2xl font-bold my-20">
+                            {mailDetail?.subject || 'I want to creat a metamail'}
+                        </h1>
+                        <div className="flex justify-between">
                             <div className="flex gap-11">
-                                <Image
-                                    src={tempMailSenderIcon}
-                                    className="self-center w-40 h-auto"
-                                    alt={'tempMailSenderIcon'}
-                                />
-                                <div className="self-end">
-                                    <div className="text-[#0075EA] text-md">
-                                        {mailDetail?.mail_from?.name ?? mailDetail?.mail_from?.address}
-                                    </div>
-                                    <div className="flex text-xs gap-3 w-220">
+                                <Image src={tempMailSenderIcon} className="w-40 h-auto" alt={'tempMailSenderIcon'} />
+                                <div className="">
+                                    <div className="text-[#0075EA]">{getMailFrom(selectedMail)}</div>
+                                    <div className="flex gap-3">
                                         to:
                                         <Image src={ifLock} className="self-center " alt={'ifLock'} />
-                                        <div className="flex-1 omit">{mailDetail?.mail_to[0]?.address}</div>
+                                        <div className="flex-1 omit">{selectedMail?.mail_to[0]?.address}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex flex-col self-end gap-6 stroke-current text-[#707070]">
+                            <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
                                 <div className="text-xs">
                                     {moment(mailDetail?.mail_date).format('ddd, MMM DD, Y LT')}
                                 </div>
@@ -318,7 +285,7 @@ export default function MailDetail() {
                                                 key={index}
                                                 url={item.src}
                                                 onClick={item.handler}
-                                                className="w-13 h-auto self-center"
+                                                className="w-20 h-20 self-center"
                                             />
                                         );
                                     })}
@@ -328,13 +295,12 @@ export default function MailDetail() {
                     </header>
 
                     {loading ? (
-                        <div className="flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]" />
+                        <div className="flex items-center justify-center pt-200">
+                            <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
+                        </div>
                     ) : readable ? (
                         <>
-                            <h1 className="p-16 pl-[4%] w-[70%] h-48 omit text-2xl font-bold pb-0 mb-24">
-                                {mailDetail?.subject}
-                            </h1>
-                            <h2 className="flex-1 overflow-auto ml-19">
+                            <h2 className="flex-1 overflow-auto">
                                 {mailDetail?.part_html
                                     ? parse(DOMPurify.sanitize(mailDetail?.part_html))
                                     : mailDetail?.part_text}
@@ -359,7 +325,7 @@ export default function MailDetail() {
                         </button>
                     )}
 
-                    <button className="m-22 mb-9 w-105 h-36 ">
+                    <button className="w-105 h-36 ">
                         <Image src={replyBtn} alt={'reply'} />
                     </button>
                 </div>

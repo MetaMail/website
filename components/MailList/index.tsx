@@ -27,16 +27,9 @@ type MailListFiltersType = (typeof MailListFilters)[number];
 let lastDraftId = '';
 
 export default function MailList() {
-    const {
-        filterType,
-        pageIndex,
-        addPageIndex,
-        subPageIndex,
-        setUnreadInboxCount,
-        setUnreadSpamCount,
-        mode,
-        setMode,
-    } = useMailListStore();
+    const { filterType, pageIndex, addPageIndex, subPageIndex, setUnreadInboxCount, setUnreadSpamCount } =
+        useMailListStore();
+    const { selectedMail } = useMailDetailStore();
     const { selectedDraft } = useNewMailStore();
 
     const [loading, setLoading] = useState(false);
@@ -220,9 +213,9 @@ export default function MailList() {
     }, [selectedDraft?.message_id]);
 
     return (
-        <div className="flex flex-col flex-1 min-w-0 h-full">
-            <div className="flex flex-row w-full justify-between px-20 py-7">
-                <div className="flex flex-row space-x-14 pt-4 items-center">
+        <div className={`flex flex-col h-full ${!selectedMail ? 'flex-1 min-w-0' : 'w-300'}`}>
+            <div className="flex flex-row w-full justify-between px-20 pb-7 pt-20">
+                <div className="flex flex-row space-x-14 items-center">
                     <input
                         type="checkbox"
                         ref={inputCheckBoxRef}
@@ -281,14 +274,14 @@ export default function MailList() {
                 <div className="flex flex-row justify-end space-x-20 text-xl text-[#7F7F7F]">
                     <button
                         disabled={pageIndex === 1}
-                        className="w-24 disabled:opacity-40"
+                        className="w-20 h-20 disabled:opacity-40"
                         onClick={() => {
                             if (pageIndex > 1) subPageIndex();
                         }}>
                         {'<'}
                     </button>
                     <button
-                        className="w-24 disabled:opacity-40"
+                        className="w-20 h-20 disabled:opacity-40"
                         disabled={pageIndex === pageNum}
                         onClick={() => {
                             if (pageIndex < pageNum) addPageIndex();
