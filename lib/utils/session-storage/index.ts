@@ -18,6 +18,7 @@ interface IUserInfo {
     privateKey?: string;
     salt?: string;
 }
+
 interface IAllUserInfo extends IUserInfo {
     showName?: string;
 }
@@ -95,6 +96,7 @@ export const userSessionStorage = {
     setShowName: (name: string) => {
         setStorage(ShowNameKey, name);
     },
+
     getRandomBits: (): string => {
         return getStorage(RandomBitsKey);
     },
