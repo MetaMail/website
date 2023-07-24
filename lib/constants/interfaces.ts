@@ -18,8 +18,8 @@ export enum MarkTypeEn {
 }
 
 export enum ReadStatusTypeEn {
-    read = 1,
-    unread = 0,
+    Read = 1,
+    Unread = 0,
 }
 
 export enum MetaMailTypeEn {

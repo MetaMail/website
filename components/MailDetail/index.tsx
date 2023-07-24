@@ -24,7 +24,6 @@ import {
     trash,
     read,
     starred,
-    temp1,
     spam,
     back,
     mailMore,
@@ -67,10 +66,6 @@ export default function MailDetail() {
             },
         },
         {
-            src: temp1,
-            handler: () => {},
-        },
-        {
             src: spam,
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
@@ -86,7 +81,7 @@ export default function MailDetail() {
             handler: async () => {
                 mailSessionStorage.clearMailListInfo();
                 await mailHttp.changeMailStatus(mailInfo, {
-                    read: isRead ? ReadStatusTypeEn.unread : ReadStatusTypeEn.read,
+                    read: isRead ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
                 });
                 setIsRead(!isRead);
             },
