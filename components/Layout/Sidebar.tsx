@@ -41,7 +41,7 @@ export default function Sidebar() {
         const { publicKey, address } = userSessionStorage.getUserInfo();
         const { key, randomBits } = await createEncryptedMailKey(publicKey, address);
         const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Signed, key);
-        const mail = await mailHttp.getMailDetailByID(window.btoa(message_id ?? ''));
+        const mail = await mailHttp.getMailDetailByID(window.btoa(message_id));
         setSelectedDraft({ ...mail, randomBits });
     }
 

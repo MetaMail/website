@@ -203,7 +203,7 @@ export default function MailDetail() {
     const handleLoad = async () => {
         try {
             setLoading(true);
-            const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id ?? ''));
+            const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
             setSelectedMail({
                 ...selectedMail,
                 attachments: mail.attachments,

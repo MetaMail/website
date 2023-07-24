@@ -109,7 +109,8 @@ export default function NewMail() {
     };
 
     const postSignature = async (keys: string[], signature?: string) => {
-        const { message_id } = await mailHttp.sendMail(selectedDraft.message_id, {
+        const { message_id } = await mailHttp.sendMail({
+            mail_id: window.btoa(selectedDraft.message_id),
             date: dateRef.current,
             signature: signature,
             keys,
@@ -195,7 +196,8 @@ export default function NewMail() {
         const metaType = encryptable ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
         const { address, ensName, showName } = userSessionStorage.getUserInfo();
         const { message_id, mail_date } =
-            (await mailHttp.updateMail(selectedDraft.message_id, {
+            (await mailHttp.updateMail({
+                mail_id: window.btoa(selectedDraft.message_id),
                 meta_type: metaType,
                 subject: selectedDraft.subject,
                 mail_to: selectedDraft.mail_to,

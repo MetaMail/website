@@ -10,6 +10,10 @@ const APIs = {
 };
 
 // 从服务器获取的加密信息和上传到服务器的加密信息格式 共用
+
+interface IGetEncryptionKeyParams {
+    address: string;
+}
 interface IGetEncryptionKeyResponse {
     salt: string;
     encryption_private_key: string;
@@ -57,7 +61,9 @@ interface IGetJwtTokenResponse {
 
 class MMUserHttp extends MMHttp {
     async getEncryptionKey(address: string) {
-        return this.get<void, IGetEncryptionKeyResponse>(`${APIs.getEncryptionKey}/${address}`);
+        return this.get<IGetEncryptionKeyParams, IGetEncryptionKeyResponse>(`${APIs.getEncryptionKey}`, {
+            address,
+        });
     }
 
     async putEncryptionKey(params: IPutEncryptionKeyParams) {

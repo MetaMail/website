@@ -43,8 +43,9 @@ const FileUploader = (item: IFileUploader) => {
             form.append('attachment', attachment);
             form.append('sha256', sha256);
             form.append('related', related);
+            form.append('mail_id', window.btoa(item.draftID));
             cid && form.append('cid', cid);
-            const data = await mailHttp.uploadAttachment(item.draftID, form);
+            const data = await mailHttp.uploadAttachment(form);
             const attachmentRes = data.attachment;
             if (attachmentRes) {
                 item.onAttachment(attachmentRes);
