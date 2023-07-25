@@ -51,6 +51,7 @@ export default function NewMail() {
 
     const [isExtend, setIsExtend] = useState(false);
     const [editable, setEditable] = useState<boolean>();
+    const [loading, setLoading] = useState(false);
     const dateRef = useRef<string>();
     const reactQuillRef = useRef<ReactQuillType>();
 
@@ -228,10 +229,30 @@ export default function NewMail() {
         setEditable(true);
     };
 
+    const handleLoad = async () => {
+        try {
+            setLoading(true);
+            const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
+            setSelectedDraft({
+                ...selectedDraft,
+                attachments: mail.attachments,
+                part_html: mail.part_html,
+                part_text: mail.part_text,
+                download: mail.download,
+            });
+            setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
+            selectedDraftKey = selectedDraft.meta_header?.keys?.[0];
+            randomBits = selectedDraft.randomBits;
+        } catch (error) {
+            console.error(error);
+            toast.error("Can't get draft detail, please try again later.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
-        selectedDraftKey = selectedDraft.meta_header?.keys?.[0];
-        randomBits = selectedDraft.randomBits;
+        handleLoad();
         return () => {
             randomBits = '';
             selectedDraftKey = '';
@@ -298,7 +319,11 @@ export default function NewMail() {
                     />
                 </div>
             </div>
-            {editable ? (
+            {loading ? (
+                <div className="flex items-center justify-center pt-200">
+                    <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
+                </div>
+            ) : editable ? (
                 <DynamicReactQuill
                     forwardedRef={reactQuillRef}
                     className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
