@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js';
+import moment from 'moment';
 
 export function convertWordArrayToUint8Array(wordArray: CryptoJS.lib.WordArray) {
     const arrayOfWords = wordArray.hasOwnProperty('words') ? wordArray.words : [];
@@ -15,6 +16,16 @@ export function convertWordArrayToUint8Array(wordArray: CryptoJS.lib.WordArray) 
         uInt8Array[index++] = word & 0xff;
     }
     return uInt8Array;
+}
+
+export function transformTime(timeStr: string) {
+    const time = moment(timeStr);
+    const now = moment();
+    const isToday = time.isSame(now, 'day');
+    if (isToday) return time.format('hh:mm');
+    const isThisYear = time.isSame(now, 'year');
+    if (isThisYear) return time.format('MMM D');
+    return time.format('MM/DD/YY');
 }
 
 export * from './session-storage';
