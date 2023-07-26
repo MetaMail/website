@@ -104,7 +104,7 @@ export default function NewMail() {
         };
         const publicKeys = await Promise.all(receivers.map(receiver => getSinglePublicKey(receiver)));
         return {
-            encryptable: publicKeys.every(key => key?.length),
+            encryptable: receivers.length && publicKeys.every(key => key?.length),
             publicKeys,
         };
     };
@@ -217,7 +217,7 @@ export default function NewMail() {
     };
 
     const handleDecrypted = async () => {
-        if (!selectedDraftKey) return;
+        if (!selectedDraftKey) return toast.error("Can't decrypt mail without randomBits key.");
         const { privateKey, salt } = userSessionStorage.getUserInfo();
         const decryptPrivateKey = await getPrivateKey(privateKey, salt);
         randomBits = await decryptMailKey(selectedDraftKey, decryptPrivateKey);
@@ -232,15 +232,16 @@ export default function NewMail() {
     const handleLoad = async () => {
         try {
             setLoading(true);
+            if (selectedDraft.hasOwnProperty('part_html')) return;
             const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
             setSelectedDraft({ ...selectedDraft, ...mail });
-            setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
-            selectedDraftKey = selectedDraft.meta_header?.keys?.[0];
-            randomBits = selectedDraft.randomBits;
         } catch (error) {
             console.error(error);
             toast.error("Can't get draft detail, please try again later.");
         } finally {
+            setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
+            selectedDraftKey = selectedDraft.meta_header?.keys?.[0];
+            randomBits = selectedDraft.randomBits;
             setLoading(false);
         }
     };
@@ -314,7 +315,7 @@ export default function NewMail() {
                 </div>
             </div>
             {loading ? (
-                <div className="flex items-center justify-center pt-200">
+                <div className="flex flex-1 items-center justify-center">
                     <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
                 </div>
             ) : editable ? (
@@ -329,13 +330,18 @@ export default function NewMail() {
                     onChange={handleChangeContent}
                 />
             ) : (
-                <button className="flex-1" onClick={handleDecrypted}>
-                    Decrypt
-                </button>
+                <div className="flex-1 flex items-center justify-center">
+                    <button className="btn" onClick={handleDecrypted}>
+                        Decrypt
+                    </button>
+                </div>
             )}
-            <div className="pt-17 flex gap-13">
-                <button onClick={handleClickSend}>
-                    <Image alt={'sendMail'} src={sendMailIcon} />
+            <div className="flex gap-13 mt-20">
+                <button
+                    onClick={handleClickSend}
+                    className="flex justify-center items-center bg-[#006AD4] text-white px-14 py-8 rounded-[8px]">
+                    <Icon url={sendMailIcon} />
+                    <span className="ml-6">Send</span>
                 </button>
                 <button>
                     <FileUploader

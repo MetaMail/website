@@ -9,10 +9,10 @@ export default function Layout({ children }: { children: ReactNode }) {
     return (
         <div className="font-poppins w-screen h-screen flex flex-row">
             <Sidebar />
-            <div className="flex flex-col flex-1 pr-28 pb-28">
+            <div className="flex-1 pr-28 pb-28">
                 <Titlebar />
                 <main
-                    className={`h-[calc(100vh-45px)] bg-white w-[calc(100%)] rounded-10 relative flex ${
+                    className={`h-[calc(100%-64px)] bg-white w-[calc(100%)] rounded-10 relative flex ${
                         !selectedMail ? 'flex-col' : 'flex-row'
                     }`}>
                     {children}

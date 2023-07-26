@@ -51,10 +51,8 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         }
     };
 
-    const handleStar = async () => {
-        await handleChangeMailStatus({
-            mark: MarkTypeEn.Starred,
-        });
+    const handleStar = async (mark: MarkTypeEn) => {
+        await handleChangeMailStatus({ mark });
     };
 
     const handleDelete = async () => {
@@ -105,7 +103,9 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                             title={'star'}
                             onClick={async e => {
                                 e.stopPropagation();
-                                await handleStar();
+                                await handleStar(
+                                    mail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred
+                                );
                             }}
                         />
                     </div>

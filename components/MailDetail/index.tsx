@@ -92,7 +92,7 @@ export default function MailDetail() {
             },
         },
         {
-            src: selectedMail.read === ReadStatusTypeEn.Read ? read : markUnread,
+            src: selectedMail.read === ReadStatusTypeEn.Read ? markUnread : read,
             handler: async () => {
                 await handleMailActionsClick({
                     read: selectedMail.read === ReadStatusTypeEn.Read ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
@@ -100,7 +100,7 @@ export default function MailDetail() {
             },
         },
         {
-            src: selectedMail.mark === MarkTypeEn.Starred ? starred : markFavorite,
+            src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
             handler: async () => {
                 await handleMailActionsClick({
                     mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
@@ -111,7 +111,7 @@ export default function MailDetail() {
 
     const rightIcons = [
         {
-            src: selectedMail.mark === MarkTypeEn.Starred ? starred : markFavorite,
+            src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
             handler: async () => {
                 await handleMailActionsClick({
                     mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
@@ -271,7 +271,7 @@ export default function MailDetail() {
                     </header>
 
                     {loading ? (
-                        <div className="flex items-center justify-center pt-200">
+                        <div className="flex-1 flex items-center justify-center">
                             <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
                         </div>
                     ) : readable ? (
@@ -296,9 +296,11 @@ export default function MailDetail() {
                             )}
                         </>
                     ) : (
-                        <button className="flex-1" onClick={handleDecrypted}>
-                            Decrypt
-                        </button>
+                        <div className="flex-1 flex items-center justify-center">
+                            <button className="btn" onClick={handleDecrypted}>
+                                Decrypt
+                            </button>
+                        </div>
                     )}
 
                     <button className="w-105 h-36 ">
