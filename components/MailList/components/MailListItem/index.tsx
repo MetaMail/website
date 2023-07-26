@@ -1,4 +1,3 @@
-import moment from 'moment';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 
@@ -11,7 +10,7 @@ import {
     FilterTypeEn,
 } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
-import { userSessionStorage, mailSessionStorage } from 'lib/utils';
+import { userSessionStorage, mailSessionStorage, transformTime } from 'lib/utils';
 import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import Icon from 'components/Icon';
 import Dot from 'components/Dot';
@@ -122,9 +121,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                         <span className="pt-4 text-[#999999] min-w-0 flex-1">{mail.digest || '( no abstract )'}</span>
                     </div>
                     <div className="w-100 text-right">
-                        <div className="text-[#999999] group-hover:hidden">
-                            {moment(mail.mail_date).format('MMM D')}
-                        </div>
+                        <div className="text-[#999999] group-hover:hidden">{transformTime(mail.mail_date)}</div>
                         <div className="hidden group-hover:flex items-center justify-end">
                             <div
                                 onClick={async e => {
@@ -160,9 +157,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                                 title={getMailFrom(mail)}>
                                 {getMailFrom(mail)}
                             </span>
-                            <span className="max-w-[80] text-right text-sm">
-                                {moment(mail.mail_date).format('MMM D')}
-                            </span>
+                            <span className="max-w-[80] text-right text-sm">{transformTime(mail.mail_date)}</span>
                         </p>
                         <p className="text-[#333333] flex justify-between items-center">
                             <span className={`${getIsReadTextClass(mail)} omit mr-4 flex-1 w-0`}>

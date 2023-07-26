@@ -293,16 +293,16 @@ export default function NewMail() {
             </header>
             <div className="text-[#878787] mt-20">
                 <div className="flex h-40 items-center">
-                    <span className="w-78">From</span>
-                    <NameSelector />
-                </div>
-                <div className="flex h-40 items-center">
                     <span className="w-78">To</span>
                     <EmailRecipientInput
                         receivers={selectedDraft.mail_to}
                         onAddReceiver={addReceiver}
                         onRemoveReceiver={removeReceiver}
                     />
+                </div>
+                <div className="flex h-40 items-center">
+                    <span className="w-78">From</span>
+                    <NameSelector />
                 </div>
                 <div className="flex h-40 items-center">
                     <span className="w-78">Subject</span>
