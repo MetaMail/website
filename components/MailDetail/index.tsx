@@ -7,7 +7,7 @@ import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
 
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
-import { mailHttp } from 'lib/http';
+import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { useMailDetailStore } from 'lib/zustand-store';
 import { getPrivateKey, decryptMailContent, decryptMailKey } from 'lib/encrypt';
@@ -31,24 +31,48 @@ import {
     markUnread,
 } from 'assets/icons';
 
+let randomBits: string = '';
+
 export default function MailDetail() {
-    const router = useRouter();
     const { selectedMail, setSelectedMail } = useMailDetailStore();
 
-    const [mailDetail, setMailDetail] = useState<IMailContentItem>();
     const [isExtend, setIsExtend] = useState(false);
-    const [readable, setReadable] = useState(true);
+    const [readable, setReadable] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [isRead, setIsRead] = useState(true);
-    const [mailInfo, setMailInfo] = useState([
-        {
-            message_id: selectedMail.message_id,
-            mailbox: selectedMail.mailbox,
-        },
-    ]);
-    const [mark, setMark] = useState(selectedMail.mark === 1);
-    const randomBitsRef = useRef('');
-    const mailDetailTopActions = [
+
+    const handleLoad = async (showLoading = true) => {
+        try {
+            showLoading && setLoading(true);
+            const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
+            setSelectedMail({ ...selectedMail, ...mail });
+            setReadable(mail.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
+        } catch (error) {
+            console.error(error);
+            showLoading && toast.error("Can't get mail detail, please try again later.");
+        } finally {
+            showLoading && setLoading(false);
+        }
+    };
+
+    const handleMailActionsClick = async (httpParams: IMailChangeOptions) => {
+        try {
+            await mailHttp.changeMailStatus(
+                [
+                    {
+                        message_id: selectedMail.message_id,
+                        mailbox: selectedMail.mailbox,
+                    },
+                ],
+                httpParams
+            );
+            await handleLoad(false);
+        } catch (error) {
+            console.error(error);
+            toast.error('Operation failed, please try again later.');
+        }
+    };
+
+    const topIcons = [
         {
             src: back,
             handler: () => {
@@ -58,85 +82,61 @@ export default function MailDetail() {
         {
             src: trash,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    mark: MarkTypeEn.Trash,
-                });
-                router.back();
+                await handleMailActionsClick({ mark: MarkTypeEn.Trash });
             },
         },
         {
             src: spam,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    mark: MarkTypeEn.Spam,
-                });
-                router.back();
+                await handleMailActionsClick({ mark: MarkTypeEn.Spam });
             },
         },
         {
-            src: read,
-            checkedSrc: markUnread,
+            src: selectedMail.read === ReadStatusTypeEn.Read ? read : markUnread,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    read: isRead ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
+                await handleMailActionsClick({
+                    read: selectedMail.read === ReadStatusTypeEn.Read ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
                 });
-                setIsRead(!isRead);
             },
-            onselect: isRead,
         },
         {
-            src: starred,
-            checkedSrc: markFavorite,
+            src: selectedMail.mark === MarkTypeEn.Starred ? starred : markFavorite,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    mark: mark ? MarkTypeEn.Normal : MarkTypeEn.Starred,
+                await handleMailActionsClick({
+                    mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
                 });
-                setMark(!mark);
             },
-            onselect: mark,
         },
     ];
 
-    const threeMail = [
+    const rightIcons = [
         {
-            src: starred,
-            checkedSrc: markFavorite,
+            src: selectedMail.mark === MarkTypeEn.Starred ? starred : markFavorite,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    mark: mark ? MarkTypeEn.Normal : MarkTypeEn.Starred,
+                await handleMailActionsClick({
+                    mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
                 });
-                setMark(!mark);
             },
-            onselect: mark,
         },
         {
             src: sent,
-            handler: () => {
-                //handleStar(mailInfo);
-            },
+            handler: () => {},
         },
         {
             src: mailMore,
-            handler: () => {
-                //handleStar(mailInfo);
-            },
+            handler: () => {},
         },
     ];
 
     const handleDecrypted = async () => {
-        let keys = mailDetail?.meta_header?.keys;
+        let keys = selectedMail?.meta_header?.keys;
         const { address, ensName } = userSessionStorage.getUserInfo();
         if (keys && keys?.length > 0 && address) {
             const addrList = [
-                mailDetail?.mail_from.address,
-                ...(mailDetail?.mail_to.map(item => item.address) || []),
-                ...(mailDetail?.mail_cc.map(item => item.address) || []),
-                ...(mailDetail?.mail_bcc.map(item => item.address) || []),
+                selectedMail?.mail_from.address,
+                ...(selectedMail?.mail_to.map(item => item.address) || []),
+                ...(selectedMail?.mail_cc.map(item => item.address) || []),
+                ...(selectedMail?.mail_bcc.map(item => item.address) || []),
             ];
             const idx = addrList.findIndex(addr => {
                 const prefix = addr?.split('@')[0].toLocaleLowerCase();
@@ -150,21 +150,20 @@ export default function MailDetail() {
 
             const { privateKey, salt } = userSessionStorage.getUserInfo();
             const decryptPrivateKey = await getPrivateKey(privateKey, salt);
-            const randomBits = await decryptMailKey(key, decryptPrivateKey);
+            randomBits = await decryptMailKey(key, decryptPrivateKey);
             if (!randomBits) {
-                console.log('error: no randombits');
-                return;
+                return toast.error('No randomBits.');
             }
-            randomBitsRef.current = randomBits;
-            const res = { ...mailDetail };
-            if (res?.part_html) {
-                res.part_html = decryptMailContent(res.part_html, randomBits);
+
+            const _mail = { ...selectedMail };
+            if (_mail?.part_html) {
+                _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
             }
-            if (res?.part_text) {
-                res.part_text = decryptMailContent(res.part_html, randomBits);
+            if (_mail?.part_text) {
+                _mail.part_text = decryptMailContent(_mail.part_html, randomBits);
             }
             setReadable(true);
-            setMailDetail(res);
+            setSelectedMail(_mail);
         } else {
             console.warn(`please check your keys ${keys} and address ${address}`);
         }
@@ -200,27 +199,11 @@ export default function MailDetail() {
         return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
     };
 
-    const handleLoad = async () => {
-        try {
-            setLoading(true);
-            const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
-            setSelectedMail({
-                ...selectedMail,
-                attachments: mail.attachments,
-                part_html: mail.part_html,
-                part_text: mail.part_text,
-                download: mail.download,
-            });
-        } catch (error) {
-            console.error(error);
-            toast.error("Can't get mail detail, please try again later.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
         handleLoad();
+        return () => {
+            randomBits = '';
+        };
     }, [selectedMail.message_id]);
 
     return (
@@ -230,7 +213,7 @@ export default function MailDetail() {
                     <header className="flex flex-col justify-between w-full mb-20">
                         <div className="flex justify-between w-full">
                             <div className="flex gap-10">
-                                {mailDetailTopActions.map((item, index) => {
+                                {topIcons.map((item, index) => {
                                     return (
                                         <Icon
                                             url={item.src}
@@ -254,9 +237,7 @@ export default function MailDetail() {
                                 />
                             </div>
                         </div>
-                        <h1 className="omit text-2xl font-bold my-20">
-                            {mailDetail?.subject || 'I want to creat a metamail'}
-                        </h1>
+                        <h1 className="omit text-2xl font-bold my-20">{selectedMail?.subject || '( no subject )'}</h1>
                         <div className="flex justify-between">
                             <div className="flex gap-11">
                                 <Image src={tempMailSenderIcon} className="w-40 h-auto" alt={'tempMailSenderIcon'} />
@@ -271,10 +252,10 @@ export default function MailDetail() {
                             </div>
                             <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
                                 <div className="text-xs">
-                                    {moment(mailDetail?.mail_date).format('ddd, MMM DD, Y LT')}
+                                    {moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}
                                 </div>
                                 <div className="flex gap-10 justify-end">
-                                    {threeMail.map((item, index) => {
+                                    {rightIcons.map((item, index) => {
                                         return (
                                             <Icon
                                                 key={index}
@@ -296,19 +277,19 @@ export default function MailDetail() {
                     ) : readable ? (
                         <>
                             <h2 className="flex-1 overflow-auto">
-                                {mailDetail?.part_html
-                                    ? parse(DOMPurify.sanitize(mailDetail?.part_html))
-                                    : mailDetail?.part_text}
+                                {selectedMail?.part_html
+                                    ? parse(DOMPurify.sanitize(selectedMail?.part_html))
+                                    : selectedMail?.part_text}
                             </h2>
-                            {mailDetail?.attachments && mailDetail.attachments.length > 0 && (
+                            {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
                                 <div className="flex">
-                                    {mailDetail?.attachments?.map((item, idx) => (
+                                    {selectedMail?.attachments?.map((item, idx) => (
                                         <AttachmentItem
                                             idx={idx}
                                             key={idx}
                                             url={item?.download?.url}
                                             name={item?.filename}
-                                            randomBits={randomBitsRef.current}
+                                            randomBits={randomBits}
                                         />
                                     ))}
                                 </div>

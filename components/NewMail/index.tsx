@@ -233,13 +233,7 @@ export default function NewMail() {
         try {
             setLoading(true);
             const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
-            setSelectedDraft({
-                ...selectedDraft,
-                attachments: mail.attachments,
-                part_html: mail.part_html,
-                part_text: mail.part_text,
-                download: mail.download,
-            });
+            setSelectedDraft({ ...selectedDraft, ...mail });
             setEditable(selectedDraft.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
             selectedDraftKey = selectedDraft.meta_header?.keys?.[0];
             randomBits = selectedDraft.randomBits;
