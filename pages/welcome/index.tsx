@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 
 import { userHttp } from 'lib/http';
 import { userSessionStorage } from 'lib/utils';
-import { generateEncryptionUserKey } from 'lib/encrypt';
+import { generateEncryptionUserKey, getPrivateKey } from 'lib/encrypt';
 import { randomStringSignInstance } from 'lib/sign';
 import ReviewInfo from 'components/ReviewInfo';
 import Footer from 'components/Footer';
@@ -44,12 +44,14 @@ export default function Welcome() {
                     data: encryptionData,
                 });
             }
+            const decryptPrivateKey = await getPrivateKey(encryptionData.encryption_private_key, encryptionData.salt);
             userSessionStorage.setUserInfo({
                 address,
                 ensName: user.ens,
                 publicKey: encryptionData.encryption_public_key,
                 privateKey: encryptionData.encryption_private_key,
                 salt: encryptionData.salt,
+                purePrivateKey: decryptPrivateKey,
             });
             router.push('/mailbox');
         } catch (error) {

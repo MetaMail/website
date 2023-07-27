@@ -16,6 +16,7 @@ interface IUserInfo {
     ensName?: string;
     address?: string;
     privateKey?: string;
+    purePrivateKey?: string;
     salt?: string;
 }
 
