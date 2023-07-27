@@ -11,12 +11,12 @@ import { MMHttp } from '../base';
 
 const APIs = {
     getMailList: '/mails/filter', // 根据筛选条件获取邮件列表
-    mailDetail: '/mails/', // 获取邮件详情
+    mailDetail: '/mails', // 获取邮件详情
     createDraft: '/mails/draft', // 新建草稿
-    updateMail: '/mails/{mail_id}', // patch方法，更新邮件内容
-    sendMail: '/mails/{mail_id}/send', // 发送邮件
-    uploadAttachment: '/mails/{mail_id}/attachments', //上传附件
-    deleteAttachment: '/mails/{mail_id}/attachments/{attachment_id}', // 删除附件
+    updateMail: '/mails', // patch方法，更新邮件内容
+    sendMail: '/mails/send', // 发送邮件
+    uploadAttachment: '/mails/attachments', //上传附件
+    deleteAttachment: '/mails/attachments', // 删除附件
 };
 
 interface ICreateDraftParams {
@@ -29,6 +29,7 @@ interface ICreateDraftResponse {
 }
 
 interface IUpdateMailParams {
+    mail_id: string;
     subject: string;
     mail_from?: IPersonItem;
     mail_to: IPersonItem[];
@@ -46,6 +47,7 @@ interface IUpdateMailResponse {
 }
 
 interface ISendMailParams {
+    mail_id: string;
     date?: string;
     signature?: string;
     keys: string[];
@@ -72,6 +74,10 @@ interface IUploadAttachmentResponse {
     date: string;
 }
 
+interface IDeleteAttachmentParams {
+    mail_id: string;
+    attachment_id: string;
+}
 interface IDeleteAttachmentResponse {
     message_id: string;
     attachment_id: string;
@@ -79,6 +85,10 @@ interface IDeleteAttachmentResponse {
 }
 
 type IGetMailDetailResponse = IMailContentItem;
+
+type IGetMailDetailParams = {
+    mail_id: string;
+};
 
 interface IGetMailListParams {
     limit?: number;
@@ -112,7 +122,9 @@ export interface IMailChangeOptions {
 
 class MMMailHttp extends MMHttp {
     async getMailDetailByID(id: string) {
-        return this.get<void, IGetMailDetailResponse>(`${APIs.mailDetail}${id}`);
+        return this.get<IGetMailDetailParams, IGetMailDetailResponse>(`${APIs.mailDetail}`, {
+            mail_id: id,
+        });
     }
 
     async getMailList(params: IGetMailListParams) {
@@ -130,34 +142,22 @@ class MMMailHttp extends MMHttp {
         });
     }
 
-    async updateMail(mailId: string, params: IUpdateMailParams) {
-        return this.patch<IUpdateMailParams, IUpdateMailResponse>(
-            APIs.updateMail.replace('{mail_id}', window.btoa(mailId)),
-            params
-        );
+    async updateMail(params: IUpdateMailParams) {
+        return this.patch<IUpdateMailParams, IUpdateMailResponse>(APIs.updateMail, params);
     }
 
-    async sendMail(mailId: string, params: ISendMailParams) {
-        return this.post<ISendMailParams, ISendMailResponse>(
-            APIs.sendMail.replace('{mail_id}', window.btoa(mailId)),
-            params
-        );
+    async sendMail(params: ISendMailParams) {
+        return this.post<ISendMailParams, ISendMailResponse>(APIs.sendMail, params);
     }
 
-    async uploadAttachment(mailId: string, data: FormData) {
-        return this.post<FormData, IUploadAttachmentResponse>(
-            APIs.uploadAttachment.replace('{mail_id}', window.btoa(mailId)),
-            data,
-            {
-                timeout: 60000,
-            }
-        );
+    async uploadAttachment(data: FormData) {
+        return this.post<FormData, IUploadAttachmentResponse>(APIs.uploadAttachment, data, {
+            timeout: 60000,
+        });
     }
 
-    async deleteAttachment(mailId: string, attachmentId: string) {
-        return this.delete<void, IDeleteAttachmentResponse>(
-            APIs.deleteAttachment.replace('{mail_id}', window.btoa(mailId)).replace('{attachment_id}', attachmentId)
-        );
+    async deleteAttachment(params: IDeleteAttachmentParams) {
+        return this.delete<IDeleteAttachmentParams, IDeleteAttachmentResponse>(APIs.deleteAttachment, params);
     }
 }
 

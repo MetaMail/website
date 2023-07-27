@@ -61,7 +61,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
                 {receivers.map((email, index) => (
                     <li key={index} className="flex">
                         <div
-                            className="w-100 omit px-6 py-2 bg-[#e6e6e6] rounded-8 cursor-pointer"
+                            className="w-100 omit px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer"
                             title={email.address}>
                             {email.address}
                         </div>

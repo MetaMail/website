@@ -1,15 +1,11 @@
 import { create } from 'zustand';
 import { IMailContentItem, FilterTypeEn } from 'lib/constants';
 
-type MailListMode = 'normal' | 'selected';
-
 interface IMailListState {
-    mode: MailListMode;
     filterType: FilterTypeEn;
     pageIndex: number;
     unreadInboxCount: number;
     unreadSpamCount: number;
-    setMode: (mode: MailListMode) => void;
     setFilterType: (filterType: FilterTypeEn) => void;
     addPageIndex: () => void;
     subPageIndex: () => void;
@@ -18,13 +14,11 @@ interface IMailListState {
     setUnreadSpamCount: (unreadSpamCount: number) => void;
 }
 export const useMailListStore = create<IMailListState>()(set => ({
-    mode: 'normal',
     filterType: FilterTypeEn.Inbox,
     pageIndex: 1,
     unreadInboxCount: 0,
     unreadSpamCount: 0,
     setFilterType: (filterType: FilterTypeEn) => set(() => ({ filterType })),
-    setMode: (mode: MailListMode) => set(() => ({ mode })),
     addPageIndex: () => set(state => ({ pageIndex: state.pageIndex + 1 })),
     subPageIndex: () => set(state => ({ pageIndex: state.pageIndex - 1 })),
     resetPageIndex: () => set({ pageIndex: 1 }),

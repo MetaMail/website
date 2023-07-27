@@ -4,14 +4,14 @@ import { useRouter } from 'next/router';
 import DOMPurify from 'dompurify';
 import moment from 'moment';
 import parse from 'html-react-parser';
+import { toast } from 'react-toastify';
 
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
-import { mailHttp } from 'lib/http';
+import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { useMailDetailStore } from 'lib/zustand-store';
 import { getPrivateKey, decryptMailContent, decryptMailKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
-import { MailListItemType } from 'components/MailList/components/MailListItem';
 import AttachmentItem from './components/AttachmentItem';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
@@ -31,24 +31,48 @@ import {
     markUnread,
 } from 'assets/icons';
 
+let randomBits: string = '';
+
 export default function MailDetail() {
-    const router = useRouter();
     const { selectedMail, setSelectedMail } = useMailDetailStore();
 
-    const [mailDetail, setMailDetail] = useState<IMailContentItem>();
     const [isExtend, setIsExtend] = useState(false);
-    const [readable, setReadable] = useState(true);
+    const [readable, setReadable] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [isRead, setIsRead] = useState(true);
-    const [mailInfo, setMailInfo] = useState([
-        {
-            message_id: selectedMail.message_id,
-            mailbox: selectedMail.mailbox,
-        },
-    ]);
-    const [mark, setMark] = useState(selectedMail.mark === 1);
-    const randomBitsRef = useRef('');
-    const mailDetailTopActions = [
+
+    const handleLoad = async (showLoading = true) => {
+        try {
+            showLoading && setLoading(true);
+            const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
+            setSelectedMail({ ...selectedMail, ...mail });
+            setReadable(mail.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
+        } catch (error) {
+            console.error(error);
+            showLoading && toast.error("Can't get mail detail, please try again later.");
+        } finally {
+            showLoading && setLoading(false);
+        }
+    };
+
+    const handleMailActionsClick = async (httpParams: IMailChangeOptions) => {
+        try {
+            await mailHttp.changeMailStatus(
+                [
+                    {
+                        message_id: selectedMail.message_id,
+                        mailbox: selectedMail.mailbox,
+                    },
+                ],
+                httpParams
+            );
+            await handleLoad(false);
+        } catch (error) {
+            console.error(error);
+            toast.error('Operation failed, please try again later.');
+        }
+    };
+
+    const topIcons = [
         {
             src: back,
             handler: () => {
@@ -58,58 +82,61 @@ export default function MailDetail() {
         {
             src: trash,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    mark: MarkTypeEn.Trash,
-                });
-                router.back();
+                await handleMailActionsClick({ mark: MarkTypeEn.Trash });
             },
         },
         {
             src: spam,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    mark: MarkTypeEn.Spam,
-                });
-                router.back();
+                await handleMailActionsClick({ mark: MarkTypeEn.Spam });
             },
         },
         {
-            src: read,
-            checkedSrc: markUnread,
+            src: selectedMail.read === ReadStatusTypeEn.Read ? markUnread : read,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    read: isRead ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
+                await handleMailActionsClick({
+                    read: selectedMail.read === ReadStatusTypeEn.Read ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
                 });
-                setIsRead(!isRead);
             },
-            onselect: isRead,
         },
         {
-            src: starred,
-            checkedSrc: markFavorite,
+            src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
             handler: async () => {
-                mailSessionStorage.clearMailListInfo();
-                await mailHttp.changeMailStatus(mailInfo, {
-                    mark: mark ? MarkTypeEn.Normal : MarkTypeEn.Starred,
+                await handleMailActionsClick({
+                    mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
                 });
-                setMark(!mark);
             },
-            onselect: mark,
+        },
+    ];
+
+    const rightIcons = [
+        {
+            src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
+            handler: async () => {
+                await handleMailActionsClick({
+                    mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
+                });
+            },
+        },
+        {
+            src: sent,
+            handler: () => {},
+        },
+        {
+            src: mailMore,
+            handler: () => {},
         },
     ];
 
     const handleDecrypted = async () => {
-        let keys = mailDetail?.meta_header?.keys;
+        let keys = selectedMail?.meta_header?.keys;
         const { address, ensName } = userSessionStorage.getUserInfo();
         if (keys && keys?.length > 0 && address) {
             const addrList = [
-                mailDetail?.mail_from.address,
-                ...(mailDetail?.mail_to.map(item => item.address) || []),
-                ...(mailDetail?.mail_cc.map(item => item.address) || []),
-                ...(mailDetail?.mail_bcc.map(item => item.address) || []),
+                selectedMail?.mail_from.address,
+                ...(selectedMail?.mail_to.map(item => item.address) || []),
+                ...(selectedMail?.mail_cc.map(item => item.address) || []),
+                ...(selectedMail?.mail_bcc.map(item => item.address) || []),
             ];
             const idx = addrList.findIndex(addr => {
                 const prefix = addr?.split('@')[0].toLocaleLowerCase();
@@ -123,40 +150,75 @@ export default function MailDetail() {
 
             const { privateKey, salt } = userSessionStorage.getUserInfo();
             const decryptPrivateKey = await getPrivateKey(privateKey, salt);
-            const randomBits = await decryptMailKey(key, decryptPrivateKey);
+            randomBits = await decryptMailKey(key, decryptPrivateKey);
             if (!randomBits) {
-                console.log('error: no randombits');
-                return;
+                return toast.error('No randomBits.');
             }
-            randomBitsRef.current = randomBits;
-            const res = { ...mailDetail };
-            if (res?.part_html) {
-                res.part_html = decryptMailContent(res.part_html, randomBits);
+
+            const _mail = { ...selectedMail };
+            if (_mail?.part_html) {
+                _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
             }
-            if (res?.part_text) {
-                res.part_text = decryptMailContent(res.part_html, randomBits);
+            if (_mail?.part_text) {
+                _mail.part_text = decryptMailContent(_mail.part_html, randomBits);
             }
             setReadable(true);
-            setMailDetail(res);
+            setSelectedMail(_mail);
         } else {
             console.warn(`please check your keys ${keys} and address ${address}`);
         }
     };
 
+    const changeInnerHTML = (data: IMailContentItem) => {
+        if (data.part_html) {
+            var el = document.createElement('html');
+            el.innerHTML = data.part_html;
+            {
+                data?.attachments?.map(
+                    (item: {
+                        filename: string;
+                        download: {
+                            expire_at: string;
+                            url: string;
+                        };
+                    }) => {
+                        //imgReplace = document.getElementById(item.filename);
+                        el.querySelectorAll('img').forEach(function (element) {
+                            if (element.alt == item.filename) {
+                                element.src = item.download.url;
+                                data.part_html = el.innerHTML;
+                            }
+                        });
+                    }
+                );
+            }
+        }
+    };
+
+    const getMailFrom = (mail: IMailContentItem): string => {
+        return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
+    };
+
+    useEffect(() => {
+        handleLoad();
+        return () => {
+            randomBits = '';
+        };
+    }, [selectedMail.message_id]);
+
     return (
-        <div className="flex">
-            <div className={`transition-all h-[100%] ${isExtend ? 'w-[calc(100vw-225px)]' : ''}`}>
-                <div className="w-full h-full bg-white flex flex-col font-poppins">
-                    <div className="h-[86%] w-0 border absolute top-54" />
-                    <header className="flex flex-col justify-between h-100 w-full px-16">
-                        <div className="py-11 flex justify-between w-full">
-                            <div className="h-14 flex gap-10">
-                                {mailDetailTopActions.map((item, index) => {
+        <div className="flex-1">
+            <div className={`transition-all h-[100%] ${isExtend ? 'absolute top-0 left-0 w-full' : ''}`}>
+                <div className="w-full h-full bg-white flex flex-col font-poppins p-20">
+                    <header className="flex flex-col justify-between w-full mb-20">
+                        <div className="flex justify-between w-full">
+                            <div className="flex gap-10">
+                                {topIcons.map((item, index) => {
                                     return (
                                         <Icon
                                             url={item.src}
                                             key={index}
-                                            className="w-13 h-auto self-center"
+                                            className="w-20 h-20 self-center"
                                             onClick={item.handler}
                                         />
                                     );
@@ -165,70 +227,83 @@ export default function MailDetail() {
                             <div className="flex gap-10">
                                 <Icon
                                     url={extend}
-                                    className="w-13 h-auto self-center "
+                                    className="w-20 h-20 self-center "
                                     onClick={() => setIsExtend(!isExtend)}
                                 />
                                 <Icon
                                     url={cancel}
                                     onClick={() => setSelectedMail(null)}
-                                    className="w-13 scale-[120%] h-auto self-center"
+                                    className="w-20 h-20 scale-[120%] self-center"
                                 />
                             </div>
                         </div>
-                        <div className="flex justify-between pr-21">
+                        <h1 className="omit text-2xl font-bold my-20">{selectedMail?.subject || '( no subject )'}</h1>
+                        <div className="flex justify-between">
                             <div className="flex gap-11">
-                                <Image
-                                    src={tempMailSenderIcon}
-                                    className="self-center w-40 h-auto"
-                                    alt={'tempMailSenderIcon'}
-                                />
-                                <div className="self-end">
-                                    <div className="text-[#0075EA] text-md">
-                                        {mailDetail?.mail_from?.name ?? mailDetail?.mail_from?.address}
-                                    </div>
-                                    <div className="flex text-xs gap-3 w-220">
+                                <Image src={tempMailSenderIcon} className="w-40 h-auto" alt={'tempMailSenderIcon'} />
+                                <div className="">
+                                    <div className="text-[#0075EA]">{getMailFrom(selectedMail)}</div>
+                                    <div className="flex gap-3">
                                         to:
                                         <Image src={ifLock} className="self-center " alt={'ifLock'} />
-                                        <div className="flex-1 omit">{mailDetail?.mail_to[0]?.address}</div>
+                                        <div className="flex-1 omit">{selectedMail?.mail_to[0]?.address}</div>
                                     </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
+                                <div className="text-xs">
+                                    {moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}
+                                </div>
+                                <div className="flex gap-10 justify-end">
+                                    {rightIcons.map((item, index) => {
+                                        return (
+                                            <Icon
+                                                key={index}
+                                                url={item.src}
+                                                onClick={item.handler}
+                                                className="w-20 h-20 self-center"
+                                            />
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
                     </header>
 
                     {loading ? (
-                        <div className="flex justify-center align-center m-auto radial-progress animate-spin text-[#006AD4]" />
+                        <div className="flex-1 flex items-center justify-center">
+                            <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
+                        </div>
                     ) : readable ? (
                         <>
-                            <h1 className="p-16 pl-[4%] w-[70%] h-48 omit text-2xl font-bold pb-0 mb-24">
-                                {mailDetail?.subject}
-                            </h1>
-                            <h2 className="flex-1 overflow-auto ml-19">
-                                {mailDetail?.part_html
-                                    ? parse(DOMPurify.sanitize(mailDetail?.part_html))
-                                    : mailDetail?.part_text}
+                            <h2 className="flex-1 overflow-auto">
+                                {selectedMail?.part_html
+                                    ? parse(DOMPurify.sanitize(selectedMail?.part_html))
+                                    : selectedMail?.part_text}
                             </h2>
-                            {mailDetail?.attachments && mailDetail.attachments.length > 0 && (
+                            {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
                                 <div className="flex">
-                                    {mailDetail?.attachments?.map((item, idx) => (
+                                    {selectedMail?.attachments?.map((item, idx) => (
                                         <AttachmentItem
                                             idx={idx}
                                             key={idx}
                                             url={item?.download?.url}
                                             name={item?.filename}
-                                            randomBits={randomBitsRef.current}
+                                            randomBits={randomBits}
                                         />
                                     ))}
                                 </div>
                             )}
                         </>
                     ) : (
-                        <button className="flex-1" onClick={handleDecrypted}>
-                            Decrypt
-                        </button>
+                        <div className="flex-1 flex items-center justify-center">
+                            <button className="btn" onClick={handleDecrypted}>
+                                Decrypt
+                            </button>
+                        </div>
                     )}
 
-                    <button className="m-22 mb-9 w-105 h-36 ">
+                    <button className="w-105 h-36 ">
                         <Image src={replyBtn} alt={'reply'} />
                     </button>
                 </div>
