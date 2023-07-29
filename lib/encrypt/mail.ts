@@ -7,14 +7,14 @@ function generateRandom256Bits(address: string) {
     return 'Encryption key of this mail from ' + address + ' is ' + rb.toString(CryptoJS.enc.Base64);
 }
 
-export const createEncryptedMailKey = async (publicKey: string, address: string) => {
+export const createEncryptedMailKey = async (publicKey: string, address: string, randomBits?: string) => {
     if (!address) {
         throw new Error('No address of current user, please check');
     }
     if (!publicKey || publicKey?.length === 0) {
         throw new Error('error: !pKey || pKey?.length === 0');
     }
-    const randomBits = generateRandom256Bits(address);
+    randomBits = randomBits || generateRandom256Bits(address);
     return {
         key: await asymmetricEncryptInstance.encrypt(randomBits, publicKey),
         randomBits,

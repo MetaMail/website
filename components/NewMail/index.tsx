@@ -140,7 +140,9 @@ export default function NewMail() {
             let keys: string[] = [];
             if (metaType === MetaMailTypeEn.Encrypted) {
                 // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
-                const receiversInfo: { publicKey: string; address: string }[] = [{ publicKey, address }];
+                const receiversInfo: { publicKey: string; address: string }[] = [
+                    { publicKey, address: address + PostfixOfAddress },
+                ];
                 for (var i = 0; i < selectedDraft.mail_to.length; i++) {
                     const receiverItem = selectedDraft.mail_to[i];
                     receiversInfo.push({
@@ -149,8 +151,9 @@ export default function NewMail() {
                     });
                 }
                 const result = await Promise.all(
-                    receiversInfo.map(item => createEncryptedMailKey(item.publicKey, item.address))
+                    receiversInfo.map(item => createEncryptedMailKey(item.publicKey, item.address, randomBits))
                 );
+
                 keys = result.map(item => item.key);
             }
 
@@ -335,6 +338,7 @@ export default function NewMail() {
                         value={selectedDraft.subject}
                         onChange={e => {
                             // TODO 所有的输入做节流
+                            // 目前的做法 每次输入之后都会页面刷新 需要优化
                             e.preventDefault();
                             setSelectedDraft({ ...selectedDraft, subject: e.target.value });
                         }}
