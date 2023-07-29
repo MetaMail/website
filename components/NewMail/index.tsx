@@ -21,7 +21,7 @@ import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
 import DynamicReactQuill from './components/DynamicReactQuill';
 import FileUploader from './components/FileUploader';
-import NameSelector from './components/NameSelector';
+import NameSelector, { MailFromType } from './components/NameSelector';
 import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
 
@@ -136,7 +136,7 @@ export default function NewMail() {
         const id = toast.loading('Sending mail...');
         try {
             const { html, text, metaType, publicKeys } = await handleSave();
-            const { address, ensName, showName, publicKey } = userSessionStorage.getUserInfo();
+            const { address, ensName, publicKey } = userSessionStorage.getUserInfo();
             let keys: string[] = [];
             if (metaType === MetaMailTypeEn.Encrypted) {
                 // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
@@ -160,7 +160,7 @@ export default function NewMail() {
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
-                from_address: showName + PostfixOfAddress,
+                from_address: address + PostfixOfAddress,
                 from_name: ensName || address,
                 to_address: selectedDraft.mail_to.map(to => to.address),
                 to_name: selectedDraft.mail_to.map(to => to.name),
@@ -207,20 +207,19 @@ export default function NewMail() {
         }
 
         const metaType = encryptable ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
-        const { address, ensName, showName } = userSessionStorage.getUserInfo();
-        const { message_id, mail_date } =
-            (await mailHttp.updateMail({
-                mail_id: window.btoa(selectedDraft.message_id),
-                meta_type: metaType,
-                subject: selectedDraft.subject,
-                mail_to: selectedDraft.mail_to,
-                part_html: html,
-                part_text: text,
-                mail_from: {
-                    address: showName + PostfixOfAddress,
-                    name: ensName ?? address,
-                },
-            })) ?? {};
+        const { address, ensName } = userSessionStorage.getUserInfo();
+        const { message_id, mail_date } = await mailHttp.updateMail({
+            mail_id: window.btoa(selectedDraft.message_id),
+            meta_type: metaType,
+            subject: selectedDraft.subject,
+            mail_to: selectedDraft.mail_to,
+            part_html: html,
+            part_text: text,
+            mail_from: selectedDraft.mail_from || {
+                address: address + PostfixOfAddress,
+                name: ensName || address,
+            },
+        });
 
         mailSessionStorage.setQuillHtml(html);
         mailSessionStorage.setQuillText(text);
@@ -251,6 +250,18 @@ export default function NewMail() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleChangeMailFrom = (from: MailFromType) => {
+        const { address, ensName } = userSessionStorage.getUserInfo();
+        const mail_from = {
+            address: address + PostfixOfAddress,
+            name: from === MailFromType.address ? address : ensName,
+        };
+        setSelectedDraft({
+            ...selectedDraft,
+            mail_from,
+        });
     };
 
     useEffect(() => {
@@ -308,7 +319,12 @@ export default function NewMail() {
                 </div>
                 <div className="flex h-40 items-center">
                     <span className="w-78">From</span>
-                    <NameSelector />
+                    <NameSelector
+                        initValue={
+                            selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
+                        }
+                        onChange={handleChangeMailFrom}
+                    />
                 </div>
                 <div className="flex h-40 items-center">
                     <span className="w-78">Subject</span>

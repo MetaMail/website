@@ -15,6 +15,7 @@ export default function Titlebar() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const router = useRouter();
     const [address, setAddress] = useState<string>();
+    const [ensName, setEnsName] = useState<string>();
 
     const { removeAllState } = useUtilsStore();
 
@@ -32,9 +33,10 @@ export default function Titlebar() {
     };
 
     useEffect(() => {
-        const address = userSessionStorage.getUserInfo()?.address;
+        const { address, ensName } = userSessionStorage.getUserInfo() ?? {};
         if (!address) return getLogOut();
         setAddress(address);
+        setEnsName(ensName);
     }, []);
     return (
         <div className="navbar p-0">
@@ -67,18 +69,21 @@ export default function Titlebar() {
                                 }}
                             />
                         </div>
-                        <div className="text-[#93989A] flex flex-row items-center my-8">
-                            <span className="flex-1 omit mr-4 cursor-default">mvsovo{PostfixOfAddress}</span>
-                            <Image
-                                src={copy}
-                                alt="copy"
-                                title="copy"
-                                className="w-18 h-18 p-0 cursor-pointer"
-                                onClick={() => {
-                                    handleCopy(address);
-                                }}
-                            />
-                        </div>
+                        {ensName && (
+                            <div className="text-[#93989A] flex flex-row items-center my-8">
+                                <span className="flex-1 omit mr-4 cursor-default">{ensName}</span>
+                                <Image
+                                    src={copy}
+                                    alt="copy"
+                                    title="copy"
+                                    className="w-18 h-18 p-0 cursor-pointer"
+                                    onClick={() => {
+                                        handleCopy(ensName);
+                                    }}
+                                />
+                            </div>
+                        )}
+
                         <div className="divider my-4"></div>
                         <div className="my-8">
                             <p className="flex justify-between font-bold">

@@ -20,10 +20,6 @@ interface IUserInfo {
     salt?: string;
 }
 
-interface IAllUserInfo extends IUserInfo {
-    showName?: string;
-}
-
 interface IMailContent {
     subject?: string;
     mail_from?: IPersonItem;
@@ -76,26 +72,14 @@ export const userSessionStorage = {
                 ...value,
             })
         );
-
-        const { ensName, address } = value;
-        setStorage(ShowNameKey, ensName ?? address);
     },
 
-    getUserInfo: (): IAllUserInfo => {
-        const basic = getStorage(UserInfoStoreKey);
-        return Object.assign(doParse(basic), { showName: userSessionStorage.getShowName() });
+    getUserInfo: (): IUserInfo => {
+        return doParse(getStorage(UserInfoStoreKey));
     },
 
     clearUserInfo: () => {
         deleteStorage(UserInfoStoreKey);
-    },
-
-    getShowName: (): string => {
-        return getStorage(ShowNameKey);
-    },
-
-    setShowName: (name: string) => {
-        setStorage(ShowNameKey, name);
     },
 
     getRandomBits: (): string => {

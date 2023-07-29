@@ -47,7 +47,7 @@ export default function Welcome() {
             const decryptPrivateKey = await getPrivateKey(encryptionData.encryption_private_key, encryptionData.salt);
             userSessionStorage.setUserInfo({
                 address,
-                ensName: user.ens,
+                ensName: user.ens || '',
                 publicKey: encryptionData.encryption_public_key,
                 privateKey: encryptionData.encryption_private_key,
                 salt: encryptionData.salt,

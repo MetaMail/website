@@ -205,7 +205,7 @@ export default function MailDetail() {
     return (
         <div className="flex-1">
             <div className={`transition-all h-[100%] ${isExtend ? 'absolute top-0 left-0 w-full' : ''}`}>
-                <div className="w-full h-full bg-white flex flex-col font-poppins p-20">
+                <div className="w-full h-full flex flex-col font-poppins p-20">
                     <header className="flex flex-col justify-between w-full mb-20">
                         <div className="flex justify-between w-full">
                             <div className="flex gap-10">

@@ -6,44 +6,38 @@ import { userSessionStorage } from 'lib/utils';
 import Icon from 'components/Icon';
 import { swapAddr } from 'assets/icons';
 
-function NameSelector() {
-    const { showName, ensName, address } = userSessionStorage.getUserInfo();
-    const [activeName, setActiveName] = useState(showName);
-    const [isAddrListHidden, setIsAddrListHidden] = useState(true);
-    const DropItem = ({ name }: { name?: string }) => {
-        return name ? (
-            <div
-                className="hover:bg-[#DAE7FF] px-11 py-5 cursor-pointer"
-                onClick={() => {
-                    userSessionStorage.setShowName(name);
-                    setActiveName(name);
-                    setIsAddrListHidden(true);
-                }}>
-                <div id="name">{name + PostfixOfAddress}</div>
-            </div>
-        ) : null;
-    };
+export enum MailFromType {
+    address = 1,
+    ensName = 2,
+}
+
+interface IProps {
+    initValue?: MailFromType;
+    onChange?: (value: MailFromType) => void;
+}
+
+function NameSelector({ initValue, onChange }: IProps) {
+    const { ensName, address } = userSessionStorage.getUserInfo();
 
     return (
         <div className="">
-            <span className="dropdown inline-relative gap-10">
-                <div className="flex gap-10">
-                    <span>{activeName + PostfixOfAddress}</span>
-                    {ensName ? (
-                        <Icon ///////////最初设计稿的提示
-                            url={swapAddr}
-                            onClick={() => setIsAddrListHidden(!isAddrListHidden)}
-                        />
-                    ) : null}
-                </div>
-                <ul
-                    className={
-                        isAddrListHidden ? 'hidden' : 'flex z-[2] menu absolute mt-6 shadow bg-base-100 rounded-5'
-                    }>
-                    <DropItem name={address} />
-                    {ensName ? <DropItem name={ensName} /> : null}
-                </ul>
-            </span>
+            {ensName ? (
+                <select
+                    className=""
+                    onChange={e => {
+                        onChange(Number(e.target.value as unknown as MailFromType));
+                    }}>
+                    <option value={MailFromType.address} selected={initValue === MailFromType.address}>
+                        {address}
+                        {PostfixOfAddress}
+                    </option>
+                    <option value={MailFromType.ensName} selected={initValue === MailFromType.ensName}>
+                        {ensName}
+                    </option>
+                </select>
+            ) : (
+                <span>{address + PostfixOfAddress}</span>
+            )}
         </div>
     );
 }
