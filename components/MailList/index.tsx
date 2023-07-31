@@ -291,7 +291,7 @@ export default function MailList() {
                 </div>
             </div>
 
-            <div className="flex flex-col overflow-auto flex-1 relative">
+            <div className="flex flex-col overflow-y-auto overflow-x-hidden flex-1 relative">
                 {loading ? (
                     <div className="flex items-center justify-center pt-200">
                         <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
