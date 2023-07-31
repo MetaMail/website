@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import { useMailListStore, useNewMailStore, useMailDetailStore } from 'lib/zustand-store';
-import { FilterTypeEn, MetaMailTypeEn, MenusMap, IMenuItem } from 'lib/constants';
-import { createEncryptedMailKey } from 'lib/encrypt';
+import MailBoxContext from 'context/mail';
+import { useMailListStore, useNewMailStore } from 'lib/zustand-store';
+import { FilterTypeEn, MenusMap, IMenuItem } from 'lib/constants';
 import { mailHttp } from 'lib/http';
-import { userSessionStorage } from 'lib/utils';
-import Icon from 'components/Icon';
 
 import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
@@ -16,6 +14,7 @@ import write from 'assets/mailbox/write.svg';
 import styles from './Siderbar.module.scss';
 
 export default function Sidebar() {
+    const { createDraft } = useContext(MailBoxContext);
     const router = useRouter();
     const {
         filterType,
@@ -38,9 +37,7 @@ export default function Sidebar() {
     }
 
     async function handleClickNewMail() {
-        const { publicKey, address } = userSessionStorage.getUserInfo();
-        const { key, randomBits } = await createEncryptedMailKey(publicKey, address);
-        const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key);
+        const { message_id, randomBits } = await createDraft();
         const mail = await mailHttp.getMailDetailByID(window.btoa(message_id));
         setSelectedDraft({ ...mail, randomBits });
     }

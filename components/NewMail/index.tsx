@@ -1,21 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import CryptoJS from 'crypto-js';
 import type ReactQuillType from 'react-quill';
 import { toast } from 'react-toastify';
+import { throttle } from 'lodash';
 
-import { IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
-import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import MailBoxContext from 'context/mail';
+import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
+import { useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
-import { mailHttp, userHttp } from 'lib/http';
-import {
-    getPrivateKey,
-    decryptMailKey,
-    concatAddress,
-    createEncryptedMailKey,
-    encryptMailContent,
-    decryptMailContent,
-} from 'lib/encrypt';
+import { mailHttp } from 'lib/http';
+import { decryptMailKey, createEncryptedMailKey, encryptMailContent, decryptMailContent } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
@@ -43,14 +37,17 @@ import styles from './index.module.scss';
  */
 let randomBits: string = '';
 let autoSaveMail = true;
+let mailChanged = false;
 
 export default function NewMail() {
+    const { checkEncryptable } = useContext(MailBoxContext);
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
     const [loading, setLoading] = useState(false);
     const dateRef = useRef<string>();
     const reactQuillRef = useRef<ReactQuillType>();
+    const subjectRef = useRef<HTMLInputElement>();
 
     const ensureRandomBitsExist = async () => {
         if (!randomBits) {
@@ -72,6 +69,7 @@ export default function NewMail() {
     const handleSetAttachmentList = (attachment: any) => {
         const newAttachment = [...selectedDraft.attachments, attachment];
         setSelectedDraft({ ...selectedDraft, attachments: newAttachment });
+        mailChanged = true;
     };
 
     const addReceiver = (address: string) => {
@@ -81,6 +79,7 @@ export default function NewMail() {
         };
         const newReceivers = [...selectedDraft.mail_to, newReceiver];
         setSelectedDraft({ ...selectedDraft, mail_to: newReceivers });
+        mailChanged = true;
     };
 
     const removeReceiver = (email: string) => {
@@ -88,34 +87,7 @@ export default function NewMail() {
             ...selectedDraft,
             mail_to: selectedDraft.mail_to.filter(receiver => receiver.address !== email),
         });
-    };
-
-    const handleChangeContent = (content: string) => {
-        setSelectedDraft({ ...selectedDraft, part_html: content });
-        const quill = getQuill();
-        if (!quill || !quill?.getHTML || !quill?.getText) {
-            return toast.error('Failed to get message content');
-        }
-        //let html = quill?.getHTML(),
-        //  text = quill?.getText();
-    };
-
-    const checkEncryptable = async (receivers: IPersonItem[]) => {
-        const getSinglePublicKey = async (receiver: IPersonItem) => {
-            try {
-                const encryptionData = await userHttp.getEncryptionKey(receiver.address.split('@')[0]);
-                return encryptionData.encryption_public_key;
-            } catch (error) {
-                console.error('Failed to get public key of receiver: ', receiver.address);
-                console.error(error);
-                return '';
-            }
-        };
-        const publicKeys = await Promise.all(receivers.map(receiver => getSinglePublicKey(receiver)));
-        return {
-            encryptable: receivers.length && publicKeys.every(key => key?.length),
-            publicKeys,
-        };
+        mailChanged = true;
     };
 
     const postSignature = async (keys: string[], signature?: string) => {
@@ -135,7 +107,7 @@ export default function NewMail() {
         autoSaveMail = false;
         const id = toast.loading('Sending mail...');
         try {
-            const { html, text, metaType, publicKeys } = await handleSave();
+            const { html, text, metaType, publicKeys } = await handleSave('send');
             const { address, ensName, publicKey } = userSessionStorage.getUserInfo();
             let keys: string[] = [];
             if (metaType === MetaMailTypeEn.Encrypted) {
@@ -188,18 +160,29 @@ export default function NewMail() {
             console.error(error);
             toast.error('Failed to send mail.');
         } finally {
-            toast.dismiss(id);
+            toast.done(id);
         }
     };
 
-    const handleSave = async () => {
-        // TODO 判断是否有改动
+    const filterMailContent = (content: string) => {
+        if (content === '\n') {
+            return '';
+        }
+        if (content === '<p><br></p>') {
+            return '';
+        }
+        return content;
+    };
+
+    const handleSave = async (reason: 'send' | 'save' = 'save') => {
+        if (!mailChanged && reason === 'save') return null;
+
         const quill = getQuill();
         if (!quill || !quill?.getHTML || !quill?.getText) {
             throw new Error('Failed to get message content');
         }
-        let html = quill?.getHTML(),
-            text = quill?.getText();
+        let html = filterMailContent(quill?.getHTML()),
+            text = filterMailContent(quill?.getText());
 
         const { encryptable, publicKeys } = await checkEncryptable(selectedDraft.mail_to);
 
@@ -214,7 +197,7 @@ export default function NewMail() {
         const { message_id, mail_date } = await mailHttp.updateMail({
             mail_id: window.btoa(selectedDraft.message_id),
             meta_type: metaType,
-            subject: selectedDraft.subject,
+            subject: subjectRef.current.value,
             mail_to: selectedDraft.mail_to,
             part_html: html,
             part_text: text,
@@ -265,6 +248,7 @@ export default function NewMail() {
             ...selectedDraft,
             mail_from,
         });
+        mailChanged = true;
     };
 
     useEffect(() => {
@@ -272,6 +256,7 @@ export default function NewMail() {
         return () => {
             randomBits = '';
             autoSaveMail = true;
+            mailChanged = false;
         };
     }, [selectedDraft.message_id]);
 
@@ -300,11 +285,12 @@ export default function NewMail() {
                         url={cancel}
                         className="w-20 scale-[120%] h-auto self-center"
                         onClick={async () => {
+                            if (!mailChanged) return setSelectedDraft(null);
                             const id = toast.loading('Saving draft...');
                             try {
                                 await handleSave();
                             } finally {
-                                toast.dismiss(id);
+                                toast.done(id);
                                 setSelectedDraft(null);
                             }
                         }}
@@ -335,13 +321,11 @@ export default function NewMail() {
                         type="text"
                         placeholder=""
                         className="flex pl-0 h-40 input flex-1 text-[#878787] focus:outline-none"
-                        value={selectedDraft.subject}
-                        onChange={e => {
-                            // TODO 所有的输入做节流
-                            // 目前的做法 每次输入之后都会页面刷新 需要优化
-                            e.preventDefault();
-                            setSelectedDraft({ ...selectedDraft, subject: e.target.value });
-                        }}
+                        defaultValue={selectedDraft.subject}
+                        ref={subjectRef}
+                        onChange={throttle(() => {
+                            mailChanged = true;
+                        }, 1000)}
                     />
                 </div>
             </div>
@@ -358,11 +342,14 @@ export default function NewMail() {
                     modules={EditorModules}
                     formats={EditorFormats}
                     value={selectedDraft.part_html}
-                    onChange={handleChangeContent}
+                    onChange={throttle(() => {
+                        mailChanged = true;
+                    }, 1000)}
                 />
             )}
             <div className="flex gap-13 mt-20">
                 <button
+                    disabled={selectedDraft.mail_to.length === 0}
                     onClick={handleClickSend}
                     className="flex justify-center items-center bg-[#006AD4] text-white px-14 py-8 rounded-[8px]">
                     <Icon url={sendMailIcon} />

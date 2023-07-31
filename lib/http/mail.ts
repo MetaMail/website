@@ -30,9 +30,9 @@ interface ICreateDraftResponse {
 
 interface IUpdateMailParams {
     mail_id: string;
-    subject: string;
+    subject?: string;
     mail_from?: IPersonItem;
-    mail_to: IPersonItem[];
+    mail_to?: IPersonItem[];
     mail_cc?: IPersonItem[];
     mail_bcc?: IPersonItem[];
     in_reply_to?: string;

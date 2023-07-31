@@ -1,20 +1,14 @@
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 
-import {
-    IPersonItem,
-    MarkTypeEn,
-    MetaMailTypeEn,
-    IMailContentItem,
-    ReadStatusTypeEn,
-    FilterTypeEn,
-} from 'lib/constants';
-import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
-import { userSessionStorage, mailSessionStorage, transformTime } from 'lib/utils';
-import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
+import { MarkTypeEn, MetaMailTypeEn, IMailContentItem, ReadStatusTypeEn, FilterTypeEn } from 'lib/constants';
+import { mailHttp, IMailChangeOptions } from 'lib/http';
+import { transformTime } from 'lib/utils';
+import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import Icon from 'components/Icon';
 import Dot from 'components/Dot';
-import { checkbox, favorite, markFavorite, selected, white, trash, markUnread } from 'assets/icons';
+import { favorite, markFavorite, trash, markUnread } from 'assets/icons';
 import styles from './index.module.scss';
 
 export type MailListItemType = IMailContentItem & {
@@ -28,6 +22,7 @@ interface IMailItemProps {
 }
 
 export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemProps) {
+    const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const { filterType } = useMailListStore();
     const { selectedMail, setSelectedMail } = useMailDetailStore();
     const { setSelectedDraft } = useNewMailStore();
@@ -78,6 +73,16 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         }
     };
 
+    const renderDigest = (mail: MailListItemType) => {
+        if (!mail.digest) {
+            return '( no abstract )';
+        }
+        if (mail.meta_type === MetaMailTypeEn.Encrypted) {
+            return '***';
+        }
+        return mail.digest;
+    };
+
     return (
         <>
             {!selectedMail ? (
@@ -118,7 +123,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                         <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
                         <span className={`ml-8 ${getIsReadTextClass(mail)}`}>{mail.subject || '( no subject )'}</span>
                         <span className="pt-4 pl-2 pr-7 text-[#333333]">{'-'}</span>
-                        <span className="pt-4 text-[#999999] min-w-0 flex-1">{mail.digest || '( no abstract )'}</span>
+                        <span className="pt-4 text-[#999999] min-w-0 flex-1">{renderDigest(mail)}</span>
                     </div>
                     <div className="w-100 text-right">
                         <div className="text-[#999999] group-hover:hidden">{transformTime(mail.mail_date)}</div>
@@ -149,7 +154,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                     className={`w-300 px-15 py-10 text-[14px] flex group cursor-pointer ${styles.mailListItem} ${
                         mail.message_id === selectedMail.message_id ? `bg-[#DAE7FF] ${styles.selectedItem}` : ''
                     }`}>
-                    <div className="rounded-full w-40 h-40 bg-[#006AD4]"></div>
+                    <JazziconGrid size={40} addr={mail.mail_from.address || ''} />
                     <div className="flex-1 px-10 w-0">
                         <p className="flex justify-between items-center text-[#333333]">
                             <span
@@ -165,7 +170,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                             </span>
                             <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
                         </p>
-                        <p className="omit text-[#333333]">{mail.digest || '( no abstract )'}</p>
+                        <p className="omit text-[#333333]">{renderDigest(mail)}</p>
                     </div>
                 </div>
             )}

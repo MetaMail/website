@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 
 import { IPersonItem } from 'lib/constants/interfaces';
@@ -12,6 +13,7 @@ interface EmailRecipientInputProps {
 }
 
 const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, onAddReceiver, onRemoveReceiver }) => {
+    const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const [emailInput, setEmailInput] = useState<string>('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,14 +58,14 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
             <button onClick={addRecipient}>
                 <Icon url={add} title="add receivers" className="w-20 h-20" />
             </button>
-            {receivers && receivers.length > 0 ? <div>Recipients:</div> : null}
             <ul>
                 {receivers.map((email, index) => (
                     <li key={index} className="flex">
                         <div
-                            className="w-100 omit px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer"
+                            className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
                             title={email.address}>
-                            {email.address}
+                            <JazziconGrid size={28} addr={email.address} />
+                            <span className="w-120 omit">{email.address}</span>
                         </div>
                         <button onClick={() => removeRecipient(email.address)}>
                             <Icon url={cancel} title="cancel" className="w-20 h-20" />
