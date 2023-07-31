@@ -73,6 +73,16 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         }
     };
 
+    const renderDigest = (mail: MailListItemType) => {
+        if (!mail.digest) {
+            return '( no abstract )';
+        }
+        if (mail.meta_type === MetaMailTypeEn.Encrypted) {
+            return '***';
+        }
+        return mail.digest;
+    };
+
     return (
         <>
             {!selectedMail ? (
@@ -113,7 +123,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                         <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
                         <span className={`ml-8 ${getIsReadTextClass(mail)}`}>{mail.subject || '( no subject )'}</span>
                         <span className="pt-4 pl-2 pr-7 text-[#333333]">{'-'}</span>
-                        <span className="pt-4 text-[#999999] min-w-0 flex-1">{mail.digest || '( no abstract )'}</span>
+                        <span className="pt-4 text-[#999999] min-w-0 flex-1">{renderDigest(mail)}</span>
                     </div>
                     <div className="w-100 text-right">
                         <div className="text-[#999999] group-hover:hidden">{transformTime(mail.mail_date)}</div>
@@ -160,7 +170,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                             </span>
                             <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
                         </p>
-                        <p className="omit text-[#333333]">{mail.digest || '( no abstract )'}</p>
+                        <p className="omit text-[#333333]">{renderDigest(mail)}</p>
                     </div>
                 </div>
             )}

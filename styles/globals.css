@@ -113,3 +113,8 @@ ql-snow .ql-toolbar button {
 select:focus-visible {
     outline: none;
 }
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
