@@ -1,21 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import CryptoJS from 'crypto-js';
 import type ReactQuillType from 'react-quill';
 import { toast } from 'react-toastify';
 
-import { IPersonItem, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
-import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import MailBoxContext from 'context/mail';
+import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
+import { useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
-import { mailHttp, userHttp } from 'lib/http';
-import {
-    getPrivateKey,
-    decryptMailKey,
-    concatAddress,
-    createEncryptedMailKey,
-    encryptMailContent,
-    decryptMailContent,
-} from 'lib/encrypt';
+import { mailHttp } from 'lib/http';
+import { decryptMailKey, createEncryptedMailKey, encryptMailContent, decryptMailContent } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
@@ -45,6 +38,7 @@ let randomBits: string = '';
 let autoSaveMail = true;
 
 export default function NewMail() {
+    const { checkEncryptable } = useContext(MailBoxContext);
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
@@ -98,24 +92,6 @@ export default function NewMail() {
         }
         //let html = quill?.getHTML(),
         //  text = quill?.getText();
-    };
-
-    const checkEncryptable = async (receivers: IPersonItem[]) => {
-        const getSinglePublicKey = async (receiver: IPersonItem) => {
-            try {
-                const encryptionData = await userHttp.getEncryptionKey(receiver.address.split('@')[0]);
-                return encryptionData.encryption_public_key;
-            } catch (error) {
-                console.error('Failed to get public key of receiver: ', receiver.address);
-                console.error(error);
-                return '';
-            }
-        };
-        const publicKeys = await Promise.all(receivers.map(receiver => getSinglePublicKey(receiver)));
-        return {
-            encryptable: receivers.length && publicKeys.every(key => key?.length),
-            publicKeys,
-        };
     };
 
     const postSignature = async (keys: string[], signature?: string) => {

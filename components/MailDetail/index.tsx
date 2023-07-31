@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import DOMPurify from 'dompurify';
 import moment from 'moment';
 import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
 
+import MailBoxContext from 'context/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { userSessionStorage, mailSessionStorage } from 'lib/utils';
-import { useMailDetailStore } from 'lib/zustand-store';
-import { getPrivateKey, decryptMailContent, decryptMailKey } from 'lib/encrypt';
+import { userSessionStorage } from 'lib/utils';
+import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { decryptMailContent, decryptMailKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
 
@@ -34,7 +34,9 @@ import {
 let randomBits: string = '';
 
 export default function MailDetail() {
+    const { createDraft, checkEncryptable } = useContext(MailBoxContext);
     const { selectedMail, setSelectedMail } = useMailDetailStore();
+    const { setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -157,7 +159,9 @@ export default function MailDetail() {
         },
         {
             src: sent,
-            handler: () => {},
+            handler: () => {
+                handleReply();
+            },
         },
         {
             src: mailMore,
@@ -195,6 +199,20 @@ export default function MailDetail() {
         return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
     };
 
+    const handleReply = async () => {
+        const { address } = userSessionStorage.getUserInfo();
+        const { message_id, randomBits } = await createDraft();
+        const { encryptable } = await checkEncryptable([selectedMail.mail_from]);
+        await mailHttp.updateMail({
+            mail_id: window.btoa(message_id),
+            mail_to: [selectedMail.mail_from],
+            mail_from: selectedMail.mail_to.find(item => item.address === address),
+            meta_type: encryptable ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed,
+        });
+        const mail = await mailHttp.getMailDetailByID(window.btoa(message_id));
+        setSelectedDraft({ ...mail, randomBits });
+    };
+
     useEffect(() => {
         handleLoad();
         return () => {
@@ -204,6 +222,7 @@ export default function MailDetail() {
 
     return (
         <div className="flex-1">
+            {/**需要缩减dom层级 */}
             <div className={`transition-all h-[100%] ${isExtend ? 'absolute top-0 left-0 w-full' : ''}`}>
                 <div className="w-full h-full flex flex-col font-poppins p-20">
                     <header className="flex flex-col justify-between w-full mb-20">
@@ -293,9 +312,11 @@ export default function MailDetail() {
                         </>
                     )}
 
-                    <button className="flex justify-center items-center bg-[#006AD4] text-white px-14 py-8 rounded-[8px] self-start">
+                    <button
+                        className="flex justify-center items-center bg-[#006AD4] text-white px-14 py-8 rounded-[8px] self-start"
+                        onClick={handleReply}>
                         <Icon url={sendMailIcon} />
-                        <span className="ml-6">Send</span>
+                        <span className="ml-6">Reply</span>
                     </button>
                 </div>
             </div>
