@@ -15,7 +15,7 @@ import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
 
 import tempMailSenderIcon from 'assets/tempMailSenderIcon.svg';
-import replyBtn from 'assets/replyButton.svg';
+import sendMailIcon from 'assets/sendMail.svg';
 import ifLock from 'assets/ifLock.svg';
 import {
     extend,
@@ -37,15 +37,52 @@ export default function MailDetail() {
     const { selectedMail, setSelectedMail } = useMailDetailStore();
 
     const [isExtend, setIsExtend] = useState(false);
-    const [readable, setReadable] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    const ensureRandomBitsExist = async () => {
+        if (!randomBits) {
+            const keys = selectedMail?.meta_header?.keys;
+            const { address, ensName } = userSessionStorage.getUserInfo();
+            const addrList = [
+                selectedMail?.mail_from.address,
+                ...(selectedMail?.mail_to.map(item => item.address) || []),
+                ...(selectedMail?.mail_cc.map(item => item.address) || []),
+                ...(selectedMail?.mail_bcc.map(item => item.address) || []),
+            ];
+            const idx = addrList.findIndex(addr => {
+                const prefix = addr?.split('@')[0].toLocaleLowerCase();
+                return prefix === address || prefix === ensName;
+            });
+            if (idx < 0 || idx > keys.length - 1) {
+                console.log('not find index from address list');
+                return;
+            }
+            const key = keys[idx];
+            if (!key) throw new Error("Can't decrypt mail without randomBits key.");
+            const { purePrivateKey } = userSessionStorage.getUserInfo();
+            randomBits = await decryptMailKey(key, purePrivateKey);
+            if (!randomBits) {
+                throw new Error('No randomBits.');
+            }
+        }
+    };
 
     const handleLoad = async (showLoading = true) => {
         try {
             showLoading && setLoading(true);
             const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
-            setSelectedMail({ ...selectedMail, ...mail });
-            setReadable(mail.meta_type !== MetaMailTypeEn.Encrypted || !!randomBits);
+            const _mail = { ...selectedMail, ...mail };
+            if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
+                await ensureRandomBitsExist();
+                if (_mail?.part_html) {
+                    _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
+                }
+                if (_mail?.part_text) {
+                    _mail.part_text = decryptMailContent(_mail.part_text, randomBits);
+                }
+            }
+
+            setSelectedMail(_mail);
         } catch (error) {
             console.error(error);
             showLoading && toast.error("Can't get mail detail, please try again later.");
@@ -128,47 +165,6 @@ export default function MailDetail() {
         },
     ];
 
-    const handleDecrypted = async () => {
-        let keys = selectedMail?.meta_header?.keys;
-        const { address, ensName } = userSessionStorage.getUserInfo();
-        if (keys && keys?.length > 0 && address) {
-            const addrList = [
-                selectedMail?.mail_from.address,
-                ...(selectedMail?.mail_to.map(item => item.address) || []),
-                ...(selectedMail?.mail_cc.map(item => item.address) || []),
-                ...(selectedMail?.mail_bcc.map(item => item.address) || []),
-            ];
-            const idx = addrList.findIndex(addr => {
-                const prefix = addr?.split('@')[0].toLocaleLowerCase();
-                return prefix === address || prefix === ensName;
-            });
-            if (idx < 0 || idx > keys.length - 1) {
-                console.log('not find index from address list');
-                return;
-            }
-            const key = keys[idx];
-
-            const { privateKey, salt } = userSessionStorage.getUserInfo();
-            const decryptPrivateKey = await getPrivateKey(privateKey, salt);
-            randomBits = await decryptMailKey(key, decryptPrivateKey);
-            if (!randomBits) {
-                return toast.error('No randomBits.');
-            }
-
-            const _mail = { ...selectedMail };
-            if (_mail?.part_html) {
-                _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
-            }
-            if (_mail?.part_text) {
-                _mail.part_text = decryptMailContent(_mail.part_html, randomBits);
-            }
-            setReadable(true);
-            setSelectedMail(_mail);
-        } else {
-            console.warn(`please check your keys ${keys} and address ${address}`);
-        }
-    };
-
     const changeInnerHTML = (data: IMailContentItem) => {
         if (data.part_html) {
             var el = document.createElement('html');
@@ -209,7 +205,7 @@ export default function MailDetail() {
     return (
         <div className="flex-1">
             <div className={`transition-all h-[100%] ${isExtend ? 'absolute top-0 left-0 w-full' : ''}`}>
-                <div className="w-full h-full bg-white flex flex-col font-poppins p-20">
+                <div className="w-full h-full flex flex-col font-poppins p-20">
                     <header className="flex flex-col justify-between w-full mb-20">
                         <div className="flex justify-between w-full">
                             <div className="flex gap-10">
@@ -274,7 +270,7 @@ export default function MailDetail() {
                         <div className="flex-1 flex items-center justify-center">
                             <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
                         </div>
-                    ) : readable ? (
+                    ) : (
                         <>
                             <h2 className="flex-1 overflow-auto">
                                 {selectedMail?.part_html
@@ -295,16 +291,11 @@ export default function MailDetail() {
                                 </div>
                             )}
                         </>
-                    ) : (
-                        <div className="flex-1 flex items-center justify-center">
-                            <button className="btn" onClick={handleDecrypted}>
-                                Decrypt
-                            </button>
-                        </div>
                     )}
 
-                    <button className="w-105 h-36 ">
-                        <Image src={replyBtn} alt={'reply'} />
+                    <button className="flex justify-center items-center bg-[#006AD4] text-white px-14 py-8 rounded-[8px] self-start">
+                        <Icon url={sendMailIcon} />
+                        <span className="ml-6">Send</span>
                     </button>
                 </div>
             </div>

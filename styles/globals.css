@@ -109,3 +109,7 @@ ql-snow .ql-toolbar button {
     border-radius: 10px;
     background: rgba(0, 0, 0, 0.1);
 }
+
+select:focus-visible {
+    outline: none;
+}
