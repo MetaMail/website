@@ -28,11 +28,15 @@ export const useMailListStore = create<IMailListState>()(set => ({
 
 interface IMailDetailState {
     selectedMail: IMailContentItem;
+    isDetailExtend: boolean;
     setSelectedMail: (selectedMail: IMailContentItem) => void;
+    setIsDetailExtend: (isDetailExtend: boolean) => void;
 }
 export const useMailDetailStore = create<IMailDetailState>()(set => ({
     selectedMail: null,
+    isDetailExtend: false,
     setSelectedMail: (selectedMail: IMailContentItem) => set(() => ({ selectedMail })),
+    setIsDetailExtend: (isDetailExtend: boolean) => set(() => ({ isDetailExtend })),
 }));
 
 interface ISelectedDraftItem extends IMailContentItem {

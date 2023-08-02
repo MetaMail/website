@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userHttp, mailHttp } from 'lib/http';
 import { IPersonItem, MetaMailTypeEn } from 'lib/constants';
@@ -8,10 +9,12 @@ import Layout from 'components/Layout';
 import MailList from 'components/MailList';
 import MailDetail from 'components/MailDetail';
 import NewMail from 'components/NewMail';
+import Loading from 'components/Loading';
 
 export default function MailBoxPage() {
     const { selectedMail } = useMailDetailStore();
     const { selectedDraft } = useNewMailStore();
+    const [showLoading, setShowLoading] = useState(false);
 
     const checkEncryptable = async (receivers: IPersonItem[]) => {
         const getSinglePublicKey = async (receiver: IPersonItem) => {
@@ -42,12 +45,13 @@ export default function MailBoxPage() {
     };
 
     return (
-        <MailBoxContext.Provider value={{ checkEncryptable, createDraft }}>
+        <MailBoxContext.Provider value={{ checkEncryptable, createDraft, setShowLoading }}>
             <Layout>
                 <MailList />
                 {selectedMail && <MailDetail />}
                 {selectedDraft && <NewMail />}
             </Layout>
+            <Loading show={showLoading} />
         </MailBoxContext.Provider>
     );
 }

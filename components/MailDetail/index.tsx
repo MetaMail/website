@@ -34,10 +34,9 @@ let randomBits: string = '';
 export default function MailDetail() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const { createDraft, checkEncryptable } = useContext(MailBoxContext);
-    const { selectedMail, setSelectedMail } = useMailDetailStore();
+    const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
     const { setSelectedDraft } = useNewMailStore();
 
-    const [isExtend, setIsExtend] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const ensureRandomBitsExist = async () => {
@@ -222,7 +221,7 @@ export default function MailDetail() {
     return (
         <div
             className={`flex-1 rounded-10 flex flex-col font-poppins p-20 transition-all h-[100%] bg-[#fff] ${
-                isExtend ? 'absolute top-0 left-0 w-full' : ''
+                isDetailExtend ? 'w-full' : ''
             }`}>
             <header className="flex flex-col justify-between w-full mb-20">
                 <div className="flex justify-between w-full">
@@ -239,7 +238,11 @@ export default function MailDetail() {
                         })}
                     </div>
                     <div className="flex gap-10">
-                        <Icon url={extend} className="w-20 h-20 self-center " onClick={() => setIsExtend(!isExtend)} />
+                        <Icon
+                            url={extend}
+                            className="w-20 h-20 self-center "
+                            onClick={() => setIsDetailExtend(!isDetailExtend)}
+                        />
                         <Icon
                             url={cancel}
                             onClick={() => setSelectedMail(null)}
@@ -279,7 +282,7 @@ export default function MailDetail() {
 
             {loading ? (
                 <div className="flex-1 flex items-center justify-center">
-                    <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
+                    <span className="loading loading-ring loading-lg bg-[#006AD4]"></span>
                 </div>
             ) : (
                 <>

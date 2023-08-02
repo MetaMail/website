@@ -40,7 +40,7 @@ let autoSaveMail = true;
 let mailChanged = false;
 
 export default function NewMail() {
-    const { checkEncryptable } = useContext(MailBoxContext);
+    const { checkEncryptable, setShowLoading } = useContext(MailBoxContext);
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
@@ -286,11 +286,11 @@ export default function NewMail() {
                         className="w-20 scale-[120%] h-auto self-center"
                         onClick={async () => {
                             if (!mailChanged) return setSelectedDraft(null);
-                            const id = toast.loading('Saving draft...');
+                            setShowLoading(true);
                             try {
                                 await handleSave();
                             } finally {
-                                toast.done(id);
+                                setShowLoading(false);
                                 setSelectedDraft(null);
                             }
                         }}
@@ -331,7 +331,7 @@ export default function NewMail() {
             </div>
             {loading ? (
                 <div className="flex flex-1 items-center justify-center">
-                    <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
+                    <span className="loading loading-ring loading-lg bg-[#006AD4]"></span>
                 </div>
             ) : (
                 <DynamicReactQuill
