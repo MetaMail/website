@@ -64,6 +64,9 @@ export default function Welcome() {
     };
 
     useEffect(() => {
+        window.ethereum.on('accountsChanged', (accounts: string[]) => {
+            console.log(accounts);
+        });
         (async () => {
             if (!address) return;
             if (userSessionStorage.getUserInfo().address !== address) return handleAutoLogin();

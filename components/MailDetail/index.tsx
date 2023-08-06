@@ -245,7 +245,10 @@ export default function MailDetail() {
                         />
                         <Icon
                             url={cancel}
-                            onClick={() => setSelectedMail(null)}
+                            onClick={() => {
+                                setSelectedMail(null);
+                                setIsDetailExtend(false);
+                            }}
                             className="w-20 h-20 scale-[120%] self-center"
                         />
                     </div>
