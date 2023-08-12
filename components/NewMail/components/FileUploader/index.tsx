@@ -11,8 +11,9 @@ import { cancel } from 'assets/icons';
 import addAttach from 'assets/addAttach.svg';
 interface IFileUploader {
     randomBits: string;
+    onChange: () => void;
 }
-const FileUploader = ({ randomBits }: IFileUploader) => {
+const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const getFileArrayBuffer = (file: File) => {
@@ -62,12 +63,14 @@ const FileUploader = ({ randomBits }: IFileUploader) => {
         const result = await Promise.all(Array.from(fileList).map((file: File) => handleSingleFileUpload(file)));
         const newAttachments = result.map(res => res.attachment);
         setSelectedDraft({ ...selectedDraft, attachments: [...selectedDraft.attachments, ...newAttachments] });
+        onChange();
     };
 
     const removeAttachment = (index: number) => {
         const newAttachments = [...selectedDraft.attachments];
         newAttachments.splice(index, 1);
         setSelectedDraft({ ...selectedDraft, attachments: newAttachments });
+        onChange();
     };
 
     return (

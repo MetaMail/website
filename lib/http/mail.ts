@@ -6,6 +6,7 @@ import {
     ReadStatusTypeEn,
     IMailContentItem,
     FilterTypeEn,
+    IMailContentAttachment,
 } from '../constants';
 import { MMHttp } from '../base';
 
@@ -39,6 +40,7 @@ interface IUpdateMailParams {
     part_text?: string;
     part_html?: string;
     meta_type?: MetaMailTypeEn;
+    attachments?: IMailContentAttachment[];
 }
 
 interface IUpdateMailResponse {

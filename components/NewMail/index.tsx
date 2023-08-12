@@ -66,12 +66,6 @@ export default function NewMail() {
         return reactQuillRef.current.makeUnprivilegedEditor(reactQuillRef.current.getEditor());
     };
 
-    const handleSetAttachmentList = (attachment: any) => {
-        const newAttachment = [...selectedDraft.attachments, attachment];
-        setSelectedDraft({ ...selectedDraft, attachments: newAttachment });
-        mailChanged = true;
-    };
-
     const addReceiver = (address: string) => {
         const newReceiver = {
             address: address,
@@ -205,6 +199,7 @@ export default function NewMail() {
                 address: address + PostfixOfAddress,
                 name: ensName || address,
             },
+            attachments: selectedDraft.attachments,
         });
 
         mailSessionStorage.setQuillHtml(html);
@@ -355,7 +350,7 @@ export default function NewMail() {
                     <Icon url={sendMailIcon} />
                     <span className="ml-6">Send</span>
                 </button>
-                <FileUploader randomBits={randomBits} />
+                <FileUploader randomBits={randomBits} onChange={() => (mailChanged = true)} />
             </div>
         </div>
     );
