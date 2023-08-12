@@ -3,108 +3,93 @@ import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 
 import { mailHttp } from 'lib/http';
+import { useNewMailStore } from 'lib/zustand-store';
 import { MetaMailTypeEn, AttachmentRelatedTypeEn } from 'lib/constants';
-
+import { ArrayBufferToWordArray } from 'lib/utils';
+import Icon from 'components/Icon';
+import { cancel } from 'assets/icons';
 import addAttach from 'assets/addAttach.svg';
 interface IFileUploader {
-    draftID: string;
-    metaType: number;
-    onAttachment: (attachment: any) => void;
-    showList: any[];
-    currRandomBits: string;
+    randomBits: string;
 }
-const FileUploader = (item: IFileUploader) => {
-    const [files, setFiles] = useState<File[]>([]);
-    const handleFinalFileUpload = (file: File, originFile: any) => {
-        const reader = new FileReader();
-        console.log(item.showList);
-        let res;
-        reader.onload = async () => {
-            if (reader?.result) {
-                const input = reader.result;
-                const wordArray = CryptoJS.lib.WordArray.create(input as any);
-                const sha256 = CryptoJS.SHA256(wordArray).toString();
-                await handleUploadAttachment(originFile, file, sha256, AttachmentRelatedTypeEn.Outside);
-            }
+const FileUploader = ({ randomBits }: IFileUploader) => {
+    const { selectedDraft, setSelectedDraft } = useNewMailStore();
+
+    const getFileArrayBuffer = (file: File) => {
+        return new Promise<ArrayBuffer>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const input = reader?.result;
+                if (!input) reject(new Error("Can't read file"));
+                resolve(input as ArrayBuffer);
+            };
+            reader.readAsArrayBuffer(file);
+            reader.onerror = reject;
+        });
+    };
+
+    const handleSingleFileUpload = async (file: File) => {
+        const fileBuffer = await getFileArrayBuffer(file);
+        if (!fileBuffer) return;
+        const fileProps = {
+            type: file.type,
+            lastModified: file.lastModified,
         };
+        let finalFile = new File([new Blob([fileBuffer])], file.name, { ...fileProps });
 
-        reader.readAsArrayBuffer(file);
-        return res;
+        // 加密邮件才需要对附件进行加密
+        if (selectedDraft.meta_type === MetaMailTypeEn.Encrypted) {
+            const encrypted = CryptoJS.AES.encrypt(ArrayBufferToWordArray(fileBuffer), randomBits).toString();
+            finalFile = new File([new Blob([encrypted])], file.name, { ...fileProps });
+        }
+
+        const wordArray = CryptoJS.lib.WordArray.create((await getFileArrayBuffer(finalFile)) as any);
+        const sha256 = CryptoJS.SHA256(wordArray).toString();
+
+        const form = new FormData();
+        form.append('attachment', finalFile);
+        form.append('sha256', sha256);
+        form.append('related', AttachmentRelatedTypeEn.Outside);
+        form.append('mail_id', window.btoa(selectedDraft.message_id));
+        // cid && form.append('cid', cid);
+        return mailHttp.uploadAttachment(form);
     };
-    const handleUploadAttachment = async (
-        file: any,
-        attachment: Blob,
-        sha256: string,
-        related: AttachmentRelatedTypeEn,
-        cid?: string
-    ) => {
-        try {
-            const form = new FormData();
-            form.append('attachment', attachment);
-            form.append('sha256', sha256);
-            form.append('related', related);
-            form.append('mail_id', window.btoa(item.draftID));
-            cid && form.append('cid', cid);
-            const data = await mailHttp.uploadAttachment(form);
-            const attachmentRes = data.attachment;
-            if (attachmentRes) {
-                item.onAttachment(attachmentRes);
-            }
-        } catch {}
-    };
-    const handleClickUpload = (e: any) => {
-        const reader = new FileReader();
+
+    const handleClickUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const fileList = e.target.files;
-        console.log(fileList);
-        fileList?.length !== 0 &&
-            Array.from(fileList).map((file: any) => {
-                reader.readAsArrayBuffer(file);
+        if (!fileList || !fileList.length) return;
 
-                reader.onload = () => {
-                    if (reader?.result) {
-                        const input = reader.result;
-                        const fileProps = {
-                            type: file.type,
-                            lastModified: file.lastModified,
-                        };
-
-                        let finalFile = new File([new Blob([input])], file.name, {
-                            ...fileProps,
-                        });
-
-                        // 加密邮件才需要对附件进行加密
-                        if (item.metaType === MetaMailTypeEn.Encrypted) {
-                            const encrypted = CryptoJS.AES.encrypt(
-                                CryptoJS.lib.WordArray.create(input as any),
-                                item.currRandomBits
-                            ).toString();
-
-                            const fileEncBlob = new Blob([encrypted]);
-
-                            finalFile = new File([fileEncBlob], file.name, {
-                                ...fileProps,
-                            });
-                        }
-
-                        handleFinalFileUpload(finalFile, file);
-                    }
-                };
-            });
+        const result = await Promise.all(Array.from(fileList).map((file: File) => handleSingleFileUpload(file)));
+        const newAttachments = result.map(res => res.attachment);
+        setSelectedDraft({ ...selectedDraft, attachments: [...selectedDraft.attachments, ...newAttachments] });
     };
-    const handleChange = (e: any) => {
-        setFiles([...files, ...e.target.files]);
-        console.log(files);
+
+    const removeAttachment = (index: number) => {
+        const newAttachments = [...selectedDraft.attachments];
+        newAttachments.splice(index, 1);
+        setSelectedDraft({ ...selectedDraft, attachments: newAttachments });
     };
+
     return (
-        <div className="">
-            <label className="">
+        <>
+            <label className="flex justify-center items-center bg-[#ddd] px-14 py-8 rounded-[8px] cursor-pointer">
                 <input type="file" className="hidden" onChange={handleClickUpload} multiple />
-                <Image src={addAttach} className="cursor-pointer h-full" alt="上传文件" />
+                <Image src={addAttach} className="h-full" alt="上传文件" />
+                <span className="ml-6">Attach</span>
             </label>
-            {item.showList.map(attr => {
-                return <div>{attr.filename}</div>;
-            })}
-        </div>
+            {selectedDraft.attachments?.map((attr, index) => (
+                <li key={index} className="flex">
+                    <div
+                        className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
+                        title={attr.filename}>
+                        <span className="w-120 omit">{attr.filename}</span>
+                    </div>
+                    <button onClick={() => removeAttachment(index)}>
+                        <Icon url={cancel} title="cancel" className="w-20 h-20" />
+                    </button>
+                </li>
+            ))}
+        </>
     );
 };
 

@@ -18,6 +18,26 @@ export function convertWordArrayToUint8Array(wordArray: CryptoJS.lib.WordArray) 
     return uInt8Array;
 }
 
+export const ArrayBufferToWordArray = (arrayBuffer: ArrayBuffer) => {
+    const u8 = new Uint8Array(arrayBuffer, 0, arrayBuffer.byteLength);
+    const len = u8.length;
+    const words: number[] = [];
+    for (let i = 0; i < len; i += 1) {
+        words[i >>> 2] |= (u8[i] & 0xff) << (24 - (i % 4) * 8);
+    }
+    return CryptoJS.lib.WordArray.create(words, len);
+};
+
+export const WordArrayToArrayBuffer = (wordArray: CryptoJS.lib.WordArray) => {
+    const { words, sigBytes } = wordArray;
+    const u8 = new Uint8Array(sigBytes);
+    for (let i = 0; i < sigBytes; i += 1) {
+        const byte = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+        u8[i] = byte;
+    }
+    return u8.buffer;
+};
+
 export function transformTime(timeStr: string) {
     const time = moment(timeStr);
     const now = moment();

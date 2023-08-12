@@ -347,7 +347,7 @@ export default function NewMail() {
                     }, 1000)}
                 />
             )}
-            <div className="flex gap-13 mt-20">
+            <div className="flex items-center gap-13 mt-20">
                 <button
                     disabled={selectedDraft.mail_to.length === 0}
                     onClick={handleClickSend}
@@ -355,15 +355,7 @@ export default function NewMail() {
                     <Icon url={sendMailIcon} />
                     <span className="ml-6">Send</span>
                 </button>
-                <button>
-                    <FileUploader
-                        draftID={selectedDraft.message_id}
-                        metaType={selectedDraft.meta_type}
-                        onAttachment={handleSetAttachmentList}
-                        showList={selectedDraft.attachments ?? []}
-                        currRandomBits={randomBits}
-                    />
-                </button>
+                <FileUploader randomBits={randomBits} />
             </div>
         </div>
     );
