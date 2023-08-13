@@ -136,7 +136,7 @@ export default function NewMail() {
                 cc_address: selectedDraft.mail_cc.map(cc => cc.address),
                 cc_name: selectedDraft.mail_cc.map(cc => cc.name),
                 date: dateRef.current,
-                subject: selectedDraft.subject,
+                subject: subjectRef.current.value,
                 text_hash: CryptoJS.SHA256(text).toString(),
                 html_hash: CryptoJS.SHA256(html).toString(),
                 attachments_hash: selectedDraft.attachments.map(att => att.sha256),
