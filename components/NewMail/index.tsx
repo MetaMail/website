@@ -9,7 +9,13 @@ import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { mailHttp } from 'lib/http';
-import { decryptMailKey, createEncryptedMailKey, encryptMailContent, decryptMailContent } from 'lib/encrypt';
+import {
+    decryptMailKey,
+    createEncryptedMailKey,
+    encryptMailContent,
+    decryptMailContent,
+    concatAddress,
+} from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
@@ -129,12 +135,9 @@ export default function NewMail() {
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
-                from_address: address + PostfixOfAddress,
-                from_name: ensName || address,
-                to_address: selectedDraft.mail_to.map(to => to.address),
-                to_name: selectedDraft.mail_to.map(to => to.name),
-                cc_address: selectedDraft.mail_cc.map(cc => cc.address),
-                cc_name: selectedDraft.mail_cc.map(cc => cc.name),
+                from: concatAddress(selectedDraft.mail_from),
+                to: selectedDraft.mail_to.map(to => concatAddress(to)),
+                cc: selectedDraft.mail_cc.map(cc => concatAddress(cc)),
                 date: dateRef.current,
                 subject: subjectRef.current.value,
                 text_hash: CryptoJS.SHA256(text).toString(),
@@ -195,10 +198,7 @@ export default function NewMail() {
             mail_to: selectedDraft.mail_to,
             part_html: html,
             part_text: text,
-            mail_from: selectedDraft.mail_from || {
-                address: address + PostfixOfAddress,
-                name: ensName || address,
-            },
+            mail_from: selectedDraft.mail_from,
         });
 
         mailSessionStorage.setQuillHtml(html);
@@ -212,6 +212,13 @@ export default function NewMail() {
             setLoading(true);
             randomBits = selectedDraft.randomBits;
             let _selectedDraft = selectedDraft;
+            if (!selectedDraft.mail_from?.address) {
+                const { address, ensName } = userSessionStorage.getUserInfo();
+                selectedDraft.mail_from = {
+                    address: (ensName || address) + PostfixOfAddress,
+                    name: ensName || address,
+                };
+            }
             if (!selectedDraft.hasOwnProperty('part_html')) {
                 const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
                 _selectedDraft = { ...selectedDraft, ...mail };
@@ -235,8 +242,8 @@ export default function NewMail() {
     const handleChangeMailFrom = (from: MailFromType) => {
         const { address, ensName } = userSessionStorage.getUserInfo();
         const mail_from = {
-            address: address + PostfixOfAddress,
-            name: from === MailFromType.address ? address : ensName,
+            address: (MailFromType.address ? address : ensName) + PostfixOfAddress,
+            name: ensName || address,
         };
         setSelectedDraft({
             ...selectedDraft,

@@ -36,7 +36,10 @@ function NameSelector({ initValue, onChange }: IProps) {
                         {address}
                         {PostfixOfAddress}
                     </option>
-                    <option value={MailFromType.ensName}>{ensName}</option>
+                    <option value={MailFromType.ensName}>
+                        {ensName}
+                        {PostfixOfAddress}
+                    </option>
                 </select>
             ) : (
                 <span>{address + PostfixOfAddress}</span>
