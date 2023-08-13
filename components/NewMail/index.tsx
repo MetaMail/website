@@ -190,7 +190,6 @@ export default function NewMail() {
         }
 
         const metaType = encryptable ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
-        const { address, ensName } = userSessionStorage.getUserInfo();
         const { message_id, mail_date } = await mailHttp.updateMail({
             mail_id: window.btoa(selectedDraft.message_id),
             meta_type: metaType,
@@ -342,7 +341,7 @@ export default function NewMail() {
                     placeholder={''}
                     modules={EditorModules}
                     formats={EditorFormats}
-                    value={selectedDraft.part_html}
+                    defaultValue={selectedDraft.part_html}
                     onChange={throttle(() => {
                         mailChanged = true;
                     }, 1000)}

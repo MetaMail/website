@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 
+import MailBoxContext from 'context/mail';
 import { mailHttp } from 'lib/http';
 import { useNewMailStore } from 'lib/zustand-store';
 import { MetaMailTypeEn, AttachmentRelatedTypeEn } from 'lib/constants';
@@ -14,6 +15,7 @@ interface IFileUploader {
     onChange: () => void;
 }
 const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
+    const { checkEncryptable } = useContext(MailBoxContext);
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const getFileArrayBuffer = (file: File) => {
@@ -29,17 +31,17 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         });
     };
 
-    const handleSingleFileUpload = async (file: File) => {
+    const handleSingleFileUpload = async (file: File, encryptable: boolean) => {
         const fileBuffer = await getFileArrayBuffer(file);
         if (!fileBuffer) return;
         const fileProps = {
             type: file.type,
             lastModified: file.lastModified,
         };
-        let finalFile = new File([new Blob([fileBuffer])], file.name, { ...fileProps });
+        let finalFile = file;
 
         // 加密邮件才需要对附件进行加密
-        if (selectedDraft.meta_type === MetaMailTypeEn.Encrypted) {
+        if (encryptable) {
             const encrypted = CryptoJS.AES.encrypt(ArrayBufferToWordArray(fileBuffer), randomBits).toString();
             finalFile = new File([new Blob([encrypted])], file.name, { ...fileProps });
         }
@@ -60,7 +62,10 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         const fileList = e.target.files;
         if (!fileList || !fileList.length) return;
 
-        const result = await Promise.all(Array.from(fileList).map((file: File) => handleSingleFileUpload(file)));
+        const { encryptable } = await checkEncryptable(selectedDraft.mail_to);
+        const result = await Promise.all(
+            Array.from(fileList).map((file: File) => handleSingleFileUpload(file, encryptable))
+        );
         const newAttachments = result.map(res => res.attachment);
         setSelectedDraft({ ...selectedDraft, attachments: [...selectedDraft.attachments, ...newAttachments] });
         onChange();
