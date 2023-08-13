@@ -11,7 +11,6 @@ export abstract class MMSign extends MMObject {
     private _address: string;
     private _signMethod = 'eth_signTypedData';
     private _domain = { name: 'MetaMail', version: '1.0.0' };
-    private _lastSignMessages: any;
 
     get signMethod() {
         return this._signMethod;
@@ -26,15 +25,6 @@ export abstract class MMSign extends MMObject {
             this._address = userSessionStorage.getUserInfo()?.address || getAccount().address?.toLowerCase() || '';
         }
         return this._address;
-    }
-
-    getLastSignData() {
-        return {
-            signMethod: this.signMethod,
-            domain: this.domain,
-            signTypes: this.getSignTypes(),
-            signMessages: this._lastSignMessages,
-        };
     }
 
     abstract getSignTypes(): Record<string, { name: string; type: string }[]>;
@@ -65,7 +55,6 @@ export abstract class MMSign extends MMObject {
             throw new Error(`Signature verification failed.
                         recoveredAddress: ${recoveredAddress},
                         expectedSignerAddress: ${expectedSignerAddress}`);
-        this._lastSignMessages = signMessages;
         return signature;
     }
 }
