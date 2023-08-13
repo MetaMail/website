@@ -66,7 +66,11 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         onChange();
     };
 
-    const removeAttachment = (index: number) => {
+    const removeAttachment = async (index: number) => {
+        await mailHttp.deleteAttachment({
+            mail_id: window.btoa(selectedDraft.message_id),
+            attachment_id: selectedDraft.attachments[index].attachment_id,
+        });
         const newAttachments = [...selectedDraft.attachments];
         newAttachments.splice(index, 1);
         setSelectedDraft({ ...selectedDraft, attachments: newAttachments });

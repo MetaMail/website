@@ -64,7 +64,7 @@ export default function Welcome() {
     };
 
     useEffect(() => {
-        window.ethereum.on('accountsChanged', (accounts: string[]) => {
+        window.ethereum?.on('accountsChanged', (accounts: string[]) => {
             console.log(accounts);
         });
         (async () => {

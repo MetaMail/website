@@ -199,7 +199,6 @@ export default function NewMail() {
                 address: address + PostfixOfAddress,
                 name: ensName || address,
             },
-            attachments: selectedDraft.attachments,
         });
 
         mailSessionStorage.setQuillHtml(html);
