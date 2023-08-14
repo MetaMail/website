@@ -56,6 +56,18 @@ export interface IPersonItem {
     name?: string;
 }
 
+export interface IMailContentAttachment {
+    attachment_id: string;
+    size: number;
+    sha256: string;
+    filename: string;
+    content_type: string;
+    download: {
+        expire_at: string;
+        url: string;
+    };
+}
+
 export interface IMailContentItem {
     read: ReadStatusTypeEn;
     mailbox: MailBoxTypeEn;
@@ -77,17 +89,7 @@ export interface IMailContentItem {
     digest: string;
     part_text?: string;
     part_html?: string;
-    attachments: {
-        attachment_id: string;
-        size: number;
-        sha256: string;
-        filename: string;
-        content_type: string;
-        download: {
-            expire_at: string;
-            url: string;
-        };
-    }[];
+    attachments: IMailContentAttachment[];
     meta_header: {
         addr: string;
         date: string;

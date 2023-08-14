@@ -1,17 +1,31 @@
-import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import { userHttp, mailHttp } from 'lib/http';
 import { IPersonItem, MetaMailTypeEn } from 'lib/constants';
-import { userSessionStorage } from 'lib/utils';
+import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { createEncryptedMailKey } from 'lib/encrypt';
 import MailBoxContext from 'context/mail';
 import Layout from 'components/Layout';
 import MailList from 'components/MailList';
 import MailDetail from 'components/MailDetail';
 import NewMail from 'components/NewMail';
+import Loading from 'components/Loading';
 
 export default function MailBoxPage() {
+    const router = useRouter();
     const { selectedMail } = useMailDetailStore();
     const { selectedDraft } = useNewMailStore();
+    const { removeAllState } = useUtilsStore();
+    const [showLoading, setShowLoading] = useState(false);
+
+    const logout = () => {
+        userSessionStorage.clearUserInfo();
+        userSessionStorage.clearToken();
+        mailSessionStorage.clearMailListInfo();
+        removeAllState();
+        router.push('/');
+    };
 
     const checkEncryptable = async (receivers: IPersonItem[]) => {
         const getSinglePublicKey = async (receiver: IPersonItem) => {
@@ -42,12 +56,13 @@ export default function MailBoxPage() {
     };
 
     return (
-        <MailBoxContext.Provider value={{ checkEncryptable, createDraft }}>
+        <MailBoxContext.Provider value={{ checkEncryptable, createDraft, setShowLoading, logout }}>
             <Layout>
                 <MailList />
                 {selectedMail && <MailDetail />}
                 {selectedDraft && <NewMail />}
             </Layout>
+            <Loading show={showLoading} />
         </MailBoxContext.Provider>
     );
 }

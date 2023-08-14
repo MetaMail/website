@@ -14,21 +14,22 @@ export const generateEncryptionUserKey = async () => {
     const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
 
+    const hashedPrivateKey = crypto.createHash('sha256').update(Encrypted_Private_Store_Key).digest('hex');
+    const hashedPublicKey = crypto.createHash('sha256').update(publicKey).digest('hex');
+
     const signMessages = {
         salt: salt,
-        encryption_private_key: Encrypted_Private_Store_Key,
-        encryption_public_key: publicKey,
+        private_key_hash: hashedPrivateKey,
+        public_key_hash: hashedPublicKey,
         date: new Date().toISOString(),
     };
 
     const keySignature = await keyDataSignInstance.doSign(signMessages);
-    const lastSignData = keyDataSignInstance.getLastSignData();
     const reqMessage = {
         signature: keySignature,
-        data: JSON.stringify(lastSignData),
         salt: salt,
-        encryption_private_key: signMessages.encryption_private_key,
-        encryption_public_key: signMessages.encryption_public_key,
+        encryption_private_key: Encrypted_Private_Store_Key,
+        encryption_public_key: publicKey,
         date: signMessages.date,
     };
     return reqMessage;

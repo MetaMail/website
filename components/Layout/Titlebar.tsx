@@ -1,31 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 
-import { userSessionStorage, mailSessionStorage } from 'lib/utils';
-import { useUtilsStore } from 'lib/zustand-store';
+import MailBoxContext from 'context/mail';
+import { userSessionStorage } from 'lib/utils';
 import { PostfixOfAddress } from 'lib/base/request';
 
 import copy from 'assets/mailbox/copy.svg';
 import right from 'assets/mailbox/right.svg';
 
 export default function Titlebar() {
+    const { logout } = useContext(MailBoxContext);
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const router = useRouter();
     const [address, setAddress] = useState<string>();
     const [ensName, setEnsName] = useState<string>();
-
-    const { removeAllState } = useUtilsStore();
-
-    const getLogOut = () => {
-        userSessionStorage.clearUserInfo();
-        userSessionStorage.clearToken();
-        mailSessionStorage.clearMailListInfo();
-        removeAllState();
-        router.push('/');
-    };
 
     const handleCopy = (txt: string) => {
         navigator.clipboard.writeText(txt);
@@ -34,7 +23,7 @@ export default function Titlebar() {
 
     useEffect(() => {
         const { address, ensName } = userSessionStorage.getUserInfo() ?? {};
-        if (!address) return getLogOut();
+        if (!address) return logout();
         setAddress(address);
         setEnsName(ensName);
     }, []);

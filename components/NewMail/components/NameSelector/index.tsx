@@ -23,20 +23,22 @@ function NameSelector({ initValue, onChange }: IProps) {
     }, [initValue]);
 
     return (
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-8 flex-1 min-w-0">
             <JazziconGrid size={24} addr={showAddress} />
             {ensName ? (
                 <select
-                    className=""
+                    className="omit max-w-[90%]"
                     onChange={e => {
                         onChange(Number(e.target.value as unknown as MailFromType));
-                    }}>
-                    <option value={MailFromType.address} selected={initValue === MailFromType.address}>
+                    }}
+                    defaultValue={initValue}>
+                    <option value={MailFromType.address}>
                         {address}
                         {PostfixOfAddress}
                     </option>
-                    <option value={MailFromType.ensName} selected={initValue === MailFromType.ensName}>
+                    <option value={MailFromType.ensName}>
                         {ensName}
+                        {PostfixOfAddress}
                     </option>
                 </select>
             ) : (

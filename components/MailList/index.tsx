@@ -29,7 +29,7 @@ let lastDraftId = '';
 export default function MailList() {
     const { filterType, pageIndex, addPageIndex, subPageIndex, setUnreadInboxCount, setUnreadSpamCount } =
         useMailListStore();
-    const { selectedMail } = useMailDetailStore();
+    const { selectedMail, isDetailExtend } = useMailDetailStore();
     const { selectedDraft } = useNewMailStore();
 
     const [loading, setLoading] = useState(false);
@@ -213,7 +213,10 @@ export default function MailList() {
     }, [selectedDraft?.message_id]);
 
     return (
-        <div className={`flex flex-col h-full ${!selectedMail ? 'flex-1 min-w-0' : 'w-300'}`}>
+        <div
+            className={`flex flex-col h-full transition-all ${
+                !selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-300'
+            }`}>
             <div className="flex flex-row w-full justify-between px-20 pb-7 pt-20">
                 <div className="flex flex-row space-x-14 items-center">
                     <input
@@ -230,7 +233,7 @@ export default function MailList() {
                             fetchMailList(true);
                         }}
                     />
-                    <div className="dropdown dropdown-bottom">
+                    <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
                         <label tabIndex={0} className="cursor-pointer flex items-center">
                             <Icon url={filterIcon} className="w-20 h-20" />
                             <span className="text-[14px]">{filter}</span>
@@ -294,7 +297,7 @@ export default function MailList() {
             <div className="flex flex-col overflow-y-auto overflow-x-hidden flex-1 relative">
                 {loading ? (
                     <div className="flex items-center justify-center pt-200">
-                        <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
+                        <span className="loading loading-ring loading-lg bg-[#006AD4]"></span>
                     </div>
                 ) : list.length ? (
                     list.map((item, index) => {

@@ -9,7 +9,13 @@ import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useNewMailStore } from 'lib/zustand-store';
 import { userSessionStorage, mailSessionStorage } from 'lib/utils';
 import { mailHttp } from 'lib/http';
-import { decryptMailKey, createEncryptedMailKey, encryptMailContent, decryptMailContent } from 'lib/encrypt';
+import {
+    decryptMailKey,
+    createEncryptedMailKey,
+    encryptMailContent,
+    decryptMailContent,
+    concatAddress,
+} from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
@@ -40,7 +46,7 @@ let autoSaveMail = true;
 let mailChanged = false;
 
 export default function NewMail() {
-    const { checkEncryptable } = useContext(MailBoxContext);
+    const { checkEncryptable, setShowLoading } = useContext(MailBoxContext);
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
@@ -64,12 +70,6 @@ export default function NewMail() {
     const getQuill = () => {
         if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
         return reactQuillRef.current.makeUnprivilegedEditor(reactQuillRef.current.getEditor());
-    };
-
-    const handleSetAttachmentList = (attachment: any) => {
-        const newAttachment = [...selectedDraft.attachments, attachment];
-        setSelectedDraft({ ...selectedDraft, attachments: newAttachment });
-        mailChanged = true;
     };
 
     const addReceiver = (address: string) => {
@@ -135,14 +135,11 @@ export default function NewMail() {
             dateRef.current = new Date().toISOString();
 
             const signature = await sendEmailInfoSignInstance.doSign({
-                from_address: address + PostfixOfAddress,
-                from_name: ensName || address,
-                to_address: selectedDraft.mail_to.map(to => to.address),
-                to_name: selectedDraft.mail_to.map(to => to.name),
-                cc_address: selectedDraft.mail_cc.map(cc => cc.address),
-                cc_name: selectedDraft.mail_cc.map(cc => cc.name),
+                from: concatAddress(selectedDraft.mail_from),
+                to: selectedDraft.mail_to.map(to => concatAddress(to)),
+                cc: selectedDraft.mail_cc.map(cc => concatAddress(cc)),
                 date: dateRef.current,
-                subject: selectedDraft.subject,
+                subject: subjectRef.current.value,
                 text_hash: CryptoJS.SHA256(text).toString(),
                 html_hash: CryptoJS.SHA256(html).toString(),
                 attachments_hash: selectedDraft.attachments.map(att => att.sha256),
@@ -193,7 +190,6 @@ export default function NewMail() {
         }
 
         const metaType = encryptable ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
-        const { address, ensName } = userSessionStorage.getUserInfo();
         const { message_id, mail_date } = await mailHttp.updateMail({
             mail_id: window.btoa(selectedDraft.message_id),
             meta_type: metaType,
@@ -201,10 +197,7 @@ export default function NewMail() {
             mail_to: selectedDraft.mail_to,
             part_html: html,
             part_text: text,
-            mail_from: selectedDraft.mail_from || {
-                address: address + PostfixOfAddress,
-                name: ensName || address,
-            },
+            mail_from: selectedDraft.mail_from,
         });
 
         mailSessionStorage.setQuillHtml(html);
@@ -218,6 +211,14 @@ export default function NewMail() {
             setLoading(true);
             randomBits = selectedDraft.randomBits;
             let _selectedDraft = selectedDraft;
+            if (!selectedDraft.mail_from?.address) {
+                const { address, ensName } = userSessionStorage.getUserInfo();
+                selectedDraft.mail_from = {
+                    address: (ensName || address) + PostfixOfAddress,
+                    name: ensName || address,
+                };
+                mailChanged = true;
+            }
             if (!selectedDraft.hasOwnProperty('part_html')) {
                 const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
                 _selectedDraft = { ...selectedDraft, ...mail };
@@ -241,8 +242,8 @@ export default function NewMail() {
     const handleChangeMailFrom = (from: MailFromType) => {
         const { address, ensName } = userSessionStorage.getUserInfo();
         const mail_from = {
-            address: address + PostfixOfAddress,
-            name: from === MailFromType.address ? address : ensName,
+            address: (MailFromType.address ? address : ensName) + PostfixOfAddress,
+            name: ensName || address,
         };
         setSelectedDraft({
             ...selectedDraft,
@@ -286,11 +287,11 @@ export default function NewMail() {
                         className="w-20 scale-[120%] h-auto self-center"
                         onClick={async () => {
                             if (!mailChanged) return setSelectedDraft(null);
-                            const id = toast.loading('Saving draft...');
+                            setShowLoading(true);
                             try {
                                 await handleSave();
                             } finally {
-                                toast.done(id);
+                                setShowLoading(false);
                                 setSelectedDraft(null);
                             }
                         }}
@@ -331,7 +332,7 @@ export default function NewMail() {
             </div>
             {loading ? (
                 <div className="flex flex-1 items-center justify-center">
-                    <span className="loading loading-infinity loading-lg bg-[#006AD4]"></span>
+                    <span className="loading loading-ring loading-lg bg-[#006AD4]"></span>
                 </div>
             ) : (
                 <DynamicReactQuill
@@ -341,13 +342,13 @@ export default function NewMail() {
                     placeholder={''}
                     modules={EditorModules}
                     formats={EditorFormats}
-                    value={selectedDraft.part_html}
+                    defaultValue={selectedDraft.part_html}
                     onChange={throttle(() => {
                         mailChanged = true;
                     }, 1000)}
                 />
             )}
-            <div className="flex gap-13 mt-20">
+            <div className="flex items-center gap-13 mt-20">
                 <button
                     disabled={selectedDraft.mail_to.length === 0}
                     onClick={handleClickSend}
@@ -355,15 +356,7 @@ export default function NewMail() {
                     <Icon url={sendMailIcon} />
                     <span className="ml-6">Send</span>
                 </button>
-                <button>
-                    <FileUploader
-                        draftID={selectedDraft.message_id}
-                        metaType={selectedDraft.meta_type}
-                        onAttachment={handleSetAttachmentList}
-                        showList={selectedDraft.attachments ?? []}
-                        currRandomBits={randomBits}
-                    />
-                </button>
+                <FileUploader randomBits={randomBits} onChange={() => (mailChanged = true)} />
             </div>
         </div>
     );

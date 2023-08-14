@@ -25,7 +25,7 @@ import gdL from 'assets/gdL.png';
 
 export default function Welcome() {
     const router = useRouter();
-    const address = useAccount().address?.toLowerCase();
+    let address = useAccount().address?.toLowerCase();
 
     const handleAutoLogin = async () => {
         try {
@@ -64,6 +64,10 @@ export default function Welcome() {
     };
 
     useEffect(() => {
+        window.ethereum?.on('accountsChanged', (accounts: string[]) => {
+            console.log('accountsChanged', accounts);
+            address = accounts[0].toLowerCase();
+        });
         (async () => {
             if (!address) return;
             if (userSessionStorage.getUserInfo().address !== address) return handleAutoLogin();

@@ -14,8 +14,7 @@ import write from 'assets/mailbox/write.svg';
 import styles from './Siderbar.module.scss';
 
 export default function Sidebar() {
-    const { createDraft } = useContext(MailBoxContext);
-    const router = useRouter();
+    const { createDraft, logout } = useContext(MailBoxContext);
     const {
         filterType,
         setFilterType,
@@ -26,10 +25,6 @@ export default function Sidebar() {
         unreadSpamCount,
     } = useMailListStore();
     const { setSelectedDraft } = useNewMailStore();
-
-    function handleReturnHome() {
-        router.push('/');
-    }
 
     function handleChangeFilter(filter: FilterTypeEn) {
         setFilterType(filter);
@@ -87,7 +82,7 @@ export default function Sidebar() {
     return (
         <div className="bg-[#F3F7FF] w-200 px-10 flex flex-col justify-between font-poppins text-sm">
             <div className="flex flex-col">
-                <button onClick={handleReturnHome} className="flex h-45 items-center justify-center">
+                <button onClick={logout} className="flex h-45 items-center justify-center">
                     <Image src={logo} alt="logo" className="w-auto h-32 mr-5" />
                     <Image src={logoBrand} alt="logo-brand" className="w-116" />
                 </button>

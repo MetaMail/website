@@ -6,8 +6,8 @@ class MMKeyDataSign extends MMSign {
             Sign_KeyData: [
                 { name: 'date', type: 'string' },
                 { name: 'salt', type: 'string' },
-                { name: 'encryption_private_key', type: 'string' },
-                { name: 'encryption_public_key', type: 'string' },
+                { name: 'private_key_hash', type: 'string' },
+                { name: 'public_key_hash', type: 'string' },
             ],
         };
     }

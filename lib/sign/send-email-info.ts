@@ -12,12 +12,9 @@ class MMSendEmailInfoSign extends MMSign {
     getSignTypes() {
         return {
             Sign_Mail: [
-                { name: 'from_address', type: 'string' },
-                { name: 'from_name', type: 'string' },
-                { name: 'to_address', type: 'string[]' },
-                { name: 'to_name', type: 'string[]' },
-                { name: 'cc_address', type: 'string[]' },
-                { name: 'cc_name', type: 'string[]' },
+                { name: 'from', type: 'string' },
+                { name: 'to', type: 'string[]' },
+                { name: 'cc', type: 'string[]' },
                 { name: 'date', type: 'string' },
                 { name: 'subject', type: 'string' },
                 { name: 'text_hash', type: 'string' },
