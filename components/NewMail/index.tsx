@@ -217,6 +217,7 @@ export default function NewMail() {
                     address: (ensName || address) + PostfixOfAddress,
                     name: ensName || address,
                 };
+                mailChanged = true;
             }
             if (!selectedDraft.hasOwnProperty('part_html')) {
                 const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
