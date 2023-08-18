@@ -172,23 +172,15 @@ export default function MailDetail() {
             var el = document.createElement('html');
             el.innerHTML = data.part_html;
             {
-                data?.attachments?.map(
-                    (item: {
-                        filename: string;
-                        download: {
-                            expire_at: string;
-                            url: string;
-                        };
-                    }) => {
-                        //imgReplace = document.getElementById(item.filename);
-                        el.querySelectorAll('img').forEach(function (element) {
-                            if (element.alt == item.filename) {
-                                element.src = item.download.url;
-                                data.part_html = el.innerHTML;
-                            }
-                        });
-                    }
-                );
+                data?.attachments?.map(item => {
+                    //imgReplace = document.getElementById(item.filename);
+                    el.querySelectorAll('img').forEach(function (element) {
+                        if (element.alt == item.filename) {
+                            element.src = item.download.url;
+                            data.part_html = el.innerHTML;
+                        }
+                    });
+                });
             }
         }
     };
