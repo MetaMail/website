@@ -30,6 +30,7 @@ import {
 } from 'assets/icons';
 
 let randomBits: string = '';
+let currentMailId: string = '';
 
 export default function MailDetail() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
@@ -73,6 +74,7 @@ export default function MailDetail() {
             const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
             const _mail = { ...selectedMail, ...mail };
             if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
+                if (currentMailId !== _mail.message_id) return;
                 await ensureRandomBitsExist();
                 if (_mail?.part_html) {
                     _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
@@ -81,7 +83,9 @@ export default function MailDetail() {
                     _mail.part_text = decryptMailContent(_mail.part_text, randomBits);
                 }
             }
-
+            // 防止loading的过程中，用户切换了邮件。比如用户先选择了A邮件然后快速选择B邮件，则A邮件走到这里来以后又会把当前邮件切换成A邮件
+            // B邮件走到这里来以后又会把当前邮件切换成B邮件，形成死循环
+            if (currentMailId !== _mail.message_id) return;
             setSelectedMail(_mail);
         } catch (error) {
             console.error(error);
@@ -114,6 +118,7 @@ export default function MailDetail() {
             src: back,
             handler: () => {
                 setSelectedMail(null);
+                setIsDetailExtend(false);
             },
         },
         {
@@ -204,9 +209,11 @@ export default function MailDetail() {
     };
 
     useEffect(() => {
+        currentMailId = selectedMail.message_id;
         handleLoad();
         return () => {
             randomBits = '';
+            currentMailId = '';
         };
     }, [selectedMail.message_id]);
 
