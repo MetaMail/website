@@ -252,6 +252,25 @@ export default function NewMail() {
         mailChanged = true;
     };
 
+    const removeAttachment = async (index: number) => {
+        const attachment_id = selectedDraft.attachments[index].attachment_id;
+        if (attachment_id) {
+            // uploaded, do delete by attachment_id
+            await mailHttp.deleteAttachment({
+                mail_id: window.btoa(selectedDraft.message_id),
+                attachment_id: selectedDraft.attachments[index].attachment_id,
+            });
+        } else {
+            // uploading, do cancel
+            selectedDraft.attachments[index].cancelableUpload.cancel();
+        }
+
+        const newAttachments = [...selectedDraft.attachments];
+        newAttachments.splice(index, 1);
+        setSelectedDraft({ ...selectedDraft, attachments: newAttachments });
+        mailChanged = true;
+    };
+
     useEffect(() => {
         handleLoad();
         return () => {
@@ -335,18 +354,37 @@ export default function NewMail() {
                     <span className="loading loading-ring loading-lg bg-[#006AD4]"></span>
                 </div>
             ) : (
-                <DynamicReactQuill
-                    forwardedRef={reactQuillRef}
-                    className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
-                    theme="snow"
-                    placeholder={''}
-                    modules={EditorModules}
-                    formats={EditorFormats}
-                    defaultValue={selectedDraft.part_html}
-                    onChange={throttle(() => {
-                        mailChanged = true;
-                    }, 1000)}
-                />
+                <>
+                    <DynamicReactQuill
+                        forwardedRef={reactQuillRef}
+                        className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
+                        theme="snow"
+                        placeholder={''}
+                        modules={EditorModules}
+                        formats={EditorFormats}
+                        defaultValue={selectedDraft.part_html}
+                        onChange={throttle(() => {
+                            mailChanged = true;
+                        }, 1000)}
+                    />
+                    {selectedDraft.attachments?.map((attr, index) => (
+                        <li key={index} className="flex">
+                            <div
+                                className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
+                                title={attr.filename}>
+                                <span className="">
+                                    {attr.filename}
+                                    {attr.uploadProcess && !attr.attachment_id
+                                        ? (Math.floor(attr.uploadProcess * 100) / 100) * 100 + '%'
+                                        : ''}
+                                </span>
+                            </div>
+                            <button onClick={() => removeAttachment(index)}>
+                                <Icon url={cancel} title="cancel" className="w-20 h-20" />
+                            </button>
+                        </li>
+                    ))}
+                </>
             )}
             <div className="flex items-center gap-13 mt-20">
                 <button

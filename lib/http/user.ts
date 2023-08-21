@@ -19,7 +19,6 @@ interface IGetEncryptionKeyResponse {
     encryption_private_key: string;
     encryption_public_key: string;
     signature: string;
-    data: string;
     addr?: string;
     date?: string;
 }

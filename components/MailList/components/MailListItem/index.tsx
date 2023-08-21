@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
+import { throttle } from 'lodash';
 
 import { MarkTypeEn, MetaMailTypeEn, IMailContentItem, ReadStatusTypeEn, FilterTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
@@ -25,7 +26,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const { filterType } = useMailListStore();
     const { selectedMail, setSelectedMail } = useMailDetailStore();
-    const { setSelectedDraft } = useNewMailStore();
+    const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const getIsReadTextClass = (mail: IMailContentItem) => {
         return mail.read == ReadStatusTypeEn.Read ? 'text-black text-opacity-60' : '';
@@ -62,7 +63,8 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         });
     };
 
-    const handleClick = async () => {
+    const handleClick = throttle(async () => {
+        if (mail.message_id === selectedMail?.message_id || mail.message_id === selectedDraft?.message_id) return;
         if (mail.read == ReadStatusTypeEn.Unread) {
             await handleChangeMailStatus({ read: ReadStatusTypeEn.Read });
         }
@@ -71,7 +73,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         } else {
             setSelectedMail(mail);
         }
-    };
+    }, 1000);
 
     const renderDigest = (mail: MailListItemType) => {
         if (!mail.digest) {

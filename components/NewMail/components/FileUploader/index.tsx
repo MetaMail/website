@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
+import { throttle } from 'lodash';
 
 import MailBoxContext from 'context/mail';
-import { mailHttp } from 'lib/http';
+import { mailHttp, IUploadAttachmentResponse } from 'lib/http';
 import { useNewMailStore } from 'lib/zustand-store';
-import { MetaMailTypeEn, AttachmentRelatedTypeEn } from 'lib/constants';
+import { AttachmentRelatedTypeEn } from 'lib/constants';
 import { ArrayBufferToWordArray } from 'lib/utils';
-import Icon from 'components/Icon';
-import { cancel } from 'assets/icons';
+
 import addAttach from 'assets/addAttach.svg';
 interface IFileUploader {
     randomBits: string;
@@ -55,7 +55,28 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         form.append('related', AttachmentRelatedTypeEn.Outside);
         form.append('mail_id', window.btoa(selectedDraft.message_id));
         // cid && form.append('cid', cid);
-        return mailHttp.uploadAttachment(form);
+
+        const cancelableUpload = mailHttp.uploadAttachment(
+            form,
+            throttle(processEvent => {
+                console.log(file.name, processEvent);
+                useNewMailStore.setState(oldValue => ({
+                    selectedDraft: {
+                        ...oldValue.selectedDraft,
+                        attachments: [
+                            ...oldValue.selectedDraft.attachments.map(attachment => {
+                                if (attachment?.cancelableUpload?.id === cancelableUpload.id) {
+                                    attachment.uploadProcess = parseFloat(processEvent.progress.toFixed(2));
+                                }
+                                return attachment;
+                            }),
+                        ],
+                    },
+                }));
+            }, 500)
+        );
+
+        return { cancelableUpload, file };
     };
 
     const handleClickUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,22 +84,39 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         if (!fileList || !fileList.length) return;
 
         const { encryptable } = await checkEncryptable(selectedDraft.mail_to);
-        const result = await Promise.all(
+
+        const uploadResult = await Promise.all(
             Array.from(fileList).map((file: File) => handleSingleFileUpload(file, encryptable))
         );
-        const newAttachments = result.map(res => res.attachment);
-        setSelectedDraft({ ...selectedDraft, attachments: [...selectedDraft.attachments, ...newAttachments] });
-        onChange();
-    };
-
-    const removeAttachment = async (index: number) => {
-        await mailHttp.deleteAttachment({
-            mail_id: window.btoa(selectedDraft.message_id),
-            attachment_id: selectedDraft.attachments[index].attachment_id,
+        const attachmentsWithoutAttachmentId = uploadResult.map(result => {
+            return {
+                filename: result.file.name,
+                uploadProcess: 0,
+                cancelableUpload: result.cancelableUpload,
+            };
         });
-        const newAttachments = [...selectedDraft.attachments];
-        newAttachments.splice(index, 1);
-        setSelectedDraft({ ...selectedDraft, attachments: newAttachments });
+        setSelectedDraft({
+            ...selectedDraft,
+            attachments: [...selectedDraft.attachments, ...attachmentsWithoutAttachmentId],
+        });
+
+        uploadResult.forEach(item => {
+            item.cancelableUpload.waitComplete<IUploadAttachmentResponse>().then(res => {
+                // get attachment id and update then
+                useNewMailStore.setState(oldValue => ({
+                    selectedDraft: {
+                        ...oldValue.selectedDraft,
+                        attachments: oldValue.selectedDraft.attachments.map(attachment => {
+                            if (item.cancelableUpload?.id === attachment.cancelableUpload?.id) {
+                                attachment.attachment_id = res.attachment_id;
+                                attachment.sha256 = res.attachment.sha256;
+                            }
+                            return attachment;
+                        }),
+                    },
+                }));
+            });
+        });
         onChange();
     };
 
@@ -89,18 +127,6 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
                 <Image src={addAttach} className="h-full" alt="上传文件" />
                 <span className="ml-6">Attach</span>
             </label>
-            {selectedDraft.attachments?.map((attr, index) => (
-                <li key={index} className="flex">
-                    <div
-                        className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
-                        title={attr.filename}>
-                        <span className="w-120 omit">{attr.filename}</span>
-                    </div>
-                    <button onClick={() => removeAttachment(index)}>
-                        <Icon url={cancel} title="cancel" className="w-20 h-20" />
-                    </button>
-                </li>
-            ))}
         </>
     );
 };

@@ -1,3 +1,4 @@
+import axios, { AxiosProgressEvent } from 'axios';
 import {
     IPersonItem,
     MetaMailTypeEn,
@@ -9,6 +10,7 @@ import {
     IMailContentAttachment,
 } from '../constants';
 import { MMHttp } from '../base';
+import { MMCancelableUpload } from './cancelable-upload';
 
 const APIs = {
     getMailList: '/mails/filter', // 根据筛选条件获取邮件列表
@@ -59,7 +61,7 @@ interface ISendMailResponse {
     message_id: string;
 }
 
-interface IUploadAttachmentResponse {
+export interface IUploadAttachmentResponse {
     message_id: string;
     attachment_id: string;
     attachment: {
@@ -152,10 +154,11 @@ class MMMailHttp extends MMHttp {
         return this.post<ISendMailParams, ISendMailResponse>(APIs.sendMail, params);
     }
 
-    async uploadAttachment(data: FormData) {
-        return this.post<FormData, IUploadAttachmentResponse>(APIs.uploadAttachment, data, {
-            timeout: 60000,
-        });
+    uploadAttachment(data: FormData, onUploadProgress?: (progressEvent: AxiosProgressEvent) => void) {
+        const cancelableUpload = new MMCancelableUpload();
+        cancelableUpload.onUploadProgressChangeHandler = onUploadProgress;
+        cancelableUpload.upload<IUploadAttachmentResponse>(APIs.uploadAttachment, data);
+        return cancelableUpload;
     }
 
     async deleteAttachment(params: IDeleteAttachmentParams) {
