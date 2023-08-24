@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { IMailContentItem, FilterTypeEn, IMailContentAttachment } from 'lib/constants';
+import { IMailContentItem, FilterTypeEn, IMailContentAttachment, MailListItemType } from 'lib/constants';
 import { MMCancelableUpload } from 'lib/http';
 
 interface IMailListState {
@@ -7,6 +7,8 @@ interface IMailListState {
     pageIndex: number;
     unreadInboxCount: number;
     unreadSpamCount: number;
+    list: MailListItemType[];
+    setList: (list: MailListItemType[]) => void;
     setFilterType: (filterType: FilterTypeEn) => void;
     addPageIndex: () => void;
     subPageIndex: () => void;
@@ -19,6 +21,8 @@ export const useMailListStore = create<IMailListState>()(set => ({
     pageIndex: 1,
     unreadInboxCount: 0,
     unreadSpamCount: 0,
+    list: [],
+    setList: (list: MailListItemType[]) => set(() => ({ list })),
     setFilterType: (filterType: FilterTypeEn) => set(() => ({ filterType })),
     addPageIndex: () => set(state => ({ pageIndex: state.pageIndex + 1 })),
     subPageIndex: () => set(state => ({ pageIndex: state.pageIndex - 1 })),

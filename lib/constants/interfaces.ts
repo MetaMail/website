@@ -99,6 +99,10 @@ export interface IMailContentItem {
     };
 }
 
+export type MailListItemType = IMailContentItem & {
+    selected: boolean;
+};
+
 export enum AttachmentRelatedTypeEn {
     Embedded = '1',
     Outside = '0',

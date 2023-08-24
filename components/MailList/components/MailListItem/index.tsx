@@ -3,7 +3,14 @@ import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
 
-import { MarkTypeEn, MetaMailTypeEn, IMailContentItem, ReadStatusTypeEn, FilterTypeEn } from 'lib/constants';
+import {
+    MarkTypeEn,
+    MetaMailTypeEn,
+    IMailContentItem,
+    ReadStatusTypeEn,
+    FilterTypeEn,
+    MailListItemType,
+} from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { transformTime } from 'lib/utils';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
@@ -12,19 +19,14 @@ import Dot from 'components/Dot';
 import { favorite, markFavorite, trash, markUnread } from 'assets/icons';
 import styles from './index.module.scss';
 
-export type MailListItemType = IMailContentItem & {
-    selected: boolean;
-};
-
 interface IMailItemProps {
     mail: MailListItemType;
     onSelect: () => void;
-    onRefresh: () => Promise<void>;
 }
 
-export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemProps) {
+export default function MailListItem({ mail, onSelect }: IMailItemProps) {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const { filterType } = useMailListStore();
+    const { filterType, list, setList } = useMailListStore();
     const { selectedMail, setSelectedMail } = useMailDetailStore();
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
@@ -39,11 +41,20 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
     const handleChangeMailStatus = async (options: IMailChangeOptions) => {
         try {
             await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
+            // 更新列表
+            const newList = list.map(item => {
+                if (item.message_id === mail.message_id) {
+                    return {
+                        ...item,
+                        ...options,
+                    };
+                }
+                return item;
+            });
+            setList([...newList]);
         } catch (error) {
             console.error(error);
             toast.error('Operation failed, please try again later.');
-        } finally {
-            onRefresh();
         }
     };
 
@@ -51,10 +62,13 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         await handleChangeMailStatus({ mark });
     };
 
-    const handleDelete = async () => {
+    const handleTrash = async () => {
         await handleChangeMailStatus({
-            mark: MarkTypeEn.Deleted,
+            mark: MarkTypeEn.Trash,
         });
+        // 从列表中移除
+        const newList = list.filter(item => item.message_id !== mail.message_id);
+        setList([...newList]);
     };
 
     const handleUnread = async () => {
@@ -66,7 +80,13 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
     const handleClick = throttle(async () => {
         if (mail.message_id === selectedMail?.message_id || mail.message_id === selectedDraft?.message_id) return;
         if (mail.read == ReadStatusTypeEn.Unread) {
-            await handleChangeMailStatus({ read: ReadStatusTypeEn.Read });
+            // 异步 不阻塞详情页渲染
+            try {
+                handleChangeMailStatus({ read: ReadStatusTypeEn.Read });
+            } catch (error) {
+                console.error('mark read error');
+                console.error(error);
+            }
         }
         if (filterType === FilterTypeEn.Draft) {
             setSelectedDraft(mail);
@@ -133,7 +153,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                             <div
                                 onClick={async e => {
                                     e.stopPropagation();
-                                    await handleDelete();
+                                    await handleTrash();
                                 }}
                                 title="delete mail">
                                 <Image src={trash} alt="delete mail" />

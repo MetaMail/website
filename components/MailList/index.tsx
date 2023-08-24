@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
-import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
-import { userSessionStorage, mailSessionStorage } from 'lib/utils';
-import { FilterTypeEn, IMailContentItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
+import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { userSessionStorage } from 'lib/utils';
+import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
-import MailListItem, { MailListItemType } from './components/MailListItem';
+import MailListItem from './components/MailListItem';
 import Icon from 'components/Icon';
 
 import {
@@ -21,22 +21,30 @@ import {
     cancelSelected,
 } from 'assets/icons';
 
-const MailListFilters = ['All', 'None', 'Read', 'Unread', 'Encrypted', 'UnEncrypted', 'Star', 'No Star'] as const;
+const MailListFilters = ['All', 'Read', 'Unread', 'Encrypted', 'UnEncrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
 let lastDraftId = '';
 
 export default function MailList() {
-    const { filterType, pageIndex, addPageIndex, subPageIndex, setUnreadInboxCount, setUnreadSpamCount } =
-        useMailListStore();
+    const {
+        filterType,
+        pageIndex,
+        list,
+        setList,
+        addPageIndex,
+        subPageIndex,
+        setUnreadInboxCount,
+        setUnreadSpamCount,
+    } = useMailListStore();
     const { selectedMail, isDetailExtend } = useMailDetailStore();
     const { selectedDraft } = useNewMailStore();
 
     const [loading, setLoading] = useState(false);
-    const [list, setList] = useState<MailListItemType[]>([]);
+
     const [pageNum, setPageNum] = useState(0);
     const [selectedAll, setSelectedAll] = useState(false);
-    const [filter, setFilter] = useState<MailListFiltersType>('None');
+    const [filter, setFilter] = useState<MailListFiltersType>(null);
 
     const inputCheckBoxRef = useRef<HTMLInputElement>();
 
@@ -50,7 +58,7 @@ export default function MailList() {
 
     const mailActions = [
         {
-            title: 'Delete',
+            title: 'Trash',
             src: trash,
             httpParams: { mark: MarkTypeEn.Trash },
         },
@@ -113,7 +121,7 @@ export default function MailList() {
             const { mails, page_num, unread } = data;
             const mailsList = mails as MailListItemType[];
             mailsList.forEach(item => {
-                item['selected'] = false;
+                item.selected = false;
             });
             setList(mailsList ?? []);
             setPageNum(page_num);
@@ -158,7 +166,7 @@ export default function MailList() {
                     item.selected = true;
                 });
                 break;
-            case 'None':
+            case null:
                 list.map(item => {
                     item.selected = false;
                 });
@@ -183,16 +191,6 @@ export default function MailList() {
                     item.selected = item.meta_type === MetaMailTypeEn.Plain;
                 });
                 break;
-            case 'Star':
-                list.map(item => {
-                    item.selected = item.mark === MarkTypeEn.Starred;
-                });
-                break;
-            case 'No Star':
-                list.map(item => {
-                    item.selected = item.mark !== MarkTypeEn.Starred;
-                });
-                break;
             default:
                 break;
         }
@@ -201,7 +199,7 @@ export default function MailList() {
     }, [filter]);
 
     useEffect(() => {
-        setFilter('None');
+        setFilter(null);
     }, [filterType]);
 
     useEffect(() => {
@@ -303,13 +301,10 @@ export default function MailList() {
                     list.map((item, index) => {
                         return (
                             <MailListItem
-                                key={index}
+                                key={item.message_id}
                                 mail={item}
                                 onSelect={() => {
                                     handleSelectItem(item);
-                                }}
-                                onRefresh={async () => {
-                                    await fetchMailList(false);
                                 }}
                             />
                         );

@@ -9,7 +9,7 @@ import MailBoxContext from 'context/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { userSessionStorage } from 'lib/utils';
-import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { useMailDetailStore, useMailListStore, useNewMailStore } from 'lib/zustand-store';
 import { decryptMailContent, decryptMailKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
@@ -37,6 +37,7 @@ export default function MailDetail() {
     const { createDraft, checkEncryptable } = useContext(MailBoxContext);
     const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
     const { setSelectedDraft } = useNewMailStore();
+    const { list, setList } = useMailListStore();
 
     const [loading, setLoading] = useState(false);
 
@@ -113,6 +114,33 @@ export default function MailDetail() {
         }
     };
 
+    const mailRemovedHandle = async (params: { mark: MarkTypeEn }) => {
+        const id = selectedMail.message_id;
+        await handleMailActionsClick(params);
+        setSelectedMail(null);
+        setIsDetailExtend(false);
+
+        // 从列表中移除
+        const idx = list.findIndex(item => item.message_id === id);
+        if (idx > -1) {
+            list.splice(idx, 1);
+            setList([...list]);
+        }
+    };
+
+    const handleStar = async () => {
+        const markValue = selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred;
+        await handleMailActionsClick({
+            mark: markValue,
+        });
+        // 同步列表中的状态
+        const idx = list.findIndex(item => item.message_id === selectedMail.message_id);
+        if (idx > -1) {
+            list[idx].mark = markValue;
+            setList([...list]);
+        }
+    };
+
     const topIcons = [
         {
             src: back,
@@ -124,41 +152,41 @@ export default function MailDetail() {
         {
             src: trash,
             handler: async () => {
-                await handleMailActionsClick({ mark: MarkTypeEn.Trash });
+                await mailRemovedHandle({ mark: MarkTypeEn.Trash });
             },
         },
         {
             src: spam,
             handler: async () => {
-                await handleMailActionsClick({ mark: MarkTypeEn.Spam });
+                await mailRemovedHandle({ mark: MarkTypeEn.Spam });
             },
         },
         {
             src: selectedMail.read === ReadStatusTypeEn.Read ? markUnread : read,
             handler: async () => {
+                const readValue =
+                    selectedMail.read === ReadStatusTypeEn.Read ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read;
                 await handleMailActionsClick({
-                    read: selectedMail.read === ReadStatusTypeEn.Read ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
+                    read: readValue,
                 });
+                // 同步列表中的状态
+                const idx = list.findIndex(item => item.message_id === selectedMail.message_id);
+                if (idx > -1) {
+                    list[idx].read = readValue;
+                    setList([...list]);
+                }
             },
         },
         {
             src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
-            handler: async () => {
-                await handleMailActionsClick({
-                    mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
-                });
-            },
+            handler: handleStar,
         },
     ];
 
     const rightIcons = [
         {
             src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
-            handler: async () => {
-                await handleMailActionsClick({
-                    mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
-                });
-            },
+            handler: handleStar,
         },
         {
             src: sent,

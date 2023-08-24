@@ -71,12 +71,12 @@ export default function Sidebar() {
             });
             return data.unread;
         };
-        Promise.all([getUnreadCountPromise(FilterTypeEn.Inbox), getUnreadCountPromise(FilterTypeEn.Spam)]).then(
-            ([inboxCount, spamCount]) => {
-                setUnreadInboxCount(inboxCount);
-                setUnreadSpamCount(spamCount);
-            }
-        );
+        // Promise.all([getUnreadCountPromise(FilterTypeEn.Inbox), getUnreadCountPromise(FilterTypeEn.Spam)]).then(
+        //     ([inboxCount, spamCount]) => {
+        //         setUnreadInboxCount(inboxCount);
+        //         setUnreadSpamCount(spamCount);
+        //     }
+        // );
     }, []);
 
     return (
