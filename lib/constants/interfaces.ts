@@ -79,8 +79,8 @@ export interface IMailContentItem {
     mail_to: IPersonItem[];
     mail_cc: IPersonItem[];
     mail_bcc: IPersonItem[];
-    mail_date: string;
-    download: {
+    mail_date?: string;
+    download?: {
         expire_at: string;
         url: string;
     };
@@ -91,11 +91,11 @@ export interface IMailContentItem {
     part_html?: string;
     attachments: IMailContentAttachment[];
     meta_header: {
-        addr: string;
-        date: string;
-        data: string;
-        keys: string[];
-        signature: string;
+        addr?: string;
+        date?: string;
+        data?: string;
+        keys?: string[];
+        signature?: string;
     };
 }
 

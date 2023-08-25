@@ -4,7 +4,15 @@ import { useRouter } from 'next/router';
 
 import MailBoxContext from 'context/mail';
 import { useMailListStore, useNewMailStore } from 'lib/zustand-store';
-import { FilterTypeEn, MenusMap, IMenuItem } from 'lib/constants';
+import {
+    FilterTypeEn,
+    MenusMap,
+    IMenuItem,
+    MetaMailTypeEn,
+    MailBoxTypeEn,
+    ReadStatusTypeEn,
+    MarkTypeEn,
+} from 'lib/constants';
 import { mailHttp } from 'lib/http';
 
 import logoBrand from 'assets/MetaMail.svg';
@@ -32,9 +40,27 @@ export default function Sidebar() {
     }
 
     async function handleClickNewMail() {
-        const { message_id, randomBits } = await createDraft();
-        const mail = await mailHttp.getMailDetailByID(window.btoa(message_id));
-        setSelectedDraft({ ...mail, randomBits });
+        const { message_id, randomBits, key } = await createDraft();
+        setSelectedDraft({
+            randomBits,
+            message_id,
+            mail_from: { name: '', address: '' },
+            mail_to: [],
+            mark: MarkTypeEn.Normal,
+            part_html: '',
+            part_text: '',
+            attachments: [],
+            subject: '',
+            meta_type: MetaMailTypeEn.Encrypted,
+            mailbox: MailBoxTypeEn.Draft,
+            mail_bcc: [],
+            mail_cc: [],
+            read: ReadStatusTypeEn.Read,
+            digest: '',
+            meta_header: {
+                keys: [key],
+            },
+        });
     }
 
     const renderBadge = (type: FilterTypeEn) => {

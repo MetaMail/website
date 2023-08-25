@@ -52,6 +52,7 @@ export default function MailBoxPage() {
         return {
             message_id,
             randomBits,
+            key,
         };
     };
 

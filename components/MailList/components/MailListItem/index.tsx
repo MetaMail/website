@@ -12,7 +12,7 @@ import {
     MailListItemType,
 } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { transformTime } from 'lib/utils';
+import { transformTime, getShowAddress } from 'lib/utils';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import Icon from 'components/Icon';
 import Dot from 'components/Dot';
@@ -138,7 +138,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
                     </div>
                     <div className="text-[#333333] font-bold w-140 ml-14 omit">
                         <span className={`${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>
-                            {getMailFrom(mail)}
+                            {getShowAddress(getMailFrom(mail))}
                         </span>
                     </div>
                     <div className="text-[#333333] flex-1 w-0 ml-14 omit">
@@ -182,7 +182,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
                             <span
                                 className={`flex-1 w-0 text-lg omit mr-4 ${getIsReadTextClass(mail)}`}
                                 title={getMailFrom(mail)}>
-                                {getMailFrom(mail)}
+                                {getShowAddress(getMailFrom(mail))}
                             </span>
                             <span className="max-w-[80] text-right text-sm">{transformTime(mail.mail_date)}</span>
                         </p>
