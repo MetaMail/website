@@ -20,6 +20,7 @@ const APIs = {
     sendMail: '/mails/send', // 发送邮件
     uploadAttachment: '/mails/attachments', //上传附件
     deleteAttachment: '/mails/attachments', // 删除附件
+    mailsStat: '/mails/stat', // 获取邮件统计信息
 };
 
 interface ICreateDraftParams {
@@ -86,6 +87,12 @@ interface IDeleteAttachmentResponse {
     message_id: string;
     attachment_id: string;
     date: string;
+}
+
+interface IMailsStatResponse {
+    unread: number;
+    spam: number;
+    draft: number;
 }
 
 type IGetMailDetailResponse = IMailContentItem;
@@ -163,6 +170,10 @@ class MMMailHttp extends MMHttp {
 
     async deleteAttachment(params: IDeleteAttachmentParams) {
         return this.delete<IDeleteAttachmentParams, IDeleteAttachmentResponse>(APIs.deleteAttachment, params);
+    }
+
+    async getMailStat() {
+        return this.get<void, IMailsStatResponse>(APIs.mailsStat);
     }
 }
 

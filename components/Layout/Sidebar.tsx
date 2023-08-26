@@ -23,15 +23,8 @@ import styles from './Siderbar.module.scss';
 
 export default function Sidebar() {
     const { createDraft, logout } = useContext(MailBoxContext);
-    const {
-        filterType,
-        setFilterType,
-        resetPageIndex,
-        unreadInboxCount,
-        setUnreadInboxCount,
-        setUnreadSpamCount,
-        unreadSpamCount,
-    } = useMailListStore();
+    const { filterType, setFilterType, resetPageIndex, unreadCount, setUnreadCount, spamCount, setSpamCount } =
+        useMailListStore();
     const { setSelectedDraft } = useNewMailStore();
 
     function handleChangeFilter(filter: FilterTypeEn) {
@@ -67,7 +60,7 @@ export default function Sidebar() {
         if (type !== FilterTypeEn.Inbox && type !== FilterTypeEn.Spam) {
             return null;
         }
-        const count = type === FilterTypeEn.Inbox ? unreadInboxCount : unreadSpamCount;
+        const count = type === FilterTypeEn.Inbox ? unreadCount : spamCount;
         if (count <= 0) return null;
         return <span className="badge badge-sm">{count > 99 ? '99+' : count}</span>;
     };
@@ -90,19 +83,21 @@ export default function Sidebar() {
     };
 
     useEffect(() => {
-        const getUnreadCountPromise = async (type: FilterTypeEn) => {
-            const data = await mailHttp.getMailList({
-                filter: type,
-                page_index: 1,
-            });
-            return data.unread;
+        const doGetMailStat = async () => {
+            try {
+                const { spam, unread } = await mailHttp.getMailStat();
+                setUnreadCount(unread);
+                setSpamCount(spam);
+            } catch (error) {
+                console.error('get mail stat error');
+                console.error(error);
+            }
         };
-        // Promise.all([getUnreadCountPromise(FilterTypeEn.Inbox), getUnreadCountPromise(FilterTypeEn.Spam)]).then(
-        //     ([inboxCount, spamCount]) => {
-        //         setUnreadInboxCount(inboxCount);
-        //         setUnreadSpamCount(spamCount);
-        //     }
-        // );
+        doGetMailStat();
+        const getMailsStatInterval = setInterval(doGetMailStat, 10000);
+        return () => {
+            clearInterval(getMailsStatInterval);
+        };
     }, []);
 
     return (

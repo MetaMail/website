@@ -27,16 +27,7 @@ type MailListFiltersType = (typeof MailListFilters)[number];
 let lastDraftId = '';
 
 export default function MailList() {
-    const {
-        filterType,
-        pageIndex,
-        list,
-        setList,
-        addPageIndex,
-        subPageIndex,
-        setUnreadInboxCount,
-        setUnreadSpamCount,
-    } = useMailListStore();
+    const { filterType, pageIndex, list, setList, addPageIndex, subPageIndex } = useMailListStore();
     const { selectedMail, isDetailExtend } = useMailDetailStore();
     const { selectedDraft } = useNewMailStore();
 
@@ -118,14 +109,13 @@ export default function MailList() {
                 limit: 20,
             });
 
-            const { mails, page_num, unread } = data;
+            const { mails, page_num } = data;
             const mailsList = mails as MailListItemType[];
             mailsList.forEach(item => {
                 item.selected = false;
             });
             setList(mailsList ?? []);
             setPageNum(page_num);
-            setUnreadInboxCount(unread ?? 0);
         } catch (error) {
             console.error(error);
             toast.error('Fetch mail list failed, please try again later.');

@@ -5,30 +5,30 @@ import { MMCancelableUpload } from 'lib/http';
 interface IMailListState {
     filterType: FilterTypeEn;
     pageIndex: number;
-    unreadInboxCount: number;
-    unreadSpamCount: number;
+    unreadCount: number;
+    spamCount: number;
     list: MailListItemType[];
     setList: (list: MailListItemType[]) => void;
     setFilterType: (filterType: FilterTypeEn) => void;
     addPageIndex: () => void;
     subPageIndex: () => void;
     resetPageIndex: () => void;
-    setUnreadInboxCount: (unreadInboxCount: number) => void;
-    setUnreadSpamCount: (unreadSpamCount: number) => void;
+    setUnreadCount: (unreadInboxCount: number) => void;
+    setSpamCount: (unreadSpamCount: number) => void;
 }
 export const useMailListStore = create<IMailListState>()(set => ({
     filterType: FilterTypeEn.Inbox,
     pageIndex: 1,
-    unreadInboxCount: 0,
-    unreadSpamCount: 0,
+    unreadCount: 0,
+    spamCount: 0,
     list: [],
     setList: (list: MailListItemType[]) => set(() => ({ list })),
     setFilterType: (filterType: FilterTypeEn) => set(() => ({ filterType })),
     addPageIndex: () => set(state => ({ pageIndex: state.pageIndex + 1 })),
     subPageIndex: () => set(state => ({ pageIndex: state.pageIndex - 1 })),
     resetPageIndex: () => set({ pageIndex: 1 }),
-    setUnreadInboxCount: (unreadInboxCount: number) => set(() => ({ unreadInboxCount })),
-    setUnreadSpamCount: (unreadSpamCount: number) => set(() => ({ unreadSpamCount })),
+    setUnreadCount: (unreadCount: number) => set(() => ({ unreadCount })),
+    setSpamCount: (spamCount: number) => set(() => ({ spamCount })),
 }));
 
 interface IMailDetailState {
@@ -68,13 +68,13 @@ interface IUtilsState {
 }
 export const useUtilsStore = create<IUtilsState>()(set => ({
     removeAllState: () => {
-        const { setFilterType, resetPageIndex, setUnreadInboxCount, setUnreadSpamCount } = useMailListStore.getState();
+        const { setFilterType, resetPageIndex, setUnreadCount, setSpamCount } = useMailListStore.getState();
         const { setSelectedMail } = useMailDetailStore.getState();
         const { setSelectedDraft } = useNewMailStore.getState();
         setFilterType(0);
         resetPageIndex();
-        setUnreadInboxCount(0);
-        setUnreadSpamCount(0);
+        setUnreadCount(0);
+        setSpamCount(0);
         setSelectedMail(null);
         setSelectedDraft(null);
     },
