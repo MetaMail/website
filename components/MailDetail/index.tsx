@@ -73,7 +73,13 @@ export default function MailDetail() {
         try {
             showLoading && setLoading(true);
             const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
-            const _mail = { ...selectedMail, ...mail };
+            const _mail = {
+                ...selectedMail,
+                ...mail,
+                mailbox: selectedMail.mailbox,
+                mark: selectedMail.mark,
+                read: selectedMail.read,
+            };
             if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
                 if (currentMailId !== _mail.message_id) return;
                 await ensureRandomBitsExist();
@@ -107,24 +113,33 @@ export default function MailDetail() {
                 ],
                 httpParams
             );
-            await handleLoad(false);
+            if (httpParams?.mark === MarkTypeEn.Trash || httpParams?.mark === MarkTypeEn.Spam) {
+                // 从列表中移除
+                const id = selectedMail.message_id;
+                const idx = list.findIndex(item => item.message_id === id);
+                if (idx > -1) {
+                    list.splice(idx, 1);
+                    setList([...list]);
+                }
+                setSelectedMail(null);
+                setIsDetailExtend(false);
+                return;
+            }
+            // 同步详情中的状态
+            setSelectedMail({
+                ...selectedMail,
+                ...httpParams,
+            });
+
+            // 同步列表中的状态
+            const idx = list.findIndex(item => item.message_id === selectedMail.message_id);
+            if (idx > -1) {
+                Object.assign(list[idx], httpParams);
+                setList([...list]);
+            }
         } catch (error) {
             console.error(error);
             toast.error('Operation failed, please try again later.');
-        }
-    };
-
-    const mailRemovedHandle = async (params: { mark: MarkTypeEn }) => {
-        const id = selectedMail.message_id;
-        await handleMailActionsClick(params);
-        setSelectedMail(null);
-        setIsDetailExtend(false);
-
-        // 从列表中移除
-        const idx = list.findIndex(item => item.message_id === id);
-        if (idx > -1) {
-            list.splice(idx, 1);
-            setList([...list]);
         }
     };
 
@@ -133,12 +148,6 @@ export default function MailDetail() {
         await handleMailActionsClick({
             mark: markValue,
         });
-        // 同步列表中的状态
-        const idx = list.findIndex(item => item.message_id === selectedMail.message_id);
-        if (idx > -1) {
-            list[idx].mark = markValue;
-            setList([...list]);
-        }
     };
 
     const topIcons = [
@@ -152,13 +161,13 @@ export default function MailDetail() {
         {
             src: trash,
             handler: async () => {
-                await mailRemovedHandle({ mark: MarkTypeEn.Trash });
+                await handleMailActionsClick({ mark: MarkTypeEn.Trash });
             },
         },
         {
             src: spam,
             handler: async () => {
-                await mailRemovedHandle({ mark: MarkTypeEn.Spam });
+                await handleMailActionsClick({ mark: MarkTypeEn.Spam });
             },
         },
         {
@@ -169,12 +178,6 @@ export default function MailDetail() {
                 await handleMailActionsClick({
                     read: readValue,
                 });
-                // 同步列表中的状态
-                const idx = list.findIndex(item => item.message_id === selectedMail.message_id);
-                if (idx > -1) {
-                    list[idx].read = readValue;
-                    setList([...list]);
-                }
             },
         },
         {

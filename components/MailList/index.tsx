@@ -301,7 +301,7 @@ export default function MailList() {
                     list.map((item, index) => {
                         return (
                             <MailListItem
-                                key={item.message_id}
+                                key={`${item.message_id}${item.mailbox}`}
                                 mail={item}
                                 onSelect={() => {
                                     handleSelectItem(item);
