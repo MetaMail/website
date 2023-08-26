@@ -262,17 +262,18 @@ export default function MailList() {
                     )}
                 </div>
 
-                <div className="flex flex-row justify-end space-x-20 text-xl text-[#7F7F7F]">
+                <div className="flex items-center flex-row justify-end space-x-20 text-xl text-[#7F7F7F]">
+                    <span className="text-md">total page: {pageNum}</span>
                     <button
                         disabled={pageIndex === 1}
-                        className="w-20 h-20 disabled:opacity-40"
+                        className="w-20 disabled:opacity-40"
                         onClick={() => {
                             if (pageIndex > 1) subPageIndex();
                         }}>
                         {'<'}
                     </button>
                     <button
-                        className="w-20 h-20 disabled:opacity-40"
+                        className="w-20 disabled:opacity-40"
                         disabled={pageIndex === pageNum}
                         onClick={() => {
                             if (pageIndex < pageNum) addPageIndex();
