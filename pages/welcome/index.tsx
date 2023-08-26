@@ -7,8 +7,8 @@ import { disconnect } from '@wagmi/core';
 import { toast } from 'react-toastify';
 
 import { userHttp } from 'lib/http';
-import { userSessionStorage } from 'lib/utils';
-import { generateEncryptionUserKey, getPrivateKey } from 'lib/encrypt';
+import { userLocalStorage } from 'lib/utils';
+import { generateEncryptionUserKey } from 'lib/encrypt';
 import { randomStringSignInstance } from 'lib/sign';
 import ReviewInfo from 'components/ReviewInfo';
 import Footer from 'components/Footer';
@@ -29,6 +29,14 @@ export default function Welcome() {
 
     const handleAutoLogin = async () => {
         try {
+            const { address: localAddress } = userLocalStorage.getUserInfo();
+            const token = userLocalStorage.getToken();
+            if (localAddress && token) {
+                return router.push('/mailbox');
+            }
+
+            if (!address) return;
+
             const signData = await userHttp.getRandomStrToSign(address);
             randomStringSignInstance.signData = signData;
             const signedMessage = await randomStringSignInstance.doSign(signData.signMessages);
@@ -44,22 +52,19 @@ export default function Welcome() {
                     data: encryptionData,
                 });
             }
-            const decryptPrivateKey = await getPrivateKey(encryptionData.encryption_private_key, encryptionData.salt);
-            userSessionStorage.setUserInfo({
+            userLocalStorage.setUserInfo({
                 address,
                 ensName: user.ens || '',
                 publicKey: encryptionData.encryption_public_key,
                 privateKey: encryptionData.encryption_private_key,
                 salt: encryptionData.salt,
-                purePrivateKey: decryptPrivateKey,
             });
+            await disconnect();
+            console.log('Disconnected');
             router.push('/mailbox');
         } catch (error) {
             console.error(error);
             toast.error('Login failed, please try again later.');
-        } finally {
-            await disconnect();
-            console.log('Disconnected');
         }
     };
 
@@ -68,12 +73,7 @@ export default function Welcome() {
             console.log('accountsChanged', accounts);
             address = accounts[0].toLowerCase();
         });
-        (async () => {
-            if (!address) return;
-            if (userSessionStorage.getUserInfo().address !== address) return handleAutoLogin();
-            await disconnect();
-            router.push('/mailbox');
-        })();
+        handleAutoLogin();
     }, [address]);
 
     return (

@@ -8,9 +8,9 @@ import { toast } from 'react-toastify';
 import MailBoxContext from 'context/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { userSessionStorage } from 'lib/utils';
+import { userLocalStorage, userSessionStorage } from 'lib/utils';
 import { useMailDetailStore, useMailListStore, useNewMailStore } from 'lib/zustand-store';
-import { decryptMailContent, decryptMailKey } from 'lib/encrypt';
+import { decryptMailContent, decryptMailKey, getPrivateKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
 
@@ -44,7 +44,7 @@ export default function MailDetail() {
     const ensureRandomBitsExist = async () => {
         if (!randomBits) {
             const keys = selectedMail?.meta_header?.keys;
-            const { address, ensName } = userSessionStorage.getUserInfo();
+            const { address, ensName } = userLocalStorage.getUserInfo();
             const addrList = [
                 selectedMail?.mail_from.address,
                 ...(selectedMail?.mail_to.map(item => item.address) || []),
@@ -61,7 +61,13 @@ export default function MailDetail() {
             }
             const key = keys[idx];
             if (!key) throw new Error("Can't decrypt mail without randomBits key.");
-            const { purePrivateKey } = userSessionStorage.getUserInfo();
+            let purePrivateKey = userSessionStorage.getPurePrivateKey();
+            if (!purePrivateKey) {
+                const { privateKey, salt } = userLocalStorage.getUserInfo();
+                purePrivateKey = await getPrivateKey(privateKey, salt);
+                userSessionStorage.setPurePrivateKey(purePrivateKey);
+            }
+
             randomBits = await decryptMailKey(key, purePrivateKey);
             if (!randomBits) {
                 throw new Error('No randomBits.');
@@ -226,7 +232,7 @@ export default function MailDetail() {
     };
 
     const handleReply = async () => {
-        const { address } = userSessionStorage.getUserInfo();
+        const { address } = userLocalStorage.getUserInfo();
         const { message_id, randomBits } = await createDraft();
         const { encryptable } = await checkEncryptable([selectedMail.mail_from]);
         await mailHttp.updateMail({

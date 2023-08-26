@@ -1,6 +1,6 @@
 import axios, { Axios, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { MMObject } from './object';
-import { userSessionStorage } from 'lib/utils';
+import { userLocalStorage } from 'lib/utils';
 
 //const BASE_URL = 'https://api.metamail.ink/';
 //const BASE_URL = 'http://localhost:8080';
@@ -11,6 +11,11 @@ export const PostfixOfAddress = '@mmail-test.ink';
 export abstract class MMHttp extends MMObject {
     private _baseUrl: string;
     private _axios: Axios;
+    private static _onUnAuthHandle: () => void;
+
+    static set onUnAuthHandle(onUnAuthHandle: () => void) {
+        MMHttp._onUnAuthHandle = onUnAuthHandle;
+    }
 
     constructor() {
         super();
@@ -37,7 +42,7 @@ export abstract class MMHttp extends MMObject {
     private setInterceptors() {
         this.axios.interceptors.request.use(
             config => {
-                const token = userSessionStorage.getToken();
+                const token = userLocalStorage.getToken();
                 if (token) {
                     config.headers.authorization = `Bearer ${token}`;
                 }
@@ -52,6 +57,9 @@ export abstract class MMHttp extends MMObject {
                 return this.checkResponse(res);
             },
             (error: AxiosError) => {
+                if (error.response?.status === 401) {
+                    return MMHttp._onUnAuthHandle?.();
+                }
                 if (error.response?.status === 404) {
                     return Promise.resolve();
                 }
@@ -63,6 +71,9 @@ export abstract class MMHttp extends MMObject {
     private checkResponse(res: AxiosResponse) {
         if (res && (res.status === 200 || res.status === 304)) {
             return res.data.data;
+        }
+        if (res && res.status === 401) {
+            return MMHttp._onUnAuthHandle?.();
         }
         throw new Error('http error with status: ' + res.status);
     }

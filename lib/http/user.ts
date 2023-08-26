@@ -1,6 +1,6 @@
 import { MMHttp } from '../base';
 import { AccountStatusTypeEn } from '../constants';
-import { userSessionStorage } from 'lib/utils';
+import { userLocalStorage } from 'lib/utils';
 
 const APIs = {
     getEncryptionKey: '/users/key', //获取和消息加密密钥
@@ -75,7 +75,7 @@ class MMUserHttp extends MMHttp {
 
     async getJwtToken(params: IGetJwtTokenParams) {
         const data = await this.post<IGetJwtTokenParams, IGetJwtTokenResponse>(APIs.getAuthToken, params);
-        userSessionStorage.setToken(data.token || '');
+        userLocalStorage.setToken(data.token || '');
         return data;
     }
 

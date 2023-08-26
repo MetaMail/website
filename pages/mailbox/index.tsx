@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import { userHttp, mailHttp } from 'lib/http';
+import { MMHttp } from 'lib/base';
 import { IPersonItem, MetaMailTypeEn } from 'lib/constants';
-import { userSessionStorage, mailSessionStorage } from 'lib/utils';
+import { userSessionStorage, userLocalStorage, mailLocalStorage } from 'lib/utils';
 import { createEncryptedMailKey } from 'lib/encrypt';
 import MailBoxContext from 'context/mail';
 import Layout from 'components/Layout';
@@ -20,9 +21,9 @@ export default function MailBoxPage() {
     const [showLoading, setShowLoading] = useState(false);
 
     const logout = () => {
-        userSessionStorage.clearUserInfo();
-        userSessionStorage.clearToken();
-        mailSessionStorage.clearMailListInfo();
+        userLocalStorage.clearAll();
+        mailLocalStorage.clearAll();
+        userSessionStorage.clearAll();
         removeAllState();
         router.push('/');
     };
@@ -46,7 +47,7 @@ export default function MailBoxPage() {
     };
 
     const createDraft = async () => {
-        const { publicKey, address } = userSessionStorage.getUserInfo();
+        const { publicKey, address } = userLocalStorage.getUserInfo();
         const { key, randomBits } = await createEncryptedMailKey(publicKey, address);
         const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key);
         return {
@@ -55,6 +56,10 @@ export default function MailBoxPage() {
             key,
         };
     };
+
+    useEffect(() => {
+        MMHttp.onUnAuthHandle = logout;
+    }, []);
 
     return (
         <MailBoxContext.Provider value={{ checkEncryptable, createDraft, setShowLoading, logout }}>

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { toast } from 'react-toastify';
 
 import MailBoxContext from 'context/mail';
-import { userSessionStorage, getShowAddress } from 'lib/utils';
+import { userLocalStorage, getShowAddress } from 'lib/utils';
 import { PostfixOfAddress } from 'lib/base/request';
 
 import copy from 'assets/mailbox/copy.svg';
@@ -22,7 +22,7 @@ export default function Titlebar() {
     };
 
     useEffect(() => {
-        const { address, ensName } = userSessionStorage.getUserInfo() ?? {};
+        const { address, ensName } = userLocalStorage.getUserInfo() ?? {};
         if (!address) return logout();
         setAddress(address);
         setEnsName(ensName);

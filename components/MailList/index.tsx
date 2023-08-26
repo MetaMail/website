@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
-import { userSessionStorage } from 'lib/utils';
+import { userLocalStorage } from 'lib/utils';
 import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import MailListItem from './components/MailListItem';
@@ -146,7 +146,7 @@ export default function MailList() {
     }, [list]);
 
     useEffect(() => {
-        if (userSessionStorage.getUserInfo()?.address) fetchMailList(true);
+        if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     }, [pageIndex, filterType]);
 
     useEffect(() => {

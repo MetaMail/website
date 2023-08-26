@@ -7,7 +7,7 @@ import { throttle } from 'lodash';
 import MailBoxContext from 'context/mail';
 import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useNewMailStore } from 'lib/zustand-store';
-import { userSessionStorage, mailSessionStorage } from 'lib/utils';
+import { userLocalStorage, userSessionStorage, mailLocalStorage } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import {
     decryptMailKey,
@@ -15,6 +15,7 @@ import {
     encryptMailContent,
     decryptMailContent,
     concatAddress,
+    getPrivateKey,
 } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
@@ -59,7 +60,12 @@ export default function NewMail() {
         if (!randomBits) {
             const selectedDraftKey = selectedDraft.meta_header?.keys?.[0]; // 当前选中的草稿的randomBits的公钥加密结果
             if (!selectedDraftKey) throw new Error("Can't decrypt mail without randomBits key.");
-            const { purePrivateKey } = userSessionStorage.getUserInfo();
+            let purePrivateKey = userSessionStorage.getPurePrivateKey();
+            if (!purePrivateKey) {
+                const { privateKey, salt } = userLocalStorage.getUserInfo();
+                purePrivateKey = await getPrivateKey(privateKey, salt);
+                userSessionStorage.setPurePrivateKey(purePrivateKey);
+            }
             randomBits = await decryptMailKey(selectedDraftKey, purePrivateKey);
             if (!randomBits) {
                 throw new Error('No randomBits.');
@@ -108,7 +114,7 @@ export default function NewMail() {
         const id = toast.loading('Sending mail...');
         try {
             const { html, text, metaType, publicKeys } = await handleSave('send');
-            const { address, ensName, publicKey } = userSessionStorage.getUserInfo();
+            const { address, ensName, publicKey } = userLocalStorage.getUserInfo();
             let keys: string[] = [];
             if (metaType === MetaMailTypeEn.Encrypted) {
                 // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
@@ -200,8 +206,8 @@ export default function NewMail() {
             mail_from: selectedDraft.mail_from,
         });
 
-        mailSessionStorage.setQuillHtml(html);
-        mailSessionStorage.setQuillText(text);
+        mailLocalStorage.setQuillHtml(html);
+        mailLocalStorage.setQuillText(text);
         dateRef.current = mail_date;
         return { html, text, metaType, publicKeys };
     };
@@ -212,7 +218,7 @@ export default function NewMail() {
             randomBits = selectedDraft.randomBits;
             let _selectedDraft = selectedDraft;
             if (!selectedDraft.mail_from?.address) {
-                const { address, ensName } = userSessionStorage.getUserInfo();
+                const { address, ensName } = userLocalStorage.getUserInfo();
                 selectedDraft.mail_from = {
                     address: (ensName || address) + PostfixOfAddress,
                     name: ensName || address,
@@ -240,7 +246,7 @@ export default function NewMail() {
     };
 
     const handleChangeMailFrom = (from: MailFromType) => {
-        const { address, ensName } = userSessionStorage.getUserInfo();
+        const { address, ensName } = userLocalStorage.getUserInfo();
         const mail_from = {
             address: (MailFromType.address ? address : ensName) + PostfixOfAddress,
             name: ensName || address,
