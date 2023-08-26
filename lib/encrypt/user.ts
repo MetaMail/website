@@ -5,7 +5,7 @@ import { asymmetricEncryptInstance, symmetricEncryptInstance } from '../base';
 import { saltSignInstance, keyDataSignInstance } from 'lib/sign';
 
 export const generateEncryptionUserKey = async () => {
-    const salt = crypto.randomBytes(256).toString('hex');
+    const salt = crypto.randomBytes(32).toString('hex');
     const signedSalt = await saltSignInstance.doSign({
         hint: 'Sign this salt to generate encryption key',
         salt: salt,
