@@ -14,13 +14,9 @@ export const generateEncryptionUserKey = async () => {
     const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
 
-    const hashedPrivateKey = crypto.createHash('sha256').update(Encrypted_Private_Store_Key).digest('hex');
-    const hashedPublicKey = crypto.createHash('sha256').update(publicKey).digest('hex');
-
     const signMessages = {
         salt: salt,
-        private_key_hash: hashedPrivateKey,
-        public_key_hash: hashedPublicKey,
+        public_key_hash: crypto.createHash('sha256').update(publicKey).digest('hex'),
         date: new Date().toISOString(),
     };
 
