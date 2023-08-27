@@ -4,8 +4,9 @@ import Image from 'next/image';
 import { toast } from 'react-toastify';
 
 import MailBoxContext from 'context/mail';
-import { userLocalStorage, getShowAddress } from 'lib/utils';
+import { userLocalStorage, getShowAddress, percentTransform } from 'lib/utils';
 import { PostfixOfAddress } from 'lib/base/request';
+import { userHttp } from 'lib/http';
 
 import copy from 'assets/mailbox/copy.svg';
 import right from 'assets/mailbox/right.svg';
@@ -15,6 +16,8 @@ export default function Titlebar() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const [address, setAddress] = useState<string>();
     const [ensName, setEnsName] = useState<string>();
+    const [emailSize, setEmailSize] = useState<number>();
+    const [emailSizeLimit, setEmailSizeLimit] = useState<number>();
 
     const handleCopy = (txt: string) => {
         navigator.clipboard.writeText(txt);
@@ -26,6 +29,16 @@ export default function Titlebar() {
         if (!address) return logout();
         setAddress(address);
         setEnsName(ensName);
+        userHttp
+            .getUserProfile()
+            .then(res => {
+                setEmailSize(res.total_email_size / 1024 / 1024 / 1024);
+                setEmailSizeLimit(res.total_email_size_limit / 1024 / 1024 / 1024);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Get user profile failed.');
+            });
     }, []);
     return (
         <div className="navbar p-0">
@@ -77,12 +90,15 @@ export default function Titlebar() {
                         <div className="my-8">
                             <p className="flex justify-between font-bold">
                                 <span>Mailbox capacity</span>
-                                <span>50%</span>
+                                <span>{percentTransform(emailSize / emailSizeLimit)}%</span>
                             </p>
-                            <progress className="progress progress-primary w-222 mt-12" value="50" max="100"></progress>
+                            <progress
+                                className="progress progress-primary w-222 mt-12"
+                                value={percentTransform(emailSize / emailSizeLimit)}
+                                max="100"></progress>
                             <p className="flex justify-between font-bold text-sm my-4">
                                 <span>0</span>
-                                <span>32GB</span>
+                                <span>{emailSizeLimit}GB</span>
                             </p>
                         </div>
                         <div className="flex justify-between font-bold items-center my-12 cursor-pointer">

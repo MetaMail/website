@@ -7,7 +7,7 @@ import { throttle } from 'lodash';
 import MailBoxContext from 'context/mail';
 import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useNewMailStore } from 'lib/zustand-store';
-import { userLocalStorage, userSessionStorage, mailLocalStorage } from 'lib/utils';
+import { userLocalStorage, userSessionStorage, mailLocalStorage, percentTransform } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import {
     decryptMailKey,
@@ -396,7 +396,7 @@ export default function NewMail() {
                                 <span className="">
                                     {attr.filename}
                                     {attr.uploadProcess && !attr.attachment_id
-                                        ? (Math.floor(attr.uploadProcess * 100) / 100) * 100 + '%'
+                                        ? percentTransform(attr.uploadProcess) + '%'
                                         : ''}
                                 </span>
                             </div>

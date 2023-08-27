@@ -55,5 +55,9 @@ export function getShowAddress(address: string) {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
+export function percentTransform(percent: number) {
+    return Number(percent.toPrecision(2)) * 100;
+}
+
 export * from './session-storage';
 export * from './local-storage';

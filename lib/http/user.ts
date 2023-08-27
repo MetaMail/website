@@ -7,6 +7,7 @@ const APIs = {
     postEncryptionKey: '/users/key', //上传签名和消息加密密钥
     getRandomString: '/auth/random', // 获取随机字符串，用户需要对这个字符串签名
     getAuthToken: '/auth/token', // 上传签名后的字符串，获取jwt token
+    getUserProfile: '/users/profile', // 获取用户信息
 };
 
 // 从服务器获取的加密信息和上传到服务器的加密信息格式 共用
@@ -58,6 +59,11 @@ interface IGetJwtTokenResponse {
     token: string;
 }
 
+interface IGetUserProfileResponse {
+    total_email_size: number;
+    total_email_size_limit: number;
+}
+
 class MMUserHttp extends MMHttp {
     async getEncryptionKey(address: string) {
         return this.get<IGetEncryptionKeyParams, IGetEncryptionKeyResponse>(`${APIs.getEncryptionKey}`, {
@@ -81,6 +87,10 @@ class MMUserHttp extends MMHttp {
 
     async getLogout() {
         return this.delete<void, void>(APIs.getAuthToken);
+    }
+
+    async getUserProfile() {
+        return this.get<void, IGetUserProfileResponse>(APIs.getUserProfile);
     }
 }
 
