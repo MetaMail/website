@@ -1,6 +1,6 @@
-import CryptoJS from 'crypto-js';
 import { toast } from 'react-toastify';
 import { convertWordArrayToUint8Array } from 'lib/utils';
+import { decryptMailAttachment } from 'lib/encrypt';
 
 type AttachmentItemProps = {
     url: string;
@@ -17,7 +17,7 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
         try {
             const response = await fetch(url);
             const encryptedFileData = await response.text();
-            const decryptedFileData = CryptoJS.AES.decrypt(encryptedFileData, randomBits);
+            const decryptedFileData = decryptMailAttachment(encryptedFileData, randomBits);
             const typedArrayData = convertWordArrayToUint8Array(decryptedFileData);
             const fileDec = new Blob([typedArrayData]);
             const a = document.createElement('a');

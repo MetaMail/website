@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 import { throttle } from 'lodash';
 
-import MailBoxContext from 'context/mail';
 import { mailHttp, IUploadAttachmentResponse } from 'lib/http';
 import { useNewMailStore } from 'lib/zustand-store';
 import { AttachmentRelatedTypeEn } from 'lib/constants';
 import { ArrayBufferToWordArray } from 'lib/utils';
+import { encryptMailAttachment } from 'lib/encrypt';
 
 import addAttach from 'assets/addAttach.svg';
 interface IFileUploader {
@@ -15,7 +15,6 @@ interface IFileUploader {
     onChange: () => void;
 }
 const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
-    const { checkEncryptable } = useContext(MailBoxContext);
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const getFileArrayBuffer = (file: File) => {
@@ -31,7 +30,7 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         });
     };
 
-    const handleSingleFileUpload = async (file: File, encryptable: boolean) => {
+    const handleSingleFileUpload = async (file: File) => {
         const fileBuffer = await getFileArrayBuffer(file);
         if (!fileBuffer) return;
         const fileProps = {
@@ -40,18 +39,22 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         };
         let finalFile = file;
 
-        // 加密邮件才需要对附件进行加密
-        if (encryptable) {
-            const encrypted = CryptoJS.AES.encrypt(ArrayBufferToWordArray(fileBuffer), randomBits).toString();
-            finalFile = new File([new Blob([encrypted])], file.name, { ...fileProps });
-        }
+        // draft阶段 附件都是需要加密的
+        const encrypted = encryptMailAttachment(ArrayBufferToWordArray(fileBuffer), randomBits);
+        finalFile = new File([new Blob([encrypted])], file.name, { ...fileProps });
 
         const wordArray = CryptoJS.lib.WordArray.create((await getFileArrayBuffer(finalFile)) as any);
-        const sha256 = CryptoJS.SHA256(wordArray).toString();
+        const encryptSha256 = CryptoJS.SHA256(wordArray).toString();
+
+        // 同时把原始附件的哈希传给后端，用于后续发邮件签名是直接用原始附件的哈希，就不用前端先下载解密再计算哈希了
+        const pureSha256 = CryptoJS.SHA256(
+            CryptoJS.lib.WordArray.create((await getFileArrayBuffer(file)) as any)
+        ).toString();
 
         const form = new FormData();
         form.append('attachment', finalFile);
-        form.append('sha256', sha256);
+        form.append('encrypted_sha256', encryptSha256);
+        form.append('plain_sha256', pureSha256);
         form.append('related', AttachmentRelatedTypeEn.Outside);
         form.append('mail_id', window.btoa(selectedDraft.message_id));
         // cid && form.append('cid', cid);
@@ -83,11 +86,7 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         const fileList = e.target.files;
         if (!fileList || !fileList.length) return;
 
-        const { encryptable } = await checkEncryptable(selectedDraft.mail_to);
-
-        const uploadResult = await Promise.all(
-            Array.from(fileList).map((file: File) => handleSingleFileUpload(file, encryptable))
-        );
+        const uploadResult = await Promise.all(Array.from(fileList).map((file: File) => handleSingleFileUpload(file)));
         const attachmentsWithoutAttachmentId = uploadResult.map(result => {
             return {
                 filename: result.file.name,
@@ -109,7 +108,8 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
                         attachments: oldValue.selectedDraft.attachments.map(attachment => {
                             if (item.cancelableUpload?.id === attachment.cancelableUpload?.id) {
                                 attachment.attachment_id = res.attachment_id;
-                                attachment.sha256 = res.attachment.sha256;
+                                attachment.encrypted_sha256 = res.attachment.encrypted_sha256;
+                                attachment.plain_sha256 = res.attachment.plain_sha256;
                             }
                             return attachment;
                         }),

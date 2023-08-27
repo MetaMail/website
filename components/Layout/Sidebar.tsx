@@ -94,7 +94,7 @@ export default function Sidebar() {
             }
         };
         doGetMailStat();
-        const getMailsStatInterval = setInterval(doGetMailStat, 10000);
+        const getMailsStatInterval = setInterval(doGetMailStat, 60000);
         return () => {
             clearInterval(getMailsStatInterval);
         };

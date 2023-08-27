@@ -59,7 +59,8 @@ export interface IPersonItem {
 export interface IMailContentAttachment {
     attachment_id?: string;
     size?: number;
-    sha256?: string;
+    encrypted_sha256?: string;
+    plain_sha256?: string;
     filename: string;
     content_type?: string;
     download?: {

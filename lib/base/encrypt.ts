@@ -19,7 +19,7 @@ class MMSymmetricEncrypt extends MMEncrypt {
         this._key = value;
     }
 
-    encrypt(data: string, key?: string): string {
+    encrypt(data: string | CryptoJS.lib.WordArray, key?: string): string {
         const encrypted = CryptoJS.AES.encrypt(data, key || this._key);
         return encrypted.toString();
     }
@@ -27,6 +27,10 @@ class MMSymmetricEncrypt extends MMEncrypt {
     decrypt(data: string, key?: string): string {
         const decrypted = CryptoJS.AES.decrypt(data, key || this._key);
         return CryptoJS.enc.Utf8.stringify(decrypted).toString();
+    }
+
+    decryptToWordArray(data: string, key?: string) {
+        return CryptoJS.AES.decrypt(data, key || this._key);
     }
 }
 

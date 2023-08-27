@@ -56,6 +56,7 @@ interface ISendMailParams {
     date?: string;
     signature?: string;
     keys: string[];
+    random_bits?: string;
 }
 
 interface ISendMailResponse {
@@ -70,7 +71,8 @@ export interface IUploadAttachmentResponse {
         filename: string;
         size: number;
         content_type: string;
-        sha256: string;
+        encrypted_sha256?: string;
+        plain_sha256?: string;
         download: {
             url: string;
             expire_at: string;
