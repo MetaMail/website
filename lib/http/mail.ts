@@ -21,6 +21,7 @@ const APIs = {
     uploadAttachment: '/mails/attachments', //上传附件
     deleteAttachment: '/mails/attachments', // 删除附件
     mailsStat: '/mails/stat', // 获取邮件统计信息
+    getSuggestedReceivers: '/mails/suggested_receivers', // 获取推荐收件人
 };
 
 interface ICreateDraftParams {
@@ -109,6 +110,14 @@ interface IGetMailListParams {
     page_index: number;
 }
 
+interface IGetSuggestedReceiversParams {
+    prefix: string;
+}
+
+interface IGetSuggestedReceiversResponse {
+    suggestions: any[];
+}
+
 export interface IGetMailListResponse {
     total: number;
     unread: number;
@@ -176,6 +185,13 @@ class MMMailHttp extends MMHttp {
 
     async getMailStat() {
         return this.get<void, IMailsStatResponse>(APIs.mailsStat);
+    }
+
+    async getSuggestedReceivers(params: IGetSuggestedReceiversParams) {
+        return this.get<IGetSuggestedReceiversParams, IGetSuggestedReceiversResponse>(
+            APIs.getSuggestedReceivers,
+            params
+        );
     }
 }
 

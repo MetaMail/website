@@ -56,6 +56,7 @@ export function getShowAddress(address: string) {
 }
 
 export function percentTransform(percent: number) {
+    if (isNaN(percent)) return 0;
     return Number(percent.toPrecision(2)) * 100;
 }
 

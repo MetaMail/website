@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
+import { debounce } from 'lodash';
 
 import { IPersonItem } from 'lib/constants/interfaces';
+import { mailHttp } from 'lib/http';
 import Icon from 'components/Icon';
 import { add, cancel } from 'assets/icons';
 
@@ -14,10 +16,21 @@ interface EmailRecipientInputProps {
 
 const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, onAddReceiver, onRemoveReceiver }) => {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const [emailInput, setEmailInput] = useState<string>('');
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmailInput(e.target.value);
+    const inputRef = useRef<HTMLInputElement>();
+
+    const [suggestedReceivers, setSuggestedReceivers] = useState<string[]>([]);
+
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const currentValue = e.target.value;
+        if (!currentValue) {
+            setSuggestedReceivers([]);
+            return;
+        }
+        const suggest = await mailHttp.getSuggestedReceivers({
+            prefix: currentValue,
+        });
+        setSuggestedReceivers(['593311986@qq.com', '0x12207863361cdccdd33db00d857d9ae765a10064@mmail-test.ink']);
     };
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -27,9 +40,10 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
     };
 
     const addRecipient = () => {
+        const emailInput = inputRef.current.value;
         if (emailInput && validateEmail(emailInput)) {
             onAddReceiver(emailInput);
-            setEmailInput('');
+            inputRef.current.value = '';
         } else {
             toast.error('Invalid Email Address.');
         }
@@ -45,15 +59,29 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
         return re.test(String(email).toLowerCase());
     };
 
+    const handleAddSuggestedReceivers = (email: string) => {
+        inputRef.current.value = email;
+        addRecipient();
+    };
+
+    const handleInputBlur = () => {
+        setTimeout(() => {
+            if (inputRef.current.value) {
+                setSuggestedReceivers([]);
+            }
+        }, 200);
+    };
+
     return (
-        <div className="flex h-40 text-[#878787] items-center gap-10">
+        <div className="flex h-40 text-[#878787] items-center gap-10 relative">
             <input
                 type="email"
                 placeholder="Add Receipients"
-                value={emailInput}
-                onChange={handleChange}
+                onChange={debounce(handleChange, 500)}
                 onKeyDown={handleKeyPress}
-                className="focus:outline-none "
+                className="focus:outline-none"
+                onBlur={handleInputBlur}
+                ref={inputRef}
             />
             <button onClick={addRecipient}>
                 <Icon url={add} title="add receivers" className="w-20 h-20" />
@@ -73,6 +101,26 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
                     </li>
                 ))}
             </ul>
+            {suggestedReceivers.length > 0 && (
+                <div className="absolute w-560 rounded-[4px] border border-[#ccc] bg-[#fff] top-40 left-0 z-[999]">
+                    <ul>
+                        {
+                            // TODO: 检索命中的字符串需要高亮
+                        }
+                        {suggestedReceivers.map((email, index) => (
+                            <li
+                                key={index}
+                                className="h-40 leading-[40px] cursor-pointer hover:bg-[#ccc] px-10"
+                                onClick={() => {
+                                    handleAddSuggestedReceivers(email);
+                                    setSuggestedReceivers([]);
+                                }}>
+                                {email}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 };
