@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { toast } from 'react-toastify';
 
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userLocalStorage } from 'lib/utils';
 import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
+import MailBoxContext from 'context/mail';
 import MailListItem from './components/MailListItem';
 import Icon from 'components/Icon';
 
@@ -27,6 +28,7 @@ type MailListFiltersType = (typeof MailListFilters)[number];
 let lastDraftId = '';
 
 export default function MailList() {
+    const { getMailStat } = useContext(MailBoxContext);
     const { filterType, pageIndex, list, setList, addPageIndex, subPageIndex } = useMailListStore();
     const { selectedMail, isDetailExtend } = useMailDetailStore();
     const { selectedDraft } = useNewMailStore();
@@ -79,6 +81,9 @@ export default function MailList() {
         try {
             await mailHttp.changeMailStatus(getSelectedMailsParams(), httpParams);
             await fetchMailList(false);
+            if (httpParams.mark === MarkTypeEn.Spam || httpParams.read !== undefined) {
+                getMailStat();
+            }
         } catch (error) {
             console.error(error);
             toast.error('Operation failed, please try again later.');
@@ -209,6 +214,7 @@ export default function MailList() {
                 <div className="flex flex-row space-x-14 items-center">
                     <input
                         type="checkbox"
+                        title="Select"
                         ref={inputCheckBoxRef}
                         checked={selectedAll}
                         onChange={handleSelectedAllChange}
@@ -216,6 +222,7 @@ export default function MailList() {
                     />
                     <Icon
                         url={update}
+                        title="Refresh"
                         className="w-20 h-20"
                         onClick={() => {
                             fetchMailList(true);
@@ -223,7 +230,7 @@ export default function MailList() {
                     />
                     <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
                         <label tabIndex={0} className="cursor-pointer flex items-center">
-                            <Icon url={filterIcon} className="w-20 h-20" />
+                            <Icon url={filterIcon} title="Filter" className="w-20 h-20" />
                             <span className="text-[14px]">{filter}</span>
                         </label>
                         <ul

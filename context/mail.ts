@@ -6,6 +6,7 @@ interface IMailBoxContext {
     createDraft?: () => Promise<{ message_id: string; randomBits: string; key: string }>;
     setShowLoading?: (show: boolean) => void;
     logout?: () => void;
+    getMailStat?: () => Promise<void>;
 }
 const MailBoxContext = createContext<IMailBoxContext>({});
 export default MailBoxContext;

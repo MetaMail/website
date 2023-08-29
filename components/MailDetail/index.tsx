@@ -34,7 +34,7 @@ let currentMailId: string = '';
 
 export default function MailDetail() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const { createDraft, checkEncryptable } = useContext(MailBoxContext);
+    const { createDraft, checkEncryptable, getMailStat } = useContext(MailBoxContext);
     const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
     const { setSelectedDraft } = useNewMailStore();
     const { list, setList } = useMailListStore();
@@ -120,6 +120,10 @@ export default function MailDetail() {
                 httpParams
             );
             if (httpParams?.mark === MarkTypeEn.Trash || httpParams?.mark === MarkTypeEn.Spam) {
+                // 更新邮件统计
+                if (httpParams?.mark === MarkTypeEn.Spam) {
+                    getMailStat();
+                }
                 // 从列表中移除
                 const id = selectedMail.message_id;
                 const idx = list.findIndex(item => item.message_id === id);
@@ -159,6 +163,7 @@ export default function MailDetail() {
     const topIcons = [
         {
             src: back,
+            title: 'Back',
             handler: () => {
                 setSelectedMail(null);
                 setIsDetailExtend(false);
@@ -166,18 +171,21 @@ export default function MailDetail() {
         },
         {
             src: trash,
+            title: 'Trash',
             handler: async () => {
                 await handleMailActionsClick({ mark: MarkTypeEn.Trash });
             },
         },
         {
             src: spam,
+            title: 'Spam',
             handler: async () => {
                 await handleMailActionsClick({ mark: MarkTypeEn.Spam });
             },
         },
         {
             src: selectedMail.read === ReadStatusTypeEn.Read ? markUnread : read,
+            title: selectedMail.read === ReadStatusTypeEn.Read ? 'Unread' : 'Read',
             handler: async () => {
                 const readValue =
                     selectedMail.read === ReadStatusTypeEn.Read ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read;
@@ -188,6 +196,7 @@ export default function MailDetail() {
         },
         {
             src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
+            title: selectedMail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star',
             handler: handleStar,
         },
     ];
@@ -195,16 +204,19 @@ export default function MailDetail() {
     const rightIcons = [
         {
             src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
+            title: selectedMail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star',
             handler: handleStar,
         },
         {
             src: sent,
+            title: 'Reply',
             handler: () => {
                 handleReply();
             },
         },
         {
             src: mailMore,
+            title: 'More',
             handler: () => {},
         },
     ];
@@ -266,6 +278,7 @@ export default function MailDetail() {
                             return (
                                 <Icon
                                     url={item.src}
+                                    title={item.title}
                                     key={index}
                                     className="w-20 h-20 self-center"
                                     onClick={item.handler}
@@ -309,6 +322,7 @@ export default function MailDetail() {
                                     <Icon
                                         key={index}
                                         url={item.src}
+                                        title={item.title}
                                         onClick={item.handler}
                                         className="w-20 h-20 self-center"
                                     />

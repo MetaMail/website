@@ -115,7 +115,7 @@ interface IGetSuggestedReceiversParams {
 }
 
 interface IGetSuggestedReceiversResponse {
-    suggestions: any[];
+    suggestions: string[];
 }
 
 export interface IGetMailListResponse {

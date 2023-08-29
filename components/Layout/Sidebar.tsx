@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 
 import MailBoxContext from 'context/mail';
 import { useMailListStore, useNewMailStore } from 'lib/zustand-store';
@@ -13,7 +12,6 @@ import {
     ReadStatusTypeEn,
     MarkTypeEn,
 } from 'lib/constants';
-import { mailHttp } from 'lib/http';
 
 import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
@@ -22,9 +20,8 @@ import write from 'assets/mailbox/write.svg';
 import styles from './Siderbar.module.scss';
 
 export default function Sidebar() {
-    const { createDraft, logout } = useContext(MailBoxContext);
-    const { filterType, setFilterType, resetPageIndex, unreadCount, setUnreadCount, spamCount, setSpamCount } =
-        useMailListStore();
+    const { createDraft, logout, getMailStat } = useContext(MailBoxContext);
+    const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();
     const { setSelectedDraft } = useNewMailStore();
 
     function handleChangeFilter(filter: FilterTypeEn) {
@@ -83,18 +80,8 @@ export default function Sidebar() {
     };
 
     useEffect(() => {
-        const doGetMailStat = async () => {
-            try {
-                const { spam, unread } = await mailHttp.getMailStat();
-                setUnreadCount(unread);
-                setSpamCount(spam);
-            } catch (error) {
-                console.error('get mail stat error');
-                console.error(error);
-            }
-        };
-        doGetMailStat();
-        const getMailsStatInterval = setInterval(doGetMailStat, 60000);
+        getMailStat();
+        const getMailsStatInterval = setInterval(getMailStat, 60000);
         return () => {
             clearInterval(getMailsStatInterval);
         };

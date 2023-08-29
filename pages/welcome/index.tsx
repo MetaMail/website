@@ -29,13 +29,13 @@ export default function Welcome() {
 
     const handleAutoLogin = async () => {
         try {
+            if (!address) return;
+
             const { address: localAddress } = userLocalStorage.getUserInfo();
             const token = userLocalStorage.getToken();
             if (localAddress && token) {
                 return router.push('/mailbox');
             }
-
-            if (!address) return;
 
             const signData = await userHttp.getRandomStrToSign(address);
             randomStringSignInstance.signData = signData;
@@ -59,12 +59,14 @@ export default function Welcome() {
                 privateKey: encryptionData.encryption_private_key,
                 salt: encryptionData.salt,
             });
-            await disconnect();
-            console.log('Disconnected');
+
             router.push('/mailbox');
         } catch (error) {
             console.error(error);
             toast.error('Login failed, please try again later.');
+        } finally {
+            await disconnect();
+            console.log('Disconnected');
         }
     };
 

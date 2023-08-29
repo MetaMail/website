@@ -27,10 +27,10 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
             setSuggestedReceivers([]);
             return;
         }
-        const suggest = await mailHttp.getSuggestedReceivers({
+        const { suggestions } = await mailHttp.getSuggestedReceivers({
             prefix: currentValue,
         });
-        setSuggestedReceivers(['593311986@qq.com', '0x12207863361cdccdd33db00d857d9ae765a10064@mmail-test.ink']);
+        setSuggestedReceivers(suggestions);
     };
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
