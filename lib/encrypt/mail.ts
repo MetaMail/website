@@ -41,4 +41,12 @@ export const decryptMailContent = (encryptedMailContent: string, key: string) =>
     return symmetricEncryptInstance.decrypt(encryptedMailContent, key);
 };
 
+export const encryptMailAttachment = (mailAttachment: CryptoJS.lib.WordArray, key: string) => {
+    return symmetricEncryptInstance.encrypt(mailAttachment, key);
+};
+
+export const decryptMailAttachment = (encryptedMailAttachment: string, key: string) => {
+    return symmetricEncryptInstance.decryptToWordArray(encryptedMailAttachment, key);
+};
+
 // TODO 所有的邮件相关的加密解密都放在这里

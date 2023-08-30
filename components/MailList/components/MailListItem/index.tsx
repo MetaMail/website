@@ -1,30 +1,35 @@
+import { useContext } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
 
-import { MarkTypeEn, MetaMailTypeEn, IMailContentItem, ReadStatusTypeEn, FilterTypeEn } from 'lib/constants';
+import {
+    MarkTypeEn,
+    MetaMailTypeEn,
+    IMailContentItem,
+    ReadStatusTypeEn,
+    FilterTypeEn,
+    MailListItemType,
+} from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { transformTime } from 'lib/utils';
+import { transformTime, getShowAddress } from 'lib/utils';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import MailBoxContext from 'context/mail';
 import Icon from 'components/Icon';
 import Dot from 'components/Dot';
-import { favorite, markFavorite, trash, markUnread } from 'assets/icons';
+import { favorite, markFavorite, trash, markUnread, read } from 'assets/icons';
 import styles from './index.module.scss';
-
-export type MailListItemType = IMailContentItem & {
-    selected: boolean;
-};
 
 interface IMailItemProps {
     mail: MailListItemType;
     onSelect: () => void;
-    onRefresh: () => Promise<void>;
 }
 
-export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemProps) {
+export default function MailListItem({ mail, onSelect }: IMailItemProps) {
+    const { getMailStat } = useContext(MailBoxContext);
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const { filterType } = useMailListStore();
+    const { filterType, list, setList } = useMailListStore();
     const { selectedMail, setSelectedMail } = useMailDetailStore();
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
@@ -39,11 +44,24 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
     const handleChangeMailStatus = async (options: IMailChangeOptions) => {
         try {
             await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
+            // 更新列表
+            const newList = list.map(item => {
+                if (item.message_id === mail.message_id) {
+                    return {
+                        ...item,
+                        ...options,
+                    };
+                }
+                return item;
+            });
+            setList([...newList]);
+
+            if (options.mark === MarkTypeEn.Trash || options.read !== undefined) {
+                getMailStat();
+            }
         } catch (error) {
             console.error(error);
             toast.error('Operation failed, please try again later.');
-        } finally {
-            onRefresh();
         }
     };
 
@@ -51,22 +69,20 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
         await handleChangeMailStatus({ mark });
     };
 
-    const handleDelete = async () => {
+    const handleTrash = async () => {
         await handleChangeMailStatus({
-            mark: MarkTypeEn.Deleted,
+            mark: MarkTypeEn.Trash,
         });
-    };
-
-    const handleUnread = async () => {
-        await handleChangeMailStatus({
-            read: ReadStatusTypeEn.Unread,
-        });
+        // 从列表中移除
+        const newList = list.filter(item => item.message_id !== mail.message_id);
+        setList([...newList]);
     };
 
     const handleClick = throttle(async () => {
         if (mail.message_id === selectedMail?.message_id || mail.message_id === selectedDraft?.message_id) return;
         if (mail.read == ReadStatusTypeEn.Unread) {
-            await handleChangeMailStatus({ read: ReadStatusTypeEn.Read });
+            // 异步 不阻塞详情页渲染
+            handleChangeMailStatus({ read: ReadStatusTypeEn.Read });
         }
         if (filterType === FilterTypeEn.Draft) {
             setSelectedDraft(mail);
@@ -96,6 +112,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                     <div className="flex flex-row gap-14">
                         <input
                             type="checkbox"
+                            title="Select"
                             className="checkbox checkbox-sm"
                             checked={mail.selected}
                             onClick={e => {
@@ -107,7 +124,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                         <Icon
                             url={mail.mark === MarkTypeEn.Starred ? markFavorite : favorite}
                             className="w-20 h-20"
-                            title={'star'}
+                            title={mail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star'}
                             onClick={async e => {
                                 e.stopPropagation();
                                 await handleStar(
@@ -118,7 +135,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                     </div>
                     <div className="text-[#333333] font-bold w-140 ml-14 omit">
                         <span className={`${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>
-                            {getMailFrom(mail)}
+                            {getShowAddress(getMailFrom(mail))}
                         </span>
                     </div>
                     <div className="text-[#333333] flex-1 w-0 ml-14 omit">
@@ -133,19 +150,28 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                             <div
                                 onClick={async e => {
                                     e.stopPropagation();
-                                    await handleDelete();
+                                    await handleTrash();
                                 }}
-                                title="delete mail">
-                                <Image src={trash} alt="delete mail" />
+                                title="Trash">
+                                <Image src={trash} alt="" />
                             </div>
                             <div
                                 onClick={async e => {
                                     e.stopPropagation();
-                                    await handleUnread();
+                                    await handleChangeMailStatus({
+                                        read:
+                                            mail.read === ReadStatusTypeEn.Read
+                                                ? ReadStatusTypeEn.Unread
+                                                : ReadStatusTypeEn.Read,
+                                    });
                                 }}
-                                title="mark unread mail"
+                                title={mail.read === ReadStatusTypeEn.Read ? 'Unread' : 'Read'}
                                 className="ml-12">
-                                <Image src={markUnread} alt="markUnread mail" className="scale-125" />
+                                <Image
+                                    src={mail.read === ReadStatusTypeEn.Read ? markUnread : read}
+                                    alt=""
+                                    className="scale-125"
+                                />
                             </div>
                         </div>
                     </div>
@@ -162,7 +188,7 @@ export default function MailListItem({ mail, onSelect, onRefresh }: IMailItemPro
                             <span
                                 className={`flex-1 w-0 text-lg omit mr-4 ${getIsReadTextClass(mail)}`}
                                 title={getMailFrom(mail)}>
-                                {getMailFrom(mail)}
+                                {getShowAddress(getMailFrom(mail))}
                             </span>
                             <span className="max-w-[80] text-right text-sm">{transformTime(mail.mail_date)}</span>
                         </p>

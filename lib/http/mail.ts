@@ -20,6 +20,8 @@ const APIs = {
     sendMail: '/mails/send', // 发送邮件
     uploadAttachment: '/mails/attachments', //上传附件
     deleteAttachment: '/mails/attachments', // 删除附件
+    mailsStat: '/mails/stat', // 获取邮件统计信息
+    getSuggestedReceivers: '/mails/suggested_receivers', // 获取推荐收件人
 };
 
 interface ICreateDraftParams {
@@ -55,6 +57,7 @@ interface ISendMailParams {
     date?: string;
     signature?: string;
     keys: string[];
+    random_bits?: string;
 }
 
 interface ISendMailResponse {
@@ -69,7 +72,8 @@ export interface IUploadAttachmentResponse {
         filename: string;
         size: number;
         content_type: string;
-        sha256: string;
+        encrypted_sha256?: string;
+        plain_sha256?: string;
         download: {
             url: string;
             expire_at: string;
@@ -88,6 +92,12 @@ interface IDeleteAttachmentResponse {
     date: string;
 }
 
+interface IMailsStatResponse {
+    unread: number;
+    spam: number;
+    draft: number;
+}
+
 type IGetMailDetailResponse = IMailContentItem;
 
 type IGetMailDetailParams = {
@@ -98,6 +108,14 @@ interface IGetMailListParams {
     limit?: number;
     filter: FilterTypeEn;
     page_index: number;
+}
+
+interface IGetSuggestedReceiversParams {
+    prefix: string;
+}
+
+interface IGetSuggestedReceiversResponse {
+    suggestions: string[];
 }
 
 export interface IGetMailListResponse {
@@ -163,6 +181,17 @@ class MMMailHttp extends MMHttp {
 
     async deleteAttachment(params: IDeleteAttachmentParams) {
         return this.delete<IDeleteAttachmentParams, IDeleteAttachmentResponse>(APIs.deleteAttachment, params);
+    }
+
+    async getMailStat() {
+        return this.get<void, IMailsStatResponse>(APIs.mailsStat);
+    }
+
+    async getSuggestedReceivers(params: IGetSuggestedReceiversParams) {
+        return this.get<IGetSuggestedReceiversParams, IGetSuggestedReceiversResponse>(
+            APIs.getSuggestedReceivers,
+            params
+        );
     }
 }
 

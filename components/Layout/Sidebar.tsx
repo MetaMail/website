@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 
 import MailBoxContext from 'context/mail';
 import { useMailListStore, useNewMailStore } from 'lib/zustand-store';
-import { FilterTypeEn, MenusMap, IMenuItem } from 'lib/constants';
-import { mailHttp } from 'lib/http';
+import {
+    FilterTypeEn,
+    MenusMap,
+    IMenuItem,
+    MetaMailTypeEn,
+    MailBoxTypeEn,
+    ReadStatusTypeEn,
+    MarkTypeEn,
+} from 'lib/constants';
 
 import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
@@ -14,16 +20,8 @@ import write from 'assets/mailbox/write.svg';
 import styles from './Siderbar.module.scss';
 
 export default function Sidebar() {
-    const { createDraft, logout } = useContext(MailBoxContext);
-    const {
-        filterType,
-        setFilterType,
-        resetPageIndex,
-        unreadInboxCount,
-        setUnreadInboxCount,
-        setUnreadSpamCount,
-        unreadSpamCount,
-    } = useMailListStore();
+    const { createDraft, logout, getMailStat } = useContext(MailBoxContext);
+    const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();
     const { setSelectedDraft } = useNewMailStore();
 
     function handleChangeFilter(filter: FilterTypeEn) {
@@ -32,16 +30,34 @@ export default function Sidebar() {
     }
 
     async function handleClickNewMail() {
-        const { message_id, randomBits } = await createDraft();
-        const mail = await mailHttp.getMailDetailByID(window.btoa(message_id));
-        setSelectedDraft({ ...mail, randomBits });
+        const { message_id, randomBits, key } = await createDraft();
+        setSelectedDraft({
+            randomBits,
+            message_id,
+            mail_from: { name: '', address: '' },
+            mail_to: [],
+            mark: MarkTypeEn.Normal,
+            part_html: '',
+            part_text: '',
+            attachments: [],
+            subject: '',
+            meta_type: MetaMailTypeEn.Encrypted,
+            mailbox: MailBoxTypeEn.Draft,
+            mail_bcc: [],
+            mail_cc: [],
+            read: ReadStatusTypeEn.Read,
+            digest: '',
+            meta_header: {
+                keys: [key],
+            },
+        });
     }
 
     const renderBadge = (type: FilterTypeEn) => {
         if (type !== FilterTypeEn.Inbox && type !== FilterTypeEn.Spam) {
             return null;
         }
-        const count = type === FilterTypeEn.Inbox ? unreadInboxCount : unreadSpamCount;
+        const count = type === FilterTypeEn.Inbox ? unreadCount : spamCount;
         if (count <= 0) return null;
         return <span className="badge badge-sm">{count > 99 ? '99+' : count}</span>;
     };
@@ -64,19 +80,11 @@ export default function Sidebar() {
     };
 
     useEffect(() => {
-        const getUnreadCountPromise = async (type: FilterTypeEn) => {
-            const data = await mailHttp.getMailList({
-                filter: type,
-                page_index: 1,
-            });
-            return data.unread;
+        getMailStat();
+        const getMailsStatInterval = setInterval(getMailStat, 60000);
+        return () => {
+            clearInterval(getMailsStatInterval);
         };
-        Promise.all([getUnreadCountPromise(FilterTypeEn.Inbox), getUnreadCountPromise(FilterTypeEn.Spam)]).then(
-            ([inboxCount, spamCount]) => {
-                setUnreadInboxCount(inboxCount);
-                setUnreadSpamCount(spamCount);
-            }
-        );
     }, []);
 
     return (

@@ -8,9 +8,9 @@ import { toast } from 'react-toastify';
 import MailBoxContext from 'context/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { userSessionStorage } from 'lib/utils';
-import { useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
-import { decryptMailContent, decryptMailKey } from 'lib/encrypt';
+import { userLocalStorage, userSessionStorage } from 'lib/utils';
+import { useMailDetailStore, useMailListStore, useNewMailStore } from 'lib/zustand-store';
+import { decryptMailContent, decryptMailKey, getPrivateKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
 
@@ -34,16 +34,17 @@ let currentMailId: string = '';
 
 export default function MailDetail() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const { createDraft, checkEncryptable } = useContext(MailBoxContext);
+    const { createDraft, checkEncryptable, getMailStat } = useContext(MailBoxContext);
     const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
     const { setSelectedDraft } = useNewMailStore();
+    const { list, setList } = useMailListStore();
 
     const [loading, setLoading] = useState(false);
 
     const ensureRandomBitsExist = async () => {
         if (!randomBits) {
             const keys = selectedMail?.meta_header?.keys;
-            const { address, ensName } = userSessionStorage.getUserInfo();
+            const { address, ensName } = userLocalStorage.getUserInfo();
             const addrList = [
                 selectedMail?.mail_from.address,
                 ...(selectedMail?.mail_to.map(item => item.address) || []),
@@ -60,7 +61,13 @@ export default function MailDetail() {
             }
             const key = keys[idx];
             if (!key) throw new Error("Can't decrypt mail without randomBits key.");
-            const { purePrivateKey } = userSessionStorage.getUserInfo();
+            let purePrivateKey = userSessionStorage.getPurePrivateKey();
+            if (!purePrivateKey) {
+                const { privateKey, salt } = userLocalStorage.getUserInfo();
+                purePrivateKey = await getPrivateKey(privateKey, salt);
+                userSessionStorage.setPurePrivateKey(purePrivateKey);
+            }
+
             randomBits = await decryptMailKey(key, purePrivateKey);
             if (!randomBits) {
                 throw new Error('No randomBits.');
@@ -72,7 +79,13 @@ export default function MailDetail() {
         try {
             showLoading && setLoading(true);
             const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
-            const _mail = { ...selectedMail, ...mail };
+            const _mail = {
+                ...selectedMail,
+                ...mail,
+                mailbox: selectedMail.mailbox,
+                mark: selectedMail.mark,
+                read: selectedMail.read,
+            };
             if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
                 if (currentMailId !== _mail.message_id) return;
                 await ensureRandomBitsExist();
@@ -106,16 +119,51 @@ export default function MailDetail() {
                 ],
                 httpParams
             );
-            await handleLoad(false);
+            if (httpParams?.mark === MarkTypeEn.Trash || httpParams?.mark === MarkTypeEn.Spam) {
+                // 更新邮件统计
+                if (httpParams?.mark === MarkTypeEn.Spam) {
+                    getMailStat();
+                }
+                // 从列表中移除
+                const id = selectedMail.message_id;
+                const idx = list.findIndex(item => item.message_id === id);
+                if (idx > -1) {
+                    list.splice(idx, 1);
+                    setList([...list]);
+                }
+                setSelectedMail(null);
+                setIsDetailExtend(false);
+                return;
+            }
+            // 同步详情中的状态
+            setSelectedMail({
+                ...selectedMail,
+                ...httpParams,
+            });
+
+            // 同步列表中的状态
+            const idx = list.findIndex(item => item.message_id === selectedMail.message_id);
+            if (idx > -1) {
+                Object.assign(list[idx], httpParams);
+                setList([...list]);
+            }
         } catch (error) {
             console.error(error);
             toast.error('Operation failed, please try again later.');
         }
     };
 
+    const handleStar = async () => {
+        const markValue = selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred;
+        await handleMailActionsClick({
+            mark: markValue,
+        });
+    };
+
     const topIcons = [
         {
             src: back,
+            title: 'Back',
             handler: () => {
                 setSelectedMail(null);
                 setIsDetailExtend(false);
@@ -123,51 +171,52 @@ export default function MailDetail() {
         },
         {
             src: trash,
+            title: 'Trash',
             handler: async () => {
                 await handleMailActionsClick({ mark: MarkTypeEn.Trash });
             },
         },
         {
             src: spam,
+            title: 'Spam',
             handler: async () => {
                 await handleMailActionsClick({ mark: MarkTypeEn.Spam });
             },
         },
         {
             src: selectedMail.read === ReadStatusTypeEn.Read ? markUnread : read,
+            title: selectedMail.read === ReadStatusTypeEn.Read ? 'Unread' : 'Read',
             handler: async () => {
+                const readValue =
+                    selectedMail.read === ReadStatusTypeEn.Read ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read;
                 await handleMailActionsClick({
-                    read: selectedMail.read === ReadStatusTypeEn.Read ? ReadStatusTypeEn.Unread : ReadStatusTypeEn.Read,
+                    read: readValue,
                 });
             },
         },
         {
             src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
-            handler: async () => {
-                await handleMailActionsClick({
-                    mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
-                });
-            },
+            title: selectedMail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star',
+            handler: handleStar,
         },
     ];
 
     const rightIcons = [
         {
             src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
-            handler: async () => {
-                await handleMailActionsClick({
-                    mark: selectedMail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred,
-                });
-            },
+            title: selectedMail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star',
+            handler: handleStar,
         },
         {
             src: sent,
+            title: 'Reply',
             handler: () => {
                 handleReply();
             },
         },
         {
             src: mailMore,
+            title: 'More',
             handler: () => {},
         },
     ];
@@ -195,7 +244,7 @@ export default function MailDetail() {
     };
 
     const handleReply = async () => {
-        const { address } = userSessionStorage.getUserInfo();
+        const { address } = userLocalStorage.getUserInfo();
         const { message_id, randomBits } = await createDraft();
         const { encryptable } = await checkEncryptable([selectedMail.mail_from]);
         await mailHttp.updateMail({
@@ -229,6 +278,7 @@ export default function MailDetail() {
                             return (
                                 <Icon
                                     url={item.src}
+                                    title={item.title}
                                     key={index}
                                     className="w-20 h-20 self-center"
                                     onClick={item.handler}
@@ -272,6 +322,7 @@ export default function MailDetail() {
                                     <Icon
                                         key={index}
                                         url={item.src}
+                                        title={item.title}
                                         onClick={item.handler}
                                         className="w-20 h-20 self-center"
                                     />

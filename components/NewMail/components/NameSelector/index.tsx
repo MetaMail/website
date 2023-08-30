@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { PostfixOfAddress } from 'lib/base';
-import { userSessionStorage } from 'lib/utils';
+import { userLocalStorage } from 'lib/utils';
 
 export enum MailFromType {
     address = 1,
@@ -15,7 +15,7 @@ interface IProps {
 
 function NameSelector({ initValue, onChange }: IProps) {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const { ensName, address } = userSessionStorage.getUserInfo();
+    const { ensName, address } = userLocalStorage.getUserInfo();
     const [showAddress, setShowAddress] = useState<string>(address);
 
     useEffect(() => {

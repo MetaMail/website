@@ -7,7 +7,7 @@ import { throttle } from 'lodash';
 import MailBoxContext from 'context/mail';
 import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useNewMailStore } from 'lib/zustand-store';
-import { userSessionStorage, mailSessionStorage } from 'lib/utils';
+import { userLocalStorage, userSessionStorage, mailLocalStorage, percentTransform } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import {
     decryptMailKey,
@@ -15,6 +15,7 @@ import {
     encryptMailContent,
     decryptMailContent,
     concatAddress,
+    getPrivateKey,
 } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
@@ -59,7 +60,12 @@ export default function NewMail() {
         if (!randomBits) {
             const selectedDraftKey = selectedDraft.meta_header?.keys?.[0]; // 当前选中的草稿的randomBits的公钥加密结果
             if (!selectedDraftKey) throw new Error("Can't decrypt mail without randomBits key.");
-            const { purePrivateKey } = userSessionStorage.getUserInfo();
+            let purePrivateKey = userSessionStorage.getPurePrivateKey();
+            if (!purePrivateKey) {
+                const { privateKey, salt } = userLocalStorage.getUserInfo();
+                purePrivateKey = await getPrivateKey(privateKey, salt);
+                userSessionStorage.setPurePrivateKey(purePrivateKey);
+            }
             randomBits = await decryptMailKey(selectedDraftKey, purePrivateKey);
             if (!randomBits) {
                 throw new Error('No randomBits.');
@@ -90,14 +96,40 @@ export default function NewMail() {
         mailChanged = true;
     };
 
-    const postSignature = async (keys: string[], signature?: string) => {
+    const postSignature = async (keys: string[], signature: string, random_bits: string) => {
         const { message_id } = await mailHttp.sendMail({
             mail_id: window.btoa(selectedDraft.message_id),
             date: dateRef.current,
             signature: signature,
             keys,
+            random_bits,
         });
         return message_id;
+    };
+
+    const getMailKeys = async () => {
+        const { address, publicKey } = userLocalStorage.getUserInfo();
+        const { encryptable, publicKeys } = await checkEncryptable(selectedDraft.mail_to);
+        let keys: string[] = [];
+        if (encryptable) {
+            // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
+            const receiversInfo: { publicKey: string; address: string }[] = [
+                { publicKey, address: address + PostfixOfAddress },
+            ];
+            for (var i = 0; i < selectedDraft.mail_to.length; i++) {
+                const receiverItem = selectedDraft.mail_to[i];
+                receiversInfo.push({
+                    publicKey: publicKeys[i],
+                    address: receiverItem.address,
+                });
+            }
+            const result = await Promise.all(
+                receiversInfo.map(item => createEncryptedMailKey(item.publicKey, item.address, randomBits))
+            );
+
+            keys = result.map(item => item.key);
+        }
+        return keys;
     };
 
     const handleClickSend = async () => {
@@ -107,32 +139,20 @@ export default function NewMail() {
         autoSaveMail = false;
         const id = toast.loading('Sending mail...');
         try {
-            const { html, text, metaType, publicKeys } = await handleSave('send');
-            const { address, ensName, publicKey } = userSessionStorage.getUserInfo();
-            let keys: string[] = [];
-            if (metaType === MetaMailTypeEn.Encrypted) {
-                // TODO: 最好用户填一个收件人的时候，就获取这个收件人的public_key，如果没有pk，就标出来
-                const receiversInfo: { publicKey: string; address: string }[] = [
-                    { publicKey, address: address + PostfixOfAddress },
-                ];
-                for (var i = 0; i < selectedDraft.mail_to.length; i++) {
-                    const receiverItem = selectedDraft.mail_to[i];
-                    receiversInfo.push({
-                        publicKey: publicKeys[i],
-                        address: receiverItem.address,
-                    });
-                }
-                const result = await Promise.all(
-                    receiversInfo.map(item => createEncryptedMailKey(item.publicKey, item.address, randomBits))
-                );
-
-                keys = result.map(item => item.key);
-            }
-
+            const { html, text } = await handleSave();
+            const keys = await getMailKeys();
             if (selectedDraft.attachments?.length) {
                 selectedDraft.attachments.sort((a, b) => a.attachment_id.localeCompare(b.attachment_id));
             }
             dateRef.current = new Date().toISOString();
+
+            // 如果不是加密邮件 那么签名之前需要把正文内容解密出来，再签名
+            let pureHtml = html,
+                pureText = text;
+            if (!keys.length) {
+                pureHtml = decryptMailContent(html || '', randomBits);
+                pureText = decryptMailContent(text || '', randomBits);
+            }
 
             const signature = await sendEmailInfoSignInstance.doSign({
                 from: concatAddress(selectedDraft.mail_from),
@@ -140,13 +160,17 @@ export default function NewMail() {
                 cc: selectedDraft.mail_cc.map(cc => concatAddress(cc)),
                 date: dateRef.current,
                 subject: subjectRef.current.value,
-                text_hash: CryptoJS.SHA256(text).toString(),
-                html_hash: CryptoJS.SHA256(html).toString(),
-                attachments_hash: selectedDraft.attachments.map(att => att.sha256),
+                text_hash: CryptoJS.SHA256(pureText).toString(),
+                html_hash: CryptoJS.SHA256(pureHtml).toString(),
+                attachments_hash: selectedDraft.attachments.map(att =>
+                    keys.length ? att.encrypted_sha256 : att.plain_sha256
+                ),
                 keys: keys,
             });
 
-            const messageId = await postSignature(keys, signature);
+            // 如果是非加密邮件，则需要将randomBits传给后端，后端发送邮件之前会先解出原始正文
+            // 如果是加密邮件，则不需要传randomBits
+            const messageId = await postSignature(keys, signature, !keys.length ? randomBits : '');
             if (messageId) {
                 toast.success('Your email has been sent successfully.');
                 setSelectedDraft(null);
@@ -171,8 +195,13 @@ export default function NewMail() {
         return content;
     };
 
-    const handleSave = async (reason: 'send' | 'save' = 'save') => {
-        if (!mailChanged && reason === 'save') return null;
+    const handleSave = async () => {
+        // save 的时候都是加密模式
+        if (!mailChanged)
+            return {
+                html: mailLocalStorage.getQuillHtml(),
+                text: mailLocalStorage.getQuillText(),
+            };
 
         const quill = getQuill();
         if (!quill || !quill?.getHTML || !quill?.getText) {
@@ -181,18 +210,11 @@ export default function NewMail() {
         let html = filterMailContent(quill?.getHTML()),
             text = filterMailContent(quill?.getText());
 
-        const { encryptable, publicKeys } = await checkEncryptable(selectedDraft.mail_to);
-
-        if (encryptable) {
-            await ensureRandomBitsExist();
-            html = encryptMailContent(html, randomBits);
-            text = encryptMailContent(text, randomBits);
-        }
-
-        const metaType = encryptable ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed;
-        const { message_id, mail_date } = await mailHttp.updateMail({
+        await ensureRandomBitsExist();
+        html = encryptMailContent(html, randomBits);
+        text = encryptMailContent(text, randomBits);
+        const { mail_date } = await mailHttp.updateMail({
             mail_id: window.btoa(selectedDraft.message_id),
-            meta_type: metaType,
             subject: subjectRef.current.value,
             mail_to: selectedDraft.mail_to,
             part_html: html,
@@ -200,19 +222,20 @@ export default function NewMail() {
             mail_from: selectedDraft.mail_from,
         });
 
-        mailSessionStorage.setQuillHtml(html);
-        mailSessionStorage.setQuillText(text);
+        mailLocalStorage.setQuillHtml(html);
+        mailLocalStorage.setQuillText(text);
         dateRef.current = mail_date;
-        return { html, text, metaType, publicKeys };
+        return { html, text };
     };
 
     const handleLoad = async () => {
+        // load 的时候都是加密模式
         try {
             setLoading(true);
             randomBits = selectedDraft.randomBits;
             let _selectedDraft = selectedDraft;
             if (!selectedDraft.mail_from?.address) {
-                const { address, ensName } = userSessionStorage.getUserInfo();
+                const { address, ensName } = userLocalStorage.getUserInfo();
                 selectedDraft.mail_from = {
                     address: (ensName || address) + PostfixOfAddress,
                     name: ensName || address,
@@ -223,12 +246,10 @@ export default function NewMail() {
                 const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
                 _selectedDraft = { ...selectedDraft, ...mail };
             }
-            if (_selectedDraft.meta_type === MetaMailTypeEn.Encrypted) {
-                await ensureRandomBitsExist();
-                const part_html = decryptMailContent(_selectedDraft.part_html || '', randomBits);
-                const part_text = decryptMailContent(_selectedDraft.part_text || '', randomBits);
-                _selectedDraft = { ..._selectedDraft, part_html, part_text };
-            }
+            await ensureRandomBitsExist();
+            const part_html = decryptMailContent(_selectedDraft.part_html || '', randomBits);
+            const part_text = decryptMailContent(_selectedDraft.part_text || '', randomBits);
+            _selectedDraft = { ..._selectedDraft, part_html, part_text };
 
             setSelectedDraft(_selectedDraft);
         } catch (error) {
@@ -240,7 +261,7 @@ export default function NewMail() {
     };
 
     const handleChangeMailFrom = (from: MailFromType) => {
-        const { address, ensName } = userSessionStorage.getUserInfo();
+        const { address, ensName } = userLocalStorage.getUserInfo();
         const mail_from = {
             address: (MailFromType.address ? address : ensName) + PostfixOfAddress,
             name: ensName || address,
@@ -375,7 +396,7 @@ export default function NewMail() {
                                 <span className="">
                                     {attr.filename}
                                     {attr.uploadProcess && !attr.attachment_id
-                                        ? (Math.floor(attr.uploadProcess * 100) / 100) * 100 + '%'
+                                        ? percentTransform(attr.uploadProcess) + '%'
                                         : ''}
                                 </span>
                             </div>

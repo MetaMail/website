@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { toast } from 'react-toastify';
 
-import { useMailListStore, useMailDetailStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
-import { userSessionStorage, mailSessionStorage } from 'lib/utils';
-import { FilterTypeEn, IMailContentItem, MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn } from 'lib/constants';
+import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { userLocalStorage } from 'lib/utils';
+import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
-import MailListItem, { MailListItemType } from './components/MailListItem';
+import MailBoxContext from 'context/mail';
+import MailListItem from './components/MailListItem';
 import Icon from 'components/Icon';
 
 import {
@@ -21,22 +22,22 @@ import {
     cancelSelected,
 } from 'assets/icons';
 
-const MailListFilters = ['All', 'None', 'Read', 'Unread', 'Encrypted', 'UnEncrypted', 'Star', 'No Star'] as const;
+const MailListFilters = ['All', 'Read', 'Unread', 'Encrypted', 'UnEncrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
 let lastDraftId = '';
 
 export default function MailList() {
-    const { filterType, pageIndex, addPageIndex, subPageIndex, setUnreadInboxCount, setUnreadSpamCount } =
-        useMailListStore();
+    const { getMailStat } = useContext(MailBoxContext);
+    const { filterType, pageIndex, list, setList, addPageIndex, subPageIndex } = useMailListStore();
     const { selectedMail, isDetailExtend } = useMailDetailStore();
     const { selectedDraft } = useNewMailStore();
 
     const [loading, setLoading] = useState(false);
-    const [list, setList] = useState<MailListItemType[]>([]);
+
     const [pageNum, setPageNum] = useState(0);
     const [selectedAll, setSelectedAll] = useState(false);
-    const [filter, setFilter] = useState<MailListFiltersType>('None');
+    const [filter, setFilter] = useState<MailListFiltersType>(null);
 
     const inputCheckBoxRef = useRef<HTMLInputElement>();
 
@@ -50,7 +51,7 @@ export default function MailList() {
 
     const mailActions = [
         {
-            title: 'Delete',
+            title: 'Trash',
             src: trash,
             httpParams: { mark: MarkTypeEn.Trash },
         },
@@ -80,6 +81,9 @@ export default function MailList() {
         try {
             await mailHttp.changeMailStatus(getSelectedMailsParams(), httpParams);
             await fetchMailList(false);
+            if (httpParams.mark === MarkTypeEn.Spam || httpParams.read !== undefined) {
+                getMailStat();
+            }
         } catch (error) {
             console.error(error);
             toast.error('Operation failed, please try again later.');
@@ -110,14 +114,13 @@ export default function MailList() {
                 limit: 20,
             });
 
-            const { mails, page_num, unread } = data;
+            const { mails, page_num } = data;
             const mailsList = mails as MailListItemType[];
             mailsList.forEach(item => {
-                item['selected'] = false;
+                item.selected = false;
             });
             setList(mailsList ?? []);
             setPageNum(page_num);
-            setUnreadInboxCount(unread ?? 0);
         } catch (error) {
             console.error(error);
             toast.error('Fetch mail list failed, please try again later.');
@@ -148,7 +151,7 @@ export default function MailList() {
     }, [list]);
 
     useEffect(() => {
-        if (userSessionStorage.getUserInfo()?.address) fetchMailList(true);
+        if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     }, [pageIndex, filterType]);
 
     useEffect(() => {
@@ -158,7 +161,7 @@ export default function MailList() {
                     item.selected = true;
                 });
                 break;
-            case 'None':
+            case null:
                 list.map(item => {
                     item.selected = false;
                 });
@@ -183,16 +186,6 @@ export default function MailList() {
                     item.selected = item.meta_type === MetaMailTypeEn.Plain;
                 });
                 break;
-            case 'Star':
-                list.map(item => {
-                    item.selected = item.mark === MarkTypeEn.Starred;
-                });
-                break;
-            case 'No Star':
-                list.map(item => {
-                    item.selected = item.mark !== MarkTypeEn.Starred;
-                });
-                break;
             default:
                 break;
         }
@@ -201,7 +194,7 @@ export default function MailList() {
     }, [filter]);
 
     useEffect(() => {
-        setFilter('None');
+        setFilter(null);
     }, [filterType]);
 
     useEffect(() => {
@@ -221,6 +214,7 @@ export default function MailList() {
                 <div className="flex flex-row space-x-14 items-center">
                     <input
                         type="checkbox"
+                        title="Select"
                         ref={inputCheckBoxRef}
                         checked={selectedAll}
                         onChange={handleSelectedAllChange}
@@ -228,6 +222,7 @@ export default function MailList() {
                     />
                     <Icon
                         url={update}
+                        title="Refresh"
                         className="w-20 h-20"
                         onClick={() => {
                             fetchMailList(true);
@@ -235,7 +230,7 @@ export default function MailList() {
                     />
                     <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
                         <label tabIndex={0} className="cursor-pointer flex items-center">
-                            <Icon url={filterIcon} className="w-20 h-20" />
+                            <Icon url={filterIcon} title="Filter" className="w-20 h-20" />
                             <span className="text-[14px]">{filter}</span>
                         </label>
                         <ul
@@ -274,17 +269,18 @@ export default function MailList() {
                     )}
                 </div>
 
-                <div className="flex flex-row justify-end space-x-20 text-xl text-[#7F7F7F]">
+                <div className="flex items-center flex-row justify-end space-x-20 text-xl text-[#7F7F7F]">
+                    <span className="text-md">total page: {pageNum}</span>
                     <button
                         disabled={pageIndex === 1}
-                        className="w-20 h-20 disabled:opacity-40"
+                        className="w-20 disabled:opacity-40"
                         onClick={() => {
                             if (pageIndex > 1) subPageIndex();
                         }}>
                         {'<'}
                     </button>
                     <button
-                        className="w-20 h-20 disabled:opacity-40"
+                        className="w-20 disabled:opacity-40"
                         disabled={pageIndex === pageNum}
                         onClick={() => {
                             if (pageIndex < pageNum) addPageIndex();
@@ -303,13 +299,10 @@ export default function MailList() {
                     list.map((item, index) => {
                         return (
                             <MailListItem
-                                key={index}
+                                key={`${item.message_id}${item.mailbox}`}
                                 mail={item}
                                 onSelect={() => {
                                     handleSelectItem(item);
-                                }}
-                                onRefresh={async () => {
-                                    await fetchMailList(false);
                                 }}
                             />
                         );

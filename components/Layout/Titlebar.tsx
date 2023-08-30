@@ -4,8 +4,9 @@ import Image from 'next/image';
 import { toast } from 'react-toastify';
 
 import MailBoxContext from 'context/mail';
-import { userSessionStorage } from 'lib/utils';
+import { userLocalStorage, getShowAddress, percentTransform } from 'lib/utils';
 import { PostfixOfAddress } from 'lib/base/request';
+import { userHttp } from 'lib/http';
 
 import copy from 'assets/mailbox/copy.svg';
 import right from 'assets/mailbox/right.svg';
@@ -15,6 +16,8 @@ export default function Titlebar() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const [address, setAddress] = useState<string>();
     const [ensName, setEnsName] = useState<string>();
+    const [emailSize, setEmailSize] = useState<number>();
+    const [emailSizeLimit, setEmailSizeLimit] = useState<number>();
 
     const handleCopy = (txt: string) => {
         navigator.clipboard.writeText(txt);
@@ -22,10 +25,20 @@ export default function Titlebar() {
     };
 
     useEffect(() => {
-        const { address, ensName } = userSessionStorage.getUserInfo() ?? {};
+        const { address, ensName } = userLocalStorage.getUserInfo() ?? {};
         if (!address) return logout();
         setAddress(address);
         setEnsName(ensName);
+        userHttp
+            .getUserProfile()
+            .then(res => {
+                setEmailSize(res.total_email_size / 1024 / 1024 / 1024);
+                setEmailSizeLimit(res.total_email_size_limit / 1024 / 1024 / 1024);
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error('Get user profile failed.');
+            });
     }, []);
     return (
         <div className="navbar p-0">
@@ -42,11 +55,11 @@ export default function Titlebar() {
                     </label>
                     <div
                         tabIndex={0}
-                        className="mt-3 z-[1] px-24 py-12 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-270">
+                        className="mt-3 z-[1] px-24 py-12 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-280">
                         <div className="text-[#93989A] flex flex-row items-center my-4">
                             <p className="flex-1 flex mr-4 cursor-default" title={`${address}${PostfixOfAddress}`}>
-                                <span className="flex-1 omit w-0">{address}</span>
-                                <span>{PostfixOfAddress}</span>
+                                {getShowAddress(address)}
+                                {PostfixOfAddress}
                             </p>
                             <Image
                                 src={copy}
@@ -54,7 +67,7 @@ export default function Titlebar() {
                                 title="copy"
                                 className="w-18 h-18 p-0 cursor-pointer"
                                 onClick={() => {
-                                    handleCopy(address);
+                                    handleCopy(`${address}${PostfixOfAddress}`);
                                 }}
                             />
                         </div>
@@ -77,12 +90,15 @@ export default function Titlebar() {
                         <div className="my-8">
                             <p className="flex justify-between font-bold">
                                 <span>Mailbox capacity</span>
-                                <span>50%</span>
+                                <span>{percentTransform(emailSize / emailSizeLimit)}%</span>
                             </p>
-                            <progress className="progress progress-primary w-222 mt-12" value="50" max="100"></progress>
+                            <progress
+                                className="progress progress-primary w-222 mt-12"
+                                value={percentTransform(emailSize / emailSizeLimit)}
+                                max="100"></progress>
                             <p className="flex justify-between font-bold text-sm my-4">
                                 <span>0</span>
-                                <span>32GB</span>
+                                <span>{emailSizeLimit}GB</span>
                             </p>
                         </div>
                         <div className="flex justify-between font-bold items-center my-12 cursor-pointer">

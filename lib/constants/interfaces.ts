@@ -59,7 +59,8 @@ export interface IPersonItem {
 export interface IMailContentAttachment {
     attachment_id?: string;
     size?: number;
-    sha256?: string;
+    encrypted_sha256?: string;
+    plain_sha256?: string;
     filename: string;
     content_type?: string;
     download?: {
@@ -79,8 +80,8 @@ export interface IMailContentItem {
     mail_to: IPersonItem[];
     mail_cc: IPersonItem[];
     mail_bcc: IPersonItem[];
-    mail_date: string;
-    download: {
+    mail_date?: string;
+    download?: {
         expire_at: string;
         url: string;
     };
@@ -91,13 +92,17 @@ export interface IMailContentItem {
     part_html?: string;
     attachments: IMailContentAttachment[];
     meta_header: {
-        addr: string;
-        date: string;
-        data: string;
-        keys: string[];
-        signature: string;
+        addr?: string;
+        date?: string;
+        data?: string;
+        keys?: string[];
+        signature?: string;
     };
 }
+
+export type MailListItemType = IMailContentItem & {
+    selected: boolean;
+};
 
 export enum AttachmentRelatedTypeEn {
     Embedded = '1',
