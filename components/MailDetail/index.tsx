@@ -6,7 +6,8 @@ import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
 
 import MailBoxContext from 'context/mail';
-import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
+import { PostfixOfAddress } from 'lib/base';
+import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, MailBoxTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { userLocalStorage, userSessionStorage } from 'lib/utils';
 import { useMailDetailStore, useMailListStore, useNewMailStore } from 'lib/zustand-store';
@@ -34,7 +35,7 @@ let currentMailId: string = '';
 
 export default function MailDetail() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const { createDraft, checkEncryptable, getMailStat } = useContext(MailBoxContext);
+    const { createDraft, getMailStat } = useContext(MailBoxContext);
     const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
     const { setSelectedDraft } = useNewMailStore();
     const { list, setList } = useMailListStore();
@@ -245,16 +246,28 @@ export default function MailDetail() {
 
     const handleReply = async () => {
         const { address } = userLocalStorage.getUserInfo();
-        const { message_id, randomBits } = await createDraft();
-        const { encryptable } = await checkEncryptable([selectedMail.mail_from]);
-        await mailHttp.updateMail({
-            mail_id: window.btoa(message_id),
-            mail_to: [selectedMail.mail_from],
-            mail_from: selectedMail.mail_to.find(item => item.address === address),
-            meta_type: encryptable ? MetaMailTypeEn.Encrypted : MetaMailTypeEn.Signed,
+        const mailFrom = selectedMail.mail_to.find(item => item.address === address + PostfixOfAddress);
+        const mailTo = [selectedMail.mail_from];
+        const { message_id, randomBits, key } = await createDraft(mailFrom, mailTo);
+
+        setSelectedDraft({
+            randomBits,
+            message_id,
+            mail_from: mailFrom,
+            mail_to: mailTo,
+            mark: MarkTypeEn.Normal,
+            part_html: '',
+            part_text: '',
+            attachments: [],
+            subject: '',
+            meta_type: MetaMailTypeEn.Encrypted,
+            mailbox: MailBoxTypeEn.Draft,
+            mail_bcc: [],
+            mail_cc: [],
+            read: ReadStatusTypeEn.Read,
+            digest: '',
+            meta_header: { keys: [key] },
         });
-        const mail = await mailHttp.getMailDetailByID(window.btoa(message_id));
-        setSelectedDraft({ ...mail, randomBits });
     };
 
     useEffect(() => {

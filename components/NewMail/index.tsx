@@ -220,6 +220,7 @@ export default function NewMail() {
             part_html: html,
             part_text: text,
             mail_from: selectedDraft.mail_from,
+            meta_type: MetaMailTypeEn.Encrypted,
         });
 
         mailLocalStorage.setQuillHtml(html);
@@ -234,14 +235,6 @@ export default function NewMail() {
             setLoading(true);
             randomBits = selectedDraft.randomBits;
             let _selectedDraft = selectedDraft;
-            if (!selectedDraft.mail_from?.address) {
-                const { address, ensName } = userLocalStorage.getUserInfo();
-                selectedDraft.mail_from = {
-                    address: (ensName || address) + PostfixOfAddress,
-                    name: ensName || address,
-                };
-                mailChanged = true;
-            }
             if (!selectedDraft.hasOwnProperty('part_html')) {
                 const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
                 _selectedDraft = { ...selectedDraft, ...mail };

@@ -12,6 +12,8 @@ import {
     ReadStatusTypeEn,
     MarkTypeEn,
 } from 'lib/constants';
+import { userLocalStorage } from 'lib/utils';
+import { PostfixOfAddress } from 'lib/base';
 
 import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
@@ -30,11 +32,16 @@ export default function Sidebar() {
     }
 
     async function handleClickNewMail() {
-        const { message_id, randomBits, key } = await createDraft();
+        const { address, ensName } = userLocalStorage.getUserInfo();
+        const mailFrom = {
+            address: (ensName || address) + PostfixOfAddress,
+            name: ensName || address,
+        };
+        const { message_id, randomBits, key } = await createDraft(mailFrom, []);
         setSelectedDraft({
             randomBits,
             message_id,
-            mail_from: { name: '', address: '' },
+            mail_from: mailFrom,
             mail_to: [],
             mark: MarkTypeEn.Normal,
             part_html: '',
@@ -47,9 +54,7 @@ export default function Sidebar() {
             mail_cc: [],
             read: ReadStatusTypeEn.Read,
             digest: '',
-            meta_header: {
-                keys: [key],
-            },
+            meta_header: { keys: [key] },
         });
     }
 
