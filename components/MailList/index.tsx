@@ -7,6 +7,7 @@ import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from '
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import MailBoxContext from 'context/mail';
 import MailListItem from './components/MailListItem';
+import LoadingRing from 'components/LoadingRing';
 import Icon from 'components/Icon';
 
 import {
@@ -291,11 +292,8 @@ export default function MailList() {
             </div>
 
             <div className="flex flex-col overflow-y-auto overflow-x-hidden flex-1 relative">
-                {loading ? (
-                    <div className="flex items-center justify-center pt-200">
-                        <span className="loading loading-ring loading-lg bg-[#006AD4]"></span>
-                    </div>
-                ) : list.length ? (
+                {loading && <LoadingRing />}
+                {list.length ? (
                     list.map((item, index) => {
                         return (
                             <MailListItem

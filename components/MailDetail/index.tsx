@@ -14,6 +14,7 @@ import { useMailDetailStore, useMailListStore, useNewMailStore } from 'lib/zusta
 import { decryptMailContent, decryptMailKey, getPrivateKey } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
+import LoadingRing from 'components/LoadingRing';
 
 import sendMailIcon from 'assets/sendMail.svg';
 import {
@@ -281,7 +282,7 @@ export default function MailDetail() {
 
     return (
         <div
-            className={`flex-1 rounded-10 flex flex-col font-poppins p-20 transition-all h-[100%] bg-[#fff] ${
+            className={`relative flex-1 rounded-10 flex flex-col font-poppins p-20 transition-all h-[100%] bg-[#fff] ${
                 isDetailExtend ? 'w-full' : ''
             }`}>
             <header className="flex flex-col justify-between w-full mb-20">
@@ -345,12 +346,8 @@ export default function MailDetail() {
                     </div>
                 </div>
             </header>
-
-            {loading ? (
-                <div className="flex-1 flex items-center justify-center">
-                    <span className="loading loading-ring loading-lg bg-[#006AD4]"></span>
-                </div>
-            ) : (
+            {loading && <LoadingRing />}
+            {
                 <>
                     <h2 className="flex-1 overflow-auto">
                         {selectedMail?.part_html
@@ -371,7 +368,7 @@ export default function MailDetail() {
                         </div>
                     )}
                 </>
-            )}
+            }
 
             <button
                 className="flex justify-center items-center bg-[#006AD4] text-white px-14 py-8 rounded-[8px] self-start"
