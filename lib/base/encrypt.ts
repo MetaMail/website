@@ -50,36 +50,50 @@ class MMAsymmetricEncrypt extends MMEncrypt {
     }
 
     async encrypt(data: string, publicKey?: string): Promise<string> {
-        // incoming data is hex string
-        const publicKeyBuffer = Buffer.from(publicKey || this._publicKey, 'hex');
-        const publicCryptoKey = await window.crypto.subtle.importKey(
-            'spki',
-            publicKeyBuffer,
-            { name: 'RSA-OAEP', hash: { name: 'SHA-256' } },
-            false,
-            ['encrypt']
-        );
-        const randomBitsBuffer = Buffer.from(data, 'utf-8');
-        const encryptData = await window.crypto.subtle.encrypt({ name: 'RSA-OAEP' }, publicCryptoKey, randomBitsBuffer);
-        return Buffer.from(encryptData).toString('hex');
+        try {
+            // incoming data is hex string
+            const publicKeyBuffer = Buffer.from(publicKey || this._publicKey, 'hex');
+            const publicCryptoKey = await window.crypto.subtle.importKey(
+                'spki',
+                publicKeyBuffer,
+                { name: 'RSA-OAEP', hash: { name: 'SHA-256' } },
+                false,
+                ['encrypt']
+            );
+            const randomBitsBuffer = Buffer.from(data, 'utf-8');
+            const encryptData = await window.crypto.subtle.encrypt(
+                { name: 'RSA-OAEP' },
+                publicCryptoKey,
+                randomBitsBuffer
+            );
+            return Buffer.from(encryptData).toString('hex');
+        } catch (error) {
+            console.error(error);
+            throw new Error('Asymmetric encrypt error');
+        }
     }
 
     async decrypt(data: string, privateKey?: string): Promise<string> {
-        // incoming data is hex string
-        const privateKeyBuffer = Buffer.from(privateKey || this._privateKey, 'hex');
-        const privateCryptoKey = await window.crypto.subtle.importKey(
-            'pkcs8',
-            privateKeyBuffer,
-            { name: 'RSA-OAEP', hash: { name: 'SHA-256' } },
-            false,
-            ['decrypt']
-        );
-        const decryptBuffer = await window.crypto.subtle.decrypt(
-            { name: 'RSA-OAEP' },
-            privateCryptoKey,
-            Buffer.from(data, 'hex')
-        );
-        return Buffer.from(decryptBuffer).toString();
+        try {
+            // incoming data is hex string
+            const privateKeyBuffer = Buffer.from(privateKey || this._privateKey, 'hex');
+            const privateCryptoKey = await window.crypto.subtle.importKey(
+                'pkcs8',
+                privateKeyBuffer,
+                { name: 'RSA-OAEP', hash: { name: 'SHA-256' } },
+                false,
+                ['decrypt']
+            );
+            const decryptBuffer = await window.crypto.subtle.decrypt(
+                { name: 'RSA-OAEP' },
+                privateCryptoKey,
+                Buffer.from(data, 'hex')
+            );
+            return Buffer.from(decryptBuffer).toString();
+        } catch (error) {
+            console.error(error);
+            throw new Error('Asymmetric decrypt error');
+        }
     }
 
     async generateKey() {
