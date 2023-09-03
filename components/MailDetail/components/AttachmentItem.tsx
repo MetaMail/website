@@ -12,24 +12,33 @@ type AttachmentItemProps = {
 export default function AttachmentItem({ url, name, idx, randomBits }: AttachmentItemProps) {
     const handleClick = async () => {
         if (!url) return;
-        if (!randomBits) return window.open(url);
 
+        let fileDec: Blob;
         try {
             const response = await fetch(url);
-            const encryptedFileData = await response.text();
-            const decryptedFileData = decryptMailAttachment(encryptedFileData, randomBits);
-            const typedArrayData = convertWordArrayToUint8Array(decryptedFileData);
-            const fileDec = new Blob([typedArrayData]);
-            const a = document.createElement('a');
-            const tmpUrl = window.URL.createObjectURL(fileDec);
-            a.href = tmpUrl;
-            a.download = name;
-            a.click();
-            window.URL.revokeObjectURL(tmpUrl);
+            const originData = await response.arrayBuffer();
+            if (!randomBits) {
+                // we download plain file in this way to specify file name
+                fileDec = new Blob([originData]);
+            } else {
+                const decryptedFileData = decryptMailAttachment(originData, randomBits);
+                const typedArrayData = convertWordArrayToUint8Array(decryptedFileData);
+                fileDec = new Blob([typedArrayData]);
+            }
         } catch (error) {
             console.error(error);
             toast.error('Download failed.');
+            return;
         }
+
+        const a = document.createElement('a');
+        document.body.appendChild(a); // Firefox requires the link to be in the body
+        const tmpUrl = window.URL.createObjectURL(fileDec);
+        a.href = tmpUrl;
+        a.download = name;
+        a.click();
+        window.URL.revokeObjectURL(tmpUrl);
+        a.remove();
     };
     return (
         <div onClick={handleClick} className="cursor-pointer">
