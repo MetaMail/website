@@ -16,7 +16,7 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
 
         try {
             const response = await fetch(url);
-            const encryptedFileData = await response.text();
+            const encryptedFileData = await response.arrayBuffer();
             const decryptedFileData = decryptMailAttachment(encryptedFileData, randomBits);
             const typedArrayData = convertWordArrayToUint8Array(decryptedFileData);
             const fileDec = new Blob([typedArrayData]);
