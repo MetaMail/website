@@ -39,17 +39,14 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         };
         let finalFile = file;
 
+        // 同时把原始附件的哈希传给后端，用于后续发邮件签名是直接用原始附件的哈希，就不用前端先下载解密再计算哈希了
+        const pureSha256 = CryptoJS.SHA256(CryptoJS.lib.WordArray.create(fileBuffer as any)).toString();
         // draft阶段 附件都是需要加密的
         const encrypted = encryptMailAttachment(ArrayBufferToWordArray(fileBuffer), randomBits);
         finalFile = new File([new Blob([encrypted])], file.name, { ...fileProps });
 
         const wordArray = CryptoJS.lib.WordArray.create((await getFileArrayBuffer(finalFile)) as any);
         const encryptSha256 = CryptoJS.SHA256(wordArray).toString();
-
-        // 同时把原始附件的哈希传给后端，用于后续发邮件签名是直接用原始附件的哈希，就不用前端先下载解密再计算哈希了
-        const pureSha256 = CryptoJS.SHA256(
-            CryptoJS.lib.WordArray.create((await getFileArrayBuffer(file)) as any)
-        ).toString();
 
         const form = new FormData();
         form.append('attachment', finalFile);

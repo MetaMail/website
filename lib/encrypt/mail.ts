@@ -42,11 +42,13 @@ export const decryptMailContent = (encryptedMailContent: string, key: string) =>
 };
 
 export const encryptMailAttachment = (mailAttachment: CryptoJS.lib.WordArray, key: string) => {
-    return symmetricEncryptInstance.encrypt(mailAttachment, key);
+    const encryptedBase64 = symmetricEncryptInstance.encrypt(mailAttachment, key);
+    return Buffer.from(encryptedBase64, 'base64');
 };
 
-export const decryptMailAttachment = (encryptedMailAttachment: string, key: string) => {
-    return symmetricEncryptInstance.decryptToWordArray(encryptedMailAttachment, key);
+export const decryptMailAttachment = (encryptedMailAttachment: ArrayBuffer, key: string) => {
+    const encryptedBase64 = Buffer.from(encryptedMailAttachment).toString('base64');
+    return symmetricEncryptInstance.decryptToWordArray(encryptedBase64, key);
 };
 
 // TODO 所有的邮件相关的加密解密都放在这里
