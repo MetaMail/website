@@ -47,10 +47,10 @@ export default function MailBoxPage() {
         };
     };
 
-    const createDraft = async () => {
+    const createDraft = async (mailFrom: IPersonItem, mailTo: IPersonItem[]) => {
         const { publicKey, address } = userLocalStorage.getUserInfo();
         const { key, randomBits } = await createEncryptedMailKey(publicKey, address);
-        const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key);
+        const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key, mailFrom, mailTo);
         return {
             message_id,
             randomBits,

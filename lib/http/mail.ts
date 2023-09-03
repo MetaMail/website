@@ -27,6 +27,8 @@ const APIs = {
 interface ICreateDraftParams {
     meta_type: MetaMailTypeEn;
     key?: string;
+    mail_from?: IPersonItem;
+    mail_to?: IPersonItem[];
 }
 
 interface ICreateDraftResponse {
@@ -157,10 +159,12 @@ class MMMailHttp extends MMHttp {
         return this.post<IChangeMailStatusParams, void>(APIs.mailDetail, { mails, ...options });
     }
 
-    async createDraft(type: MetaMailTypeEn, key?: string) {
+    async createDraft(type: MetaMailTypeEn, key: string, mailFrom: IPersonItem, mailTo: IPersonItem[]) {
         return this.post<ICreateDraftParams, ICreateDraftResponse>(APIs.createDraft, {
             meta_type: type,
             key,
+            mail_from: mailFrom,
+            mail_to: mailTo,
         });
     }
 

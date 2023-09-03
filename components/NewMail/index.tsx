@@ -25,6 +25,7 @@ import FileUploader from './components/FileUploader';
 import NameSelector, { MailFromType } from './components/NameSelector';
 import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
+import LoadingRing from 'components/LoadingRing';
 
 import { cancel, extend } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
@@ -220,6 +221,7 @@ export default function NewMail() {
             part_html: html,
             part_text: text,
             mail_from: selectedDraft.mail_from,
+            meta_type: MetaMailTypeEn.Encrypted,
         });
 
         mailLocalStorage.setQuillHtml(html);
@@ -234,14 +236,6 @@ export default function NewMail() {
             setLoading(true);
             randomBits = selectedDraft.randomBits;
             let _selectedDraft = selectedDraft;
-            if (!selectedDraft.mail_from?.address) {
-                const { address, ensName } = userLocalStorage.getUserInfo();
-                selectedDraft.mail_from = {
-                    address: (ensName || address) + PostfixOfAddress,
-                    name: ensName || address,
-                };
-                mailChanged = true;
-            }
             if (!selectedDraft.hasOwnProperty('part_html')) {
                 const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
                 _selectedDraft = { ...selectedDraft, ...mail };
@@ -370,11 +364,8 @@ export default function NewMail() {
                     />
                 </div>
             </div>
-            {loading ? (
-                <div className="flex flex-1 items-center justify-center">
-                    <span className="loading loading-ring loading-lg bg-[#006AD4]"></span>
-                </div>
-            ) : (
+            {loading && <LoadingRing />}
+            {
                 <>
                     <DynamicReactQuill
                         forwardedRef={reactQuillRef}
@@ -406,7 +397,7 @@ export default function NewMail() {
                         </li>
                     ))}
                 </>
-            )}
+            }
             <div className="flex items-center gap-13 mt-20">
                 <button
                     disabled={selectedDraft.mail_to.length === 0}
