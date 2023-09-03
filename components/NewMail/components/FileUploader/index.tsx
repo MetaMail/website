@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import CryptoJS from 'crypto-js';
 import { throttle } from 'lodash';
+import { toast } from 'react-toastify';
 
 import { mailHttp, IUploadAttachmentResponse } from 'lib/http';
 import { useNewMailStore } from 'lib/zustand-store';
@@ -10,6 +11,8 @@ import { ArrayBufferToWordArray } from 'lib/utils';
 import { encryptMailAttachment } from 'lib/encrypt';
 
 import addAttach from 'assets/addAttach.svg';
+
+const Max_File_Size = 20 * 1024 * 1024; // 20MB
 interface IFileUploader {
     randomBits: string;
     onChange: () => void;
@@ -79,11 +82,20 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         return { cancelableUpload, file };
     };
 
+    const checkFilesSize = (files: FileList) => {
+        return Array.from(files).every(file => file.size <= Max_File_Size);
+    };
+
     const handleClickUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const fileList = e.target.files;
         if (!fileList || !fileList.length) return;
+        const isFilesSizeValid = checkFilesSize(fileList);
+        if (!isFilesSizeValid) {
+            return toast.error('Single attachment size should be less than 20MB.');
+        }
 
         const uploadResult = await Promise.all(Array.from(fileList).map((file: File) => handleSingleFileUpload(file)));
+        e.target.value = null; // ensure same file can be uploaded again
         const attachmentsWithoutAttachmentId = uploadResult.map(result => {
             return {
                 filename: result.file.name,
