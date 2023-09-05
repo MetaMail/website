@@ -85,7 +85,18 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             handleChangeMailStatus({ read: ReadStatusTypeEn.Read });
         }
         if (filterType === FilterTypeEn.Draft) {
-            setSelectedDraft(mail);
+            if (!selectedDraft) {
+                setSelectedDraft(mail);
+            } else {
+                const draftChangedEvent = new CustomEvent('draft-changed', {
+                    detail: {
+                        done: (result: boolean) => {
+                            result && setSelectedDraft(mail);
+                        },
+                    },
+                });
+                window.dispatchEvent(draftChangedEvent);
+            }
         } else {
             setSelectedMail(mail);
         }

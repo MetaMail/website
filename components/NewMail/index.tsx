@@ -7,16 +7,9 @@ import { throttle } from 'lodash';
 import MailBoxContext from 'context/mail';
 import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useNewMailStore } from 'lib/zustand-store';
-import { userLocalStorage, userSessionStorage, mailLocalStorage, percentTransform } from 'lib/utils';
+import { userLocalStorage, mailLocalStorage, percentTransform } from 'lib/utils';
 import { mailHttp } from 'lib/http';
-import {
-    decryptMailKey,
-    createEncryptedMailKey,
-    encryptMailContent,
-    decryptMailContent,
-    concatAddress,
-    getPrivateKey,
-} from 'lib/encrypt';
+import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
@@ -46,9 +39,10 @@ import styles from './index.module.scss';
 let randomBits: string = '';
 let autoSaveMail = true;
 let mailChanged = false;
+let initHtml = '';
 
 export default function NewMail() {
-    const { checkEncryptable, setShowLoading } = useContext(MailBoxContext);
+    const { checkEncryptable, setShowLoading, getRandomBits } = useContext(MailBoxContext);
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const [isExtend, setIsExtend] = useState(false);
@@ -56,23 +50,6 @@ export default function NewMail() {
     const dateRef = useRef<string>();
     const reactQuillRef = useRef<ReactQuillType>();
     const subjectRef = useRef<HTMLInputElement>();
-
-    const ensureRandomBitsExist = async () => {
-        if (!randomBits) {
-            const selectedDraftKey = selectedDraft.meta_header?.keys?.[0]; // 当前选中的草稿的randomBits的公钥加密结果
-            if (!selectedDraftKey) throw new Error("Can't decrypt mail without randomBits key.");
-            let purePrivateKey = userSessionStorage.getPurePrivateKey();
-            if (!purePrivateKey) {
-                const { privateKey, salt } = userLocalStorage.getUserInfo();
-                purePrivateKey = await getPrivateKey(privateKey, salt);
-                userSessionStorage.setPurePrivateKey(purePrivateKey);
-            }
-            randomBits = await decryptMailKey(selectedDraftKey, purePrivateKey);
-            if (!randomBits) {
-                throw new Error('No randomBits.');
-            }
-        }
-    };
 
     const getQuill = () => {
         if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
@@ -193,12 +170,19 @@ export default function NewMail() {
         if (content === '<p><br></p>') {
             return '';
         }
-        return content;
+        return content || '';
+    };
+
+    const getMailChanged = () => {
+        const quillHtml = filterMailContent(getQuill()?.getHTML());
+        const quillChanged = quillHtml !== initHtml;
+
+        return mailChanged || quillChanged;
     };
 
     const handleSave = async () => {
         // save 的时候都是加密模式
-        if (!mailChanged)
+        if (!getMailChanged())
             return {
                 html: mailLocalStorage.getQuillHtml(),
                 text: mailLocalStorage.getQuillText(),
@@ -211,7 +195,6 @@ export default function NewMail() {
         let html = filterMailContent(quill?.getHTML()),
             text = filterMailContent(quill?.getText());
 
-        await ensureRandomBitsExist();
         html = encryptMailContent(html, randomBits);
         text = encryptMailContent(text, randomBits);
         const { mail_date } = await mailHttp.updateMail({
@@ -230,22 +213,32 @@ export default function NewMail() {
         return { html, text };
     };
 
+    const setContentsToQuill = (html: string) => {
+        const editor = reactQuillRef.current?.getEditor();
+        if (editor) {
+            editor.setContents(editor.clipboard.convert(html));
+        }
+    };
+
     const handleLoad = async () => {
         // load 的时候都是加密模式
         try {
             setLoading(true);
-            randomBits = selectedDraft.randomBits;
+            randomBits = selectedDraft.randomBits || (await getRandomBits('draft'));
             let _selectedDraft = selectedDraft;
             if (!selectedDraft.hasOwnProperty('part_html')) {
                 const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
                 _selectedDraft = { ...selectedDraft, ...mail };
             }
-            await ensureRandomBitsExist();
+
             const part_html = decryptMailContent(_selectedDraft.part_html || '', randomBits);
             const part_text = decryptMailContent(_selectedDraft.part_text || '', randomBits);
             _selectedDraft = { ..._selectedDraft, part_html, part_text };
 
             setSelectedDraft(_selectedDraft);
+            initHtml = part_html;
+
+            setContentsToQuill(part_html);
         } catch (error) {
             console.error(error);
             toast.error("Can't get draft detail, please try again later.");
@@ -287,11 +280,34 @@ export default function NewMail() {
     };
 
     useEffect(() => {
+        dateRef.current = selectedDraft.mail_date;
+        subjectRef.current.value = selectedDraft.subject;
+        setContentsToQuill(selectedDraft.part_html || '');
+
         handleLoad();
+
+        const onDraftChange: (e: Event) => Promise<void> = async event => {
+            setShowLoading(true);
+            const e = event as CustomEvent;
+            try {
+                await handleSave();
+                e.detail.done(true);
+            } catch (error) {
+                console.error(error);
+                e.detail.done(false);
+            } finally {
+                setShowLoading(false);
+            }
+        };
+
+        window.addEventListener('draft-changed', onDraftChange);
+
         return () => {
             randomBits = '';
             autoSaveMail = true;
             mailChanged = false;
+            initHtml = '';
+            window.removeEventListener('draft-changed', onDraftChange);
         };
     }, [selectedDraft.message_id]);
 
@@ -320,7 +336,7 @@ export default function NewMail() {
                         url={cancel}
                         className="w-20 scale-[120%] h-auto self-center"
                         onClick={async () => {
-                            if (!mailChanged) return setSelectedDraft(null);
+                            if (!getMailChanged()) return setSelectedDraft(null);
                             setShowLoading(true);
                             try {
                                 await handleSave();
@@ -374,10 +390,6 @@ export default function NewMail() {
                         placeholder={''}
                         modules={EditorModules}
                         formats={EditorFormats}
-                        defaultValue={selectedDraft.part_html}
-                        onChange={throttle(() => {
-                            mailChanged = true;
-                        }, 1000)}
                     />
                     {selectedDraft.attachments?.map((attr, index) => (
                         <li key={index} className="flex">

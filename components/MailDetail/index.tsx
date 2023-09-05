@@ -9,9 +9,9 @@ import MailBoxContext from 'context/mail';
 import { PostfixOfAddress } from 'lib/base';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, MailBoxTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { userLocalStorage, userSessionStorage } from 'lib/utils';
+import { userLocalStorage } from 'lib/utils';
 import { useMailDetailStore, useMailListStore, useNewMailStore } from 'lib/zustand-store';
-import { decryptMailContent, decryptMailKey, getPrivateKey } from 'lib/encrypt';
+import { decryptMailContent } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
 import LoadingRing from 'components/LoadingRing';
@@ -36,46 +36,12 @@ let currentMailId: string = '';
 
 export default function MailDetail() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
-    const { createDraft, getMailStat } = useContext(MailBoxContext);
+    const { createDraft, getMailStat, getRandomBits } = useContext(MailBoxContext);
     const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
     const { setSelectedDraft } = useNewMailStore();
     const { list, setList } = useMailListStore();
 
     const [loading, setLoading] = useState(false);
-
-    const ensureRandomBitsExist = async () => {
-        if (!randomBits) {
-            const keys = selectedMail?.meta_header?.keys;
-            const { address, ensName } = userLocalStorage.getUserInfo();
-            const addrList = [
-                selectedMail?.mail_from.address,
-                ...(selectedMail?.mail_to.map(item => item.address) || []),
-                ...(selectedMail?.mail_cc.map(item => item.address) || []),
-                ...(selectedMail?.mail_bcc.map(item => item.address) || []),
-            ];
-            const idx = addrList.findIndex(addr => {
-                const prefix = addr?.split('@')[0].toLocaleLowerCase();
-                return prefix === address || prefix === ensName;
-            });
-            if (idx < 0 || idx > keys.length - 1) {
-                console.log('not find index from address list');
-                return;
-            }
-            const key = keys[idx];
-            if (!key) throw new Error("Can't decrypt mail without randomBits key.");
-            let purePrivateKey = userSessionStorage.getPurePrivateKey();
-            if (!purePrivateKey) {
-                const { privateKey, salt } = userLocalStorage.getUserInfo();
-                purePrivateKey = await getPrivateKey(privateKey, salt);
-                userSessionStorage.setPurePrivateKey(purePrivateKey);
-            }
-
-            randomBits = await decryptMailKey(key, purePrivateKey);
-            if (!randomBits) {
-                throw new Error('No randomBits.');
-            }
-        }
-    };
 
     const handleLoad = async (showLoading = true) => {
         try {
@@ -90,7 +56,7 @@ export default function MailDetail() {
             };
             if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
                 if (currentMailId !== _mail.message_id) return;
-                await ensureRandomBitsExist();
+                randomBits = await getRandomBits('detail');
                 if (_mail?.part_html) {
                     _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
                 }

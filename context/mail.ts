@@ -10,6 +10,7 @@ interface IMailBoxContext {
     setShowLoading?: (show: boolean) => void;
     logout?: () => void;
     getMailStat?: () => Promise<void>;
+    getRandomBits?: (type: 'detail' | 'draft') => Promise<string>;
 }
 const MailBoxContext = createContext<IMailBoxContext>({});
 export default MailBoxContext;
