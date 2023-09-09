@@ -97,13 +97,13 @@ export default function NewMail() {
         mailChanged = true;
     };
 
-    const postSignature = async (keys: string[], signature: string, random_bits: string) => {
+    const postSignature = async (keys: string[], signature: string, mail_decryption_key: string) => {
         const { message_id } = await mailHttp.sendMail({
             mail_id: window.btoa(selectedDraft.message_id),
             date: dateRef.current,
             signature: signature,
             keys,
-            random_bits,
+            mail_decryption_key,
         });
         return message_id;
     };

@@ -59,7 +59,7 @@ interface ISendMailParams {
     date?: string;
     signature?: string;
     keys: string[];
-    random_bits?: string;
+    mail_decryption_key?: string;
 }
 
 interface ISendMailResponse {
