@@ -105,6 +105,17 @@ export default function Titlebar() {
                             <span>Setting</span>
                             <Image src={right} alt="go" />
                         </div>
+                        <div className="form-control">
+                            <label className="label cursor-pointer">
+                                <span className="label-text">Change theme</span>
+                                <input
+                                    type="checkbox"
+                                    className="toggle"
+                                    data-toggle-theme="dark,light"
+                                    data-act-class="ACTIVECLASS"
+                                />
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

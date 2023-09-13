@@ -19,8 +19,6 @@ import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
 import write from 'assets/mailbox/write.svg';
 
-import styles from './Siderbar.module.scss';
-
 export default function Sidebar() {
     const { createDraft, logout, getMailStat } = useContext(MailBoxContext);
     const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();
@@ -70,7 +68,6 @@ export default function Sidebar() {
     const renderLi = (menusMap: IMenuItem[]) => {
         return menusMap.map(item => (
             <li
-                className={styles.menuLi}
                 key={item.key}
                 onClick={() => {
                     handleChangeFilter(item.key);
@@ -93,22 +90,23 @@ export default function Sidebar() {
     }, []);
 
     return (
-        <div className="bg-[#F3F7FF] w-200 px-10 flex flex-col justify-between font-poppins text-sm">
+        <div className="w-200 px-10 flex flex-col justify-between font-poppins text-sm">
             <div className="flex flex-col">
                 <button onClick={logout} className="flex h-45 items-center justify-center">
                     <Image src={logo} alt="logo" className="w-auto h-32 mr-5" />
-                    <Image src={logoBrand} alt="logo-brand" className="w-116" />
+                    {/* <Image src={logoBrand} alt="logo-brand" className="w-116" /> */}
+                    <span className="text-2xl font-bold">MetaMail</span>
                 </button>
                 <button className="btn btn-primary text-white mt-5" onClick={handleClickNewMail}>
                     <Image src={write} alt="new_mail" className="w-16 h-auto" />
                     <span>New Mail</span>
                 </button>
                 <div>
-                    <ul className={`menu ${styles.mainMenu}`}>
+                    <ul className="menu">
                         {renderLi(MenusMap.filter(menu => menu.belong === 'basic'))}
                         <li>
                             <details open>
-                                <summary className={styles.moreSummary}>
+                                <summary>
                                     <span className="ml-8">More</span>
                                 </summary>
                                 <ul className="ml-0 pl-0 before:w-0">

@@ -5,7 +5,7 @@ import { userHttp, mailHttp } from 'lib/http';
 import { MMHttp } from 'lib/base';
 import { IPersonItem, MetaMailTypeEn } from 'lib/constants';
 import { userSessionStorage, userLocalStorage, mailLocalStorage } from 'lib/utils';
-import { createEncryptedMailKey } from 'lib/encrypt';
+import { createEncryptedMailKey, getPrivateKey, decryptMailKey } from 'lib/encrypt';
 import MailBoxContext from 'context/mail';
 import Layout from 'components/Layout';
 import MailList from 'components/MailList';
@@ -69,12 +69,47 @@ export default function MailBoxPage() {
         }
     };
 
+    const getRandomBits = async (type: 'detail' | 'draft') => {
+        let currentKey: string;
+        if (type === 'draft') {
+            currentKey = selectedDraft.meta_header?.keys?.[0];
+        } else {
+            const keys = selectedMail?.meta_header?.keys;
+            const { address, ensName } = userLocalStorage.getUserInfo();
+            const addrList = [
+                selectedMail?.mail_from.address,
+                ...(selectedMail?.mail_to.map(item => item.address) || []),
+                ...(selectedMail?.mail_cc.map(item => item.address) || []),
+                ...(selectedMail?.mail_bcc.map(item => item.address) || []),
+            ];
+            const idx = addrList.findIndex(addr => {
+                const prefix = addr?.split('@')[0].toLocaleLowerCase();
+                return prefix === address || prefix === ensName;
+            });
+            if (idx < 0 || idx > keys.length - 1) {
+                throw new Error('not find index from address list');
+            }
+            currentKey = keys[idx];
+        }
+        if (!currentKey) {
+            throw new Error('not find current key');
+        }
+        let purePrivateKey = userSessionStorage.getPurePrivateKey();
+        if (!purePrivateKey) {
+            const { privateKey, salt } = userLocalStorage.getUserInfo();
+            purePrivateKey = await getPrivateKey(privateKey, salt);
+            userSessionStorage.setPurePrivateKey(purePrivateKey);
+        }
+        return decryptMailKey(currentKey, purePrivateKey);
+    };
+
     useEffect(() => {
         MMHttp.onUnAuthHandle = logout;
     }, []);
 
     return (
-        <MailBoxContext.Provider value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat }}>
+        <MailBoxContext.Provider
+            value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat, getRandomBits }}>
             <Layout>
                 <MailList />
                 {selectedMail && <MailDetail />}
