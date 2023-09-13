@@ -14,9 +14,22 @@ export const generateEncryptionUserKey = async () => {
     const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
 
+    const keyMeta = {
+        type: 'RSA-OAEP',
+        modulus_length: 2048,
+        public_exponent: '010001',
+        hash: { name: 'SHA-256' },
+        private_key_format: 'pkcs8',
+        public_key_format: 'spki',
+        key_usages: ['encrypt', 'decrypt'],
+        private_key_encoding: 'hex',
+        public_key_encoding: 'hex',
+    };
+
     const signMessages = {
         salt: salt,
         public_key_hash: crypto.createHash('sha256').update(publicKey).digest('hex'),
+        key_meta: JSON.stringify(keyMeta), // stringifying the key meta object
         date: new Date().toISOString(),
     };
 
@@ -24,8 +37,9 @@ export const generateEncryptionUserKey = async () => {
     const reqMessage = {
         signature: keySignature,
         salt: salt,
-        encryption_private_key: Encrypted_Private_Store_Key,
-        encryption_public_key: publicKey,
+        encrypted_private_key: Encrypted_Private_Store_Key,
+        public_key: publicKey,
+        key_meta: JSON.stringify(keyMeta),
         date: signMessages.date,
     };
     return reqMessage;

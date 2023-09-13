@@ -55,8 +55,8 @@ export default function Welcome() {
             userLocalStorage.setUserInfo({
                 address,
                 ensName: user.ens || '',
-                publicKey: encryptionData.encryption_public_key,
-                privateKey: encryptionData.encryption_private_key,
+                publicKey: encryptionData.public_key,
+                privateKey: encryptionData.encrypted_private_key,
                 salt: encryptionData.salt,
             });
 

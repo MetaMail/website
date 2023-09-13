@@ -17,8 +17,8 @@ interface IGetEncryptionKeyParams {
 }
 interface IGetEncryptionKeyResponse {
     salt: string;
-    encryption_private_key: string;
-    encryption_public_key: string;
+    encrypted_private_key: string;
+    public_key: string;
     signature: string;
     addr?: string;
     date?: string;

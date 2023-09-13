@@ -33,7 +33,7 @@ export default function MailBoxPage() {
         const getSinglePublicKey = async (receiver: IPersonItem) => {
             try {
                 const encryptionData = await userHttp.getEncryptionKey(receiver.address.split('@')[0]);
-                return encryptionData.encryption_public_key;
+                return encryptionData.public_key;
             } catch (error) {
                 console.error('Failed to get public key of receiver: ', receiver.address);
                 console.error(error);
