@@ -53,28 +53,13 @@ body {
     white-space: nowrap;
     overflow: hidden;
 }
-.mail-bg {
-    min-width: 1000px;
-    background-color: white;
-}
-
-.active-bg {
-    background-color: rgba(171, 199, 255, 0.35);
-}
-.select-bg {
-    background: rgba(218, 231, 255, 0.4);
-}
-
-.modal-bg:active {
-    background-color: #006ad4;
-}
 
 .ql-container.ql-snow {
     @apply flex border-0 min-h-0 flex-1;
     border: none !important;
 }
 .ql-toolbar.ql-snow {
-    @apply flex bg-white;
+    @apply flex bg-base-100;
     border: none !important;
     padding-left: 0 !important;
 }

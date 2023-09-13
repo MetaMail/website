@@ -322,12 +322,12 @@ export default function NewMail() {
 
     return (
         <div
-            className={`flex flex-col font-poppins bg-white p-18 transition-all absolute bottom-0 right-0 rounded-10 ${
+            className={`flex flex-col font-poppins bg-base-100 p-18 transition-all absolute bottom-0 right-0 rounded-10 ${
                 isExtend ? 'h-full w-full' : 'h-502 w-[45vw]'
             } ${styles.newMailWrap}`}>
             <header className="flex justify-between">
                 <div className="flex items-center">
-                    <div className="w-6 h-24 bg-[#006AD4] rounded-4" />
+                    <div className="w-6 h-24 bg-primary rounded-4" />
                     <span className="pl-7 font-black text-xl">New Mail</span>
                 </div>
                 <div className="flex gap-10 self-start">
@@ -414,7 +414,7 @@ export default function NewMail() {
                 <button
                     disabled={selectedDraft.mail_to.length === 0}
                     onClick={handleClickSend}
-                    className="flex justify-center items-center bg-[#006AD4] text-white px-14 py-8 rounded-[8px]">
+                    className="flex justify-center items-center bg-primary text-white px-14 py-8 rounded-[8px]">
                     <Icon url={sendMailIcon} />
                     <span className="ml-6">Send</span>
                 </button>

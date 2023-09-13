@@ -248,7 +248,7 @@ export default function MailDetail() {
 
     return (
         <div
-            className={`relative flex-1 rounded-10 flex flex-col font-poppins p-20 transition-all h-[100%] bg-[#fff] ${
+            className={`relative flex-1 rounded-10 flex flex-col font-poppins p-20 transition-all h-[100%] bg-base-100 ${
                 isDetailExtend ? 'w-full' : ''
             }`}>
             <header className="flex flex-col justify-between w-full mb-20">
@@ -337,7 +337,7 @@ export default function MailDetail() {
             }
 
             <button
-                className="flex justify-center items-center bg-[#006AD4] text-white px-14 py-8 rounded-[8px] self-start"
+                className="flex justify-center items-center bg-primary text-white px-14 py-8 rounded-[8px] self-start"
                 onClick={handleReply}>
                 <Icon url={sendMailIcon} />
                 <span className="ml-6">Reply</span>
