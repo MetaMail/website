@@ -70,16 +70,16 @@ export interface IMailContentAttachment {
 }
 
 export interface IMailContentItem {
-    read: ReadStatusTypeEn;
-    mailbox: MailBoxTypeEn;
+    read?: ReadStatusTypeEn;
+    mailbox?: MailBoxTypeEn;
     mark?: MarkTypeEn;
-    message_id: string;
-    meta_type: MetaMailTypeEn;
-    subject: string;
-    mail_from: IPersonItem;
-    mail_to: IPersonItem[];
-    mail_cc: IPersonItem[];
-    mail_bcc: IPersonItem[];
+    message_id?: string;
+    meta_type?: MetaMailTypeEn;
+    subject?: string;
+    mail_from?: IPersonItem;
+    mail_to?: IPersonItem[];
+    mail_cc?: IPersonItem[];
+    mail_bcc?: IPersonItem[];
     mail_date?: string;
     download?: {
         expire_at: string;
@@ -87,11 +87,11 @@ export interface IMailContentItem {
     };
     in_reply_to?: IPersonItem;
     reply_to?: IPersonItem;
-    digest: string;
+    digest?: string;
     part_text?: string;
     part_html?: string;
-    attachments: IMailContentAttachment[];
-    meta_header: {
+    attachments?: IMailContentAttachment[];
+    meta_header?: {
         addr?: string;
         date?: string;
         data?: string;

@@ -49,9 +49,9 @@ export interface IAttachment extends IMailContentAttachment {
     cancelableUpload?: MMCancelableUpload;
 }
 
-interface ISelectedDraftItem extends IMailContentItem {
+export interface ISelectedDraftItem extends IMailContentItem {
     randomBits?: string;
-    attachments: IAttachment[];
+    attachments?: IAttachment[];
 }
 
 interface INewMailState {

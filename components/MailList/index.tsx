@@ -3,7 +3,8 @@ import { toast } from 'react-toastify';
 
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userLocalStorage } from 'lib/utils';
-import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
+import { usePrevious } from 'hooks';
+import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType, LOCAL_DRAFT_ID } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import MailBoxContext from 'context/mail';
 import MailListItem from './components/MailListItem';
@@ -25,8 +26,6 @@ import {
 
 const MailListFilters = ['All', 'Read', 'Unread', 'Encrypted', 'UnEncrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
-
-let lastDraftId = '';
 
 export default function MailList() {
     const { getMailStat } = useContext(MailBoxContext);
@@ -198,12 +197,13 @@ export default function MailList() {
         setFilter(null);
     }, [filterType]);
 
+    const prevDraftId = usePrevious<string>(selectedDraft?.message_id);
+
     useEffect(() => {
-        if (!!lastDraftId && !selectedDraft?.message_id) {
+        if (prevDraftId && prevDraftId !== LOCAL_DRAFT_ID && !selectedDraft?.message_id) {
             // 代表从草稿组件出来，此时需要刷新列表
             fetchMailList(false);
         }
-        lastDraftId = selectedDraft?.message_id;
     }, [selectedDraft?.message_id]);
 
     return (

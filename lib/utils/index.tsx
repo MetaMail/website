@@ -42,7 +42,7 @@ export function transformTime(timeStr: string) {
     const time = moment(timeStr);
     const now = moment();
     const isToday = time.isSame(now, 'day');
-    if (isToday) return time.format('HH:MM');
+    if (isToday) return time.format('HH:mm');
     const isThisYear = time.isSame(now, 'year');
     if (isThisYear) return time.format('MMM D');
     return time.format('MM/DD/YY');

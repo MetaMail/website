@@ -6,11 +6,9 @@ import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
 
 import MailBoxContext from 'context/mail';
-import { PostfixOfAddress } from 'lib/base';
-import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, MailBoxTypeEn } from 'lib/constants';
+import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { userLocalStorage } from 'lib/utils';
-import { useMailDetailStore, useMailListStore, useNewMailStore } from 'lib/zustand-store';
+import { useMailDetailStore, useMailListStore } from 'lib/zustand-store';
 import { decryptMailContent } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
@@ -38,7 +36,6 @@ export default function MailDetail() {
     const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
     const { createDraft, getMailStat, getRandomBits } = useContext(MailBoxContext);
     const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
-    const { setSelectedDraft } = useNewMailStore();
     const { list, setList } = useMailListStore();
 
     const [loading, setLoading] = useState(false);
@@ -211,30 +208,8 @@ export default function MailDetail() {
         return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
     };
 
-    const handleReply = async () => {
-        const { address } = userLocalStorage.getUserInfo();
-        const mailFrom = selectedMail.mail_to.find(item => item.address === address + PostfixOfAddress);
-        const mailTo = [selectedMail.mail_from];
-        const { message_id, randomBits, key } = await createDraft(mailFrom, mailTo);
-
-        setSelectedDraft({
-            randomBits,
-            message_id,
-            mail_from: mailFrom,
-            mail_to: mailTo,
-            mark: MarkTypeEn.Normal,
-            part_html: '',
-            part_text: '',
-            attachments: [],
-            subject: '',
-            meta_type: MetaMailTypeEn.Encrypted,
-            mailbox: MailBoxTypeEn.Draft,
-            mail_bcc: [],
-            mail_cc: [],
-            read: ReadStatusTypeEn.Read,
-            digest: '',
-            meta_header: { keys: [key] },
-        });
+    const handleReply = () => {
+        createDraft([selectedMail.mail_from]);
     };
 
     useEffect(() => {
