@@ -5,13 +5,13 @@ import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
 
 import MailBoxContext from 'context/mail';
-import { MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
+import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, LOCAL_DRAFT_ID } from 'lib/constants';
 import { useNewMailStore } from 'lib/zustand-store';
 import { userLocalStorage, mailLocalStorage, percentTransform } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
-import { useInterval } from 'hooks';
+import { useInterval, usePrevious } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
 import DynamicReactQuill from './components/DynamicReactQuill';
 import FileUploader from './components/FileUploader';
@@ -197,16 +197,24 @@ export default function NewMail() {
 
         html = encryptMailContent(html, randomBits);
         text = encryptMailContent(text, randomBits);
-        const { mail_date } = await mailHttp.updateMail({
-            mail_id: window.btoa(selectedDraft.message_id),
+        const json: IUpdateMailContentParams = {
             subject: subjectRef.current.value,
             mail_to: selectedDraft.mail_to,
             part_html: html,
             part_text: text,
             mail_from: selectedDraft.mail_from,
             meta_type: MetaMailTypeEn.Encrypted,
-        });
-
+            mark: selectedDraft.mark,
+            mailbox: selectedDraft.mailbox,
+            read: selectedDraft.read,
+        };
+        const fromLocalDraft = selectedDraft.message_id === LOCAL_DRAFT_ID;
+        !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
+        fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
+        const { mail_date, message_id } = await mailHttp.updateMail(json);
+        selectedDraft.message_id = message_id;
+        selectedDraft.mail_date = mail_date;
+        fromLocalDraft && setSelectedDraft({ ...selectedDraft });
         mailLocalStorage.setQuillHtml(html);
         mailLocalStorage.setQuillText(text);
         dateRef.current = mail_date;
@@ -224,6 +232,17 @@ export default function NewMail() {
         // load 的时候都是加密模式
         try {
             setLoading(true);
+
+            if (selectedDraft.message_id === LOCAL_DRAFT_ID) {
+                // create a temp randomBits
+                const { publicKey, address } = userLocalStorage.getUserInfo();
+                const { key, randomBits: tempRandomBits } = await createEncryptedMailKey(publicKey, address);
+                selectedDraft.randomBits = tempRandomBits;
+                randomBits = tempRandomBits;
+                selectedDraft.meta_header = { keys: [key] };
+                return;
+            }
+
             randomBits = selectedDraft.randomBits || (await getRandomBits('draft'));
             let _selectedDraft = selectedDraft;
             if (!selectedDraft.hasOwnProperty('part_html')) {
@@ -279,7 +298,14 @@ export default function NewMail() {
         mailChanged = true;
     };
 
+    const prevDraftId = usePrevious<string>(selectedDraft?.message_id);
+    let currentDraftId = '';
     useEffect(() => {
+        currentDraftId = selectedDraft?.message_id;
+
+        // local draft -> real draft, do nothing
+        if (prevDraftId === LOCAL_DRAFT_ID) return;
+
         dateRef.current = selectedDraft.mail_date;
         subjectRef.current.value = selectedDraft.subject;
         setContentsToQuill(selectedDraft.part_html || '');
@@ -303,11 +329,13 @@ export default function NewMail() {
         window.addEventListener('draft-changed', onDraftChange);
 
         return () => {
-            randomBits = '';
-            autoSaveMail = true;
-            mailChanged = false;
-            initHtml = '';
-            window.removeEventListener('draft-changed', onDraftChange);
+            if (currentDraftId !== LOCAL_DRAFT_ID) {
+                randomBits = '';
+                autoSaveMail = true;
+                mailChanged = false;
+                initHtml = '';
+                window.removeEventListener('draft-changed', onDraftChange);
+            }
         };
     }, [selectedDraft.message_id]);
 
@@ -418,7 +446,16 @@ export default function NewMail() {
                     <Icon url={sendMailIcon} />
                     <span className="ml-6">Send</span>
                 </button>
-                <FileUploader randomBits={randomBits} onChange={() => (mailChanged = true)} />
+                <FileUploader
+                    randomBits={randomBits}
+                    onChange={() => (mailChanged = true)}
+                    onCheckDraft={async () => {
+                        mailChanged = true;
+                        if (selectedDraft.message_id === LOCAL_DRAFT_ID) {
+                            await handleSave();
+                        }
+                    }}
+                />
             </div>
         </div>
     );

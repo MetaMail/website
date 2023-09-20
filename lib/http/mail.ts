@@ -1,13 +1,11 @@
 import axios, { AxiosProgressEvent } from 'axios';
 import {
-    IPersonItem,
-    MetaMailTypeEn,
     MailBoxTypeEn,
     MarkTypeEn,
     ReadStatusTypeEn,
     IMailContentItem,
     FilterTypeEn,
-    IMailContentAttachment,
+    IUpdateMailContentParams,
 } from '../constants';
 import { MMHttp } from '../base';
 import { MMCancelableUpload } from './cancelable-upload';
@@ -15,39 +13,13 @@ import { MMCancelableUpload } from './cancelable-upload';
 const APIs = {
     getMailList: '/mails/filter', // 根据筛选条件获取邮件列表
     mailDetail: '/mails', // 获取邮件详情
-    createDraft: '/mails/draft', // 新建草稿
-    updateMail: '/mails', // patch方法，更新邮件内容
+    updateMail: '/mails', // 创建邮件 or 更新邮件内容
     sendMail: '/mails/send', // 发送邮件
     uploadAttachment: '/mails/attachments', //上传附件
     deleteAttachment: '/mails/attachments', // 删除附件
     mailsStat: '/mails/stat', // 获取邮件统计信息
     getSuggestedReceivers: '/mails/suggested_receivers', // 获取推荐收件人
 };
-
-interface ICreateDraftParams {
-    meta_type: MetaMailTypeEn;
-    key?: string;
-    mail_from?: IPersonItem;
-    mail_to?: IPersonItem[];
-}
-
-interface ICreateDraftResponse {
-    message_id: string;
-}
-
-interface IUpdateMailParams {
-    mail_id: string;
-    subject?: string;
-    mail_from?: IPersonItem;
-    mail_to?: IPersonItem[];
-    mail_cc?: IPersonItem[];
-    mail_bcc?: IPersonItem[];
-    in_reply_to?: string;
-    part_text?: string;
-    part_html?: string;
-    meta_type?: MetaMailTypeEn;
-    attachments?: IMailContentAttachment[];
-}
 
 interface IUpdateMailResponse {
     message_id: string;
@@ -159,17 +131,8 @@ class MMMailHttp extends MMHttp {
         return this.post<IChangeMailStatusParams, void>(APIs.mailDetail, { mails, ...options });
     }
 
-    async createDraft(type: MetaMailTypeEn, key: string, mailFrom: IPersonItem, mailTo: IPersonItem[]) {
-        return this.post<ICreateDraftParams, ICreateDraftResponse>(APIs.createDraft, {
-            meta_type: type,
-            key,
-            mail_from: mailFrom,
-            mail_to: mailTo,
-        });
-    }
-
-    async updateMail(params: IUpdateMailParams) {
-        return this.patch<IUpdateMailParams, IUpdateMailResponse>(APIs.updateMail, params);
+    async updateMail(params: IUpdateMailContentParams) {
+        return this.patch<IUpdateMailContentParams, IUpdateMailResponse>(APIs.updateMail, params);
     }
 
     async sendMail(params: ISendMailParams) {

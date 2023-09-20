@@ -16,8 +16,9 @@ const Max_File_Size = 20 * 1024 * 1024; // 20MB
 interface IFileUploader {
     randomBits: string;
     onChange: () => void;
+    onCheckDraft: () => Promise<void>;
 }
-const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
+const FileUploader = ({ randomBits, onChange, onCheckDraft }: IFileUploader) => {
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
     const getFileArrayBuffer = (file: File) => {
@@ -93,7 +94,7 @@ const FileUploader = ({ randomBits, onChange }: IFileUploader) => {
         if (!isFilesSizeValid) {
             return toast.error('Single attachment size should be less than 20MB.');
         }
-
+        await onCheckDraft();
         const uploadResult = await Promise.all(Array.from(fileList).map((file: File) => handleSingleFileUpload(file)));
         e.target.value = null; // ensure same file can be uploaded again
         const attachmentsWithoutAttachmentId = uploadResult.map(result => {

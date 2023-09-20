@@ -2,8 +2,15 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMailDetailStore, useMailListStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import { userHttp, mailHttp } from 'lib/http';
-import { MMHttp } from 'lib/base';
-import { IPersonItem, MetaMailTypeEn } from 'lib/constants';
+import { MMHttp, PostfixOfAddress } from 'lib/base';
+import {
+    IPersonItem,
+    MetaMailTypeEn,
+    MarkTypeEn,
+    MailBoxTypeEn,
+    ReadStatusTypeEn,
+    LOCAL_DRAFT_ID,
+} from 'lib/constants';
 import { userSessionStorage, userLocalStorage, mailLocalStorage } from 'lib/utils';
 import { createEncryptedMailKey, getPrivateKey, decryptMailKey } from 'lib/encrypt';
 import MailBoxContext from 'context/mail';
@@ -17,7 +24,7 @@ export default function MailBoxPage() {
     const router = useRouter();
     const { selectedMail } = useMailDetailStore();
     const { setUnreadCount, setSpamCount } = useMailListStore();
-    const { selectedDraft } = useNewMailStore();
+    const { selectedDraft, setSelectedDraft } = useNewMailStore();
     const { removeAllState } = useUtilsStore();
     const [showLoading, setShowLoading] = useState(false);
 
@@ -47,15 +54,26 @@ export default function MailBoxPage() {
         };
     };
 
-    const createDraft = async (mailFrom: IPersonItem, mailTo: IPersonItem[]) => {
-        const { publicKey, address } = userLocalStorage.getUserInfo();
-        const { key, randomBits } = await createEncryptedMailKey(publicKey, address);
-        const { message_id } = await mailHttp.createDraft(MetaMailTypeEn.Encrypted, key, mailFrom, mailTo);
-        return {
-            message_id,
-            randomBits,
-            key,
+    const createDraft = async (mailTo: IPersonItem[]) => {
+        const { address, ensName } = userLocalStorage.getUserInfo();
+        const mailFrom = {
+            address: (ensName || address) + PostfixOfAddress,
+            name: ensName || address,
         };
+        setSelectedDraft({
+            mail_from: mailFrom,
+            mail_to: mailTo,
+            mark: MarkTypeEn.Normal,
+            part_html: '',
+            part_text: '',
+            attachments: [],
+            subject: '',
+            meta_type: MetaMailTypeEn.Encrypted,
+            mailbox: MailBoxTypeEn.Draft,
+            read: ReadStatusTypeEn.Read,
+            digest: '',
+            message_id: LOCAL_DRAFT_ID,
+        });
     };
 
     const getMailStat = async () => {
