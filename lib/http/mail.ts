@@ -1,5 +1,12 @@
 import axios, { AxiosProgressEvent } from 'axios';
-import { MailBoxTypeEn, MarkTypeEn, ReadStatusTypeEn, IMailContentItem, FilterTypeEn } from '../constants';
+import {
+    MailBoxTypeEn,
+    MarkTypeEn,
+    ReadStatusTypeEn,
+    IMailContentItem,
+    FilterTypeEn,
+    IUpdateMailContentParams,
+} from '../constants';
 import { MMHttp } from '../base';
 import { MMCancelableUpload } from './cancelable-upload';
 
@@ -124,8 +131,8 @@ class MMMailHttp extends MMHttp {
         return this.post<IChangeMailStatusParams, void>(APIs.mailDetail, { mails, ...options });
     }
 
-    async updateMail(params: IMailContentItem) {
-        return this.patch<IMailContentItem, IUpdateMailResponse>(APIs.updateMail, params);
+    async updateMail(params: IUpdateMailContentParams) {
+        return this.patch<IUpdateMailContentParams, IUpdateMailResponse>(APIs.updateMail, params);
     }
 
     async sendMail(params: ISendMailParams) {

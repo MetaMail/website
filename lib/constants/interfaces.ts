@@ -69,11 +69,11 @@ export interface IMailContentAttachment {
     };
 }
 
-export interface IMailContentItem {
+interface IMailDetailBaseItem {
     read?: ReadStatusTypeEn;
     mailbox?: MailBoxTypeEn;
     mark?: MarkTypeEn;
-    message_id?: string;
+
     meta_type?: MetaMailTypeEn;
     subject?: string;
     mail_from?: IPersonItem;
@@ -98,6 +98,14 @@ export interface IMailContentItem {
         keys?: string[];
         signature?: string;
     };
+}
+
+export interface IMailContentItem extends IMailDetailBaseItem {
+    message_id?: string;
+}
+
+export interface IUpdateMailContentParams extends IMailDetailBaseItem {
+    mail_id?: string;
 }
 
 export type MailListItemType = IMailContentItem & {
