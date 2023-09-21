@@ -5,13 +5,13 @@ import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
 
 import MailBoxContext from 'context/mail';
-import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
-import { useNewMailStore } from 'lib/zustand-store';
-import { userLocalStorage, mailLocalStorage, percentTransform } from 'lib/utils';
+import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn } from 'lib/constants';
+import { useNewMailStore, useMailListStore } from 'lib/zustand-store';
+import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
-import { useInterval, usePrevious } from 'hooks';
+import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
 import DynamicReactQuill from './components/DynamicReactQuill';
 import FileUploader from './components/FileUploader';
@@ -44,6 +44,7 @@ let initHtml = '';
 export default function NewMail() {
     const { checkEncryptable, setShowLoading, getRandomBits } = useContext(MailBoxContext);
     const { selectedDraft, setSelectedDraft } = useNewMailStore();
+    const { filterType } = useMailListStore();
 
     const [isExtend, setIsExtend] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -218,6 +219,7 @@ export default function NewMail() {
         mailLocalStorage.setQuillHtml(html);
         mailLocalStorage.setQuillText(text);
         dateRef.current = mail_date;
+        filterType === FilterTypeEn.Draft && dispatchEvent('refresh-list', { showLoading: false });
         return { html, text };
     };
 
@@ -304,7 +306,7 @@ export default function NewMail() {
 
         handleLoad();
 
-        const onDraftChange: (e: Event) => Promise<void> = async event => {
+        const onAnotherDraftSelected: (e: Event) => Promise<void> = async event => {
             setShowLoading(true);
             const e = event as CustomEvent;
             try {
@@ -318,14 +320,14 @@ export default function NewMail() {
             }
         };
 
-        window.addEventListener('draft-changed', onDraftChange);
+        window.addEventListener('another-draft-selected', onAnotherDraftSelected);
 
         return () => {
             randomBits = '';
             autoSaveMail = true;
             mailChanged = false;
             initHtml = '';
-            window.removeEventListener('draft-changed', onDraftChange);
+            window.removeEventListener('another-draft-selected', onAnotherDraftSelected);
         };
     }, [selectedDraft.local_id]);
 
@@ -400,14 +402,16 @@ export default function NewMail() {
             </div>
             {loading && <LoadingRing />}
 
-            <DynamicReactQuill
-                forwardedRef={reactQuillRef}
-                className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
-                theme="snow"
-                placeholder={''}
-                modules={EditorModules}
-                formats={EditorFormats}
-            />
+            <div className="flex-1 flex flex-col-reverse overflow-hidden mt-20">
+                <DynamicReactQuill
+                    forwardedRef={reactQuillRef}
+                    theme="snow"
+                    placeholder={''}
+                    modules={EditorModules}
+                    formats={EditorFormats}
+                />
+            </div>
+
             {selectedDraft.attachments?.map((attr, index) => (
                 <li key={index} className="flex">
                     <div
