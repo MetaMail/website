@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
 
 import MailBoxContext from 'context/mail';
-import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, LOCAL_DRAFT_ID } from 'lib/constants';
+import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules } from 'lib/constants';
 import { useNewMailStore } from 'lib/zustand-store';
 import { userLocalStorage, mailLocalStorage, percentTransform } from 'lib/utils';
 import { mailHttp } from 'lib/http';
@@ -208,7 +208,7 @@ export default function NewMail() {
             mailbox: selectedDraft.mailbox,
             read: selectedDraft.read,
         };
-        const fromLocalDraft = selectedDraft.message_id === LOCAL_DRAFT_ID;
+        const fromLocalDraft = !selectedDraft.message_id;
         !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
         fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
         const { mail_date, message_id } = await mailHttp.updateMail(json);
@@ -233,17 +233,16 @@ export default function NewMail() {
         try {
             setLoading(true);
 
-            if (selectedDraft.message_id === LOCAL_DRAFT_ID) {
+            if (!selectedDraft.message_id) {
                 // create a temp randomBits
                 const { publicKey, address } = userLocalStorage.getUserInfo();
                 const { key, randomBits: tempRandomBits } = await createEncryptedMailKey(publicKey, address);
-                selectedDraft.randomBits = tempRandomBits;
                 randomBits = tempRandomBits;
                 selectedDraft.meta_header = { keys: [key] };
                 return;
             }
 
-            randomBits = selectedDraft.randomBits || (await getRandomBits('draft'));
+            randomBits = await getRandomBits('draft');
             let _selectedDraft = selectedDraft;
             if (!selectedDraft.hasOwnProperty('part_html')) {
                 const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
@@ -298,14 +297,7 @@ export default function NewMail() {
         mailChanged = true;
     };
 
-    const prevDraftId = usePrevious<string>(selectedDraft?.message_id);
-    let currentDraftId = '';
     useEffect(() => {
-        currentDraftId = selectedDraft?.message_id;
-
-        // local draft -> real draft, do nothing
-        if (prevDraftId === LOCAL_DRAFT_ID) return;
-
         dateRef.current = selectedDraft.mail_date;
         subjectRef.current.value = selectedDraft.subject;
         setContentsToQuill(selectedDraft.part_html || '');
@@ -329,15 +321,13 @@ export default function NewMail() {
         window.addEventListener('draft-changed', onDraftChange);
 
         return () => {
-            if (currentDraftId !== LOCAL_DRAFT_ID) {
-                randomBits = '';
-                autoSaveMail = true;
-                mailChanged = false;
-                initHtml = '';
-                window.removeEventListener('draft-changed', onDraftChange);
-            }
+            randomBits = '';
+            autoSaveMail = true;
+            mailChanged = false;
+            initHtml = '';
+            window.removeEventListener('draft-changed', onDraftChange);
         };
-    }, [selectedDraft.message_id]);
+    }, [selectedDraft.local_id]);
 
     useInterval(() => {
         if (!autoSaveMail) return;
@@ -409,35 +399,33 @@ export default function NewMail() {
                 </div>
             </div>
             {loading && <LoadingRing />}
-            {
-                <>
-                    <DynamicReactQuill
-                        forwardedRef={reactQuillRef}
-                        className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
-                        theme="snow"
-                        placeholder={''}
-                        modules={EditorModules}
-                        formats={EditorFormats}
-                    />
-                    {selectedDraft.attachments?.map((attr, index) => (
-                        <li key={index} className="flex">
-                            <div
-                                className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
-                                title={attr.filename}>
-                                <span className="">
-                                    {attr.filename}
-                                    {attr.uploadProcess && !attr.attachment_id
-                                        ? percentTransform(attr.uploadProcess) + '%'
-                                        : ''}
-                                </span>
-                            </div>
-                            <button onClick={() => removeAttachment(index)}>
-                                <Icon url={cancel} title="cancel" className="w-20 h-20" />
-                            </button>
-                        </li>
-                    ))}
-                </>
-            }
+
+            <DynamicReactQuill
+                forwardedRef={reactQuillRef}
+                className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
+                theme="snow"
+                placeholder={''}
+                modules={EditorModules}
+                formats={EditorFormats}
+            />
+            {selectedDraft.attachments?.map((attr, index) => (
+                <li key={index} className="flex">
+                    <div
+                        className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
+                        title={attr.filename}>
+                        <span className="">
+                            {attr.filename}
+                            {attr.uploadProcess && !attr.attachment_id
+                                ? percentTransform(attr.uploadProcess) + '%'
+                                : ''}
+                        </span>
+                    </div>
+                    <button onClick={() => removeAttachment(index)}>
+                        <Icon url={cancel} title="cancel" className="w-20 h-20" />
+                    </button>
+                </li>
+            ))}
+
             <div className="flex items-center gap-13 mt-20">
                 <button
                     disabled={selectedDraft.mail_to.length === 0}
@@ -451,7 +439,7 @@ export default function NewMail() {
                     onChange={() => (mailChanged = true)}
                     onCheckDraft={async () => {
                         mailChanged = true;
-                        if (selectedDraft.message_id === LOCAL_DRAFT_ID) {
+                        if (!selectedDraft.message_id) {
                             await handleSave();
                         }
                     }}

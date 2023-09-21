@@ -3,14 +3,7 @@ import { useRouter } from 'next/router';
 import { useMailDetailStore, useMailListStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import { userHttp, mailHttp } from 'lib/http';
 import { MMHttp, PostfixOfAddress } from 'lib/base';
-import {
-    IPersonItem,
-    MetaMailTypeEn,
-    MarkTypeEn,
-    MailBoxTypeEn,
-    ReadStatusTypeEn,
-    LOCAL_DRAFT_ID,
-} from 'lib/constants';
+import { IPersonItem, MetaMailTypeEn, MarkTypeEn, MailBoxTypeEn, ReadStatusTypeEn } from 'lib/constants';
 import { userSessionStorage, userLocalStorage, mailLocalStorage } from 'lib/utils';
 import { createEncryptedMailKey, getPrivateKey, decryptMailKey } from 'lib/encrypt';
 import MailBoxContext from 'context/mail';
@@ -72,7 +65,7 @@ export default function MailBoxPage() {
             mailbox: MailBoxTypeEn.Draft,
             read: ReadStatusTypeEn.Read,
             digest: '',
-            message_id: LOCAL_DRAFT_ID,
+            local_id: new Date().toString(),
         });
     };
 

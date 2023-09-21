@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userLocalStorage } from 'lib/utils';
 import { usePrevious } from 'hooks';
-import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType, LOCAL_DRAFT_ID } from 'lib/constants';
+import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import MailBoxContext from 'context/mail';
 import MailListItem from './components/MailListItem';
@@ -118,6 +118,7 @@ export default function MailList() {
             const mailsList = mails as MailListItemType[];
             mailsList.forEach(item => {
                 item.selected = false;
+                item.local_id = item.message_id;
             });
             setList(mailsList ?? []);
             setPageNum(page_num);
@@ -197,14 +198,14 @@ export default function MailList() {
         setFilter(null);
     }, [filterType]);
 
-    const prevDraftId = usePrevious<string>(selectedDraft?.message_id);
+    const prevLocalDraftId = usePrevious<string>(selectedDraft?.local_id);
 
     useEffect(() => {
-        if (prevDraftId && prevDraftId !== LOCAL_DRAFT_ID && !selectedDraft?.message_id) {
+        if (prevLocalDraftId && !selectedDraft?.message_id) {
             // 代表从草稿组件出来，此时需要刷新列表
             fetchMailList(false);
         }
-    }, [selectedDraft?.message_id]);
+    }, [selectedDraft?.local_id]);
 
     return (
         <div

@@ -1,3 +1,4 @@
+import type { MMCancelableUpload } from 'lib/http';
 export enum AccountStatusTypeEn {
     Normal = 0,
     Locked,
@@ -108,9 +109,16 @@ export interface IUpdateMailContentParams extends IMailDetailBaseItem {
     mail_id?: string;
 }
 
-export type MailListItemType = IMailContentItem & {
-    selected: boolean;
-};
+export interface IAttachment extends IMailContentAttachment {
+    uploadProcess?: number;
+    cancelableUpload?: MMCancelableUpload;
+}
+
+export interface MailListItemType extends IMailContentItem {
+    attachments?: IAttachment[];
+    selected?: boolean;
+    local_id?: string;
+}
 
 export enum AttachmentRelatedTypeEn {
     Embedded = '1',
