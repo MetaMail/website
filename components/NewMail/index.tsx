@@ -5,13 +5,13 @@ import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
 
 import MailBoxContext from 'context/mail';
-import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, LOCAL_DRAFT_ID } from 'lib/constants';
-import { useNewMailStore } from 'lib/zustand-store';
-import { userLocalStorage, mailLocalStorage, percentTransform } from 'lib/utils';
+import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn } from 'lib/constants';
+import { useNewMailStore, useMailListStore } from 'lib/zustand-store';
+import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
-import { useInterval, usePrevious } from 'hooks';
+import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
 import DynamicReactQuill from './components/DynamicReactQuill';
 import FileUploader from './components/FileUploader';
@@ -44,6 +44,7 @@ let initHtml = '';
 export default function NewMail() {
   const { checkEncryptable, setShowLoading, getRandomBits } = useContext(MailBoxContext);
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
+  const { filterType } = useMailListStore();
 
   const [isExtend, setIsExtend] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -208,7 +209,7 @@ export default function NewMail() {
       mailbox: selectedDraft.mailbox,
       read: selectedDraft.read,
     };
-    const fromLocalDraft = selectedDraft.message_id === LOCAL_DRAFT_ID;
+    const fromLocalDraft = !selectedDraft.message_id;
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
     fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
     const { mail_date, message_id } = await mailHttp.updateMail(json);
@@ -218,6 +219,7 @@ export default function NewMail() {
     mailLocalStorage.setQuillHtml(html);
     mailLocalStorage.setQuillText(text);
     dateRef.current = mail_date;
+    filterType === FilterTypeEn.Draft && dispatchEvent('refresh-list', { showLoading: false });
     return { html, text };
   };
 
@@ -233,17 +235,16 @@ export default function NewMail() {
     try {
       setLoading(true);
 
-      if (selectedDraft.message_id === LOCAL_DRAFT_ID) {
+      if (!selectedDraft.message_id) {
         // create a temp randomBits
         const { publicKey, address } = userLocalStorage.getUserInfo();
         const { key, randomBits: tempRandomBits } = await createEncryptedMailKey(publicKey, address);
-        selectedDraft.randomBits = tempRandomBits;
         randomBits = tempRandomBits;
         selectedDraft.meta_header = { keys: [key] };
         return;
       }
 
-      randomBits = selectedDraft.randomBits || (await getRandomBits('draft'));
+      randomBits = await getRandomBits('draft');
       let _selectedDraft = selectedDraft;
       if (!selectedDraft.hasOwnProperty('part_html')) {
         const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
@@ -298,21 +299,14 @@ export default function NewMail() {
     mailChanged = true;
   };
 
-  const prevDraftId = usePrevious<string>(selectedDraft?.message_id);
-  let currentDraftId = '';
   useEffect(() => {
-    currentDraftId = selectedDraft?.message_id;
-
-    // local draft -> real draft, do nothing
-    if (prevDraftId === LOCAL_DRAFT_ID) return;
-
     dateRef.current = selectedDraft.mail_date;
     subjectRef.current.value = selectedDraft.subject;
     setContentsToQuill(selectedDraft.part_html || '');
 
     handleLoad();
 
-    const onDraftChange: (e: Event) => Promise<void> = async event => {
+    const onAnotherDraftSelected: (e: Event) => Promise<void> = async event => {
       setShowLoading(true);
       const e = event as CustomEvent;
       try {
@@ -326,18 +320,16 @@ export default function NewMail() {
       }
     };
 
-    window.addEventListener('draft-changed', onDraftChange);
+    window.addEventListener('another-draft-selected', onAnotherDraftSelected);
 
     return () => {
-      if (currentDraftId !== LOCAL_DRAFT_ID) {
-        randomBits = '';
-        autoSaveMail = true;
-        mailChanged = false;
-        initHtml = '';
-        window.removeEventListener('draft-changed', onDraftChange);
-      }
+      randomBits = '';
+      autoSaveMail = true;
+      mailChanged = false;
+      initHtml = '';
+      window.removeEventListener('another-draft-selected', onAnotherDraftSelected);
     };
-  }, [selectedDraft.message_id]);
+  }, [selectedDraft.local_id]);
 
   useInterval(() => {
     if (!autoSaveMail) return;
@@ -451,12 +443,12 @@ export default function NewMail() {
           onChange={() => (mailChanged = true)}
           onCheckDraft={async () => {
             mailChanged = true;
-            if (selectedDraft.message_id === LOCAL_DRAFT_ID) {
+            if (!selectedDraft.message_id) {
               await handleSave();
             }
           }}
         />
       </div>
-    </div >
+    </div>
   );
 }

@@ -17,8 +17,8 @@ export default function Titlebar() {
   const [address, setAddress] = useState<string>();
   const [ensName, setEnsName] = useState<string>();
   const [emailSize, setEmailSize] = useState<number>();
-  const [dropdownShow, setDropdownShow] = useState<boolean>(false)
   const [emailSizeLimit, setEmailSizeLimit] = useState<number>();
+  const [dropdownShow, setDropdownShow] = useState<boolean>(false)
 
   const handleCopy = (txt: string) => {
     navigator.clipboard.writeText(txt);

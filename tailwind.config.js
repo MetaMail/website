@@ -32,7 +32,7 @@ module.exports = {
                     "neutral-content":"#3C6FF4",
                     "base-100":"#ffffff",
                     "base-200":"#EDF3FF",
-                    "base-300":"#B1CCFF",
+                    "base-300":"#CADCFF",
                     "base-content":"#333333",
                     "primary-content":"#ffffff"
                 },

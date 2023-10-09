@@ -1,28 +1,18 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { toast } from 'react-toastify';
-import { empty } from 'assets/icons';
-import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import Image from 'next/image';
+import { useMailListStore, useMailDetailStore } from 'lib/zustand-store';
 import { userLocalStorage } from 'lib/utils';
-import { usePrevious } from 'hooks';
-import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType, LOCAL_DRAFT_ID } from 'lib/constants';
+import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import MailBoxContext from 'context/mail';
 import MailListItem from './components/MailListItem';
 import LoadingRing from 'components/LoadingRing';
 import Icon from 'components/Icon';
-import Image from 'next/image';
+import { empty } from 'assets/icons';
 import {
   checkboxSvg,
-  checkboxedSvg,
-  trash,
-  read,
-  starred,
-  markUnread,
-  temp1,
-  spam,
-  filter as filterIcon,
-  update,
-  cancelSelected,
+  checkboxedSvg, trash, read, starred, markUnread, spam, filter as filterIcon, update
 } from 'assets/icons';
 
 const MailListFilters = ['All', 'Read', 'Unread', 'Encrypted', 'UnEncrypted'] as const;
@@ -32,7 +22,6 @@ export default function MailList() {
   const { getMailStat } = useContext(MailBoxContext);
   const { filterType, pageIndex, list, setList, addPageIndex, subPageIndex } = useMailListStore();
   const { selectedMail, isDetailExtend } = useMailDetailStore();
-  const { selectedDraft } = useNewMailStore();
 
   const [loading, setLoading] = useState(false);
 
@@ -119,6 +108,7 @@ export default function MailList() {
       const mailsList = mails as MailListItemType[];
       mailsList.forEach(item => {
         item.selected = false;
+        item.local_id = item.message_id;
       });
       setList(mailsList ?? []);
       setPageNum(page_num);
@@ -145,10 +135,10 @@ export default function MailList() {
   };
 
   useEffect(() => {
-    // const selectedListNum = getSelectedList().length;
-    // const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
-    // inputCheckBoxRef.current.indeterminate = isIndeterminate;
-    // setSelectedAll(list.length && list.every(item => item.selected));
+    const selectedListNum = getSelectedList().length;
+    const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
+    inputCheckBoxRef.current.indeterminate = isIndeterminate;
+    setSelectedAll(list.length && list.every(item => item.selected));
   }, [list]);
 
   useEffect(() => {
@@ -196,16 +186,16 @@ export default function MailList() {
 
   useEffect(() => {
     setFilter(null);
+    const onRefresh: (e: Event) => Promise<void> = async event => {
+      const e = event as CustomEvent;
+      await fetchMailList(e.detail.showLoading);
+    };
+
+    window.addEventListener('refresh-list', onRefresh);
+    return () => {
+      window.removeEventListener('refresh-list', onRefresh);
+    };
   }, [filterType]);
-
-  const prevDraftId = usePrevious<string>(selectedDraft?.message_id);
-
-  useEffect(() => {
-    if (prevDraftId && prevDraftId !== LOCAL_DRAFT_ID && !selectedDraft?.message_id) {
-      // 代表从草稿组件出来，此时需要刷新列表
-      fetchMailList(false);
-    }
-  }, [selectedDraft?.message_id]);
 
   return (
     <div

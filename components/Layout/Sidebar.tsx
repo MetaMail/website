@@ -9,6 +9,8 @@ import MailBoxContext from 'context/mail';
 import { useMailListStore } from 'lib/zustand-store';
 import { FilterTypeEn, MenusMap, IMenuItem } from 'lib/constants';
 
+import { MetaMailSvg, WriteMailSvg } from 'components/svg';
+
 import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
 import write from 'assets/mailbox/write.svg';

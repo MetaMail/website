@@ -3,6 +3,28 @@
 @tailwind components;
 @tailwind utilities;
 
+ [data-theme='light'] {
+    --primary: #3c6ff4;
+    --menu-active-bg-color: #9ebfff;
+    --menu-active-color: var(--primary);
+    --menu-hover-bg-color: #d6e4ff;
+    --icon-color: #8c8c8c;
+    --icon-active-color: var(--primary);
+    --meta-mail-color: black;
+    --btn-font-color: #fff;
+    --chkbg: #ccc;
+}
+/* [data-theme='dark'] {
+    --primary: #3c6ff4;
+    --menu-active-bg-color: rgba(231, 231, 231, 0.1);
+    --menu-active-color: #fff;
+    --menu-hover-bg-color: rgba(231, 231, 231, 0.06);
+    --icon-color: #e9e9e9;
+    --icon-active-color: #e9e9e9;
+    --meta-mail-color: white;
+    --btn-font-color: #fff;
+}  */
+
 body {
     width: 100%;
     margin: auto;
@@ -99,7 +121,82 @@ select:focus-visible {
     outline: none;
 }
 
+.btn {
+    height: 40px;
+    min-height: 40px;
+    line-height: 38px;
+    color: var(--btn-font-color);
+}
+
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.checkbox:checked,
+.checkbox[checked='true'],
+.checkbox[aria-checked='true'] {
+    /* background-image: linear-gradient(-45deg, transparent 65%, hsl(var(--check-box-bg)) 65.99%),
+        linear-gradient(45deg, transparent 75%, hsl(var(--check-box-bg)) 75.99%),
+        linear-gradient(-45deg, hsl(var(--check-box-bg)) 40%, transparent 40.99%),
+        linear-gradient(
+            45deg,
+            hsl(var(--check-box-bg)) 30%,
+            hsl(var(--check-box-bg)) 30.99%,
+            hsl(var(--check-box-bg)) 40%,
+            transparent 40.99%
+        ),
+        linear-gradient(-45deg, hsl(var(--check-box-bg)) 50%, hsl(var(--check-box-bg)) 50.99%); */
+}
+
+.menu li > *:not(ul):not(.menu-title):not(details).active,
+.menu li > *:not(ul):not(.menu-title):not(details):active {
+    background-color: var(--menu-active-bg-color);
+    cursor: pointer;
+    color: var(--menu-active-color);
+    font-weight: bolder;
+}
+
+.menu li > *:not(ul):not(.menu-title):not(details).active .mail-svg,
+.menu li > *:not(ul):not(.menu-title):not(details):active .mail-svg {
+    stroke: var(--icon-active-color);
+}
+
+.menu li > details > summary:active {
+    background-color: var(--menu-active-bg-color);
+    cursor: pointer;
+    color: var(--menu-active-color);
+    font-weight: bolder;
+}
+
+.menu li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title):not(.active):hover {
+    background-color: var(--menu-hover-bg-color);
+}
+
+.menu li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title):not(.active):hover {
+    background-color: var(--menu-hover-bg-color);
+}
+
+.mail-svg {
+    stroke: var(--icon-color);
+}
+
+.meta-mail-txt path {
+    fill: var(--meta-mail-color);
+}
+
+.badge-inbox {
+    background-color: var(--primary);
+    border-radius: 2px;
+    padding: 0 8px;
+    color: #fff;
+    font-size: 12px;
+    transform: scale(0.75);
+    font-weight: 400;
+}
+
+.badge-spam {
+    font-size: 12px;
+    transform: scale(0.9);
+    font-weight: 400;
 }

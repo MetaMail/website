@@ -13,7 +13,7 @@ import {
   MailListItemType,
 } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { transformTime, getShowAddress } from 'lib/utils';
+import { transformTime, getShowAddress, dispatchEvent } from 'lib/utils';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import MailBoxContext from 'context/mail';
 import Icon from 'components/Icon';
@@ -79,6 +79,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
     setList([...newList]);
   };
 
+
   const handleClick = throttle(async () => {
     if (mail.message_id === selectedMail?.message_id || mail.message_id === selectedDraft?.message_id) return;
     if (mail.read == ReadStatusTypeEn.Unread) {
@@ -89,20 +90,16 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       if (!selectedDraft) {
         setSelectedDraft(mail);
       } else {
-        const draftChangedEvent = new CustomEvent('draft-changed', {
-          detail: {
-            done: (result: boolean) => {
-              result && setSelectedDraft(mail);
-            },
+        dispatchEvent('another-draft-selected', {
+          done: (result: boolean) => {
+            result && setSelectedDraft(mail);
           },
         });
-        window.dispatchEvent(draftChangedEvent);
       }
     } else {
       setSelectedMail(mail);
     }
   }, 1000);
-
   const renderDigest = (mail: MailListItemType) => {
     if (!mail.digest) {
       return '( no abstract )';
@@ -150,7 +147,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             </span>
           </div>
           <div className="flex-1 w-0 ml-14 omit">
-            <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
+            <Dot size={8} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             <span className={`ml-8 ${getIsReadTextClass(mail)}`}>{mail.subject || '( no subject )'}</span>
             <span className="pt-4 pl-2 pr-7">{'-'}</span>
             <span className="pt-4 min-w-0 flex-1">{renderDigest(mail)}</span>
@@ -198,7 +195,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             <p className="flex justify-between items-center">
               {/* 邮件地址 */}
               <span
-                className={` flex-1  w-0 text-lg omit mr-4 text-[12px] font-bold leading-1 ${getIsReadTextClass(mail)}`}
+                className={` flex-1  w-0 text-lg omit mr-4 text-[12px] font-semibold leading-1 ${getIsReadTextClass(mail)}`}
                 title={getMailFrom(mail)}>
                 {getMailFrom(mail)}
               </span>
