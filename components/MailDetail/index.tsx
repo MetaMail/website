@@ -288,28 +288,22 @@ export default function MailDetail() {
                 </div>
             </header>
             {loading && <LoadingRing />}
-            {
-                <>
-                    <h2 className="flex-1 overflow-auto">
-                        {selectedMail?.part_html
-                            ? parse(DOMPurify.sanitize(selectedMail?.part_html))
-                            : selectedMail?.part_text}
-                    </h2>
-                    {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
-                        <div className="flex">
-                            {selectedMail?.attachments?.map((item, idx) => (
-                                <AttachmentItem
-                                    idx={idx}
-                                    key={idx}
-                                    url={item?.download?.url}
-                                    name={item?.filename}
-                                    randomBits={randomBits}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </>
-            }
+            <h2 className="flex-1 overflow-auto">
+                {selectedMail?.part_html ? parse(DOMPurify.sanitize(selectedMail?.part_html)) : selectedMail?.part_text}
+            </h2>
+            {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
+                <div className="flex">
+                    {selectedMail?.attachments?.map((item, idx) => (
+                        <AttachmentItem
+                            idx={idx}
+                            key={idx}
+                            url={item?.download?.url}
+                            name={item?.filename}
+                            randomBits={randomBits}
+                        />
+                    ))}
+                </div>
+            )}
 
             <button
                 className="flex justify-center items-center bg-primary text-white px-14 py-8 rounded-[8px] self-start"

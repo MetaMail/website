@@ -41,16 +41,16 @@ export default function Titlebar() {
             });
     }, []);
     return (
-        <div className="navbar p-0">
+        <div className="navbar p-0 h-48 min-h-[48px]">
             <div className="flex-1">
-                <input type="text" placeholder="Search" className="input w-380 h-42" />
+                <input type="text" placeholder="Search" className="input w-380 h-30" />
             </div>
             <div className="flex-none gap-2">
                 <div className="form-control"></div>
                 <div className="dropdown dropdown-end">
                     <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                        <div className="w-40 h-40 rounded-full">
-                            <JazziconGrid size={40} addr={address} />
+                        <div className="w-32 h-32 rounded-full">
+                            <JazziconGrid size={32} addr={address} />
                         </div>
                     </label>
                     <div

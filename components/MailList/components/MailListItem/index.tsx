@@ -13,7 +13,7 @@ import {
     MailListItemType,
 } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { transformTime, getShowAddress } from 'lib/utils';
+import { transformTime, getShowAddress, dispatchEvent } from 'lib/utils';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import MailBoxContext from 'context/mail';
 import Icon from 'components/Icon';
@@ -87,14 +87,11 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             if (!selectedDraft) {
                 setSelectedDraft(mail);
             } else {
-                const draftChangedEvent = new CustomEvent('draft-changed', {
-                    detail: {
-                        done: (result: boolean) => {
-                            result && setSelectedDraft(mail);
-                        },
+                dispatchEvent('another-draft-selected', {
+                    done: (result: boolean) => {
+                        result && setSelectedDraft(mail);
                     },
                 });
-                window.dispatchEvent(draftChangedEvent);
             }
         } else {
             setSelectedMail(mail);
