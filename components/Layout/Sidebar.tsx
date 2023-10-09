@@ -71,7 +71,7 @@ export default function Sidebar() {
                     <WriteMailSvg />
                     <span>New Message</span>
                 </button>
-                <ul className="menu w-175 mx-auto">
+                <ul className="menu w-175 mx-auto px-0">
                     {renderLi(MenusMap.filter(menu => menu.belong === 'basic'))}
                     <li>
                         <details open>

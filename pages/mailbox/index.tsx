@@ -56,6 +56,7 @@ export default function MailBoxPage() {
         setSelectedDraft({
             mail_from: mailFrom,
             mail_to: mailTo,
+            mail_cc: [],
             mark: MarkTypeEn.Normal,
             part_html: '',
             part_text: '',

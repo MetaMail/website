@@ -402,15 +402,14 @@ export default function NewMail() {
             </div>
             {loading && <LoadingRing />}
 
-            <div className="flex-1 flex flex-col-reverse overflow-hidden mt-20">
-                <DynamicReactQuill
-                    forwardedRef={reactQuillRef}
-                    theme="snow"
-                    placeholder={''}
-                    modules={EditorModules}
-                    formats={EditorFormats}
-                />
-            </div>
+            <DynamicReactQuill
+                forwardedRef={reactQuillRef}
+                theme="snow"
+                placeholder={''}
+                modules={EditorModules}
+                formats={EditorFormats}
+                className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
+            />
 
             {selectedDraft.attachments?.map((attr, index) => (
                 <li key={index} className="flex">

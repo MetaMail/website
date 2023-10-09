@@ -196,10 +196,10 @@ export default function MailList() {
 
     return (
         <div
-            className={`flex flex-col h-full transition-all ${
+            className={`flex flex-col h-full transition-all pf-4 ${
                 !selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-300'
             }`}>
-            <div className="flex flex-row w-full justify-between px-20 pb-7 pt-20">
+            <div className="flex flex-row w-full justify-between px-20 pb-7 pt-10">
                 <div className="flex flex-row space-x-14 items-center">
                     <input
                         type="checkbox"

@@ -37,7 +37,7 @@ module.exports = {
                     primary: '#3C6FF4',
                     'base-100': '#1F1F1F',
                     'base-200': '#262626',
-                    'base-300': '#000',
+                    'base-300': '#333',
                 },
             },
         ],
