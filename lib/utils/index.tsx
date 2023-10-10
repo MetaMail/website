@@ -60,10 +60,5 @@ export function percentTransform(percent: number) {
     return Number(percent.toPrecision(2)) * 100;
 }
 
-export function dispatchEvent(eventName: string, detail?: any) {
-    const event = new CustomEvent(eventName, { detail });
-    window.dispatchEvent(event);
-}
-
 export * from './session-storage';
 export * from './local-storage';
