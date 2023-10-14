@@ -3,27 +3,37 @@ import type { AppProps } from 'next/app';
 import { ReactNode, ReactElement, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { themeChange } from 'theme-change';
-
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-    getLayout?: (page: ReactElement) => ReactNode;
+  getLayout?: (page: ReactElement) => ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & { Component: NextPageWithLayout };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
-    useEffect(() => {
-        themeChange(false);
-    }, []);
+  useEffect(() => {
+    themeChange(false);
+    const theme = document.documentElement.getAttribute('data-theme') || '';
+    document.body.className = theme;
+  }, []);
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const theme = document.documentElement.getAttribute('data-theme') || '';
+      document.body.className = theme;
+    });
+    observer.observe(document.documentElement, { attributes: true });
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+  const getLayout = Component.getLayout ?? (page => page);
 
-    const getLayout = Component.getLayout ?? (page => page);
-
-    return getLayout(
-        <>
-            <Component {...pageProps} />
-            <ToastContainer autoClose={1000} hideProgressBar={true} />
-        </>
-    );
+  return getLayout(
+    <>
+      <Component {...pageProps} />
+      <ToastContainer autoClose={1000} hideProgressBar={true} />
+    </>
+  );
 }

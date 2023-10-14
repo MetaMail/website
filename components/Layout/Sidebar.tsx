@@ -51,8 +51,9 @@ export default function Sidebar() {
             key={item.key}
             onClick={() => {
               handleChangeFilter(item.key);
-            }}>
-            <a className={`hover:bg-base-300  ${filterType === Number(item.key) ? 'active ' : ''}`}>
+            }}
+            className='mb-2 '>
+            <a className={`hover:bg-base-300 rounded-4 py-4   ${filterType === Number(item.key) ? 'active rounded-4 ' : ''}  dark:!bg-E7E7E7 dark:hover:!!bg-opacity-6 dark:!bg-opacity-10 `}>
               <Image src={filterType === Number(item.key) ? item.activeLogo : item?.logo} alt={item?.title} height="12.5" className="self-center stroke-width-100 fill-primary filter-primary" />
               <span>{item.title}</span>
               {renderBadge(item.key)}
@@ -62,9 +63,9 @@ export default function Sidebar() {
       } else {
         // dropdown
         return (
-          <li key={item.key}>
+          <li key={item.key} >
             {/* <details open> */}
-            <div className={`menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active' : ''}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
+            <div className={`hover:bg-base-300 rounded-4 py-4 menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : ''}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
               <Image src={item?.logo} alt={item?.title} height="12.5" className={`self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
               <span>{item.title}</span>
               {item.childrenShow}
@@ -94,12 +95,12 @@ export default function Sidebar() {
           {/* <Image src={logoBrand} alt="logo-brand" className="w-116" /> */}
           <span className="text-2xl font-bold">MetaMail</span>
         </button>
-        <button className="btn btn-primary text-white mt-5" onClick={handleClickNewMail}>
+        <button className="btn btn-xs btn-primary text-white mt-10 h-40" onClick={handleClickNewMail}>
           <Image src={write} alt="new_mail" className="w-16 h-auto" />
-          <span>New Mail</span>
+          <span className='fz-500'>New Message</span>
         </button>
         <div>
-          <ul className="menu px-4">
+          <ul className="menu px-4 py-8">
             {renderLi(menus_Map)}
           </ul>
         </div>
