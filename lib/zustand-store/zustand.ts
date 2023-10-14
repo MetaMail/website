@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { IMailContentItem, FilterTypeEn, IMailContentAttachment, MailListItemType } from 'lib/constants';
+import { MMCancelableUpload } from 'lib/http';
 
 interface IMailListState {
     filterType: FilterTypeEn;
@@ -43,13 +44,23 @@ export const useMailDetailStore = create<IMailDetailState>()(set => ({
     setIsDetailExtend: (isDetailExtend: boolean) => set(() => ({ isDetailExtend })),
 }));
 
+export interface IAttachment extends IMailContentAttachment {
+    uploadProcess?: number;
+    cancelableUpload?: MMCancelableUpload;
+}
+
+export interface ISelectedDraftItem extends IMailContentItem {
+    randomBits?: string;
+    attachments?: IAttachment[];
+}
+
 interface INewMailState {
-    selectedDraft: MailListItemType;
-    setSelectedDraft: (selectedDraft: MailListItemType) => void;
+    selectedDraft: ISelectedDraftItem;
+    setSelectedDraft: (selectedDraft: ISelectedDraftItem) => void;
 }
 export const useNewMailStore = create<INewMailState>()(set => ({
     selectedDraft: null,
-    setSelectedDraft: (selectedDraft: MailListItemType) => set(() => ({ selectedDraft })),
+    setSelectedDraft: (selectedDraft: ISelectedDraftItem) => set(() => ({ selectedDraft })),
 }));
 
 interface IUtilsState {
