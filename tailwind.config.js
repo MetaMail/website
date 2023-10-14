@@ -13,6 +13,7 @@ const ALL_SIZE = [...Array(1441).keys()];
 const PERCENT_SIZE = [...Array(101).keys()];
 
 module.exports = {
+    darkMode: 'class',
     purge: true,
     content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './sections/**/*.{ts,tsx}'],
     variants: {
@@ -25,21 +26,23 @@ module.exports = {
             {
                 light: {
                     ...require('daisyui/src/theming/themes')['[data-theme=light]'],
-                    primary: '#3C6FF4',
-                    neutral:"#9EBFFF",
+                    "primary": '#3C6FF4',
+                    "neutral":"#9EBFFF",
                     "neutral-content":"#3C6FF4",
                     "base-200":"#EDF3FF",
                     "base-300":"#B1CCFF",
-                    "base-content":"#333"
+                    "base-content":"#333",
                 },
                 dark: {
                     ...require('daisyui/src/theming/themes')['[data-theme=dark]'],
-                    primary: '#3C6FF4',
-                    "neutral":"rgba(231,231,231,0.1)",
-                    "base-300":"rgba(231,231,231,0.6)",
+                    "primary": '#3C6FF4',
+                    "neutral":"#E7E7E7",
+                    "base-300":"#E7E7E7",
                     "base-200":"#262626",
                     "base-100":"#1F1F1F",
-                    "base-content":"#fff"
+                    "base-content":"#ffffff",
+                    "neutral-content":"#ffffff",
+                    "tw-bg-opacity":'1',
                 },
             },
         ],

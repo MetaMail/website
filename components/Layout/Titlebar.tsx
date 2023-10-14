@@ -44,7 +44,7 @@ export default function Titlebar() {
   return (
     <div className="navbar p-0 min-h-fit h-45">
       <div className="flex-1">
-        <input type="text" placeholder="Search" className="input w-380 h-29" />
+        <input type="text" placeholder="Search" className="input w-380 h-29 rounded-4 dark:!bg-[#353739]" />
       </div>
       <div className="flex-none gap-2">
         <div className="form-control"></div>
