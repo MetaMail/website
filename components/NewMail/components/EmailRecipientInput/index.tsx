@@ -90,9 +90,9 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div
-              className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
+              className="p-4 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
               title={email.address}>
-              <JazziconGrid size={28} addr={email.address} />
+              <JazziconGrid size={24} addr={email.address} />
               <span className="w-120 omit">{email.address}</span>
             </div>
             <button onClick={() => removeRecipient(email.address)}>

@@ -94,7 +94,7 @@ export default function Titlebar() {
             <div className="my-8">
               <p className="flex justify-between font-bold">
                 <span>Mailbox capacity</span>
-                <span>{percentTransform(emailSize / emailSizeLimit)}%</span>
+                <span>{percentTransform((emailSize < 0.1 ? 0 : emailSize) / emailSizeLimit)}%</span>
               </p>
               <progress
                 className="progress progress-primary w-222 mt-12"

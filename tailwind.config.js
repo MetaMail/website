@@ -29,9 +29,11 @@ module.exports = {
                     "primary": '#3C6FF4',
                     "neutral":"#9EBFFF",
                     "neutral-content":"#3C6FF4",
+                    "base-100":"#fff",
                     "base-200":"#EDF3FF",
                     "base-300":"#B1CCFF",
                     "base-content":"#333",
+                    "primary-content":"#ffffff"
                 },
                 dark: {
                     ...require('daisyui/src/theming/themes')['[data-theme=dark]'],

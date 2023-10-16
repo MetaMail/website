@@ -350,12 +350,12 @@ export default function NewMail() {
 
   return (
     <div
-      className={`flex flex-col font-poppins bg-base-100 p-18 transition-all absolute bottom-0 right-0 rounded-10 ${isExtend ? 'h-full w-full' : 'h-502 w-[45vw]'
+      className={`flex flex-col font-poppins bg-base-100 px-18 pt-23 pb-10 transition-all absolute bottom-0 right-0 rounded-20 ${isExtend ? 'h-full w-full' : 'h-502 w-[50vw]'
         } ${styles.newMailWrap}`}>
       <header className="flex justify-between">
         <div className="flex items-center">
-          <div className="w-6 h-24 bg-primary rounded-4" />
-          <span className="pl-7 font-black text-xl">New Mail</span>
+          {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
+          <span className="font-black text-[20px] font-bold">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
           <Icon url={extend} className="w-20 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
