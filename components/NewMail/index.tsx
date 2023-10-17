@@ -350,7 +350,7 @@ export default function NewMail() {
 
   return (
     <div
-      className={`flex flex-col font-poppins bg-base-100 px-18 pt-23 pb-10 transition-all absolute bottom-0 right-0 rounded-20 ${isExtend ? 'h-full w-full' : 'h-502 w-[50vw]'
+      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0 right-0 rounded-20 ${isExtend ? 'h-full w-full' : 'h-502 w-[50vw]'
         } ${styles.newMailWrap}`}>
       <header className="flex justify-between">
         <div className="flex items-center">
@@ -375,9 +375,9 @@ export default function NewMail() {
           />
         </div>
       </header>
-      <div className="text-[#878787] mt-20">
+      <div className="text-[#464646] mt-20">
         <div className="flex h-40 items-center">
-          <span className="w-78">To</span>
+          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">To</span>
           <EmailRecipientInput
             receivers={selectedDraft.mail_to}
             onAddReceiver={addReceiver}
@@ -385,7 +385,7 @@ export default function NewMail() {
           />
         </div>
         <div className="flex h-40 items-center">
-          <span className="w-78">From</span>
+          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">From</span>
           <NameSelector
             initValue={
               selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
@@ -394,11 +394,11 @@ export default function NewMail() {
           />
         </div>
         <div className="flex h-40 items-center">
-          <span className="w-78">Subject</span>
+          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
           <input
             type="text"
             placeholder=""
-            className="flex pl-0 h-40 input flex-1 text-[#878787] focus:outline-none"
+            className="flex pl-0 h-40 input flex-1 text-[#000000] dark:text-[#fff] focus:outline-none"
             defaultValue={selectedDraft.subject}
             ref={subjectRef}
             onChange={throttle(() => {
@@ -410,9 +410,10 @@ export default function NewMail() {
       {loading && <LoadingRing />}
       {
         <>
+          {/* DynamicReactQuill 富文本编辑器 */}
           <DynamicReactQuill
             forwardedRef={reactQuillRef}
-            className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
+            className="flex-1 py-16 flex flex-col-reverse text-[#464646] dark:text-[#fff] overflow-hidden mt-9  leading-[21px]"
             theme="snow"
             placeholder={''}
             modules={EditorModules}
@@ -421,7 +422,7 @@ export default function NewMail() {
           {selectedDraft.attachments?.map((attr, index) => (
             <li key={index} className="flex">
               <div
-                className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
+                className="px-6 py-2 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer flex items-center gap-8"
                 title={attr.filename}>
                 <span className="">
                   {attr.filename}
@@ -437,13 +438,13 @@ export default function NewMail() {
           ))}
         </>
       }
-      <div className="flex items-center gap-13 mt-20">
+      <div className="flex items-center gap-13 mt-12">
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
-          className="flex justify-center items-center bg-primary text-white px-14 py-8 rounded-[8px]">
+          className="flex justify-center items-center bg-primary text-white w-80 h-40 rounded-[6px]">
           <Icon url={sendMailIcon} />
-          <span className="ml-6">Send</span>
+          <span className="ml-8">Send</span>
         </button>
         <FileUploader
           randomBits={randomBits}

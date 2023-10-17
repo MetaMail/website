@@ -146,7 +146,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             />
           </div>
           <div className="font-bold w-140 ml-14 omit text-base-content">
-            <span className={` ${getIsReadTextClass(mail)} font-bold`} title={getMailFrom(mail)}>{getMailFrom(mail)}
+            <span className={` ${getIsReadTextClass(mail)} font-semibold`} title={getMailFrom(mail)}>{getMailFrom(mail)}
             </span>
           </div>
           <div className="flex-1 w-0 ml-14 omit">

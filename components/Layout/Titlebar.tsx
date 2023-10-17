@@ -46,17 +46,17 @@ export default function Titlebar() {
       <div className="flex-1">
         <input type="text" placeholder="Search" className="input w-380 h-29 rounded-4 dark:!bg-[#353739]" />
       </div>
-      <div className="flex-none gap-2">
+      <div className="flex-none gap-2  ">
         <div className="form-control"></div>
-        <div className={`dropdown dropdown-end  dropdown-bottom`} onClick={() => { if (!dropdownShow) setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
-          <div className="flex justify-center items-center">
-            <label tabIndex={0} className="btn btn-circle btn-sm p-0 avatar mr-18 flex-shrink-0  hover:border-5">
-              <div className="w-28 h-28 rounded-full">
-                <JazziconGrid size={28} addr={address} />
-              </div>
-            </label>
+        <div className={`dropdown dropdown-end  dropdown-bottom  w-90`} onClick={() => { if (!dropdownShow) setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
+          <label tabIndex={0} className="rounded-6 border-0 flex w-full justify-between items-center btn btn-circle btn-sm p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] h-35 pl-8 pr-19 box-border">
+            <div className="w-28 h-28 rounded-full  hover:border-5">
+              {/* 头像 */}
+              <JazziconGrid size={28} addr={address} />
+            </div>
             <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-16 h-16 ${dropdownShow ? 'transform rotate-180' : ''}`} />
-          </div>
+          </label>
+
           <div
             tabIndex={0}
             className={`mt-3 z-[1] px-24 py-12 shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>

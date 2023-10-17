@@ -23,7 +23,7 @@ function NameSelector({ initValue, onChange }: IProps) {
   }, [initValue]);
 
   return (
-    <div className="flex items-center gap-8 flex-1 min-w-0">
+    <div className="flex items-center gap-8 w-fit p-4 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer text-[#706F6F]">
       <JazziconGrid size={24} addr={showAddress} />
       {ensName ? (
         <select
