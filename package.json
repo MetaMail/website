@@ -5,7 +5,7 @@
     "author": "walkjoi",
     "description": "The website project of MetaMail",
     "scripts": {
-        "dev": "next dev -p 8002",
+        "dev": "next dev -p 8000",
         "build": "next build && next export",
         "analyze": "cross-env ANALYZE=true next build",
         "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
