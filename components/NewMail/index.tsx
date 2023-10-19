@@ -5,13 +5,13 @@ import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
 
 import MailBoxContext from 'context/mail';
-import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, LOCAL_DRAFT_ID } from 'lib/constants';
-import { useNewMailStore } from 'lib/zustand-store';
-import { userLocalStorage, mailLocalStorage, percentTransform } from 'lib/utils';
+import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn } from 'lib/constants';
+import { useNewMailStore, useMailListStore } from 'lib/zustand-store';
+import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
-import { useInterval, usePrevious } from 'hooks';
+import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
 import DynamicReactQuill from './components/DynamicReactQuill';
 import FileUploader from './components/FileUploader';
@@ -44,6 +44,7 @@ let initHtml = '';
 export default function NewMail() {
   const { checkEncryptable, setShowLoading, getRandomBits } = useContext(MailBoxContext);
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
+  const { filterType } = useMailListStore();
 
   const [isExtend, setIsExtend] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -208,7 +209,7 @@ export default function NewMail() {
       mailbox: selectedDraft.mailbox,
       read: selectedDraft.read,
     };
-    const fromLocalDraft = selectedDraft.message_id === LOCAL_DRAFT_ID;
+    const fromLocalDraft = !selectedDraft.message_id;
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
     fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
     const { mail_date, message_id } = await mailHttp.updateMail(json);
@@ -218,6 +219,7 @@ export default function NewMail() {
     mailLocalStorage.setQuillHtml(html);
     mailLocalStorage.setQuillText(text);
     dateRef.current = mail_date;
+    filterType === FilterTypeEn.Draft && dispatchEvent('refresh-list', { showLoading: false });
     return { html, text };
   };
 
@@ -233,17 +235,16 @@ export default function NewMail() {
     try {
       setLoading(true);
 
-      if (selectedDraft.message_id === LOCAL_DRAFT_ID) {
+      if (!selectedDraft.message_id) {
         // create a temp randomBits
         const { publicKey, address } = userLocalStorage.getUserInfo();
         const { key, randomBits: tempRandomBits } = await createEncryptedMailKey(publicKey, address);
-        selectedDraft.randomBits = tempRandomBits;
         randomBits = tempRandomBits;
         selectedDraft.meta_header = { keys: [key] };
         return;
       }
 
-      randomBits = selectedDraft.randomBits || (await getRandomBits('draft'));
+      randomBits = await getRandomBits('draft');
       let _selectedDraft = selectedDraft;
       if (!selectedDraft.hasOwnProperty('part_html')) {
         const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
@@ -298,21 +299,14 @@ export default function NewMail() {
     mailChanged = true;
   };
 
-  const prevDraftId = usePrevious<string>(selectedDraft?.message_id);
-  let currentDraftId = '';
   useEffect(() => {
-    currentDraftId = selectedDraft?.message_id;
-
-    // local draft -> real draft, do nothing
-    if (prevDraftId === LOCAL_DRAFT_ID) return;
-
     dateRef.current = selectedDraft.mail_date;
     subjectRef.current.value = selectedDraft.subject;
     setContentsToQuill(selectedDraft.part_html || '');
 
     handleLoad();
 
-    const onDraftChange: (e: Event) => Promise<void> = async event => {
+    const onAnotherDraftSelected: (e: Event) => Promise<void> = async event => {
       setShowLoading(true);
       const e = event as CustomEvent;
       try {
@@ -326,18 +320,16 @@ export default function NewMail() {
       }
     };
 
-    window.addEventListener('draft-changed', onDraftChange);
+    window.addEventListener('another-draft-selected', onAnotherDraftSelected);
 
     return () => {
-      if (currentDraftId !== LOCAL_DRAFT_ID) {
-        randomBits = '';
-        autoSaveMail = true;
-        mailChanged = false;
-        initHtml = '';
-        window.removeEventListener('draft-changed', onDraftChange);
-      }
+      randomBits = '';
+      autoSaveMail = true;
+      mailChanged = false;
+      initHtml = '';
+      window.removeEventListener('another-draft-selected', onAnotherDraftSelected);
     };
-  }, [selectedDraft.message_id]);
+  }, [selectedDraft.local_id]);
 
   useInterval(() => {
     if (!autoSaveMail) return;
@@ -350,12 +342,12 @@ export default function NewMail() {
 
   return (
     <div
-      className={`flex flex-col font-poppins bg-base-100 p-18 transition-all absolute bottom-0 right-0 rounded-10 ${isExtend ? 'h-full w-full' : 'h-502 w-[45vw]'
+      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0 right-0 rounded-20 ${isExtend ? 'h-full w-full' : 'h-502 w-[50vw]'
         } ${styles.newMailWrap}`}>
       <header className="flex justify-between">
         <div className="flex items-center">
-          <div className="w-6 h-24 bg-primary rounded-4" />
-          <span className="pl-7 font-black text-xl">New Mail</span>
+          {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
+          <span className="font-black text-[20px] font-bold">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
           <Icon url={extend} className="w-20 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
@@ -375,9 +367,9 @@ export default function NewMail() {
           />
         </div>
       </header>
-      <div className="text-[#878787] mt-20">
+      <div className="text-[#464646] mt-20">
         <div className="flex h-40 items-center">
-          <span className="w-78">To</span>
+          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">To</span>
           <EmailRecipientInput
             receivers={selectedDraft.mail_to}
             onAddReceiver={addReceiver}
@@ -385,7 +377,7 @@ export default function NewMail() {
           />
         </div>
         <div className="flex h-40 items-center">
-          <span className="w-78">From</span>
+          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">From</span>
           <NameSelector
             initValue={
               selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
@@ -394,11 +386,11 @@ export default function NewMail() {
           />
         </div>
         <div className="flex h-40 items-center">
-          <span className="w-78">Subject</span>
+          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
           <input
             type="text"
             placeholder=""
-            className="flex pl-0 h-40 input flex-1 text-[#878787] focus:outline-none"
+            className="flex pl-0 h-40 input flex-1 text-[#000000] dark:text-[#fff] focus:outline-none"
             defaultValue={selectedDraft.subject}
             ref={subjectRef}
             onChange={throttle(() => {
@@ -410,9 +402,10 @@ export default function NewMail() {
       {loading && <LoadingRing />}
       {
         <>
+          {/* DynamicReactQuill 富文本编辑器 */}
           <DynamicReactQuill
             forwardedRef={reactQuillRef}
-            className="flex-1 flex flex-col-reverse overflow-hidden mt-20"
+            className="flex-1 py-16 flex flex-col-reverse text-[#464646] dark:text-[#fff] overflow-hidden mt-9  leading-[21px]"
             theme="snow"
             placeholder={''}
             modules={EditorModules}
@@ -421,7 +414,7 @@ export default function NewMail() {
           {selectedDraft.attachments?.map((attr, index) => (
             <li key={index} className="flex">
               <div
-                className="px-6 py-2 bg-[#4f4f4f0a] rounded-8 cursor-pointer flex items-center gap-8"
+                className="px-6 py-2 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer flex items-center gap-8"
                 title={attr.filename}>
                 <span className="">
                   {attr.filename}
@@ -437,25 +430,25 @@ export default function NewMail() {
           ))}
         </>
       }
-      <div className="flex items-center gap-13 mt-20">
+      <div className="flex items-center gap-13 mt-12">
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
-          className="flex justify-center items-center bg-primary text-white px-14 py-8 rounded-[8px]">
+          className="flex justify-center items-center bg-primary text-white w-80 h-40 rounded-[6px]">
           <Icon url={sendMailIcon} />
-          <span className="ml-6">Send</span>
+          <span className="ml-8">Send</span>
         </button>
         <FileUploader
           randomBits={randomBits}
           onChange={() => (mailChanged = true)}
           onCheckDraft={async () => {
             mailChanged = true;
-            if (selectedDraft.message_id === LOCAL_DRAFT_ID) {
+            if (!selectedDraft.message_id) {
               await handleSave();
             }
           }}
         />
       </div>
-    </div >
+    </div>
   );
 }

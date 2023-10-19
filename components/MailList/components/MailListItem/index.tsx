@@ -13,7 +13,7 @@ import {
   MailListItemType,
 } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { transformTime, getShowAddress } from 'lib/utils';
+import { transformTime, getShowAddress, dispatchEvent } from 'lib/utils';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import MailBoxContext from 'context/mail';
 import Icon from 'components/Icon';
@@ -33,11 +33,13 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'font-normal' : 'font-bold';
+    return mail.read == ReadStatusTypeEn.Read ? 'text-opacity-40' : ' ';
   };
 
   const getMailFrom = (mail: IMailContentItem): string => {
-    return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
+    if (mail.mail_from?.name && mail.mail_from.name.length > 0) {
+      return mail.mail_from.name;
+    } else return getShowAddress(mail.mail_from.address)
   };
 
   const handleChangeMailStatus = async (options: IMailChangeOptions) => {
@@ -77,6 +79,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
     setList([...newList]);
   };
 
+
   const handleClick = throttle(async () => {
     if (mail.message_id === selectedMail?.message_id || mail.message_id === selectedDraft?.message_id) return;
     if (mail.read == ReadStatusTypeEn.Unread) {
@@ -87,20 +90,16 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       if (!selectedDraft) {
         setSelectedDraft(mail);
       } else {
-        const draftChangedEvent = new CustomEvent('draft-changed', {
-          detail: {
-            done: (result: boolean) => {
-              result && setSelectedDraft(mail);
-            },
+        dispatchEvent('another-draft-selected', {
+          done: (result: boolean) => {
+            result && setSelectedDraft(mail);
           },
         });
-        window.dispatchEvent(draftChangedEvent);
       }
     } else {
       setSelectedMail(mail);
     }
   }, 1000);
-
   const renderDigest = (mail: MailListItemType) => {
     if (!mail.digest) {
       return '( no abstract )';
@@ -116,7 +115,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={`text-[14px] flex flex-row px-20 items-center group h-36 cursor-pointer hover:bg-base-200 ${mail.selected ? `bg-base-300 hover:bg-base-200 bg-opacity-50` : ''
+          className={` text-[14px] flex flex-row px-20 items-center group h-36 cursor-pointer hover:bg-base-200 ${mail.selected ? `bg-base-300 hover:bg-base-200 bg-opacity-50` : ''
             }`}>
           <div className="flex flex-row gap-14">
             <input
@@ -144,12 +143,11 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             />
           </div>
           <div className="font-bold w-140 ml-14 omit text-base-content">
-            <span className={`${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>
-              {getShowAddress(getMailFrom(mail))}
+            <span className={` ${getIsReadTextClass(mail)} font-semibold`} title={getMailFrom(mail)}>{getMailFrom(mail)}
             </span>
           </div>
           <div className="flex-1 w-0 ml-14 omit">
-            <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
+            <Dot size={8} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             <span className={`ml-8 ${getIsReadTextClass(mail)}`}>{mail.subject || '( no subject )'}</span>
             <span className="pt-4 pl-2 pr-7">{'-'}</span>
             <span className="pt-4 min-w-0 flex-1">{renderDigest(mail)}</span>
@@ -189,28 +187,33 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       ) : (
         <div
           onClick={handleClick}
-          className={`w-300 px-15 py-10 text-[14px] flex group cursor-pointer hover:bg-base-200 ${mail.message_id === selectedMail.message_id ? `bg-base-300 hover:bg-base-300` : ''
+          className={`w-296 items-start box-border px-15 py-8 text-[10px] flex group cursor-pointer hover:bg-base-200 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
             }`}>
-          <JazziconGrid size={40} addr={mail.mail_from.address || ''} />
-          <div className="flex-1 px-10 w-0">
+          {/* 头像 */}
+          <JazziconGrid size={30} addr={mail.mail_from.address || ''} />
+          <div className="flex-1 px-10 w-0 text-[#707070]" >
             <p className="flex justify-between items-center">
+              {/* 邮件地址 */}
               <span
-                className={`flex-1 w-0 text-lg omit mr-4 ${getIsReadTextClass(mail)}`}
+                className={` flex-1  w-0 text-lg omit mr-4 text-[12px] font-semibold leading-1 ${getIsReadTextClass(mail)}`}
                 title={getMailFrom(mail)}>
-                {getShowAddress(getMailFrom(mail))}
+                {getMailFrom(mail)}
               </span>
-              <span className="max-w-[80] text-right text-sm">{transformTime(mail.mail_date)}</span>
+              {/* 邮件日期 */}
+              <span className="max-w-[80] text-right text-sm ${getIsReadTextClass(mail)}">{transformTime(mail.mail_date)}</span>
             </p>
             <p className="flex justify-between items-center">
-              <span className={`${getIsReadTextClass(mail)} omit mr-4 flex-1 w-0`}>
+              {/* 邮件主体 */}
+              <span className={`${getIsReadTextClass(mail)} omit mr-4 flex-1 w-0 `}>
                 {mail.subject || '( no subject )'}
               </span>
               <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             </p>
-            <p className="omit">{renderDigest(mail)}</p>
+            <p className={`${getIsReadTextClass(mail)}  omit`}>{renderDigest(mail)}</p>
           </div>
-        </div>
-      )}
+        </div >
+      )
+      }
     </>
   );
 }

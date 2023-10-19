@@ -9,6 +9,8 @@ import MailBoxContext from 'context/mail';
 import { useMailListStore } from 'lib/zustand-store';
 import { FilterTypeEn, MenusMap, IMenuItem } from 'lib/constants';
 
+import { MetaMailSvg, WriteMailSvg } from 'components/svg';
+
 import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
 import write from 'assets/mailbox/write.svg';
@@ -33,7 +35,9 @@ export default function Sidebar() {
     }
     const count = type === FilterTypeEn.Inbox ? unreadCount : spamCount;
     if (count <= 0) return null;
-    return <span className="badge badge-sm">{count > 99 ? '99+' : count}</span>;
+    return <p className="badge badge-sm rounded-2 btn-primary p-0 w-26 h-16">
+      <span className='text-[18px] scale-50'> {count > 99 ? '99+' : count}</span>
+    </p>;
   };
 
   const [menus_Map, setMenusMap] = useState(MenusMap);
@@ -88,7 +92,7 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <div className="w-200 px-10 flex flex-col justify-between font-poppins text-sm">
+    <div className="w-200 px-10 flex flex-col justify-between font-poppins text-sm flex-shrink-0">
       <div className="flex flex-col">
         <button onClick={logout} className="flex h-45 items-center justify-center">
           <Image src={logo} alt="logo" className="w-auto h-32 mr-5" />
