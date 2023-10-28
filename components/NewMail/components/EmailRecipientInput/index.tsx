@@ -86,7 +86,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
       <button onClick={addRecipient}>
         <Icon url={add} title="add receivers" className="w-20 h-20" />
       </button>
-      <ul>
+      <ul className='flex'>
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div

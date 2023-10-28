@@ -342,8 +342,8 @@ export default function NewMail() {
 
   return (
     <div
-      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0 right-0 rounded-20 ${isExtend ? 'h-full w-full' : 'h-502 w-[50vw]'
-        } ${styles.newMailWrap}`}>
+      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0  rounded-20 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[50vw] right-20 ${styles.newMailWrap}`
+        } `}>
       <header className="flex justify-between">
         <div className="flex items-center">
           {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
@@ -399,6 +399,7 @@ export default function NewMail() {
           />
         </div>
       </div>
+
       {loading && <LoadingRing />}
       {
         <>
@@ -430,6 +431,18 @@ export default function NewMail() {
           ))}
         </>
       }
+      {isExtend && <FileUploader
+        randomBits={randomBits}
+        onChange={() => (mailChanged = true)}
+        onCheckDraft={async () => {
+          mailChanged = true;
+          if (!selectedDraft.message_id) {
+            await handleSave();
+          }
+        }}
+        isExtend={isExtend}
+      />}
+
       <div className="flex items-center gap-13 mt-12">
         <button
           disabled={selectedDraft.mail_to.length <= 0}
@@ -438,7 +451,9 @@ export default function NewMail() {
           <Icon url={sendMailIcon} />
           <span className="ml-8">Send</span>
         </button>
-        <FileUploader
+
+        {/* 上传文件按钮 */}
+        {!isExtend && <FileUploader
           randomBits={randomBits}
           onChange={() => (mailChanged = true)}
           onCheckDraft={async () => {
@@ -447,7 +462,8 @@ export default function NewMail() {
               await handleSave();
             }
           }}
-        />
+          isExtend={isExtend}
+        />}
       </div>
     </div>
   );

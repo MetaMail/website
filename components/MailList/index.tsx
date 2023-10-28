@@ -299,7 +299,6 @@ export default function MailList() {
             );
           })
         ) : (
-          // <div className="text-center pt-24">{'<No Mail>'}</div>
           <Image src={empty} alt="No Mail" className="w-auto h-136" />
         )}
       </div>
