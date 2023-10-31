@@ -69,7 +69,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const handleStar = async (mark: MarkTypeEn) => {
     await handleChangeMailStatus({ mark });
   };
-
+  // 批量删除邮件
   const handleTrash = async () => {
     await handleChangeMailStatus({
       mark: MarkTypeEn.Trash,
