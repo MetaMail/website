@@ -191,7 +191,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
         // 查看详情时候的邮件列表
         <div
           onClick={handleClick}
-          className={`text-base-content w-296 items-start box-border px-15 py-10 flex group cursor-pointer hover:bg-base-200 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
+          className={`text-base-content w-296 items-start box-border px-15 py-10 flex group cursor-pointer hover:bg-base-200 dark:bg-opacity-10 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
             }`}>
           {/* 头像 */}
           <JazziconGrid size={30} addr={mail.mail_from.address || ''} />
