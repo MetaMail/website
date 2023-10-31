@@ -17,6 +17,7 @@
     font-size: 22px;
   }
 }
+
 [data-theme="light"] {
   --primary: #3c6ff4;
   --menu-active-bg-color: #9EBFFF;
@@ -83,7 +84,9 @@ body {
 .description-bg3 {
   background: linear-gradient(292.77deg, rgba(171, 207, 255, 0.08) 14.7%, rgba(141, 152, 255, 0.26) 97.91%);
 }
-
+::-webkit-scrollbar {
+    display: none;
+}
 .omit {
   text-overflow: ellipsis;
   white-space: nowrap;
