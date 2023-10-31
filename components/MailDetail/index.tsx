@@ -258,7 +258,7 @@ export default function MailDetail() {
         </div>
         <h1 className="omit text-2xl font-bold my-20 max-w-4xl text-[20px] mt-14 mb-18">{selectedMail?.subject || '( no subject )'}</h1>
         <div className="flex justify-between">
-          <div className="flex gap-18">
+          <div className="flex gap-18 items-center text-sm">
             <JazziconGrid size={30} addr={selectedMail.mail_from.address || ''} />
             <div className="">
               <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>

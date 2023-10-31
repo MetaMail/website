@@ -81,7 +81,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
         placeholder="Add Receipients"
         onChange={debounce(handleChange, 200)}
         onKeyDown={handleKeyPress}
-        className="input input-ghost h-40 focus:h-36 px-0"
+        className="input input-ghost h-40 focus:h-36 px-0 placeholder:text-sm"
         onBlur={handleInputBlur}
         ref={inputRef}
       />

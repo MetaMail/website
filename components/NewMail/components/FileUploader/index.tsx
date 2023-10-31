@@ -134,9 +134,9 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
     return (
       <>
         {/* 小上传文件的按钮 */}
-        <label className="flex justify-center items-center bg-[#ddd] px-14 py-8 rounded-[8px] cursor-pointer">
+        <label className="flex justify-center items-center bg-[#ddd] px-14 py-8 rounded-[8px] text-sm  cursor-pointer">
           <input type="file" className="hidden" onChange={handleClickUpload} multiple />
-          <Image src={addAttach} className="h-full" alt="上传文件" />
+          <Image src={addAttach} className="h-16" alt="上传文件" />
           <span className="ml-6">Attach</span>
         </label>
       </>

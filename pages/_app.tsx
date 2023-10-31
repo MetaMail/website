@@ -13,6 +13,13 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & { Component: NextPageWithLayout };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const setRem = async () => {
+    await require('../lib/utils/flexible.js')
+  }
+  useEffect(() => {
+    setRem()
+    window.addEventListener('resize', setRem)
+  })
   useEffect(() => {
     themeChange(false);
     const theme = document.documentElement.getAttribute('data-theme') || '';
