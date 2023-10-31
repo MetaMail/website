@@ -115,13 +115,13 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={` text-[14px] flex flex-row px-20 items-center group h-36 cursor-pointer hover:bg-base-200 ${mail.selected ? `bg-base-300 hover:bg-base-200 bg-opacity-50` : ''
+          className={` text-[14px] flex flex-row px-10 items-center group h-36 cursor-pointer  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-base-200 bg-opacity-50'
             }`}>
-          <div className="flex flex-row gap-14">
+          <div className="flex flex-row gap-10">
             <input
               type="checkbox"
               title="Select"
-              className={`checkbox checkbox-sm w-12 h-12 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
               style={{ backgroundImage: `url(${mail.selected ? checkboxedSvg.src : checkboxSvg.src})` }}
               checked={mail.selected}
               onClick={e => {
@@ -132,7 +132,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
 
             <Icon
               url={mail.mark === MarkTypeEn.Starred ? markFavorite : favorite}
-              className="w-12 h-12"
+              className="w-16 h-16"
               title={mail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star'}
               onClick={async e => {
                 e.stopPropagation();
@@ -142,11 +142,11 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
               }}
             />
           </div>
-          <div className="font-bold w-140 ml-14 omit text-base-content">
+          <div className="font-bold w-100 ml-25 omit text-base-content">
             <span className={` ${getIsReadTextClass(mail)} font-semibold`} title={getMailFrom(mail)}>{getMailFrom(mail)}
             </span>
           </div>
-          <div className="flex-1 w-0 ml-14 omit">
+          <div className="flex-1 w-0 ml-25 omit">
             <Dot size={8} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             <span className={`ml-8 ${getIsReadTextClass(mail)}`}>{mail.subject || '( no subject )'}</span>
             <span className="pt-4 pl-2 pr-7">{'-'}</span>
@@ -202,7 +202,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
               {/* 邮件日期 */}
               <span className="max-w-[80] text-right text-sm ${getIsReadTextClass(mail)}">{transformTime(mail.mail_date)}</span>
             </p>
-            <p className="flex justify-between items-center">
+            <p className="flex justify-between items-center text-sm">
               {/* 邮件主体 */}
               <span className={`${getIsReadTextClass(mail)} omit mr-4 flex-1 w-0 `}>
                 {mail.subject || '( no subject )'}
