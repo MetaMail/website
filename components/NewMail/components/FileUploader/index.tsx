@@ -144,7 +144,7 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
   } else return (
     <div className='mt-30 flex-col text-[16px] text-[#1F2937] font-semibold w-full h-[120px] border-dashed leading-24 border-[#E5E7EB] border-2 flex justify-center items-center'>
       <p>Drop your files here or <span> browse </span></p>
-      <p className='text-[14px] text-[#9CA3AF] leading-[20px] mt-5'>Maximum size: 50MB</p>
+      <p className='text-sm text-[#9CA3AF] leading-[20px] mt-5'>Maximum size: 50MB</p>
     </div>
   )
 };

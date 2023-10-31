@@ -342,7 +342,7 @@ export default function NewMail() {
 
   return (
     <div
-      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0  rounded-20 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[50vw] right-20 ${styles.newMailWrap}`
+      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0  rounded-20 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
         } `}>
       <header className="flex justify-between">
         <div className="flex items-center">
@@ -350,10 +350,10 @@ export default function NewMail() {
           <span className="font-black text-[20px] font-bold">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
-          <Icon url={extend} className="w-20 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
+          <Icon url={extend} className="w-16 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
           <Icon
             url={cancel}
-            className="w-20 scale-[120%] h-auto self-center"
+            className="w-16 h-auto self-center"
             onClick={async () => {
               if (!getMailChanged()) return setSelectedDraft(null);
               setShowLoading(true);
@@ -369,7 +369,7 @@ export default function NewMail() {
       </header>
       <div className="text-[#464646] mt-20">
         <div className="flex h-40 items-center">
-          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">To</span>
+          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
           <EmailRecipientInput
             receivers={selectedDraft.mail_to}
             onAddReceiver={addReceiver}
@@ -377,7 +377,7 @@ export default function NewMail() {
           />
         </div>
         <div className="flex h-40 items-center">
-          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">From</span>
+          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
           <NameSelector
             initValue={
               selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
@@ -386,7 +386,7 @@ export default function NewMail() {
           />
         </div>
         <div className="flex h-40 items-center">
-          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
+          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
           <input
             type="text"
             placeholder=""

@@ -23,8 +23,10 @@ type MailListFiltersType = (typeof MailListFilters)[number];
 export default function MailList() {
   const { getMailStat } = useContext(MailBoxContext);
   const { filterType, pageIndex, list, setList, addPageIndex, subPageIndex } = useMailListStore();
+  // isDetailExtend : 详情是否占满全屏
+  // selectedMail : 选中查看详情的邮件
   const { selectedMail, isDetailExtend } = useMailDetailStore();
-
+  // console.log('selectedMail', selectedMail)
   const [loading, setLoading] = useState(false);
 
   const [pageNum, setPageNum] = useState(0);
@@ -153,6 +155,7 @@ export default function MailList() {
   }, [pageIndex, filterType]);
 
   useEffect(() => {
+    // console.log('执行了')
     switch (filter) {
       case 'All':
         list.map(item => {
@@ -209,9 +212,10 @@ export default function MailList() {
       className={`flex flex-col h-full transition-all ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-300'
         }`}>
       {
-        list.length > 0 ? (<div className="flex flex-row w-full justify-between px-15 pb-7 pt-20">
+        list.length > 0 ? (<div className="flex flex-row w-full justify-between px-15 pb-7 pt-20 box-border">
           <div className="flex flex-row space-x-10 items-center">
             {/* 全选按钮 */}
+
             <input
               type="checkbox"
               title="Select"
@@ -229,6 +233,7 @@ export default function MailList() {
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
                 <span className="text-sm text-[#707070]">{filter}</span>
               </label>
+
               <ul
                 tabIndex={0}
                 className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-130">
@@ -248,7 +253,8 @@ export default function MailList() {
 
             {getSelectedList().length > 0 && (
               <div className="flex gap-5 border-l-2 border-[#EFEFEF] pl-10">
-                {mailActions.map((item, index) => {
+                {/* 筛选旁边的小icon */}
+                {!selectedMail && mailActions.map((item, index) => {
                   return (
                     <div className="box-border bg-opacity-0 rounded-10 hover:bg-opacity-60 p-4 hover:bg-[#EDF3FF]">
                       <Icon
@@ -269,6 +275,7 @@ export default function MailList() {
           {/* 分页 */}
           <div className="flex items-center flex-row justify-end space-x-8 text-xl text-[#7F7F7F]">
             {/* <span className="text-md">total page: {pageNum}</span> */}
+
             <button
               disabled={pageIndex === 1}
               className="w-16"
@@ -276,8 +283,9 @@ export default function MailList() {
                 if (pageIndex > 1) subPageIndex();
               }}>
               {/* 当是第一页 */}
-              <Icon url={arrowLeft} title="arrowLeft" className="w-16 h-16 opacity-100"></Icon>
+              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-16 h-16 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-16 h-16 rotate-180"></Icon>)}
             </button>
+
             <button
               className="w-16"
               disabled={pageIndex === pageNum}
@@ -300,7 +308,7 @@ export default function MailList() {
       }
 
 
-      <div className={`flex flex-col overflow-y-auto  overflow-x-hidden flex-1 relative px-5 ${list.length ? 'justify-start' : 'justify-center'}`}>
+      <div className={`flex flex-col overflow-y-auto  overflow-x-hidden flex-1 relative  ${list.length ? 'justify-start' : 'justify-center'}`}>
         {loading && <LoadingRing />}
         {list.length ? (
           list.map((item, index) => {
