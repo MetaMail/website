@@ -22,6 +22,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   })
   useEffect(() => {
     themeChange(false);
+    console.log(themeChange)
     const theme = document.documentElement.getAttribute('data-theme') || '';
     document.body.className = theme;
   }, []);

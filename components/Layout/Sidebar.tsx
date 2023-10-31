@@ -56,8 +56,8 @@ export default function Sidebar() {
             onClick={() => {
               handleChangeFilter(item.key);
             }}
-            className='mb-2 '>
-            <a className={`hover:bg-base-300 rounded-4 py-4   ${filterType === Number(item.key) ? 'active rounded-4 ' : ''}  dark:!bg-E7E7E7 dark:hover:!!bg-opacity-6 dark:!bg-opacity-10 `}>
+            className='mb-2 font-semibold'>
+            <a className={`hover:bg-base-300 rounded-4 py-4   ${filterType === Number(item.key) ? 'active rounded-4 ' : ''}  dark:!bg-#E7E7E71A dark:hover:!!bg-opacity-6 dark:!bg-opacity-10 `}>
               <Image src={filterType === Number(item.key) ? item.activeLogo : item?.logo} alt={item?.title} className="w-16 h-16 self-center stroke-width-100 fill-primary filter-primary" />
               <span>{item.title}</span>
               {renderBadge(item.key)}
@@ -101,7 +101,7 @@ export default function Sidebar() {
         </button>
         <button className="btn btn-xs btn-primary text-white mt-10 h-40" onClick={handleClickNewMail}>
           <Image src={write} alt="new_mail" className="w-16 h-auto" />
-          <span className='fz-500'>New Message</span>
+          <span className='font-700 text-sm'>New Message</span>
         </button>
         <div>
           <ul className="menu px-4 py-8">

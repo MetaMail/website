@@ -115,7 +115,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={`text-base  py-6 flex flex-row px-15 items-center group h-36 cursor-pointer  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50'
+          className={`text-base  py-6 flex flex-row px-15 items-center group h-36 cursor-pointer hover:dark:bg-base-300 hover:dark:bg-opacity-10  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50'
             }`}>
           <div className="flex flex-row gap-10">
             <input
@@ -204,16 +204,16 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
                 {getMailFrom(mail)}
               </span>
               {/* 邮件日期 */}
-              <span className={`max-w-[80] text-right text-sm text-[#7F7F7F]`}>{transformTime(mail.mail_date)}</span>
+              <span className={`max-w-[80] text-right text-sm text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
             </p>
             <p className="flex justify-between items-center  text-sm ">
               {/* 邮件主体 */}
-              <span className={`omit text-sm mr-4 flex-1 w-0 ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366]' : 'text-base-content'}`}>
+              <span className={`omit text-sm mr-4 flex-1 w-0  dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
                 {mail.subject || '( no subject )'}
               </span>
               <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             </p>
-            <p className={`omit text-sm  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#70707099]' : 'text-base-content'}`}>{renderDigest(mail)}</p>
+            <p className={`omit text-sm  dark:text-[#A7A1A1] ${mail.read == ReadStatusTypeEn.Read ? 'text-[#70707099]' : 'text-base-content'}`}>{renderDigest(mail)}</p>
           </div>
         </div >
       )
