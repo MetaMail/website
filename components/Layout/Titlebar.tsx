@@ -50,24 +50,24 @@ export default function Titlebar() {
     localStorage.setItem('theme', theme)
   };
   return (
-    <div className="navbar p-0 min-h-fit h-45 py-5 flex items-center">
+    <div className="navbar p-0 min-h-fit h-68 py-8 flex items-center">
       {/* header-left 左边搜索框 */}
       <div className="flex-1">
         <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
-          <Image src={searchNormal} alt='search' title='search' className={`w-12 h-12`} />
-          <input type="text" className="input w-380 h-29 rounded-4 pl-7 text-sm dark:!bg-[#353739]" />
+          <Image src={searchNormal} alt='search' title='search' className={`w-18 h-18`} />
+          <input type="text" className="input w-380 h-44 rounded-4 pl-7 text-sm dark:!bg-[#353739]" />
         </div>
       </div>
       {/* header-right avatar */}
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
-        <div className={`dropdown dropdown-end  dropdown-bottom  w-90`} onClick={() => { if (!dropdownShow) setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
-          <label tabIndex={0} className="rounded-6 border-0 flex w-full justify-between items-center h-[35] btn btn-circle btn-sm p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] h-35 pl-8 pr-19 box-border">
-            <div className="w-28 h-28 rounded-full  hover:border-5">
+        <div className={`dropdown dropdown-end  dropdown-bottom  w-100`} onClick={() => { if (!dropdownShow) setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
+          <label tabIndex={0} className="rounded-9 border-0 flex w-full justify-between items-center h-[35] btn btn-circle btn-sm p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] h-52 pl-8 pr-19 box-border">
+            <div className="w-42 h-42 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
-              <JazziconGrid size={28} addr={address} />
+              <JazziconGrid size={42} addr={address} />
             </div>
-            <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-16 h-16 ${dropdownShow ? 'transform rotate-180' : ''}`} />
+            <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18 ${dropdownShow ? 'transform rotate-180' : ''}`} />
           </label>
 
           <div

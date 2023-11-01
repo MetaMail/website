@@ -44,7 +44,21 @@ import dropdownImg from './dropdown.svg'
 import arrowLeft from './arrowLeft.svg'
 import arrowRight from './arrowRight.svg'
 import arrowRightActive from './arrowRightActive.svg'
+
+// Dark theme slider icon 
+import dark_spam from './darkSlider/spam.svg';
+import dark_star from './darkSlider/star.svg'
+import dark_send from './darkSlider/send.svg'
+import dark_inbox from './darkSlider/inbox.svg'
+import dark_draft from './darkSlider/draft.svg'
+import dark_delete from './darkSlider/delete.svg'
 export {
+    dark_spam ,
+    dark_star ,
+    dark_send ,
+    dark_inbox,
+    dark_draft,
+    dark_delete,
     arrowLeft,
     arrowRight,
     arrowRightActive,
