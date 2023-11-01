@@ -51,8 +51,15 @@ export function transformTime(timeStr: string) {
 export function getShowAddress(address: string) {
   // in 0x12207863361cdccdd33db00d857d9ae765a10064
   // out 0x122...0064
-  if (!address || !address.startsWith('0x')) return '';
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  // ?这里有点问题? 
+  // if (!address || !address.startsWith('0x')) return '';
+  // return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  if (!address) return;
+  if (address.startsWith('0x')) {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`
+  } else
+    return address
+
 }
 
 export function percentTransform(percent: number) {

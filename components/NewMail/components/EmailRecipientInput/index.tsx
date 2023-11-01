@@ -45,7 +45,9 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
       onAddReceiver(emailInput);
       inputRef.current.value = '';
     } else {
-      toast.error('Invalid Email Address.');
+      toast.error('Invalid Email Address.', {
+        autoClose: 90000
+      });
     }
   };
 
@@ -73,20 +75,21 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
   };
 
   return (
-    <div className="flex h-40 text-[#878787] items-center gap-10 relative">
+    <div className="flex h-40 text-[#878787] items-center relative">
       <input
         type="email"
         placeholder="Add Receipients"
         onChange={debounce(handleChange, 200)}
         onKeyDown={handleKeyPress}
-        className="input input-ghost h-40 focus:h-36"
+        className="input input-ghost h-40 focus:h-36 px-0 placeholder:text-sm"
         onBlur={handleInputBlur}
         ref={inputRef}
       />
       <button onClick={addRecipient}>
-        <Icon url={add} title="add receivers" className="w-20 h-20" />
+        {/* 添加收件人 */}
+        <Icon url={add} title="add receivers" className="w-23 h-23" />
       </button>
-      <ul>
+      <ul className='flex gap-10 '>
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div

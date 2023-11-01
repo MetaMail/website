@@ -3,7 +3,7 @@ import draftActive from './draftActive.svg';
 import inbox from './inbox.svg';
 import inboxActive from './inboxActive.svg';
 import encryptedInbox from './encryptedInbox.svg';
-
+import searchNormal from './searchNormal.svg'
 import markUnread from './markUnread.svg';
 import update from './update.svg';
 import read from './read.svg';
@@ -40,7 +40,15 @@ import extend from './extend.svg';
 import cancel from './cancel.svg';
 import mailMore from './mailMore.svg';
 import dropdownImg from './dropdown.svg'
+
+import arrowLeft from './arrowLeft.svg'
+import arrowRight from './arrowRight.svg'
+import arrowRightActive from './arrowRightActive.svg'
 export {
+    arrowLeft,
+    arrowRight,
+    arrowRightActive,
+    searchNormal,
     dropdownImg,
     down,
     empty,

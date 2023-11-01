@@ -11,8 +11,10 @@ import LoadingRing from 'components/LoadingRing';
 import Icon from 'components/Icon';
 import { empty } from 'assets/icons';
 import {
-  checkboxSvg,
-  checkboxedSvg, trash, read, starred, markUnread, spam, filter as filterIcon, update
+  arrowLeft,
+  arrowRight,
+  checkboxSvg, checkboxedSvg,
+  trash, read, starred, markUnread, spam, filter as filterIcon, update
 } from 'assets/icons';
 
 const MailListFilters = ['All', 'Read', 'Unread', 'Encrypted', 'UnEncrypted'] as const;
@@ -21,17 +23,20 @@ type MailListFiltersType = (typeof MailListFilters)[number];
 export default function MailList() {
   const { getMailStat } = useContext(MailBoxContext);
   const { filterType, pageIndex, list, setList, addPageIndex, subPageIndex } = useMailListStore();
+  // isDetailExtend : 详情是否占满全屏
+  // selectedMail : 选中查看详情的邮件
   const { selectedMail, isDetailExtend } = useMailDetailStore();
-
+  // console.log('selectedMail', selectedMail)
   const [loading, setLoading] = useState(false);
 
   const [pageNum, setPageNum] = useState(0);
   const [selectedAll, setSelectedAll] = useState(false);
-  const [filter, setFilter] = useState<MailListFiltersType>(null);
+  const [filter, setFilter] = useState<MailListFiltersType>();
 
   const inputCheckBoxRef = useRef<HTMLInputElement>();
 
   const handleFilterChange = (currentFilter: MailListFiltersType) => {
+    console.log('handleFilterChange', currentFilter)
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
@@ -119,13 +124,14 @@ export default function MailList() {
       if (showLoading) setLoading(false);
     }
   };
-
+  // 选中某一条邮件
   const handleSelectItem = (item: MailListItemType) => {
     item.selected = !item.selected;
+    console.log(list)
     setList([...list]);
     setSelectedAll(list.length && list.every(item => item.selected));
   };
-
+  // 点击全选
   const handleSelectedAllChange = () => {
     list.map(item => {
       item.selected = !selectedAll;
@@ -135,10 +141,13 @@ export default function MailList() {
   };
 
   useEffect(() => {
-    const selectedListNum = getSelectedList().length;
-    const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
-    inputCheckBoxRef.current.indeterminate = isIndeterminate;
-    setSelectedAll(list.length && list.every(item => item.selected));
+    if (list.length) {
+      const selectedListNum = getSelectedList().length;
+      const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
+      inputCheckBoxRef.current.indeterminate = isIndeterminate;
+      setSelectedAll(list.length && list.every(item => item.selected));
+    }
+
   }, [list]);
 
   useEffect(() => {
@@ -146,6 +155,7 @@ export default function MailList() {
   }, [pageIndex, filterType]);
 
   useEffect(() => {
+    // console.log('执行了')
     switch (filter) {
       case 'All':
         list.map(item => {
@@ -201,93 +211,108 @@ export default function MailList() {
     <div
       className={`flex flex-col h-full transition-all ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-300'
         }`}>
-      <div className="flex flex-row w-full justify-between px-20 pb-7 pt-20">
-        <div className="flex flex-row space-x-14 items-center">
-          <input
-            type="checkbox"
-            title="Select"
-            ref={inputCheckBoxRef}
-            checked={selectedAll}
-            onChange={handleSelectedAllChange}
-            className={`checkbox checkbox-sm w-12 h-12 rounded-2 border-0 ${selectedAll ? 'checked:bg-transparent' : ''}`}
-            style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
-          />
-          <Icon
-            url={update}
-            title="Refresh"
-            className="w-12 h-12"
-            onClick={() => {
-              fetchMailList(true);
-            }}
-          />
-          <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
-            <label tabIndex={0} className="cursor-pointer flex items-center">
-              <Icon url={filterIcon} title="Filter" className="w-12 h-12" />
-              <span className="text-[10px] text-[#707070]">{filter}</span>
-            </label>
-            <ul
-              tabIndex={0}
-              className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-130">
-              {MailListFilters.map((item, index) => {
-                return (
-                  <li
-                    onClick={() => {
-                      handleFilterChange(item);
-                    }}
-                    key={index}>
-                    <a>{item}</a>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+      {
+        list.length > 0 ? (<div className="flex flex-row w-full justify-between px-15 pb-7 pt-20 box-border">
+          <div className="flex flex-row space-x-10 items-center">
+            {/* 全选按钮 */}
 
-          {getSelectedList().length > 0 && (
-            <div className="flex gap-9 pl-10 border-l-2 border-[#EFEFEF]">
-              {mailActions.map((item, index) => {
-                return (
-                  <div className="box-border bg-opacity-0 rounded-10 hover:bg-opacity-60 p-4 hover:bg-[#EDF3FF]">
-                    <Icon
-                      title={item.title}
-                      url={item.src}
-                      key={index}
-                      onClick={async () => {
-                        await handleMailActionsClick(item.httpParams);
+            <input
+              type="checkbox"
+              title="Select"
+              ref={inputCheckBoxRef}
+              checked={selectedAll}
+              onChange={handleSelectedAllChange}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent`}
+              style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
+
+            />
+
+            <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
+              {/* 筛选漏斗icon */}
+              <label tabIndex={0} className="cursor-pointer flex items-center">
+                <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
+                <span className="text-sm text-[#707070]">{filter}</span>
+              </label>
+
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-130">
+                {MailListFilters.map((item, index) => {
+                  return (
+                    <li
+                      onClick={() => {
+                        handleFilterChange(item);
                       }}
-                      className="w-12 h-12 self-center box-border bg-opacity-0 "
-                    />
-                  </div>
-                );
-              })}
+                      key={index}>
+                      <a>{item}</a>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-          )}
-        </div>
 
-        <div className="flex items-center flex-row justify-end space-x-20 text-xl text-[#7F7F7F]">
-          <span className="text-md">total page: {pageNum}</span>
-          <button
-            disabled={pageIndex === 1}
-            className="w-20 disabled:opacity-40"
-            onClick={() => {
-              if (pageIndex > 1) subPageIndex();
-            }}>
-            {'<'}
-          </button>
-          <button
-            className="w-20 disabled:opacity-40"
-            disabled={pageIndex === pageNum}
-            onClick={() => {
-              if (pageIndex < pageNum) addPageIndex();
-            }}>
-            {'>'}
-          </button>
-        </div>
-      </div>
+            {getSelectedList().length > 0 && (
+              <div className="flex gap-5 border-l-2 border-[#EFEFEF] pl-10">
+                {/* 筛选旁边的小icon */}
+                {!selectedMail && mailActions.map((item, index) => {
+                  return (
+                    <div className="box-border bg-opacity-0 rounded-10 hover:bg-opacity-60 p-4 hover:bg-[#EDF3FF]">
+                      <Icon
+                        title={item.title}
+                        url={item.src}
+                        key={index}
+                        onClick={async () => {
+                          await handleMailActionsClick(item.httpParams);
+                        }}
+                        className="w-16 h-16 self-center box-border bg-opacity-0 "
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          {/* 分页 */}
+          <div className="flex items-center flex-row justify-end space-x-8 text-xl text-[#7F7F7F]">
+            {/* <span className="text-md">total page: {pageNum}</span> */}
 
-      <div className={`flex flex-col overflow-y-auto  overflow-x-hidden flex-1 relative ${list.length ? 'justify-start' : 'justify-center'}`}>
+            <button
+              disabled={pageIndex === 1}
+              className="w-16"
+              onClick={() => {
+                if (pageIndex > 1) subPageIndex();
+              }}>
+              {/* 当是第一页 */}
+              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-16 h-16 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-16 h-16 rotate-180"></Icon>)}
+            </button>
+
+            <button
+              className="w-16"
+              disabled={pageIndex === pageNum}
+              onClick={() => {
+                if (pageIndex < pageNum) addPageIndex();
+              }}>
+              <Icon url={arrowRight} title="arrowRight" className="w-16 h-16"></Icon>
+            </button>
+            <Icon
+              url={update}
+              title="Refresh"
+              className="w-16 h-16"
+              onClick={() => {
+                fetchMailList(true);
+              }}
+            />
+          </div>
+        </div>
+        ) : ''
+      }
+
+
+      <div className={`flex flex-col overflow-y-auto  overflow-x-hidden flex-1 relative  ${list.length ? 'justify-start' : 'justify-center'}`}>
         {loading && <LoadingRing />}
         {list.length ? (
           list.map((item, index) => {
+            // console.log(`${item.message_id}${item.mailbox}`)
             return (
               <MailListItem
                 key={`${item.message_id}${item.mailbox}`}
@@ -299,7 +324,6 @@ export default function MailList() {
             );
           })
         ) : (
-          // <div className="text-center pt-24">{'<No Mail>'}</div>
           <Image src={empty} alt="No Mail" className="w-auto h-136" />
         )}
       </div>

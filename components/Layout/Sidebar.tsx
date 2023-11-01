@@ -56,9 +56,9 @@ export default function Sidebar() {
             onClick={() => {
               handleChangeFilter(item.key);
             }}
-            className='mb-2 '>
-            <a className={`hover:bg-base-300 rounded-4 py-4   ${filterType === Number(item.key) ? 'active rounded-4 ' : ''}  dark:!bg-E7E7E7 dark:hover:!!bg-opacity-6 dark:!bg-opacity-10 `}>
-              <Image src={filterType === Number(item.key) ? item.activeLogo : item?.logo} alt={item?.title} height="12.5" className="self-center stroke-width-100 fill-primary filter-primary" />
+            className='mb-2 font-semibold'>
+            <a className={`hover:bg-base-300 rounded-4 py-4   ${filterType === Number(item.key) ? 'active rounded-4 ' : ''}  dark:!bg-#E7E7E71A dark:hover:!!bg-opacity-6 dark:!bg-opacity-10 `}>
+              <Image src={filterType === Number(item.key) ? item.activeLogo : item?.logo} alt={item?.title} className="w-16 h-16 self-center stroke-width-100 fill-primary filter-primary" />
               <span>{item.title}</span>
               {renderBadge(item.key)}
             </a>
@@ -70,7 +70,7 @@ export default function Sidebar() {
           <li key={item.key} >
             {/* <details open> */}
             <div className={`hover:bg-base-300 rounded-4 py-4 menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : ''}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
-              <Image src={item?.logo} alt={item?.title} height="12.5" className={`self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
+              <Image src={item?.logo} alt={item?.title} className={`w-16 h-16 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
               <span>{item.title}</span>
               {item.childrenShow}
             </div>
@@ -101,7 +101,7 @@ export default function Sidebar() {
         </button>
         <button className="btn btn-xs btn-primary text-white mt-10 h-40" onClick={handleClickNewMail}>
           <Image src={write} alt="new_mail" className="w-16 h-auto" />
-          <span className='fz-500'>New Message</span>
+          <span className='font-700 text-sm'>New Message</span>
         </button>
         <div>
           <ul className="menu px-4 py-8">

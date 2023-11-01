@@ -342,18 +342,18 @@ export default function NewMail() {
 
   return (
     <div
-      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0 right-0 rounded-20 ${isExtend ? 'h-full w-full' : 'h-502 w-[50vw]'
-        } ${styles.newMailWrap}`}>
+      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0  rounded-20 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
+        } `}>
       <header className="flex justify-between">
         <div className="flex items-center">
           {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
           <span className="font-black text-[20px] font-bold">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
-          <Icon url={extend} className="w-20 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
+          <Icon url={extend} className="w-16 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
           <Icon
             url={cancel}
-            className="w-20 scale-[120%] h-auto self-center"
+            className="w-16 h-auto self-center"
             onClick={async () => {
               if (!getMailChanged()) return setSelectedDraft(null);
               setShowLoading(true);
@@ -367,9 +367,9 @@ export default function NewMail() {
           />
         </div>
       </header>
-      <div className="text-[#464646] mt-20">
+      <div className="text-[#464646] mt-20 text-sm">
         <div className="flex h-40 items-center">
-          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">To</span>
+          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
           <EmailRecipientInput
             receivers={selectedDraft.mail_to}
             onAddReceiver={addReceiver}
@@ -377,7 +377,7 @@ export default function NewMail() {
           />
         </div>
         <div className="flex h-40 items-center">
-          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">From</span>
+          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
           <NameSelector
             initValue={
               selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
@@ -386,7 +386,7 @@ export default function NewMail() {
           />
         </div>
         <div className="flex h-40 items-center">
-          <span className="w-78 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
+          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
           <input
             type="text"
             placeholder=""
@@ -399,6 +399,7 @@ export default function NewMail() {
           />
         </div>
       </div>
+
       {loading && <LoadingRing />}
       {
         <>
@@ -411,34 +412,51 @@ export default function NewMail() {
             modules={EditorModules}
             formats={EditorFormats}
           />
-          {selectedDraft.attachments?.map((attr, index) => (
-            <li key={index} className="flex">
-              <div
-                className="px-6 py-2 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer flex items-center gap-8"
-                title={attr.filename}>
-                <span className="">
-                  {attr.filename}
-                  {attr.uploadProcess && !attr.attachment_id
-                    ? percentTransform(attr.uploadProcess) + '%'
-                    : ''}
-                </span>
-              </div>
-              <button onClick={() => removeAttachment(index)}>
-                <Icon url={cancel} title="cancel" className="w-20 h-20" />
-              </button>
-            </li>
-          ))}
+          <ul className="flex gap-10">
+            {selectedDraft.attachments?.map((attr, index) => (
+
+              <li key={index} className="flex">
+                <div
+                  className="text-sm px-6 py-2 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer flex items-center gap-8"
+                  title={attr.filename}>
+                  <span className="">
+                    {attr.filename}
+                    {attr.uploadProcess && !attr.attachment_id
+                      ? percentTransform(attr.uploadProcess) + '%'
+                      : ''}
+                  </span>
+                </div>
+                <button onClick={() => removeAttachment(index)}>
+                  <Icon url={cancel} title="cancel" className="w-16 h-16" />
+                </button>
+              </li>
+            ))}
+          </ul>
         </>
       }
+      {isExtend && <FileUploader
+        randomBits={randomBits}
+        onChange={() => (mailChanged = true)}
+        onCheckDraft={async () => {
+          mailChanged = true;
+          if (!selectedDraft.message_id) {
+            await handleSave();
+          }
+        }}
+        isExtend={isExtend}
+      />}
+
       <div className="flex items-center gap-13 mt-12">
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
-          className="flex justify-center items-center bg-primary text-white w-80 h-40 rounded-[6px]">
-          <Icon url={sendMailIcon} />
+          className="flex justify-center items-center bg-primary text-white px-14 py-8  rounded-[6px] text-sm">
+          <Icon url={sendMailIcon} className='h-16' />
           <span className="ml-8">Send</span>
         </button>
-        <FileUploader
+
+        {/* 上传文件按钮 */}
+        {!isExtend && <FileUploader
           randomBits={randomBits}
           onChange={() => (mailChanged = true)}
           onCheckDraft={async () => {
@@ -447,7 +465,8 @@ export default function NewMail() {
               await handleSave();
             }
           }}
-        />
+          isExtend={isExtend}
+        />}
       </div>
     </div>
   );

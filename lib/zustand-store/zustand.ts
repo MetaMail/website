@@ -68,3 +68,12 @@ export const useUtilsStore = create<IUtilsState>()(set => ({
         setSelectedDraft(null);
     },
 }));
+
+interface ITheme {
+  theme: string;
+   setTheme: (theme: string) => void;
+}
+export const useThemeStore = create<ITheme>()(set => ({
+   theme: "",
+   setTheme: (theme: string) => set(() => ({ theme })),
+}));

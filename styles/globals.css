@@ -1,20 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Space+Grotesk&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins&family=Space+Grotesk&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
- [data-theme='light'] {
-    --primary: #3c6ff4;
-    --menu-active-bg-color: #9ebfff;
-    --menu-active-color: var(--primary);
-    --menu-hover-bg-color: #d6e4ff;
-    --icon-color: #8c8c8c;
-    --icon-active-color: var(--primary);
-    --meta-mail-color: black;
-    --btn-font-color: #fff;
-    --chkbg: #ccc;
+
+@media (min-width: 1680px) {
+  body,
+  html {
+    font-size: 20px;
+  }
 }
-/* [data-theme='dark'] {
+
+@media (min-width: 1920px) {
+  body,
+  html {
+    font-size: 22px;
+  }
+}
+
+[data-theme="light"] {
+  --primary: #3c6ff4;
+  --menu-active-bg-color: #9EBFFF;
+  --menu-active-color: var(--primary);
+  --menu-hover-bg-color: #d6e4ff;
+  --icon-color: #8c8c8c;
+  --icon-active-color: var(--primary);
+  --meta-mail-color: black;
+  --btn-font-color: #fff;
+  --chkbg: #ccc;
+}
+[data-theme='dark'] {
     --primary: #3c6ff4;
     --menu-active-bg-color: rgba(231, 231, 231, 0.1);
     --menu-active-color: #fff;
@@ -23,180 +38,165 @@
     --icon-active-color: #e9e9e9;
     --meta-mail-color: white;
     --btn-font-color: #fff;
-}  */
+} 
 
 body {
-    width: 100%;
-    margin: auto;
-    background-color: #f2f8ff;
-    background-repeat: no-repeat;
-    background-size: cover;
-    font-family: 'Poppins', 'sans-serif';
-    font-family: 'Space Grotesk', 'sans-serif';
-    font-style: 'Space Grotesk';
+  width: 100%;
+  margin: auto;
+  background-color: #f2f8ff;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: "Poppins", "sans-serif";
+  font-family: "Space Grotesk", "sans-serif";
+  font-style: "Space Grotesk";
 }
 .home-bg {
-    background-repeat: no-repeat;
+  background-repeat: no-repeat;
 }
 .gradient-dot-NE {
-    position: absolute;
-    right: 0;
-    top: 190px;
-    background: #00d1ff;
-    opacity: 0.2;
-    filter: blur(100px);
-    width: 210px;
-    height: 210px;
+  position: absolute;
+  right: 0;
+  top: 190px;
+  background: #00d1ff;
+  opacity: 0.2;
+  filter: blur(100px);
+  width: 210px;
+  height: 210px;
 }
 .gradient-dot-middle {
-    position: absolute;
-    background: #ff6b00;
-    right: 123px;
-    top: 185px;
-    opacity: 0.3;
-    width: 170px;
-    height: 170px;
-    filter: blur(150px);
+  position: absolute;
+  background: #ff6b00;
+  right: 123px;
+  top: 185px;
+  opacity: 0.3;
+  width: 170px;
+  height: 170px;
+  filter: blur(150px);
 }
 
 .description-bg {
-    background: linear-gradient(296.84deg, rgba(172, 180, 252, 0.02) 2.19%, rgba(171, 207, 254, 0.31) 98%);
-    background-repeat: no-repeat;
+  background: linear-gradient(296.84deg, rgba(172, 180, 252, 0.02) 2.19%, rgba(171, 207, 254, 0.31) 98%);
+  background-repeat: no-repeat;
 }
 .description-bg2 {
-    background: linear-gradient(72.92deg, rgba(232, 201, 255, 0.147) 5.55%, rgba(102, 117, 255, 0.182) 82.18%);
+  background: linear-gradient(72.92deg, rgba(232, 201, 255, 0.147) 5.55%, rgba(102, 117, 255, 0.182) 82.18%);
 }
 .description-bg3 {
-    background: linear-gradient(292.77deg, rgba(171, 207, 255, 0.08) 14.7%, rgba(141, 152, 255, 0.26) 97.91%);
+  background: linear-gradient(292.77deg, rgba(171, 207, 255, 0.08) 14.7%, rgba(141, 152, 255, 0.26) 97.91%);
 }
-
+::-webkit-scrollbar {
+    display: none;
+}
 .omit {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
+.ql-container{
 
+}
 .ql-container.ql-snow {
-    @apply flex border-0 min-h-0 flex-1;
-    border: none !important;
+  @apply flex border-0 min-h-0 flex-1;
+  border: none !important;
+ 
 }
 .ql-toolbar.ql-snow {
-    @apply flex bg-base-100;
-    border: none !important;
-    padding-left: 0 !important;
+  @apply flex bg-base-100;
+  border: none !important;
+  padding-left: 0 !important;
 }
 .ql-snow .ql-picker.ql-header {
-    @apply hidden;
+  @apply hidden;
 }
 .ql-editor {
-    @apply flex-1;
-    padding: 0 !important;
+  @apply flex-1;
+  padding: 0 !important;
 }
 .ql-snow .ql-tooltip {
-    @apply ml-150;
+  @apply ml-150;
 }
 .ql-toolbar.ql-snow .ql-formats {
-    margin-right: 0px !important;
+  margin-right: 0px !important;
 }
 
-ql-snow .ql-toolbar button {
-    @apply w-12 h-12;
+.ql-snow.ql-toolbar button, .ql-snow .ql-toolbar button{
+  width: 40px!important;
+  height: 40px!important;
 }
 
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
 }
 
 select:focus-visible {
-    outline: none;
+  outline: none;
 }
 
 .btn {
-    height: 40px;
-    min-height: 40px;
-    line-height: 38px;
-    color: var(--btn-font-color);
+  /* height: 40px;
+  min-height: 40px; */
+  line-height: 38px;
+  color: var(--btn-font-color);
 }
 
 button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.checkbox:checked,
-.checkbox[checked='true'],
-.checkbox[aria-checked='true'] {
-    /* background-image: linear-gradient(-45deg, transparent 65%, hsl(var(--check-box-bg)) 65.99%),
-        linear-gradient(45deg, transparent 75%, hsl(var(--check-box-bg)) 75.99%),
-        linear-gradient(-45deg, hsl(var(--check-box-bg)) 40%, transparent 40.99%),
-        linear-gradient(
-            45deg,
-            hsl(var(--check-box-bg)) 30%,
-            hsl(var(--check-box-bg)) 30.99%,
-            hsl(var(--check-box-bg)) 40%,
-            transparent 40.99%
-        ),
-        linear-gradient(-45deg, hsl(var(--check-box-bg)) 50%, hsl(var(--check-box-bg)) 50.99%); */
-}
-
-.menu li > *:not(ul):not(.menu-title):not(details).active,
-.menu li > *:not(ul):not(.menu-title):not(details):active {
-    background-color: var(--menu-active-bg-color);
-    cursor: pointer;
-    color: var(--menu-active-color);
-    font-weight: bolder;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .menu li > *:not(ul):not(.menu-title):not(details).active .mail-svg,
 .menu li > *:not(ul):not(.menu-title):not(details):active .mail-svg {
-    stroke: var(--icon-active-color);
+  stroke: var(--icon-active-color);
 }
 
 .menu li > details > summary:active {
-    background-color: var(--menu-active-bg-color);
-    cursor: pointer;
-    color: var(--menu-active-color);
-    font-weight: bolder;
+  background-color: var(--menu-active-bg-color);
+  cursor: pointer;
+  color: var(--menu-active-color);
+  font-weight: bolder;
 }
 
 .menu li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title):not(.active):hover {
-    background-color: var(--menu-hover-bg-color);
+  background-color: var(--menu-hover-bg-color);
 }
 
 .menu li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title):not(.active):hover {
-    background-color: var(--menu-hover-bg-color);
+  background-color: var(--menu-hover-bg-color);
 }
 
 .mail-svg {
-    stroke: var(--icon-color);
+  stroke: var(--icon-color);
 }
 
 .meta-mail-txt path {
-    fill: var(--meta-mail-color);
+  fill: var(--meta-mail-color);
 }
 
 .badge-inbox {
-    background-color: var(--primary);
-    border-radius: 2px;
-    padding: 0 8px;
-    color: #fff;
-    font-size: 12px;
-    transform: scale(0.75);
-    font-weight: 400;
+  background-color: var(--primary);
+  border-radius: 2px;
+  padding: 0 8px;
+  color: #fff;
+  font-size: 12px;
+  transform: scale(0.75);
+  font-weight: 400;
 }
 
 .badge-spam {
-    font-size: 12px;
-    transform: scale(0.9);
-    font-weight: 400;
+  font-size: 12px;
+  transform: scale(0.9);
+  font-weight: 400;
+}
+.input:focus, .input:focus-within{
+  outline: none;
 }

@@ -223,7 +223,7 @@ export default function MailDetail() {
 
   return (
     <div
-      className={`relative flex-1 rounded-10 flex flex-col font-poppins p-20 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full' : ''
+      className={`relative flex-1 rounded-10 flex flex-col font-poppins p-16 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full' : ''
         }`}>
       <header className="flex flex-col justify-between w-full mb-20">
         <div className="flex justify-between w-full">
@@ -234,7 +234,7 @@ export default function MailDetail() {
                   url={item.src}
                   title={item.title}
                   key={index}
-                  className="w-20 h-20 self-center"
+                  className="w-16 h-16 self-center"
                   onClick={item.handler}
                 />
               );
@@ -243,7 +243,7 @@ export default function MailDetail() {
           <div className="flex gap-10">
             <Icon
               url={extend}
-              className="w-20 h-20 self-center "
+              className="w-16 h-16 self-center "
               onClick={() => setIsDetailExtend(!isDetailExtend)}
             />
             <Icon
@@ -252,13 +252,13 @@ export default function MailDetail() {
                 setSelectedMail(null);
                 setIsDetailExtend(false);
               }}
-              className="w-20 h-20 scale-[120%] self-center"
+              className="w-16 h-16 self-center"
             />
           </div>
         </div>
-        <h1 className="omit text-2xl font-bold my-20 max-w-4xl text-[20px] mt-14 mb-22">{selectedMail?.subject || '( no subject )'}</h1>
+        <h1 className="omit text-2xl font-bold my-20 max-w-4xl text-[20px] mt-14 mb-18">{selectedMail?.subject || '( no subject )'}</h1>
         <div className="flex justify-between">
-          <div className="flex gap-11">
+          <div className="flex gap-18 items-center text-sm">
             <JazziconGrid size={30} addr={selectedMail.mail_from.address || ''} />
             <div className="">
               <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
@@ -269,7 +269,7 @@ export default function MailDetail() {
             </div>
           </div>
           <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
-            <div className="text-xs">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
+            <div className="text-sm">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
             <div className="flex gap-10 justify-end">
               {rightIcons.map((item, index) => {
                 return (
@@ -278,7 +278,7 @@ export default function MailDetail() {
                     url={item.src}
                     title={item.title}
                     onClick={item.handler}
-                    className="w-20 h-20 self-center"
+                    className="w-16 h-16 self-center"
                   />
                 );
               })}
@@ -289,7 +289,7 @@ export default function MailDetail() {
       {loading && <LoadingRing />}
       {
         <>
-          <h2 className="flex-1 overflow-auto text-[12px] text=[#040404]">
+          <h2 className="flex-1 overflow-auto text-sm text=[#040404]">
             {selectedMail?.part_html
               ? parse(DOMPurify.sanitize(selectedMail?.part_html))
               : selectedMail?.part_text}
@@ -311,7 +311,7 @@ export default function MailDetail() {
       }
 
       <button
-        className="flex justify-center items-center bg-primary text-white px-16 py-5 rounded-[6px] self-start text-[12px] leading-[22px]"
+        className="flex justify-center items-center bg-primary text-white px-16 py-5 rounded-[6px] self-start text-sm leading-[22px]"
         onClick={handleReply}>
         {/* <Icon url={sendMailIcon} /> */}
         <span className="">Reply</span>

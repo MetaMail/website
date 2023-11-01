@@ -9,8 +9,9 @@ import { PostfixOfAddress } from 'lib/base/request';
 import { userHttp } from 'lib/http';
 
 import copy from 'assets/mailbox/copy.svg';
+import copyDark from 'assets/mailbox/copyDark.svg'
 import right from 'assets/mailbox/right.svg';
-import { dropdownImg } from 'assets/icons';
+import { dropdownImg, searchNormal } from 'assets/icons';
 export default function Titlebar() {
   const { logout } = useContext(MailBoxContext);
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
@@ -19,7 +20,7 @@ export default function Titlebar() {
   const [emailSize, setEmailSize] = useState<number>();
   const [emailSizeLimit, setEmailSizeLimit] = useState<number>();
   const [dropdownShow, setDropdownShow] = useState<boolean>(false)
-
+  const [theme, setTheme] = useState('light');
   const handleCopy = (txt: string) => {
     navigator.clipboard.writeText(txt);
     toast.success('Copied to clipboard');
@@ -41,15 +42,27 @@ export default function Titlebar() {
         toast.error('Get user profile failed.');
       });
   }, []);
+  useEffect(() => {
+    document.querySelector('html').setAttribute('data-theme', theme);
+  }, [theme])
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+    localStorage.setItem('theme', theme)
+  };
   return (
-    <div className="navbar p-0 min-h-fit h-45">
+    <div className="navbar p-0 min-h-fit h-45 py-5 flex items-center">
+      {/* header-left 左边搜索框 */}
       <div className="flex-1">
-        <input type="text" placeholder="Search" className="input w-380 h-29 rounded-4 dark:!bg-[#353739]" />
+        <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
+          <Image src={searchNormal} alt='search' title='search' className={`w-12 h-12`} />
+          <input type="text" className="input w-380 h-29 rounded-4 pl-7 text-sm dark:!bg-[#353739]" />
+        </div>
       </div>
+      {/* header-right avatar */}
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
         <div className={`dropdown dropdown-end  dropdown-bottom  w-90`} onClick={() => { if (!dropdownShow) setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
-          <label tabIndex={0} className="rounded-6 border-0 flex w-full justify-between items-center btn btn-circle btn-sm p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] h-35 pl-8 pr-19 box-border">
+          <label tabIndex={0} className="rounded-6 border-0 flex w-full justify-between items-center h-[35] btn btn-circle btn-sm p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] h-35 pl-8 pr-19 box-border">
             <div className="w-28 h-28 rounded-full  hover:border-5">
               {/* 头像 */}
               <JazziconGrid size={28} addr={address} />
@@ -66,7 +79,7 @@ export default function Titlebar() {
                 {PostfixOfAddress}
               </p>
               <Image
-                src={copy}
+                src={theme == 'light' ? copy : copyDark}
                 alt="copy"
                 title="copy"
                 className="w-18 h-18 p-0 cursor-pointer"
@@ -74,6 +87,7 @@ export default function Titlebar() {
                   handleCopy(`${address}${PostfixOfAddress}`);
                 }}
               />
+
             </div>
             {ensName && (
               <div className="text-[#93989A] flex flex-row items-center my-8">
@@ -110,15 +124,22 @@ export default function Titlebar() {
               <Image src={right} alt="go" />
             </div>
             <div className="form-control">
-              <label className="label cursor-pointer">
-                <span className="label-text">Change theme</span>
+              {theme == 'dark' && <label className="label cursor-pointer" >
+                <span className="label-text font-bold">Light theme</span>
                 <input
                   type="checkbox"
                   className="toggle"
-                  data-toggle-theme="dark,light"
-                  data-act-class="ACTIVECLASS"
+                  onClick={toggleTheme}
                 />
-              </label>
+              </label>}
+              {theme == 'light' && <label className="label cursor-pointer" >
+                <span className="label-text font-bold">Dark theme</span>
+                <input
+                  type="checkbox"
+                  className="toggle"
+                  onClick={toggleTheme}
+                />
+              </label>}
             </div>
           </div>
         </div>
