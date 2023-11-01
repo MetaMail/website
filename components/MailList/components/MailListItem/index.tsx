@@ -115,13 +115,13 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={`text-base  py-6 flex flex-row px-15 items-center group h-36 cursor-pointer hover:dark:bg-base-300 hover:dark:bg-opacity-10  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50'
+          className={`text-[18px]  py-6 flex flex-row px-15 items-center group h-36 cursor-pointer hover:dark:bg-base-300 hover:dark:bg-opacity-10  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50'
             }`}>
           <div className="flex flex-row gap-10">
             <input
               type="checkbox"
               title="Select"
-              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-18 h-18 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
               style={{ backgroundImage: `url(${mail.selected ? checkboxedSvg.src : checkboxSvg.src})` }}
               checked={mail.selected}
               onClick={e => {
@@ -132,7 +132,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
 
             <Icon
               url={mail.mark === MarkTypeEn.Starred ? markFavorite : favorite}
-              className="w-16 h-16"
+              className="w-18 h-18"
               title={mail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star'}
               onClick={async e => {
                 e.stopPropagation();
@@ -204,16 +204,16 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
                 {getMailFrom(mail)}
               </span>
               {/* 邮件日期 */}
-              <span className={`max-w-[80] text-right text-sm text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
+              <span className={`max-w-[80] text-right text-base text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
             </p>
-            <p className="flex justify-between items-center  text-sm ">
+            <p className="flex justify-between items-center  text-base ">
               {/* 邮件主体 */}
-              <span className={`omit text-sm mr-4 flex-1 w-0  dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
+              <span className={`omit text-base mr-4 flex-1 w-0  dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
                 {mail.subject || '( no subject )'}
               </span>
               <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             </p>
-            <p className={`omit text-sm  dark:text-[#A7A1A1] ${mail.read == ReadStatusTypeEn.Read ? 'text-[#70707099]' : 'text-base-content'}`}>{renderDigest(mail)}</p>
+            <p className={`omit text-base  dark:text-[#A7A1A1] ${mail.read == ReadStatusTypeEn.Read ? 'text-[#70707099]' : 'text-base-content'}`}>{renderDigest(mail)}</p>
           </div>
         </div >
       )

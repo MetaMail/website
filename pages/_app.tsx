@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import { themeChange } from 'theme-change';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
-
+import { useThemeStore } from 'lib/zustand-store';
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -13,18 +13,14 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & { Component: NextPageWithLayout };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
-  const setRem = async () => {
-    await require('../lib/utils/flexible.js')
-  }
-  useEffect(() => {
-    setRem()
-    window.addEventListener('resize', setRem)
-  })
+  const { isDark, setIsDark } = useThemeStore()
+
   useEffect(() => {
     themeChange(false);
     console.log(themeChange)
     const theme = document.documentElement.getAttribute('data-theme') || '';
     document.body.className = theme;
+    setIsDark(theme == 'dark' ? true : false)
   }, []);
   useEffect(() => {
     const observer = new MutationObserver(() => {

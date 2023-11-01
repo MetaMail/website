@@ -222,7 +222,7 @@ export default function MailList() {
               ref={inputCheckBoxRef}
               checked={selectedAll}
               onChange={handleSelectedAllChange}
-              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent`}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-18 h-18 rounded-2 border-0 bg-transparent`}
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
 
             />
@@ -230,8 +230,8 @@ export default function MailList() {
             <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center">
-                <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
-                <span className="text-sm text-[#707070]">{filter}</span>
+                <Icon url={filterIcon} title="Filter" className="w-18 h-18" />
+                <span className="text-base text-[#707070]">{filter}</span>
               </label>
 
               <ul
@@ -264,7 +264,7 @@ export default function MailList() {
                         onClick={async () => {
                           await handleMailActionsClick(item.httpParams);
                         }}
-                        className="w-16 h-16 self-center box-border bg-opacity-0 "
+                        className="w-18 h-18 self-center box-border bg-opacity-0 "
                       />
                     </div>
                   );
@@ -278,26 +278,26 @@ export default function MailList() {
 
             <button
               disabled={pageIndex === 1}
-              className="w-16"
+              className="w-18"
               onClick={() => {
                 if (pageIndex > 1) subPageIndex();
               }}>
               {/* 当是第一页 */}
-              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-16 h-16 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-16 h-16 rotate-180"></Icon>)}
+              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-18 h-18 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-18 h-18 rotate-180"></Icon>)}
             </button>
 
             <button
-              className="w-16"
+              className="w-18"
               disabled={pageIndex === pageNum}
               onClick={() => {
                 if (pageIndex < pageNum) addPageIndex();
               }}>
-              <Icon url={arrowRight} title="arrowRight" className="w-16 h-16"></Icon>
+              <Icon url={arrowRight} title="arrowRight" className="w-18 h-18"></Icon>
             </button>
             <Icon
               url={update}
               title="Refresh"
-              className="w-16 h-16"
+              className="w-18 h-18"
               onClick={() => {
                 fetchMailList(true);
               }}

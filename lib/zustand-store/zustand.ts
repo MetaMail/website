@@ -70,10 +70,14 @@ export const useUtilsStore = create<IUtilsState>()(set => ({
 }));
 
 interface ITheme {
+  isDark:boolean,
   theme: string;
-   setTheme: (theme: string) => void;
+  setTheme: (theme: string) => void;
+  setIsDark: (isDark: boolean) => void;
 }
 export const useThemeStore = create<ITheme>()(set => ({
+   isDark:false,
    theme: "",
    setTheme: (theme: string) => set(() => ({ theme })),
+   setIsDark: (isDark: boolean) => set(() => ({ isDark })),
 }));

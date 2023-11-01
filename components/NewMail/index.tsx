@@ -350,10 +350,10 @@ export default function NewMail() {
           <span className="font-black text-[20px] font-bold">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
-          <Icon url={extend} className="w-16 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
+          <Icon url={extend} className="w-18 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
           <Icon
             url={cancel}
-            className="w-16 h-auto self-center"
+            className="w-18 h-auto self-center"
             onClick={async () => {
               if (!getMailChanged()) return setSelectedDraft(null);
               setShowLoading(true);
@@ -427,7 +427,7 @@ export default function NewMail() {
                   </span>
                 </div>
                 <button onClick={() => removeAttachment(index)}>
-                  <Icon url={cancel} title="cancel" className="w-16 h-16" />
+                  <Icon url={cancel} title="cancel" className="w-18 h-18" />
                 </button>
               </li>
             ))}
@@ -451,7 +451,7 @@ export default function NewMail() {
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
           className="flex justify-center items-center bg-primary text-white px-14 py-8  rounded-[6px] text-sm">
-          <Icon url={sendMailIcon} className='h-16' />
+          <Icon url={sendMailIcon} className='h-18' />
           <span className="ml-8">Send</span>
         </button>
 
