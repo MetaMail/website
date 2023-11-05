@@ -3,7 +3,7 @@ import React from 'react';
 import CryptoJS from 'crypto-js';
 import { throttle } from 'lodash';
 import { toast } from 'react-toastify';
-import Dropzone from '../Dropzone';
+import MyDropzone from '../Dropzone';
 import { mailHttp, IUploadAttachmentResponse } from 'lib/http';
 import { useNewMailStore } from 'lib/zustand-store';
 import { AttachmentRelatedTypeEn } from 'lib/constants';
@@ -136,11 +136,11 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
 
 
   return (
-    <Dropzone Dropzone
+    <MyDropzone
       onChange={handleClickUpload}
       isExtend={isExtend}
     >
-    </Dropzone>
+    </MyDropzone>
   )
 
 };
