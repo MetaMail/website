@@ -1,26 +1,25 @@
 /*
  * @Author: your name
  * @Date: 2023-11-03 16:07:51
- * @LastEditTime: 2023-11-03 18:11:27
+ * @LastEditTime: 2023-11-05 19:51:21
  * @LastEditors: 韦玮莹
  * @Description: In User Settings Edit
  * @FilePath: \website\components\NewMail\components\Dropzone\index.tsx
  */
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { ReactNode } from 'react';
 import Dropzone from 'react-dropzone';
 import addAttach from 'assets/addAttach.svg';
 interface IDropzone {
-  onChange: (fileList: File[]) => void;
+  children: ReactNode;
+  onChange: any;
   isExtend: boolean
 }
 const UploadComponent = ({ onChange, isExtend }: IDropzone) => {
-  const [files, setFiles] = useState([]);
 
-  const handleDrop = (acceptedFiles: File[]) => {
-    console.log('event', [...acceptedFiles])
+  const handleDrop = (acceptedFiles: any[]) => {
+    // console.log('event', [...acceptedFiles])
     onChange([...acceptedFiles])
-    // setFiles([...files, ...acceptedFiles]);
   };
 
   return (
