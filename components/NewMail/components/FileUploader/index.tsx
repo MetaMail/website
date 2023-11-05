@@ -1,4 +1,4 @@
-import React,from 'react';
+import React from 'react';
 
 import CryptoJS from 'crypto-js';
 import { throttle } from 'lodash';
