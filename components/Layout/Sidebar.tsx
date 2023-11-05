@@ -11,15 +11,16 @@ import { FilterTypeEn, MenusMap, IMenuItem } from 'lib/constants';
 
 import { MetaMailSvg, WriteMailSvg } from 'components/svg';
 
-import logoBrand from 'assets/MetaMail.svg';
 import logo from 'assets/logo.svg';
 import write from 'assets/mailbox/write.svg';
 
 
 
 export default function Sidebar() {
-  const { theme, setTheme } = useThemeStore()
-  console.log('theme', theme)
+  const { isDark } = useThemeStore()
+  useEffect(() => {
+    console.log('isDark', isDark)
+  }, [isDark])
   const { logout, getMailStat, createDraft } = useContext(MailBoxContext);
   const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();
 
@@ -38,7 +39,7 @@ export default function Sidebar() {
     }
     const count = type === FilterTypeEn.Inbox ? unreadCount : spamCount;
     if (count <= 0) return null;
-    return <p className="badge badge-sm rounded-2 btn-primary p-0 w-26 h-18">
+    return <p className="badge badge-sm rounded-4 btn-primary p-0 w-30 h-18">
       <span className='text-[18px] scale-50'> {count > 99 ? '99+' : count}</span>
     </p>;
   };
@@ -59,10 +60,10 @@ export default function Sidebar() {
             onClick={() => {
               handleChangeFilter(item.key);
             }}
-            className='mb-10 font-semibold text-[21px]'>
-            <a className={`rounded-4 py-3   ${filterType === Number(item.key) ? 'active rounded-4 ' : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:!!bg-opacity-6 dark:!bg-opacity-10 `}>
-              <Image src={filterType === Number(item.key) ? item.activeLogo : item?.logo} alt={item?.title} className="w-24 h-24 self-center stroke-width-100 fill-primary filter-primary" />
-              <span className='leading-[36px]'>{item.title}</span>
+            className='mb-5 '>
+            <a className={`rounded-5 p-0 h-32 pl-12 pr-5  ${filterType === Number(item.key) ? 'active rounded-4 font-semibold ' : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:!!bg-opacity-6 dark:!bg-opacity-10 `}>
+              <Image src={filterType === Number(item.key) ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" />
+              <span className='leading-[32px]'>{item.title}</span>
               {renderBadge(item.key)}
             </a>
           </li>
@@ -72,8 +73,8 @@ export default function Sidebar() {
         return (
           <li key={item.key} >
             {/* <details open> */}
-            <div className={`rounded-4 text-[21px] py-4 menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
-              <Image src={item?.logo} alt={item?.title} className={`w-24 h-24 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
+            <div className={`p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
+              <Image src={item?.logo} alt={item?.title} className={`w-18 h-18 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
               <span className='leading-[36px]'>{item.title}</span>
               {item.childrenShow}
             </div>
@@ -95,19 +96,19 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <div className="w-250 px-10 flex flex-col justify-between font-poppins text-sm flex-shrink-0">
+    <div className="w-203 px-12 flex flex-col justify-between font-poppins flex-shrink-0 text-base">
       <div className="flex flex-col">
-        <button onClick={logout} className="flex h-72 items-center justify-center">
-          <Image src={logo} alt="logo" className="w-auto h-32 mr-5" />
+        <button onClick={logout} className="flex items-center justify-center">
+          <Image src={logo} alt="logo" className="w-auto h-36 mr-3" />
           {/* <Image src={logoBrand} alt="logo-brand" className="w-116" /> */}
-          <span className="text-2xl font-bold">MetaMail</span>
+          <p className="text-[27px] font-bold py-14">MetaMail</p>
         </button>
-        <button className="btn btn-xs btn-primary text-white mt-15 h-60 rounded-12" onClick={handleClickNewMail}>
-          <Image src={write} alt="new_mail" className="w-24 h-auto" />
-          <span className='font-700 text-[22px]'>New Message</span>
+        <button className="btn btn-xs btn-primary text-white mt-12 h-45 rounded-9" onClick={handleClickNewMail}>
+          <Image src={write} alt="new_mail" className="w-18 h-auto" />
+          <span className='font-700 '>New Message</span>
         </button>
         <div>
-          <ul className="menu px-4 py-12">
+          <ul className="menu px-4 py-9">
             {renderLi(menus_Map)}
           </ul>
         </div>

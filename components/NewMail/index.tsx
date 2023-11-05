@@ -3,11 +3,11 @@ import CryptoJS from 'crypto-js';
 import type ReactQuillType from 'react-quill';
 import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
-
+import Image from 'next/image';
 import MailBoxContext from 'context/mail';
 import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn } from 'lib/constants';
 import { useNewMailStore, useMailListStore } from 'lib/zustand-store';
-import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent } from 'lib/utils';
+import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent, fileType } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
@@ -20,12 +20,15 @@ import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
 import LoadingRing from 'components/LoadingRing';
 
-import { cancel, extend } from 'assets/icons';
+import { trashCan, extend, cancel } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
 
+import docx from 'assets/file/docx.svg';
+import pdf from 'assets/file/pdf.svg';
+import ai from 'assets/file/ai.svg';
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
  * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
@@ -340,6 +343,23 @@ export default function NewMail() {
     }
   }, 30000);
 
+  function fileTypeSvg(type: string) {
+    switch (type) {
+      case 'docx':
+        return (
+          <Image src={docx} alt={type} width={20} height={24} />
+        );
+      case 'pdf':
+        return (
+          <Image src={pdf} alt={type} width={20} height={24} />
+        );
+      case 'ai':
+        return (
+          <Image src={ai} alt={type} width={20} height={24} />
+        );
+    }
+  }
+
   return (
     <div
       className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0  rounded-20 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
@@ -412,39 +432,43 @@ export default function NewMail() {
             modules={EditorModules}
             formats={EditorFormats}
           />
+          {isExtend && <FileUploader
+            randomBits={randomBits}
+            onChange={() => (mailChanged = true)}
+            onCheckDraft={async () => {
+              mailChanged = true;
+              if (!selectedDraft.message_id) {
+                await handleSave();
+              }
+            }}
+            isExtend={isExtend}
+          />}
+          {/* 上传成功得文件列表 */}
           <ul className="flex gap-10">
             {selectedDraft.attachments?.map((attr, index) => (
 
-              <li key={index} className="flex">
+              <li key={index} className="flex text-[#878787]">
                 <div
-                  className="text-sm px-6 py-2 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer flex items-center gap-8"
+                  className="text-sm px-10 py-10 bg-[#F4F4F4] dark:bg-[#DCDCDC26] rounded-3 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
+                  {fileTypeSvg(fileType(attr.filename))}
+                  <span>{attr.filename}</span>
                   <span className="">
-                    {attr.filename}
                     {attr.uploadProcess && !attr.attachment_id
-                      ? percentTransform(attr.uploadProcess) + '%'
+                      ? (<div className='flex items-center'><progress className="progress progress-success w-56" value={percentTransform(attr.uploadProcess)} max="100"></progress><span color='text-[#1F2937]'>{percentTransform(attr.uploadProcess) + '%'}</span></div>)
                       : ''}
                   </span>
+
+                  <button onClick={() => removeAttachment(index)}>
+                    <Icon url={trashCan} title="trashCan" className="w-12 h-12" />
+                  </button>
                 </div>
-                <button onClick={() => removeAttachment(index)}>
-                  <Icon url={cancel} title="cancel" className="w-18 h-18" />
-                </button>
               </li>
             ))}
           </ul>
         </>
       }
-      {isExtend && <FileUploader
-        randomBits={randomBits}
-        onChange={() => (mailChanged = true)}
-        onCheckDraft={async () => {
-          mailChanged = true;
-          if (!selectedDraft.message_id) {
-            await handleSave();
-          }
-        }}
-        isExtend={isExtend}
-      />}
+
 
       <div className="flex items-center gap-13 mt-12">
         <button
@@ -455,7 +479,7 @@ export default function NewMail() {
           <span className="ml-8">Send</span>
         </button>
 
-        {/* 上传文件按钮 */}
+        {/* 上传文件按钮   &&*/}
         {!isExtend && <FileUploader
           randomBits={randomBits}
           onChange={() => (mailChanged = true)}

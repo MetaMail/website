@@ -17,7 +17,7 @@ import down from './down.svg';
 import more from './more.svg';
 import moreActive from './moreActive.svg';
 import swapAddr from './swapaddr.svg';
-//import trash from './trash.svg';
+import trashCan from './trashCan.svg';
 import unread from './unread.svg';
 import empty from './empty.svg'
 import checkboxSvg from './checkbox.svg';
@@ -91,6 +91,7 @@ export {
     spam,
     spamActive,
     trash,
+    trashCan,
     unread,
     swapAddr,
   checkboxSvg,
