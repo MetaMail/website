@@ -1,16 +1,16 @@
-import React from 'react';
-import Image from 'next/image';
+import React,from 'react';
+
 import CryptoJS from 'crypto-js';
 import { throttle } from 'lodash';
 import { toast } from 'react-toastify';
-
+import Dropzone from '../Dropzone';
 import { mailHttp, IUploadAttachmentResponse } from 'lib/http';
 import { useNewMailStore } from 'lib/zustand-store';
 import { AttachmentRelatedTypeEn } from 'lib/constants';
 import { ArrayBufferToWordArray } from 'lib/utils';
 import { encryptMailAttachment } from 'lib/encrypt';
 
-import addAttach from 'assets/addAttach.svg';
+
 
 const Max_File_Size = 20 * 1024 * 1024; // 20MB
 interface IFileUploader {
@@ -34,7 +34,7 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
       reader.onerror = reject;
     });
   };
-
+  // 上传单个文件
   const handleSingleFileUpload = async (file: File) => {
     const fileBuffer = await getFileArrayBuffer(file);
     if (!fileBuffer) return;
@@ -88,8 +88,11 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
     return Array.from(files).every(file => file.size <= Max_File_Size);
   };
 
-  const handleClickUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = e.target.files;
+  // 点击上传获得原始files
+  const handleClickUpload = async (fileList: FileList) => {
+    // console.log('e', e)
+    // const fileList = e.target.files;
+    console.log('fileList', fileList)
     if (!fileList || !fileList.length) return;
     const isFilesSizeValid = checkFilesSize(fileList);
     if (!isFilesSizeValid) {
@@ -97,7 +100,7 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
     }
     await onCheckDraft();
     const uploadResult = await Promise.all(Array.from(fileList).map((file: File) => handleSingleFileUpload(file)));
-    e.target.value = null; // ensure same file can be uploaded again
+    // e.target.value = null; // ensure same file can be uploaded again
     const attachmentsWithoutAttachmentId = uploadResult.map(result => {
       return {
         filename: result.file.name,
@@ -130,23 +133,16 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
     });
     onChange();
   };
-  if (!isExtend) {
-    return (
-      <>
-        {/* 小上传文件的按钮 */}
-        <label className="flex justify-center items-center bg-[#ddd] px-14 py-8 rounded-[8px] text-sm  cursor-pointer">
-          <input type="file" className="hidden" onChange={handleClickUpload} multiple />
-          <Image src={addAttach} className="h-18" alt="上传文件" />
-          <span className="ml-6">Attach</span>
-        </label>
-      </>
-    );
-  } else return (
-    <div className='mt-30 flex-col text-[16px] text-[#1F2937] font-semibold w-full h-[120px] border-dashed leading-24 border-[#E5E7EB] border-2 flex justify-center items-center'>
-      <p>Drop your files here or <span> browse </span></p>
-      <p className='text-sm text-[#9CA3AF] leading-[20px] mt-5'>Maximum size: 50MB</p>
-    </div>
+
+
+  return (
+    <Dropzone Dropzone
+      onChange={handleClickUpload}
+      isExtend={isExtend}
+    >
+    </Dropzone>
   )
+
 };
 
 export default FileUploader;

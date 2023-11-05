@@ -72,5 +72,16 @@ export function dispatchEvent(eventName: string, detail?: any) {
   window.dispatchEvent(event);
 }
 
+// 通过文件名判断文件类型
+export function fileType(name: string) {
+
+  //获取最后一个.的位置
+  const index = name.lastIndexOf(".");
+  //获取后缀
+  const ext = name.substring(index + 1);
+  console.log(ext);
+  return ext
+}
+
 export * from './session-storage';
 export * from './local-storage';

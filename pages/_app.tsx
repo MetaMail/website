@@ -20,12 +20,13 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     console.log(themeChange)
     const theme = document.documentElement.getAttribute('data-theme') || '';
     document.body.className = theme;
-    setIsDark(theme == 'dark' ? true : false)
+
   }, []);
   useEffect(() => {
     const observer = new MutationObserver(() => {
       const theme = document.documentElement.getAttribute('data-theme') || '';
       document.body.className = theme;
+      setIsDark(theme == 'dark' ? true : false)
     });
     observer.observe(document.documentElement, { attributes: true });
     return () => {
