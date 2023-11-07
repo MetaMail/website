@@ -362,18 +362,18 @@ export default function NewMail() {
 
   return (
     <div
-      className={`flex flex-col font-poppins bg-base-100 px-16 pt-23 pb-10 transition-all absolute bottom-0  rounded-20 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
+      className={`flex flex-col font-poppins bg-base-100 p-18 transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
         } `}>
       <header className="flex justify-between">
         <div className="flex items-center">
           {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
-          <span className=" text-[20px] font-bold">New Message</span>
+          <span className=" text-[22px] font-bold">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
-          <Icon url={extend} className="w-18 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
+          <Icon url={extend} className="w-14 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
           <Icon
             url={cancel}
-            className="w-18 h-auto self-center"
+            className="w-14 h-auto self-center"
             onClick={async () => {
               if (!getMailChanged()) return setSelectedDraft(null);
               setShowLoading(true);
@@ -387,17 +387,17 @@ export default function NewMail() {
           />
         </div>
       </header>
-      <div className="text-[#464646] mt-20 text-sm">
-        <div className="flex h-40 items-center">
-          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
+      <div className="text-[#464646] mt-20">
+        <div className="flex py-3 items-center">
+          <span className="w-65 font-semibold  text-sm  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
           <EmailRecipientInput
             receivers={selectedDraft.mail_to}
             onAddReceiver={addReceiver}
             onRemoveReceiver={removeReceiver}
           />
         </div>
-        <div className="flex h-40 items-center">
-          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
+        <div className="flex py-3 items-center">
+          <span className="w-65 font-semibold  text-sm  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
           <NameSelector
             initValue={
               selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
@@ -405,12 +405,12 @@ export default function NewMail() {
             onChange={handleChangeMailFrom}
           />
         </div>
-        <div className="flex h-40 items-center">
-          <span className="w-78  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
+        <div className="flex py-3 items-center">
+          <span className="w-65 font-semibold  text-sm  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
           <input
             type="text"
             placeholder=""
-            className="flex pl-0 h-40 input flex-1 text-[#000000] dark:text-[#fff] focus:outline-none"
+            className="flex h-25 pl-0 py-5 flex-1 text-[#000000] dark:text-[#fff] focus:outline-none"
             defaultValue={selectedDraft.subject}
             ref={subjectRef}
             onChange={throttle(() => {
@@ -449,7 +449,7 @@ export default function NewMail() {
 
               <li key={index} className="flex text-[#878787]">
                 <div
-                  className="text-sm px-10 py-10 bg-[#F4F4F4] dark:bg-[#DCDCDC26] rounded-3 cursor-pointer flex items-center gap-8"
+                  className="text-sm px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename))}
                   <span>{attr.filename}</span>
@@ -460,7 +460,7 @@ export default function NewMail() {
                   </span>
 
                   <button onClick={() => removeAttachment(index)}>
-                    <Icon url={trashCan} title="trashCan" className="w-12 h-12" />
+                    <Icon url={trashCan} title="trashCan" className="w-14 h-14" />
                   </button>
                 </div>
               </li>
@@ -470,7 +470,7 @@ export default function NewMail() {
       }
 
 
-      <div className="flex items-center gap-13 mt-12">
+      <div className="flex items-center gap-13 mt-20">
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}

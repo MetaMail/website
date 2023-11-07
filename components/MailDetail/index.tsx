@@ -234,7 +234,7 @@ export default function MailDetail() {
                   url={item.src}
                   title={item.title}
                   key={index}
-                  className="w-18 h-18 self-center"
+                  className="w-14 h-14 self-center"
                   onClick={item.handler}
                 />
               );
@@ -243,7 +243,7 @@ export default function MailDetail() {
           <div className="flex gap-10">
             <Icon
               url={extend}
-              className="w-18 h-18 self-center "
+              className="w-14 h-14 self-center "
               onClick={() => setIsDetailExtend(!isDetailExtend)}
             />
             <Icon
@@ -252,7 +252,7 @@ export default function MailDetail() {
                 setSelectedMail(null);
                 setIsDetailExtend(false);
               }}
-              className="w-18 h-18 self-center"
+              className="w-14 h-14 self-center"
             />
           </div>
         </div>
@@ -270,7 +270,7 @@ export default function MailDetail() {
             </div>
           </div>
           <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
-            <div className="text-sm">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
+            <div className="text-xs">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
             <div className="flex gap-10 justify-end">
               {rightIcons.map((item, index) => {
                 return (
@@ -279,7 +279,7 @@ export default function MailDetail() {
                     url={item.src}
                     title={item.title}
                     onClick={item.handler}
-                    className="w-18 h-18 self-center"
+                    className="w-14 h-14 self-center"
                   />
                 );
               })}

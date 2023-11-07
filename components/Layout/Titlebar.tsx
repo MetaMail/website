@@ -54,7 +54,7 @@ export default function Titlebar() {
       {/* header-left 左边搜索框 */}
       <div className="flex-1">
         <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
-          <Image src={searchNormal} alt='search' title='search' className={`w-18 h-18`} />
+          <Image src={searchNormal} alt='search' title='search' className={`w-14 h-14`} />
           <input type="text" className="input w-405 h-32 rounded-5 pl-7 text-sm dark:!bg-[#353739]" />
         </div>
       </div>
@@ -67,7 +67,7 @@ export default function Titlebar() {
               {/* 头像 */}
               <JazziconGrid size={32} addr={address} />
             </div>
-            <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18 ${dropdownShow ? 'transform rotate-180' : ''}`} />
+            <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-14 h-14 ${dropdownShow ? 'transform rotate-180' : ''}`} />
           </label>
 
           <div
@@ -82,7 +82,7 @@ export default function Titlebar() {
                 src={theme == 'light' ? copy : copyDark}
                 alt="copy"
                 title="copy"
-                className="w-18 h-18 p-0 cursor-pointer"
+                className="w-14 h-14 p-0 cursor-pointer"
                 onClick={() => {
                   handleCopy(`${address}${PostfixOfAddress}`);
                 }}
@@ -96,7 +96,7 @@ export default function Titlebar() {
                   src={copy}
                   alt="copy"
                   title="copy"
-                  className="w-18 h-18 p-0 cursor-pointer"
+                  className="w-14 h-14 p-0 cursor-pointer"
                   onClick={() => {
                     handleCopy(ensName);
                   }}

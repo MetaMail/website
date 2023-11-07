@@ -83,7 +83,7 @@ export default function Welcome() {
       <Head>
         <title>MetaMail</title>
       </Head>
-      <div className="home-bg text-sm">
+      <div className="home-bg">
         <div className="flex justify-between relative">
           <Image src={gdL} alt="gradient NW" className="fixed w-1069 h-auto" />
           <div className="gradient-dot-NE" />

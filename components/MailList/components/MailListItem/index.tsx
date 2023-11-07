@@ -206,7 +206,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
                 {getMailFrom(mail)}
               </span>
               {/* 邮件日期 */}
-              <span className={`max-w-[80px] text-sm text-right text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
+              <span className={`max-w-[80px] text-xs text-right text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
             </p>
             <p className="flex justify-between items-center text-sm ">
               {/* 邮件主体 */}

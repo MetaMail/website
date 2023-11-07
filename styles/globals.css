@@ -98,18 +98,21 @@ body {
   white-space: nowrap;
   overflow: hidden;
 }
-.ql-container{
-
-}
+:deep(.ql-container){
+   font-size: 14px;
+   font-family: Poppins;
+  }
 .ql-container.ql-snow {
   @apply flex border-0 min-h-0 flex-1;
   border: none !important;
- 
+   font-size: 14px;
+   font-family: Poppins;
 }
 .ql-toolbar.ql-snow {
   @apply flex bg-base-100;
   border: none !important;
   padding-left: 0 !important;
+
 }
 .ql-snow .ql-picker.ql-header {
   @apply hidden;
@@ -123,11 +126,6 @@ body {
 }
 .ql-toolbar.ql-snow .ql-formats {
   margin-right: 0px !important;
-}
-
-.ql-snow.ql-toolbar button, .ql-snow .ql-toolbar button{
-  width: 40px!important;
-  height: 40px!important;
 }
 
 /* 设置滚动条的样式 */
