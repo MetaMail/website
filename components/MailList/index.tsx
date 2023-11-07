@@ -209,10 +209,10 @@ export default function MailList() {
 
   return (
     <div
-      className={`flex flex-col h-full transition-all text-[14px] ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-300'
+      className={`flex flex-col h-full transition-all text-[14px] ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
         }`}>
       {
-        list.length > 0 ? (<div className="flex flex-row w-full justify-between px-12 pb-7 pt-10 box-border">
+        list.length > 0 ? (<div className="flex flex-row w-full justify-between px-12 box-border py-9 pt-0">
           <div className="flex flex-row space-x-10 items-center">
             {/* 全选按钮 */}
 
@@ -308,7 +308,7 @@ export default function MailList() {
       }
 
 
-      <div className={`flex flex-col overflow-y-auto  overflow-x-hidden flex-1 relative  ${list.length ? 'justify-start' : 'justify-center'}`}>
+      <div className={`flex flex-col overflow-y-auto  overflow-x-hidden flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
         {loading && <LoadingRing />}
         {list.length ? (
           list.map((item, index) => {

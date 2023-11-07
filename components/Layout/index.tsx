@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <div className="flex-1 pr-28 pb-28">
         <Titlebar />
         <main
-          className={`h-[calc(100%-64px)] bg-base-100 w-[calc(100%)] rounded-10 relative flex ${!selectedMail ? 'flex-col' : 'flex-row'
+          className={`h-[calc(100%-64px)] bg-base-100 w-[calc(100%)] rounded-10 relative pt-22 flex ${!selectedMail ? 'flex-col' : 'flex-row'
             }`}>
           {children}
         </main>

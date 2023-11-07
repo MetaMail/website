@@ -367,7 +367,7 @@ export default function NewMail() {
       <header className="flex justify-between">
         <div className="flex items-center">
           {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
-          <span className="font-black text-[20px] font-bold">New Message</span>
+          <span className=" text-[20px] font-bold">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
           <Icon url={extend} className="w-18 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
