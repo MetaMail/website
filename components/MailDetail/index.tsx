@@ -257,7 +257,7 @@ export default function MailDetail() {
           </div>
         </div>
         {/* 邮件详情 */}
-        <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224]">{selectedMail?.subject || '( no subject )'}</h1>
+        <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '( no subject )'}</h1>
         <div className="flex justify-between">
           <div className="flex gap-20 items-center">
             <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
@@ -270,7 +270,7 @@ export default function MailDetail() {
             </div>
           </div>
           <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
-            <div className="text-xs">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
+            <div className="text-[12px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
             <div className="flex gap-10 justify-end">
               {rightIcons.map((item, index) => {
                 return (
@@ -290,7 +290,7 @@ export default function MailDetail() {
       {loading && <LoadingRing />}
       {
         <>
-          <h2 className="flex-1 overflow-auto  text=[#040404]">
+          <h2 className="flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]">
             {selectedMail?.part_html
               ? parse(DOMPurify.sanitize(selectedMail?.part_html))
               : selectedMail?.part_text}
