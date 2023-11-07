@@ -3,11 +3,13 @@ import dynamic from 'next/dynamic';
 import { StringMap } from 'quill';
 import { ReactQuillProps } from 'react-quill';
 
+
 const DynamicReactQuill = dynamic(
   async () => {
+
     const { default: RQ } = await import('react-quill');
     var icons = RQ.Quill.import('ui/icons');
-    icons['bold'] = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    icons['bold'] = `<svg  width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2.44043 2.25C2.44043 1.7 2.89043 1.25 3.44043 1.25H6.00043C7.31043 1.25 8.37543 2.315 8.37543 3.625C8.37543 4.935 7.31043 6 6.00043 6H2.44043V2.25Z" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M2.44043 6H7.19043C8.50043 6 9.56543 7.065 9.56543 8.375C9.56543 9.685 8.50043 10.75 7.19043 10.75H3.44043C2.89043 10.75 2.44043 10.3 2.44043 9.75V6V6Z" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;

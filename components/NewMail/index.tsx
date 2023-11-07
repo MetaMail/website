@@ -6,7 +6,7 @@ import { throttle } from 'lodash';
 import Image from 'next/image';
 import MailBoxContext from 'context/mail';
 import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn } from 'lib/constants';
-import { useNewMailStore, useMailListStore } from 'lib/zustand-store';
+import { useNewMailStore, useMailListStore, useThemeStore } from 'lib/zustand-store';
 import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent, fileType } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
@@ -54,7 +54,7 @@ export default function NewMail() {
   const dateRef = useRef<string>();
   const reactQuillRef = useRef<ReactQuillType>();
   const subjectRef = useRef<HTMLInputElement>();
-
+  const { isDark } = useThemeStore()
   const getQuill = () => {
     if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
     return reactQuillRef.current.makeUnprivilegedEditor(reactQuillRef.current.getEditor());
@@ -426,11 +426,12 @@ export default function NewMail() {
           {/* DynamicReactQuill 富文本编辑器 */}
           <DynamicReactQuill
             forwardedRef={reactQuillRef}
-            className="flex-1 py-16 flex flex-col-reverse text-[#464646] dark:text-[#fff] overflow-hidden mt-9  leading-[21px]"
+            className={`flex-1 py-16 flex flex-col-reverse text-[#464646] dark:text-[#fff] overflow-hidden mt-9  leading-[21px] ${isDark ? 'dark' : ''}`}
             theme="snow"
             placeholder={''}
             modules={EditorModules}
             formats={EditorFormats}
+            style={{ color: `red` }}
           />
           {isExtend && <FileUploader
             randomBits={randomBits}
