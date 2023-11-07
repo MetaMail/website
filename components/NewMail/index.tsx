@@ -389,7 +389,7 @@ export default function NewMail() {
       </header>
       <div className="text-[#464646] mt-20">
         <div className="flex py-3 items-center">
-          <span className="w-65 font-semibold  text-sm  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
+          <span className="w-65 font-semibold  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
           <EmailRecipientInput
             receivers={selectedDraft.mail_to}
             onAddReceiver={addReceiver}
@@ -397,7 +397,7 @@ export default function NewMail() {
           />
         </div>
         <div className="flex py-3 items-center">
-          <span className="w-65 font-semibold  text-sm  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
+          <span className="w-65 font-semibold  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
           <NameSelector
             initValue={
               selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
@@ -406,7 +406,7 @@ export default function NewMail() {
           />
         </div>
         <div className="flex py-3 items-center">
-          <span className="w-65 font-semibold  text-sm  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
+          <span className="w-65 font-semibold  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
           <input
             type="text"
             placeholder=""
@@ -449,7 +449,7 @@ export default function NewMail() {
 
               <li key={index} className="flex text-[#878787]">
                 <div
-                  className="text-sm px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer flex items-center gap-8"
+                  className="text-[14px] px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename))}
                   <span>{attr.filename}</span>
@@ -474,7 +474,7 @@ export default function NewMail() {
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
-          className="flex justify-center items-center bg-primary text-white px-14 py-8  rounded-[6px] text-sm">
+          className="flex justify-center items-center bg-primary text-white px-14 py-8  rounded-[6px] text-[14px]">
           <Icon url={sendMailIcon} className='h-18' />
           <span className="ml-8">Send</span>
         </button>

@@ -231,7 +231,7 @@ export default function MailList() {
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center">
                 <Icon url={filterIcon} title="Filter" className="w-14 h-14" />
-                <span className="text-xs text-[#707070]">{filter}</span>
+                <span className="text-[12px] text-[#707070]">{filter}</span>
               </label>
 
               <ul

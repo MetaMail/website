@@ -155,7 +155,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             <span className="pt-4 pl-2 pr-7 ">{'-'}</span>
             <span className={`min-w-0 flex-1 ${mail.read === ReadStatusTypeEn.Unread ? 'text-base-content opacity-90' : 'text-[#70707099] '}`}>{renderDigest(mail)}</span>
           </div>
-          <div className="w-100 text-right">
+          <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
             <div className="hidden group-hover:flex items-center justify-end">
               <div
@@ -206,16 +206,16 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
                 {getMailFrom(mail)}
               </span>
               {/* 邮件日期 */}
-              <span className={`max-w-[80px] text-xs text-right text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
+              <span className={`max-w-[80px] text-[12px] text-right text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
             </p>
-            <p className="flex justify-between items-center text-sm ">
+            <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}
               <span className={`omit mr-4 flex-1 w-0  dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
                 {mail.subject || '( no subject )'}
               </span>
               <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             </p>
-            <p className={`omit text-sm  dark:text-[#A7A1A1]  text-[#70707099] `}>{renderDigest(mail)}</p>
+            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#70707099] `}>{renderDigest(mail)}</p>
           </div>
         </div >
       )
