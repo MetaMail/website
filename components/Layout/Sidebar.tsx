@@ -62,7 +62,7 @@ export default function Sidebar() {
             }}
             className='mb-5 '>
             <a className={`rounded-5 p-0 h-32 pl-12 pr-5  ${filterType === Number(item.key) ? 'active rounded-4 font-semibold ' : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:!!bg-opacity-6 dark:!bg-opacity-10 `}>
-              <Image src={filterType === Number(item.key) ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" />
+              <Image src={filterType === Number(item.key) ? item.activeLogo : item?.logo} alt={item?.title} className="w-14 h-14 self-center stroke-width-100 fill-primary filter-primary" />
               <span className='leading-[32px]'>{item.title}</span>
               {renderBadge(item.key)}
             </a>
@@ -73,8 +73,8 @@ export default function Sidebar() {
         return (
           <li key={item.key} >
             {/* <details open> */}
-            <div className={`flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
-              <Image src={item?.logo} alt={item?.title} className={`w-18 h-18 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
+            <div className={`rounded-5 flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
+              <Image src={item?.logo} alt={item?.title} className={`w-14 h-14 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
               <span className='leading-[36px]'>{item.title}</span>
               {item.childrenShow}
             </div>

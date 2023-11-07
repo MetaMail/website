@@ -23,8 +23,9 @@ function NameSelector({ initValue, onChange }: IProps) {
   }, [initValue]);
 
   return (
-    <div className="flex items-center gap-8 w-fit p-4 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer text-[#706F6F]">
-      <JazziconGrid size={24} addr={showAddress} />
+    <div className="flex items-center gap-9 w-fit p-5 pr-9  bg-[#0700200A] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer text-[#706F6F]">
+      {/* 头像 */}
+      <JazziconGrid size={27} addr={showAddress} />
       {ensName ? (
         <select
           className="omit max-w-[90%]"

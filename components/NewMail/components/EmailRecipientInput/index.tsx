@@ -18,7 +18,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
 
   const inputRef = useRef<HTMLInputElement>();
-
+  const [isInputShow, setIsInputShow] = useState(false)
   const [suggestedReceivers, setSuggestedReceivers] = useState<string[]>([]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,26 +76,27 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
 
   return (
     <div className="flex h-40 text-[#878787] items-center relative">
+      {/* 添加收件人 */}
       <input
         type="email"
         placeholder="Add Receipients"
         onChange={debounce(handleChange, 200)}
         onKeyDown={handleKeyPress}
-        className="input input-ghost h-40 focus:h-36 px-0 placeholder:text-sm"
+        className={`input focus:h-36 px-0 placeholder:text-[14px] ${isInputShow ? 'block' : 'hidden'}`}
         onBlur={handleInputBlur}
         ref={inputRef}
       />
-      <button onClick={addRecipient}>
+      <button onClick={() => setIsInputShow(!isInputShow)}>
         {/* 添加收件人 */}
-        <Icon url={add} title="add receivers" className="w-23 h-23" />
+        <Icon url={add} title="add receivers" className="w-26 h-26" />
       </button>
       <ul className='flex gap-10 '>
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div
-              className="p-4 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer flex items-center gap-8"
+              className="p-5 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-9 cursor-pointer flex items-center gap-8"
               title={email.address}>
-              <JazziconGrid size={24} addr={email.address} />
+              <JazziconGrid size={27} addr={email.address} />
               <span className="w-120 omit">{email.address}</span>
             </div>
             <button onClick={() => removeRecipient(email.address)}>
