@@ -17,7 +17,14 @@
     font-size: 22px;
   }
 }
-
+@font-face {
+  font-family:Poppins ;
+  src: url('../assets/fonts/Poppins-Regular.ttf');
+}
+@font-face {
+  font-family:PoppinsBold ;
+  src: url('../assets/fonts/Poppins-Bold.ttf');
+}
 [data-theme="light"] {
   --primary: #3c6ff4;
   --menu-active-bg-color: #9EBFFF;
@@ -46,9 +53,8 @@ body {
   background-color: #f2f8ff;
   background-repeat: no-repeat;
   background-size: cover;
-  font-family: "Poppins", "sans-serif";
-  font-family: "Space Grotesk", "sans-serif";
-  font-style: "Space Grotesk";
+  font-family: "Poppins";
+  font-size: 14px;
 }
 .home-bg {
   background-repeat: no-repeat;

@@ -20,7 +20,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     console.log(themeChange)
     const theme = document.documentElement.getAttribute('data-theme') || '';
     document.body.className = theme;
-
+    document.body.style.fontFamily = "Poppins"
   }, []);
   useEffect(() => {
     const observer = new MutationObserver(() => {

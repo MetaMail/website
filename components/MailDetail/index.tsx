@@ -223,9 +223,9 @@ export default function MailDetail() {
 
   return (
     <div
-      className={`relative flex-1 rounded-10 flex flex-col font-poppins p-16 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full' : ''
+      className={`relative flex-1 rounded-10 flex flex-col font-poppins p-16 pt-0 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full' : ''
         }`}>
-      <header className="flex flex-col justify-between w-full mb-20">
+      <header className="flex flex-col justify-between w-full mb-22">
         <div className="flex justify-between w-full">
           <div className="flex gap-10">
             {topIcons.map((item, index) => {
@@ -256,10 +256,11 @@ export default function MailDetail() {
             />
           </div>
         </div>
-        <h1 className="omit text-2xl font-bold my-20 max-w-4xl text-[20px] mt-14 mb-18">{selectedMail?.subject || '( no subject )'}</h1>
+        {/* 邮件详情 */}
+        <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224]">{selectedMail?.subject || '( no subject )'}</h1>
         <div className="flex justify-between">
-          <div className="flex gap-18 items-center text-sm">
-            <JazziconGrid size={30} addr={selectedMail.mail_from.address || ''} />
+          <div className="flex gap-20 items-center">
+            <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
             <div className="">
               <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
               <div className="flex gap-3">
@@ -289,7 +290,7 @@ export default function MailDetail() {
       {loading && <LoadingRing />}
       {
         <>
-          <h2 className="flex-1 overflow-auto text-sm text=[#040404]">
+          <h2 className="flex-1 overflow-auto  text=[#040404]">
             {selectedMail?.part_html
               ? parse(DOMPurify.sanitize(selectedMail?.part_html))
               : selectedMail?.part_text}
@@ -311,7 +312,7 @@ export default function MailDetail() {
       }
 
       <button
-        className="flex justify-center items-center bg-primary text-white px-16 py-5 rounded-[6px] self-start text-sm leading-[22px]"
+        className="flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
         onClick={handleReply}>
         {/* <Icon url={sendMailIcon} /> */}
         <span className="">Reply</span>

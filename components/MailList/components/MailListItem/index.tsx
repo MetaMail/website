@@ -33,7 +33,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? ' text-opacity-40' : 'font-semibold';
+    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : 'font-semibold';
   };
 
   const getMailFrom = (mail: IMailContentItem): string => {
@@ -117,7 +117,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
           onClick={handleClick}
           className={` py-6 flex flex-row px-12 items-center group h-30 cursor-pointer hover:dark:bg-base-300 hover:dark:bg-opacity-10  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50'
             }`}>
-          <div className="flex flex-row gap-10">
+          <div className="flex flex-row gap-12">
             <input
               type="checkbox"
               title="Select"
@@ -142,14 +142,14 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
               }}
             />
           </div>
-          <div className="w-100 ml-25 omit text-base-content">
+          <div className="w-113 ml-28  omit text-base-content">
             {/* 来自谁 */}
             <span className={` ${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>{getMailFrom(mail)}
             </span>
           </div>
           {/* 邮件list-item */}
-          <div className="flex-1 w-0 ml-25 omit">
-            <Dot size={8} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
+          <div className="flex-1 w-0 ml-28 omit">
+            <Dot size={7} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             {/* ReadStatusTypeEn.Read 已读 */}
             <span className={`ml-8 ${getIsReadTextClass(mail)}`}>{mail.subject || '( no subject )'}</span>
             <span className="pt-4 pl-2 pr-7 ">{'-'}</span>
@@ -191,29 +191,31 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
         // 查看详情时候的邮件列表
         <div
           onClick={handleClick}
-          className={`text-base-content w-296 items-start box-border px-12 py-10 flex group cursor-pointer hover:bg-base-200 dark:hover:bg-[#F3F7FF] dark:hover:bg-opacity-10 dark:bg-opacity-10 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
+          className={`text-base-content  items-start box-border px-17 py-9 flex group cursor-pointer hover:bg-base-200 dark:hover:bg-[#F3F7FF] dark:hover:bg-opacity-10 dark:bg-opacity-10 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
             }`}>
-          {/* 头像 */}
-          <JazziconGrid size={30} addr={mail.mail_from.address || ''} />
-          <div className="flex-1 px-10 w-0 " >
-            <p className="flex justify-between items-center mb-5">
+          <div className='pt-5'>
+            {/* 头像 */}
+            <JazziconGrid size={34} addr={mail.mail_from.address || ''} />
+          </div>
+          <div className="flex-1 pl-15 w-0 " >
+            <p className="flex justify-between items-center">
               {/* 邮件地址 */}
               <span
-                className={` flex-1  w-0  omit mr-4   leading-[20px] ${getIsReadTextClass(mail)}`}
+                className={` flex-1  w-0  omit mr-4 font-['PoppinsBold']  leading-[20px] ${getIsReadTextClass(mail)}`}
                 title={getMailFrom(mail)}>
                 {getMailFrom(mail)}
               </span>
               {/* 邮件日期 */}
-              <span className={`max-w-[80] text-right text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
+              <span className={`max-w-[80px] text-sm text-right text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
             </p>
-            <p className="flex justify-between items-center  ">
+            <p className="flex justify-between items-center text-sm ">
               {/* 邮件主体 */}
               <span className={`omit mr-4 flex-1 w-0  dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
                 {mail.subject || '( no subject )'}
               </span>
               <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             </p>
-            <p className={`omit  dark:text-[#A7A1A1] ${mail.read == ReadStatusTypeEn.Read ? 'text-[#70707099]' : 'text-base-content'}`}>{renderDigest(mail)}</p>
+            <p className={`omit text-sm  dark:text-[#A7A1A1]  text-[#70707099] `}>{renderDigest(mail)}</p>
           </div>
         </div >
       )
