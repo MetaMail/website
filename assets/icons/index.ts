@@ -52,7 +52,14 @@ import dark_send from './darkSlider/send.svg'
 import dark_inbox from './darkSlider/inbox.svg'
 import dark_draft from './darkSlider/draft.svg'
 import dark_delete from './darkSlider/delete.svg'
+
+
+// checkBox
+import checkboxDark from './checkboxDark.svg'
+import favoriteDark from './favoriteDark.svg'
 export {
+  favoriteDark,
+  checkboxDark,
     dark_spam ,
     dark_star ,
     dark_send ,

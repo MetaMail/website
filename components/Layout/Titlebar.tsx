@@ -54,7 +54,7 @@ export default function Titlebar() {
       {/* header-left 左边搜索框 */}
       <div className="flex-1">
         <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
-          <Image src={searchNormal} alt='search' title='search' className={`w-18 h-18`} />
+          <Image src={searchNormal} alt='search' title='search' className={`w-14 h-14`} />
           <input type="text" className="input w-405 h-32 rounded-5 pl-7 text-[14px] dark:!bg-[#353739]" />
         </div>
       </div>

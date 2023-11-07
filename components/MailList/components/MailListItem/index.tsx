@@ -14,11 +14,11 @@ import {
 } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { transformTime, getShowAddress, dispatchEvent } from 'lib/utils';
-import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
+import { useMailListStore, useMailDetailStore, useNewMailStore, useThemeStore } from 'lib/zustand-store';
 import MailBoxContext from 'context/mail';
 import Icon from 'components/Icon';
 import Dot from 'components/Dot';
-import { favorite, markFavorite, trash, markUnread, read, checkboxSvg, checkboxedSvg } from 'assets/icons';
+import { favorite, markFavorite, trash, markUnread, read, checkboxSvg, checkboxedSvg, checkboxDark, favoriteDark } from 'assets/icons';
 
 interface IMailItemProps {
   mail: MailListItemType;
@@ -26,6 +26,7 @@ interface IMailItemProps {
 }
 
 export default function MailListItem({ mail, onSelect }: IMailItemProps) {
+  const { isDark } = useThemeStore()
   const { getMailStat } = useContext(MailBoxContext);
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const { filterType, list, setList } = useMailListStore();
@@ -33,7 +34,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : 'font-semibold';
+    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : 'text-[#000000] font-semibold';
   };
 
   const getMailFrom = (mail: IMailContentItem): string => {
@@ -122,7 +123,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
               type="checkbox"
               title="Select"
               className={`checkbox bg-no-repeat bg-cover checkbox-sm w-14 h-14 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
-              style={{ backgroundImage: `url(${mail.selected ? checkboxedSvg.src : checkboxSvg.src})` }}
+              style={{ backgroundImage: `url(${mail.selected ? checkboxedSvg.src : isDark ? checkboxDark.src : checkboxSvg.src})` }}
               checked={mail.selected}
               onClick={e => {
                 e.stopPropagation();
@@ -131,7 +132,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             />
 
             <Icon
-              url={mail.mark === MarkTypeEn.Starred ? markFavorite : favorite}
+              url={mail.mark === MarkTypeEn.Starred ? markFavorite : isDark ? favoriteDark : favorite}
               className="w-14 h-14"
               title={mail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star'}
               onClick={async e => {
@@ -148,10 +149,10 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
           </span>
           {/* </div> */}
           {/* 邮件list-item */}
-          <div className="flex-1 w-0 ml-28 omit">
+          <div className="flex-1 w-0 ml-28 omit dark:text-base-content">
             <Dot size={7} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             {/* ReadStatusTypeEn.Read 已读 */}
-            <span className={`ml-8 ${getIsReadTextClass(mail)}`}>{mail.subject || '( no subject )'}</span>
+            <span className={`ml-8 ${getIsReadTextClass(mail)} dark:text-base-content`}>{mail.subject || '( no subject )'}</span>
             <span className="pt-4 pl-2 pr-7 ">{'-'}</span>
             <span className={`min-w-0 flex-1 ${mail.read === ReadStatusTypeEn.Unread ? 'text-base-content opacity-90' : 'text-[#70707099] '}`}>{renderDigest(mail)}</span>
           </div>
@@ -201,7 +202,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             <p className="flex justify-between items-center">
               {/* 邮件地址 */}
               <span
-                className={` flex-1  w-0  omit mr-4 font-['PoppinsBold']  leading-[20px] ${getIsReadTextClass(mail)}`}
+                className={` flex-1  w-0  omit mr-4 font-['PoppinsBold']  leading-[20px] dark:text-base-content  ${getIsReadTextClass(mail)}`}
                 title={getMailFrom(mail)}>
                 {getMailFrom(mail)}
               </span>
@@ -210,12 +211,12 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             </p>
             <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}
-              <span className={`omit mr-4 flex-1 w-0  dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
+              <span className={`omit mr-4 flex-1 w-0 text-[12px] dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
                 {mail.subject || '( no subject )'}
               </span>
               <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             </p>
-            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#70707099] `}>{renderDigest(mail)}</p>
+            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#70707099] text-[12px]`}>{renderDigest(mail)}</p>
           </div>
         </div >
       )
