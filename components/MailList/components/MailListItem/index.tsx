@@ -142,11 +142,11 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
               }}
             />
           </div>
-          <div className="w-113 ml-28  omit text-base-content">
-            {/* 来自谁 */}
-            <span className={` ${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>{getMailFrom(mail)}
-            </span>
-          </div>
+          {/* <div className=""> */}
+          {/* 来自谁 */}
+          <span className={`w-[113px] ml-28  omit text-base-content ${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>{getMailFrom(mail)}
+          </span>
+          {/* </div> */}
           {/* 邮件list-item */}
           <div className="flex-1 w-0 ml-28 omit">
             <Dot size={7} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
