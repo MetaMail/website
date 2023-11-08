@@ -2,43 +2,66 @@ import React, { MutableRefObject } from 'react';
 import dynamic from 'next/dynamic';
 import { StringMap } from 'quill';
 import { ReactQuillProps } from 'react-quill';
+import { userLocalStorage } from 'lib/utils';
 
 
 const DynamicReactQuill = dynamic(
   async () => {
-
+    const localTheme = userLocalStorage.getTheme() || 'light'
+    console.log('isDarkisDark', localTheme)
     const { default: RQ } = await import('react-quill');
     var icons = RQ.Quill.import('ui/icons');
-    icons['bold'] = `<svg  width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    icons['bold'] = localTheme === 'dark' ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+<path d="M2.44141 2.25C2.44141 1.7 2.89141 1.25 3.44141 1.25H6.00141C7.31141 1.25 8.37641 2.315 8.37641 3.625C8.37641 4.935 7.31141 6 6.00141 6H2.44141V2.25Z" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2.44141 6H7.19141C8.50141 6 9.56641 7.065 9.56641 8.375C9.56641 9.685 8.50141 10.75 7.19141 10.75H3.44141C2.89141 10.75 2.44141 10.3 2.44141 9.75V6V6Z" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`: `<svg  width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2.44043 2.25C2.44043 1.7 2.89043 1.25 3.44043 1.25H6.00043C7.31043 1.25 8.37543 2.315 8.37543 3.625C8.37543 4.935 7.31043 6 6.00043 6H2.44043V2.25Z" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M2.44043 6H7.19043C8.50043 6 9.56543 7.065 9.56543 8.375C9.56543 9.685 8.50043 10.75 7.19043 10.75H3.44043C2.89043 10.75 2.44043 10.3 2.44043 9.75V6V6Z" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
     icons[
       'italic'
-    ] = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    ] = localTheme === 'dark' ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+<path d="M4.81055 1.5H9.43555" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2.56055 10.5H7.18555" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.125 1.5L4.875 10.5" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`: `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M4.80957 1.5H9.43457" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M2.55957 10.5H7.18457" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M7.125 1.5L4.875 10.5" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
     icons[
       'underline'
-    ] = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    ] = localTheme === 'dark' ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+<path d="M2.5 10.5H9.5" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2.5 1.5V5C2.5 6.935 4.065 8.5 6 8.5C7.935 8.5 9.5 6.935 9.5 5V1.5" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`: `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2.5 10.5H9.5" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M2.5 1.5V5C2.5 6.935 4.065 8.5 6 8.5C7.935 8.5 9.5 6.935 9.5 5V1.5" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
-    icons['link'] = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    icons['link'] = localTheme === 'dark' ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+<path d="M6.52992 5.47021C7.65492 6.59521 7.65492 8.41522 6.52992 9.53522C5.40492 10.6552 3.58492 10.6602 2.46492 9.53522C1.34492 8.41022 1.33992 6.59021 2.46492 5.47021" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.29547 6.70494C4.12547 5.53494 4.12547 3.63494 5.29547 2.45994C6.46547 1.28494 8.36547 1.28994 9.54047 2.45994C10.7155 3.62994 10.7105 5.52994 9.54047 6.70494" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>` : `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M6.52992 5.47021C7.65492 6.59521 7.65492 8.41522 6.52992 9.53522C5.40492 10.6552 3.58492 10.6602 2.46492 9.53522C1.34492 8.41022 1.33992 6.59021 2.46492 5.47021" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M5.29547 6.70494C4.12547 5.53494 4.12547 3.63494 5.29547 2.45994C6.46547 1.28494 8.36547 1.28994 9.54047 2.45994C10.7155 3.62994 10.7105 5.52994 9.54047 6.70494" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
     icons[
       'strike'
-    ] = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    ] = localTheme === 'dark' ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+<path d="M0.599609 4.7998H11.3996" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2.40039 1.2002V5.4002C2.40039 7.72219 4.0101 9.60019 6.00039 9.60019C7.99068 9.60019 9.60039 7.72219 9.60039 5.4002V1.2002" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`: `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0.600098 4.7998H11.4001" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M2.3999 1.2002V5.4002C2.3999 7.72219 4.00962 9.60019 5.9999 9.60019C7.99019 9.60019 9.5999 7.72219 9.5999 5.4002V1.2002" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
     icons[
       'blockquote'
-    ] = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    ] = localTheme === 'dark' ? `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="12" viewBox="0 0 10 12" fill="none">
+<path d="M0.833984 6.17529H3.25065C3.88815 6.17529 4.32565 6.7553 4.32565 7.4653V9.07532C4.32565 9.78532 3.88815 10.3653 3.25065 10.3653H1.90899C1.31732 10.3653 0.833984 9.78532 0.833984 9.07532V6.17529" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M0.833984 6.17511C0.833984 3.15011 1.30483 2.65014 2.7215 1.64014" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.67969 6.17529H8.09635C8.73385 6.17529 9.17136 6.7553 9.17136 7.4653V9.07532C9.17136 9.78532 8.73385 10.3653 8.09635 10.3653H6.75469C6.16303 10.3653 5.67969 9.78532 5.67969 9.07532V6.17529" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.67969 6.17511C5.67969 3.15011 6.15051 2.65014 7.56717 1.64014" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`: `<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0.833008 6.17529H3.24967C3.88717 6.17529 4.32468 6.7553 4.32468 7.4653V9.07532C4.32468 9.78532 3.88717 10.3653 3.24967 10.3653H1.90801C1.31635 10.3653 0.833008 9.78532 0.833008 9.07532V6.17529" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M0.833008 6.17511C0.833008 3.15011 1.30385 2.65014 2.72052 1.64014" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M5.6792 6.17529H8.09586C8.73336 6.17529 9.17087 6.7553 9.17087 7.4653V9.07532C9.17087 9.78532 8.73336 10.3653 8.09586 10.3653H6.75421C6.16254 10.3653 5.6792 9.78532 5.6792 9.07532V6.17529" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -56,7 +79,14 @@ const DynamicReactQuill = dynamic(
     </svg>`;
     icons[
       'list'
-    ].bullet = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    ].bullet = localTheme === 'dark' ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+<path d="M5 9.5H10" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5 6H10" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5 2.5H10" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M3.2 2.6C3.2 2.93137 2.93137 3.2 2.6 3.2C2.26863 3.2 2 2.93137 2 2.6C2 2.26863 2.26863 2 2.6 2C2.93137 2 3.2 2.26863 3.2 2.6Z" fill="black"/>
+<path d="M3.2 6.1C3.2 6.43137 2.93137 6.7 2.6 6.7C2.26863 6.7 2 6.43137 2 6.1C2 5.76863 2.26863 5.5 2.6 5.5C2.93137 5.5 3.2 5.76863 3.2 6.1Z" fill="black"/>
+<path d="M3.2 9.6C3.2 9.93137 2.93137 10.2 2.6 10.2C2.26863 10.2 2 9.93137 2 9.6C2 9.26863 2.26863 9 2.6 9C2.93137 9 3.2 9.26863 3.2 9.6Z" fill="black"/>
+</svg>`: `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M5 9.5H10" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M5 6H10" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M5 2.5H10" stroke="black" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
