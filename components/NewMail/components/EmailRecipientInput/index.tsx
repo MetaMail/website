@@ -83,7 +83,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
         placeholder="Add Receipients"
         onChange={debounce(handleChange, 200)}
         onKeyDown={handleKeyPress}
-        className={`input focus:h-36 px-0 placeholder:text-[14px] ${isInputShow ? 'block' : 'hidden'}`}
+        className={` h-25 pl-0 py-5 box-border input focus:h-36 px-0 placeholder:text-[14px] text-[14px] text-[#000] ${isInputShow ? 'block' : 'hidden'}`}
         onBlur={handleInputBlur}
         ref={inputRef}
       />
