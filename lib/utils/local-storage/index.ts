@@ -9,7 +9,7 @@ const TempMailStoreKey = 'MM_TemporalContent';
 const QuillTextKey = 'MM_Text';
 const QuillHtmlKey = 'MM_Html';
 const MailReply = 'MM_Reply';
-
+const THEME = 'theme'
 interface IUserInfo {
     publicKey?: string;
     ensName?: string;
@@ -70,6 +70,12 @@ export const userLocalStorage = {
                 ...value,
             })
         );
+  },
+  getTheme:(): string => {
+       return  getStorage(THEME);
+    },
+  setTheme: (mode?: string) => {
+        setStorage(THEME, mode);
     },
 
     getUserInfo: (): IUserInfo => {

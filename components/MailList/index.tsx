@@ -209,7 +209,7 @@ export default function MailList() {
 
   return (
     <div
-      className={`flex flex-col h-full transition-all text-[14px] ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
+      className={`flex flex-col h-full transition-all text-[14px] pt-28 ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
         }`}>
       {
         list.length > 0 ? (<div className="flex flex-row w-full justify-between px-12 box-border py-9 pt-0">

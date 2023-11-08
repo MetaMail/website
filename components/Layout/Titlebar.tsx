@@ -20,7 +20,7 @@ export default function Titlebar() {
   const [emailSize, setEmailSize] = useState<number>();
   const [emailSizeLimit, setEmailSizeLimit] = useState<number>();
   const [dropdownShow, setDropdownShow] = useState<boolean>(false)
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState<string>();
   const handleCopy = (txt: string) => {
     navigator.clipboard.writeText(txt);
     toast.success('Copied to clipboard');
@@ -28,9 +28,11 @@ export default function Titlebar() {
 
   useEffect(() => {
     const { address, ensName } = userLocalStorage.getUserInfo() ?? {};
+    const localTheme = userLocalStorage.getTheme() || 'light'
     if (!address) return logout();
     setAddress(address);
     setEnsName(ensName);
+    setTheme(localTheme)
     userHttp
       .getUserProfile()
       .then(res => {
@@ -45,12 +47,14 @@ export default function Titlebar() {
   useEffect(() => {
     document.querySelector('html').setAttribute('data-theme', theme);
   }, [theme])
+  // 点击切换主题
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-    localStorage.setItem('theme', theme)
+    const changeToTheme = theme == 'dark' ? 'light' : 'dark';
+    setTheme(changeToTheme);
+    userLocalStorage.setTheme(changeToTheme)
   };
   return (
-    <div className="navbar p-0 min-h-fit h-50 py-6 flex items-center">
+    <div className="navbar p-0 min-h-fit h-50 box-border py-10 flex items-center">
       {/* header-left 左边搜索框 */}
       <div className="flex-1">
         <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
@@ -62,10 +66,10 @@ export default function Titlebar() {
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
         <div className={`dropdown dropdown-end  dropdown-bottom  w-100`} onClick={() => { if (!dropdownShow) setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
-          <label tabIndex={0} className="rounded-7 border-0 flex w-full justify-between items-center h-40 btn btn-circle btn-sm p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
-            <div className="w-32 h-32 rounded-full  hover:border-5 flex items-center">
+          <label tabIndex={0} className="rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
+            <div className="w-31 h-31 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
-              <JazziconGrid size={32} addr={address} />
+              <JazziconGrid size={31} addr={address} />
             </div>
             <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18 ${dropdownShow ? 'transform rotate-180' : ''}`} />
           </label>

@@ -104,7 +104,7 @@ export default function Welcome() {
           </h1>
           <p className="text-4xl font-light leading-snug">Create And Use Your Crypto Email</p>
           <div
-            className="mt-80 relative z-[10] font-poppins flex items-center justify-center w-219 h-69 rounded-20 text-white font-semibold 
+            className="mt-80 relative z-[10] font-poppins flex items-center justify-center w-219 h-69 rounded-20 text-white font-['PoppinsBold'] 
     text-2xl bg-black ">
             <RainbowLogin content="Try It Now" />
           </div>
