@@ -87,7 +87,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
         onBlur={handleInputBlur}
         ref={inputRef}
       />
-      <button onClick={() => setIsInputShow(!isInputShow)}>
+      <button onClick={() => setIsInputShow(true)}>
         {/* 添加收件人 */}
         <Icon url={isDark ? addDark : add} title="add receivers" className="w-26 h-26" />
       </button>
