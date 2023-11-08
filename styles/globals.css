@@ -17,16 +17,21 @@
     font-size: 22px;
   }
 }
-@layer base {
   @font-face {
     font-family:Poppins ;
     src: url('../public/static/fonts/Poppins-Regular.ttf');
   }
-  @font-face {
-    font-family:PoppinsBold ;
-    src: url('../public/static/fonts/Poppins-Bold.ttf');
-  }
+  
+@font-face {
+    font-family: 'PoppinsBold';
+    src: url('public/static/fonts/Poppins-Bold.ttf') format('ttf'),
+         url('public/static/fonts/poppins-bold-webfont.woff2') format('woff2'),
+         url('public/static/fonts/poppins-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
 }
+
 [data-theme="light"] {
   --primary: #3c6ff4;
   --menu-active-bg-color: #9EBFFF;
