@@ -50,7 +50,7 @@ export default function Titlebar() {
     localStorage.setItem('theme', theme)
   };
   return (
-    <div className="navbar p-0 min-h-fit h-50 py-6 flex items-center">
+    <div className="navbar p-0 min-h-fit h-45 box-border py-10 flex items-center">
       {/* header-left 左边搜索框 */}
       <div className="flex-1">
         <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
