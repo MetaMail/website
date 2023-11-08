@@ -223,7 +223,7 @@ export default function MailDetail() {
 
   return (
     <div
-      className={`relative flex-1 rounded-10 flex flex-col font-poppins p-16 pt-0 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full' : ''
+      className={`relative flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full' : ''
         }`}>
       <header className="flex flex-col justify-between w-full mb-22">
         <div className="flex justify-between w-full">

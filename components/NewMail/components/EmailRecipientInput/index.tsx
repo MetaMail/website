@@ -6,15 +6,16 @@ import { debounce } from 'lodash';
 import { IPersonItem } from 'lib/constants/interfaces';
 import { mailHttp } from 'lib/http';
 import Icon from 'components/Icon';
-import { add, cancel } from 'assets/icons';
+import { add, cancel, addDark } from 'assets/icons';
 
 interface EmailRecipientInputProps {
   receivers: IPersonItem[];
   onAddReceiver: (address: string) => void;
   onRemoveReceiver: (email: string) => void;
+  isDark: boolean
 }
 
-const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, onAddReceiver, onRemoveReceiver }) => {
+const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, receivers, onAddReceiver, onRemoveReceiver }) => {
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
 
   const inputRef = useRef<HTMLInputElement>();
@@ -88,7 +89,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
       />
       <button onClick={() => setIsInputShow(!isInputShow)}>
         {/* 添加收件人 */}
-        <Icon url={add} title="add receivers" className="w-26 h-26" />
+        <Icon url={isDark ? addDark : add} title="add receivers" className="w-26 h-26" />
       </button>
       <ul className='flex gap-10 '>
         {receivers.map((email, index) => (
@@ -98,10 +99,11 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ receivers, on
               title={email.address}>
               <JazziconGrid size={27} addr={email.address} />
               <span className="w-120 omit">{email.address}</span>
+              <button onClick={() => removeRecipient(email.address)}>
+                <Icon url={cancel} title="cancel" className="w-14 h-14" />
+              </button>
             </div>
-            <button onClick={() => removeRecipient(email.address)}>
-              <Icon url={cancel} title="cancel" className="w-20 h-20" />
-            </button>
+
           </li>
         ))}
       </ul>

@@ -1,3 +1,4 @@
+
 import draft from './draft.svg';
 import draftActive from './draftActive.svg';
 import inbox from './inbox.svg';
@@ -14,6 +15,7 @@ import spam from './spam.svg';
 import spamActive from './spamActive.svg';
 import add from './add.svg';
 import down from './down.svg';
+import addDark from './addDark.svg';
 import more from './more.svg';
 import moreActive from './moreActive.svg';
 import swapAddr from './swapaddr.svg';
@@ -37,6 +39,8 @@ import cancelSelected from './cancelselected.svg';
 import temp1 from './temp1.svg';
 import back from './back.svg';
 import extend from './extend.svg';
+import cancelDark from './cancelDark.svg';
+import extendDark from './extendDark.svg';
 import cancel from './cancel.svg';
 import mailMore from './mailMore.svg';
 import dropdownImg from './dropdown.svg'
@@ -58,8 +62,11 @@ import dark_delete from './darkSlider/delete.svg'
 import checkboxDark from './checkboxDark.svg'
 import favoriteDark from './favoriteDark.svg'
 export {
-  favoriteDark,
-  checkboxDark,
+    addDark,
+    cancelDark,
+    extendDark,
+    favoriteDark,
+    checkboxDark,
     dark_spam ,
     dark_star ,
     dark_send ,

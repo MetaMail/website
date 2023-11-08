@@ -34,7 +34,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : 'text-[#000000] font-semibold';
+    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : "text-[#000000] font-['PoppinsBold']";
   };
 
   const getMailFrom = (mail: IMailContentItem): string => {

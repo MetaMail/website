@@ -20,7 +20,7 @@ import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
 import LoadingRing from 'components/LoadingRing';
 
-import { trashCan, extend, cancel } from 'assets/icons';
+import { trashCan, extend, cancel, cancelDark, extendDark } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
@@ -362,7 +362,7 @@ export default function NewMail() {
 
   return (
     <div
-      className={`flex flex-col font-poppins bg-base-100 p-18 transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
+      className={`dark:bg-[#2D2E2F] flex flex-col font-poppins bg-base-100 p-18 transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
         } `}>
       <header className="flex justify-between">
         <div className="flex items-center">
@@ -370,9 +370,11 @@ export default function NewMail() {
           <span className=" text-[22px] font-bold">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
-          <Icon url={extend} className="w-14 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
+          {/* 放大 */}
+          <Icon url={isDark ? extendDark : extend} className="w-14 h-auto self-center" onClick={() => setIsExtend(!isExtend)} />
+          {/* 关闭 */}
           <Icon
-            url={cancel}
+            url={isDark ? cancelDark : cancel}
             className="w-14 h-auto self-center"
             onClick={async () => {
               if (!getMailChanged()) return setSelectedDraft(null);
@@ -389,15 +391,16 @@ export default function NewMail() {
       </header>
       <div className="text-[#464646] mt-20">
         <div className="flex py-3 items-center">
-          <span className="w-65 font-semibold  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
+          <span className="w-65  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
           <EmailRecipientInput
             receivers={selectedDraft.mail_to}
             onAddReceiver={addReceiver}
             onRemoveReceiver={removeReceiver}
+            isDark={isDark}
           />
         </div>
         <div className="flex py-3 items-center">
-          <span className="w-65 font-semibold  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
+          <span className="w-65  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
           <NameSelector
             initValue={
               selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
@@ -406,11 +409,11 @@ export default function NewMail() {
           />
         </div>
         <div className="flex py-3 items-center">
-          <span className="w-65 font-semibold  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
+          <span className="w-65  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">Subject</span>
           <input
             type="text"
             placeholder=""
-            className="flex h-25 pl-0 py-5 flex-1 text-[#000000] dark:text-[#fff] focus:outline-none"
+            className="flex h-25 pl-0 py-5 flex-1 text-[#000000] dark:text-[#fff] focus:outline-none dark:bg-[unset]"
             defaultValue={selectedDraft.subject}
             ref={subjectRef}
             onChange={throttle(() => {
