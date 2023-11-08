@@ -5,7 +5,7 @@ interface IDotProps {
   color?: string;
 }
 
-export default function Dot({ size = 6, color = '#006AD4' }: IDotProps) {
+export default function Dot({ size = 9, color = '#006AD4' }: IDotProps) {
   return (
     <span
       className="rounded-full inline-block"

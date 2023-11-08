@@ -19,11 +19,11 @@
 }
 @font-face {
   font-family:Poppins ;
-  src: url('../assets/fonts/Poppins-Regular.ttf');
+  src: url('../public/static/fonts/Poppins-Regular.ttf');
 }
 @font-face {
   font-family:PoppinsBold ;
-  src: url('../assets/fonts/Poppins-Bold.ttf');
+  src: url('../public/static/fonts/Poppins-Bold.ttf');
 }
 [data-theme="light"] {
   --primary: #3c6ff4;
