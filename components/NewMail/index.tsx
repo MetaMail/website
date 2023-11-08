@@ -430,11 +430,10 @@ export default function NewMail() {
           <DynamicReactQuill
             forwardedRef={reactQuillRef}
             className={`flex-1 py-16 flex flex-col-reverse text-[#464646] dark:text-[#fff] overflow-hidden mt-9  leading-[21px] ${isDark ? 'dark' : ''}`}
-            theme="snow"
+            theme={'snow'}
             placeholder={''}
             modules={EditorModules}
             formats={EditorFormats}
-            style={{ color: `red` }}
           />
           {isExtend && <FileUploader
             randomBits={randomBits}

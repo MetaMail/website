@@ -83,11 +83,11 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
         placeholder="Add Receipients"
         onChange={debounce(handleChange, 200)}
         onKeyDown={handleKeyPress}
-        className={`input focus:h-36 px-0 placeholder:text-[14px] ${isInputShow ? 'block' : 'hidden'}`}
+        className={`dark:bg-[unset] dark:text-[#fff] h-25 pl-0 py-5 box-border input focus:h-36 px-0 placeholder:text-[14px] text-[14px] text-[#000] ${isInputShow ? 'block' : 'hidden'}`}
         onBlur={handleInputBlur}
         ref={inputRef}
       />
-      <button onClick={() => setIsInputShow(!isInputShow)}>
+      <button onClick={() => setIsInputShow(true)}>
         {/* 添加收件人 */}
         <Icon url={isDark ? addDark : add} title="add receivers" className="w-26 h-26" />
       </button>
