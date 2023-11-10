@@ -222,8 +222,9 @@ export default function MailDetail() {
   }, [selectedMail.message_id]);
 
   return (
+    // 邮件详情
     <div
-      className={`relative flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full' : ''
+      className={`relative flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
         }`}>
       <header className="flex flex-col justify-between w-full mb-22">
         <div className="flex justify-between w-full">

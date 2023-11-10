@@ -18,8 +18,10 @@
   }
 }
   @font-face {
-    font-family:Poppins ;
-    src: url('/static/fonts/Poppins-Regular.ttf');
+    font-family:'Poppins';
+    src: url('/static/fonts/poppins-regular.ttf') format('ttf'),
+             url('/static/fonts/poppins-regular.woff2') format('woff2'),
+         url('/static/fonts/poppins-regular.woff') format('woff');
   }
   
 @font-face {
@@ -62,7 +64,7 @@ body {
   background-color: #f2f8ff;
   background-repeat: no-repeat;
   background-size: cover;
-  font-family: "Poppins";
+  font-family: Poppins;
   font-size: 14px;
 }
 .home-bg {

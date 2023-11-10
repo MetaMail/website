@@ -34,9 +34,10 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : "text-[#000000] font-['PoppinsBold']";
+    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : "text-[#000000] font-[600]";
   };
 
+  // 有name展示name,没有就展示address
   const getMailFrom = (mail: IMailContentItem): string => {
     if (mail.mail_from?.name && mail.mail_from.name.length > 0) {
       return mail.mail_from.name;
@@ -110,6 +111,14 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
     }
     return mail.digest;
   };
+  const renderMailTo = (mail: MailListItemType) => {
+    return mail.mail_to.map((item, index) => {
+      if (item?.name && item.name.length > 0) {
+        return item.name;
+      } else return getShowAddress(item.address)
+
+    })
+  }
 
   return (
     <>
@@ -145,8 +154,20 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
           </div>
           {/* <div className=""> */}
           {/* 来自谁 */}
-          <span className={`w-[113px] ml-28  omit text-base-content ${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>{getMailFrom(mail)}
-          </span>
+          {/* inbox展示from;send展示同 */}
+          {
+            filterType === FilterTypeEn.Sent ? (
+              <span className={`w-[113px]  ml-28  omit text-base-content ${getIsReadTextClass(mail)}`} title={renderMailTo(mail).join(';')}>{renderMailTo(mail).join(';')}
+              </span>
+
+            ) : (
+              // Inbox
+              <span className={`w-[113px]  ml-28  omit text-base-content ${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>{getMailFrom(mail)}
+              </span>
+
+            )
+          }
+
           {/* </div> */}
           {/* 邮件list-item */}
           <div className="flex-1 w-0 ml-28 omit dark:text-base-content">

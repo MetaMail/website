@@ -76,7 +76,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
   };
 
   return (
-    <div className="flex h-40 text-[#878787] items-center relative">
+    <div className="flex flex-wrap text-[#878787] items-center relative">
       {/* 添加收件人 */}
       <input
         type="email"

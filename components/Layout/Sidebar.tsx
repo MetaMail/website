@@ -59,9 +59,11 @@ export default function Sidebar() {
               handleChangeFilter(item.key);
             }}
             className='mb-2 text-[#545454]  dark:text-base-content'>
-            <a className={`rounded-5 p-0 h-32 pl-12 pr-5  ${filterType === Number(item.key) ? "active rounded-4 font-['PoppinsBold']" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
-              <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" />
-              <span className='leading-[32px]'>{item.title}</span>
+            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between  ${filterType === Number(item.key) ? "active rounded-4 font-[600]" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
+              <div className='flex items-center gap-9'>
+                <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" />
+                <span className='leading-[20px] inline-block h-18'>{item.title}</span>
+              </div>
               {renderBadge(item.key)}
             </a>
           </li >
@@ -99,7 +101,7 @@ export default function Sidebar() {
         <button onClick={logout} className="flex items-center justify-center py-10">
           <Image src={logo} alt="logo" className="w-auto h-36 mr-3" />
           {/* <Image src={logoBrand} alt="logo-brand" className="w-116" /> */}
-          <p className="text-[27px] font-['PoppinsBold']  leading-none">MetaMail</p>
+          <p className="text-[27px] text-[#000] font-['PoppinsBold']  leading-[43px] h-36">MetaMail</p>
         </button>
         <button className="btn-primary flex items-center justify-center text-white h-45 rounded-9 gap-9" onClick={handleClickNewMail}>
           <Image src={write} alt="new_mail" className="w-18 h-auto" />
