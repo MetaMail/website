@@ -92,7 +92,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
         {/* 添加收件人 */}
         <Icon url={isDark ? addDark : add} title="add receivers" className="w-26 h-26" />
       </button>
-      <ul className='flex gap-10 '>
+      <ul className='flex gap-10 flex-wrap'>
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div
