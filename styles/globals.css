@@ -18,8 +18,10 @@
   }
 }
   @font-face {
-    font-family:Poppins ;
-    src: url('/static/fonts/Poppins-Regular.ttf');
+    font-family:'Poppins';
+    src: url('/static/fonts/poppins-regular.ttf') format('ttf'),
+             url('/static/fonts/poppins-regular.woff2') format('woff2'),
+         url('/static/fonts/poppins-regular.woff') format('woff');
   }
   
 @font-face {
@@ -62,7 +64,7 @@ body {
   background-color: #f2f8ff;
   background-repeat: no-repeat;
   background-size: cover;
-  font-family: "Poppins";
+  font-family: Poppins;
   font-size: 14px;
 }
 .home-bg {
@@ -105,7 +107,16 @@ body {
 .omit {
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
+  overflow-x: hidden;
+  display: block;
+}
+.tooltip:before{
+  font-size: 14px;
+  padding-top: 0px;
+   padding-bottom: 0px;
+   max-width: fit-content;
+   word-break: keep-all;
+   white-space:nowrap;
 }
 :deep(.ql-container){
    font-size: 14px;
@@ -169,26 +180,6 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-/* 
-.menu li > *:not(ul):not(.menu-title):not(details).active .mail-svg,
-.menu li > *:not(ul):not(.menu-title):not(details):active .mail-svg {
-  stroke: var(--icon-active-color);
-}
-
-.menu li > details > summary:active {
-  background-color: var(--menu-active-bg-color);
-  cursor: pointer;
-  color: var(--menu-active-color);
-  font-weight: bolder;
-}
-
-.menu li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title):not(.active):hover {
-  background-color: var(--menu-hover-bg-color);
-}
-
-.menu li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title):not(.active):hover {
-  background-color: var(--menu-hover-bg-color);
-} */
 
 .mail-svg {
   stroke: var(--icon-color);
@@ -216,3 +207,19 @@ button:disabled {
 .input:focus, .input:focus-within{
   outline: none;
 }
+/* 邮件详情出现动画 --- start */
+@keyframes mailDetailShow {
+  from {
+    right: -1000px;
+    opacity: 0;
+  }
+  to{
+    right: 0;
+    opacity: 1;
+  }
+}
+.mailDetailShowAnimate {
+  animation: mailDetailShow 0.2s ;
+  animation-fill-mode: forwards;
+}
+/* 邮件详情出现动画 --- end */

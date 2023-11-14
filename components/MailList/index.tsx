@@ -222,7 +222,7 @@ export default function MailList() {
               ref={inputCheckBoxRef}
               checked={selectedAll}
               onChange={handleSelectedAllChange}
-              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-14 h-14 rounded-2 border-0 bg-transparent`}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent`}
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
 
             />
@@ -230,7 +230,7 @@ export default function MailList() {
             <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center">
-                <Icon url={filterIcon} title="Filter" className="w-14 h-14" />
+                <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
                 <span className="text-[12px] text-[#707070]">{filter}</span>
               </label>
 
@@ -264,7 +264,7 @@ export default function MailList() {
                         onClick={async () => {
                           await handleMailActionsClick(item.httpParams);
                         }}
-                        className="w-14 h-14 self-center box-border bg-opacity-0 "
+                        className="w-16 h-16 self-center box-border bg-opacity-0 "
                       />
                     </div>
                   );
@@ -283,7 +283,7 @@ export default function MailList() {
                 if (pageIndex > 1) subPageIndex();
               }}>
               {/* 当是第一页 */}
-              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-14 h-14 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-14 h-14 rotate-180"></Icon>)}
+              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-16 h-16 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-16 h-16 rotate-180"></Icon>)}
             </button>
 
             <button
@@ -292,12 +292,12 @@ export default function MailList() {
               onClick={() => {
                 if (pageIndex < pageNum) addPageIndex();
               }}>
-              <Icon url={arrowRight} title="arrowRight" className="w-14 h-14"></Icon>
+              <Icon url={arrowRight} title="arrowRight" className="w-16 h-16"></Icon>
             </button>
             <Icon
               url={update}
               title="Refresh"
-              className="w-14 h-14"
+              className="w-16 h-16"
               onClick={() => {
                 fetchMailList(true);
               }}
@@ -308,7 +308,7 @@ export default function MailList() {
       }
 
 
-      <div className={`flex flex-col overflow-y-auto  overflow-x-hidden flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
+      <div className={`flex flex-col overflow-y-visible   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
         {loading && <LoadingRing />}
         {list.length ? (
           list.map((item, index) => {

@@ -23,6 +23,8 @@ export default function Sidebar() {
   const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();
 
   function handleChangeFilter(filter: FilterTypeEn) {
+    console.log('filter', filter)
+    // 如果不是Draft,隐藏编辑框？
     setFilterType(filter);
     resetPageIndex();
   }
@@ -59,9 +61,11 @@ export default function Sidebar() {
               handleChangeFilter(item.key);
             }}
             className='mb-2 text-[#545454]  dark:text-base-content'>
-            <a className={`rounded-5 p-0 h-32 pl-12 pr-5  ${filterType === Number(item.key) ? "active rounded-4 font-['PoppinsBold']" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
-              <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" />
-              <span className='leading-[32px]'>{item.title}</span>
+            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-[600]" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
+              <div className='flex items-center gap-9'>
+                <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" />
+                <span className='leading-[20px] inline-block h-18'>{item.title}</span>
+              </div>
               {renderBadge(item.key)}
             </a>
           </li >
@@ -71,7 +75,7 @@ export default function Sidebar() {
         return (
           <li key={item.key} >
             {/* More */}
-            <div className={`rounded-5 flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
+            <div className={`rounded-5 flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 transition-colors duration-75 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
               <Image src={item?.logo} alt={item?.title} className={`w-18 h-18 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
               <span className='leading-[36px] text-[#54545499] dark:text-[#E9E9E9]'>{item.title}</span>
               {item.childrenShow}
@@ -99,7 +103,7 @@ export default function Sidebar() {
         <button onClick={logout} className="flex items-center justify-center py-10">
           <Image src={logo} alt="logo" className="w-auto h-36 mr-3" />
           {/* <Image src={logoBrand} alt="logo-brand" className="w-116" /> */}
-          <p className="text-[27px] font-['PoppinsBold']  leading-none">MetaMail</p>
+          <p className="text-[27px] text-[#000] font-['PoppinsBold']  leading-[43px] h-36">MetaMail</p>
         </button>
         <button className="btn-primary flex items-center justify-center text-white h-45 rounded-9 gap-9" onClick={handleClickNewMail}>
           <Image src={write} alt="new_mail" className="w-18 h-auto" />

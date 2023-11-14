@@ -65,7 +65,7 @@ export default function Titlebar() {
       {/* header-right avatar */}
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
-        <div className={`dropdown dropdown-end  dropdown-bottom  w-100`} onClick={() => { if (!dropdownShow) setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
+        <div className={`dropdown dropdown-end  dropdown-bottom  w-100 `} onClick={() => { setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
           <label tabIndex={0} className="rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
             <div className="w-31 h-31 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
@@ -76,6 +76,7 @@ export default function Titlebar() {
 
           <div
             tabIndex={0}
+            style={{ visibility: dropdownShow ? 'visible' : 'hidden' }}
             className={`mt-3 z-[1] px-24 py-12 shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
             <div className="text-[#93989A] flex flex-row items-center my-4">
               <p className="flex-1 flex mr-4 cursor-default" title={`${address}${PostfixOfAddress}`}>

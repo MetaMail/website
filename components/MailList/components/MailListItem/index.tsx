@@ -34,9 +34,10 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : "text-[#000000] font-['PoppinsBold']";
+    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : "text-[#000000] font-[600]";
   };
 
+  // 有name展示name,没有就展示address
   const getMailFrom = (mail: IMailContentItem): string => {
     if (mail.mail_from?.name && mail.mail_from.name.length > 0) {
       return mail.mail_from.name;
@@ -80,7 +81,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
     setList([...newList]);
   };
 
-
+  // 查看邮件详情
   const handleClick = throttle(async () => {
     if (mail.message_id === selectedMail?.message_id || mail.message_id === selectedDraft?.message_id) return;
     if (mail.read == ReadStatusTypeEn.Unread) {
@@ -110,19 +111,27 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
     }
     return mail.digest;
   };
+  const renderMailTo = (mail: MailListItemType) => {
+    return mail.mail_to.map((item, index) => {
+      if (item?.name && item.name.length > 0) {
+        return item.name;
+      } else return getShowAddress(item.address)
+
+    })
+  }
 
   return (
     <>
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={` py-6 flex flex-row px-12 items-center group h-30 cursor-pointer    ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10 hover:dark:bg-base-300'
+          className={`overflow-y-visible py-6 flex flex-row px-12 items-center group h-30 cursor-pointe transition-colors duration-75  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10 hover:dark:bg-base-300'
             }`}>
           <div className="flex flex-row gap-12">
             <input
               type="checkbox"
               title="Select"
-              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-14 h-14 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
               style={{ backgroundImage: `url(${mail.selected ? checkboxedSvg.src : isDark ? checkboxDark.src : checkboxSvg.src})` }}
               checked={mail.selected}
               onClick={e => {
@@ -133,7 +142,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
 
             <Icon
               url={mail.mark === MarkTypeEn.Starred ? markFavorite : isDark ? favoriteDark : favorite}
-              className="w-14 h-14"
+              className="w-16 h-16"
               title={mail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star'}
               onClick={async e => {
                 e.stopPropagation();
@@ -145,8 +154,25 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
           </div>
           {/* <div className=""> */}
           {/* 来自谁 */}
-          <span className={`w-[113px] ml-28  omit text-base-content ${getIsReadTextClass(mail)}`} title={getMailFrom(mail)}>{getMailFrom(mail)}
-          </span>
+          {/* inbox展示from;send展示同 */}
+          {
+            filterType === FilterTypeEn.Sent ? (
+              <div className="tooltip" data-tip={renderMailTo(mail).join(';')}>
+                <span className={`w-[113px] max-w-[113px] ml-28  omit text-base-content ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
+                </span>
+              </div>
+
+            ) : (
+              // Inbox
+              <div className="tooltip" data-tip={getMailFrom(mail)}>
+                <span className={`w-[113px]  max-w-[113px]  ml-28  omit text-base-content ${getIsReadTextClass(mail)}`} >
+                  {getMailFrom(mail)}
+                </span>
+              </div>
+
+            )
+          }
+
           {/* </div> */}
           {/* 邮件list-item */}
           <div className="flex-1 w-0 ml-28 omit dark:text-base-content">
@@ -192,7 +218,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
         // 查看详情时候的邮件列表
         <div
           onClick={handleClick}
-          className={`text-base-content  items-start box-border px-17 py-9 flex group cursor-pointer hover:bg-base-200 dark:hover:bg-[#F3F7FF] dark:hover:bg-opacity-10 dark:bg-opacity-10 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
+          className={`text-base-content  items-start box-border px-17 py-9 flex group cursor-pointer transition-colors duration-75 hover:bg-base-200 dark:hover:bg-[#F3F7FF] dark:hover:bg-opacity-10 dark:bg-opacity-10 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
             }`}>
           <div className='pt-5'>
             {/* 头像 */}

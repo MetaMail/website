@@ -70,13 +70,14 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
   const handleInputBlur = () => {
     setTimeout(() => {
       if (inputRef.current.value) {
+        addRecipient()
         setSuggestedReceivers([]);
       }
     }, 200);
   };
 
   return (
-    <div className="flex h-40 text-[#878787] items-center relative">
+    <div className="flex flex-wrap text-[#878787] items-center relative">
       {/* 添加收件人 */}
       <input
         type="email"
@@ -91,7 +92,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
         {/* 添加收件人 */}
         <Icon url={isDark ? addDark : add} title="add receivers" className="w-26 h-26" />
       </button>
-      <ul className='flex gap-10 '>
+      <ul className='flex gap-10 flex-wrap'>
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div

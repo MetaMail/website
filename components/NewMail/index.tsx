@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useContext } from 'react';
 import CryptoJS from 'crypto-js';
 import type ReactQuillType from 'react-quill';
 import { toast } from 'react-toastify';
-import { throttle } from 'lodash';
+import { throttle, toUpper } from 'lodash';
 import Image from 'next/image';
 import MailBoxContext from 'context/mail';
 import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn } from 'lib/constants';
@@ -26,9 +26,6 @@ import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
 
-import docx from 'assets/file/docx.svg';
-import pdf from 'assets/file/pdf.svg';
-import ai from 'assets/file/ai.svg';
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
  * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
@@ -45,6 +42,7 @@ let mailChanged = false;
 let initHtml = '';
 
 export default function NewMail() {
+
   const { checkEncryptable, setShowLoading, getRandomBits } = useContext(MailBoxContext);
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
   const { filterType } = useMailListStore();
@@ -59,12 +57,14 @@ export default function NewMail() {
     if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
     return reactQuillRef.current.makeUnprivilegedEditor(reactQuillRef.current.getEditor());
   };
-
+  // 把输入的正确的收件人加入待发送列表；
   const addReceiver = (address: string) => {
     const newReceiver = {
       address: address,
       name: address.split('@')[0],
     };
+    // 要做去重
+    console.log('selectedDraft', selectedDraft, address)
     const newReceivers = [...selectedDraft.mail_to, newReceiver];
     setSelectedDraft({ ...selectedDraft, mail_to: newReceivers });
     mailChanged = true;
@@ -343,20 +343,11 @@ export default function NewMail() {
     }
   }, 30000);
 
-  function fileTypeSvg(type: string) {
-    switch (type) {
-      case 'docx':
-        return (
-          <Image src={docx} alt={type} width={20} height={24} />
-        );
-      case 'pdf':
-        return (
-          <Image src={pdf} alt={type} width={20} height={24} />
-        );
-      case 'ai':
-        return (
-          <Image src={ai} alt={type} width={20} height={24} />
-        );
+  function fileTypeSvg(type?: any) {
+    try {
+      return <Image src={require(`assets/file/${type}.svg`)} alt={type} width={20} height={24} />
+    } catch (err) {
+      return <Image src={require(`assets/file/DEFAULT.svg`)} alt={type} width={20} height={24} />
     }
   }
 
@@ -367,7 +358,7 @@ export default function NewMail() {
       <header className="flex justify-between">
         <div className="flex items-center">
           {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
-          <span className=" text-[22px] font-bold">New Message</span>
+          <span className=" text-[22px] font-['PoppinsBold'] text-[#000]">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
           {/* 放大 */}
@@ -392,6 +383,7 @@ export default function NewMail() {
       <div className="text-[#464646] mt-20">
         <div className="flex py-3 items-center">
           <span className="w-65  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff] ">To</span>
+          {/* To 收件人输入框*/}
           <EmailRecipientInput
             receivers={selectedDraft.mail_to}
             onAddReceiver={addReceiver}
@@ -401,6 +393,7 @@ export default function NewMail() {
         </div>
         <div className="flex py-3 items-center">
           <span className="w-65  text-[14px]  shrink-0 text-[#3E3E3E66] dark:text-[#fff]">From</span>
+          {/* From 发件人输入框 */}
           <NameSelector
             initValue={
               selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
@@ -454,7 +447,7 @@ export default function NewMail() {
                 <div
                   className="text-[14px] px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
-                  {fileTypeSvg(fileType(attr.filename))}
+                  {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
                   <span>{attr.filename}</span>
                   <span className="">
                     {attr.uploadProcess && !attr.attachment_id
@@ -463,7 +456,7 @@ export default function NewMail() {
                   </span>
 
                   <button onClick={() => removeAttachment(index)}>
-                    <Icon url={trashCan} title="trashCan" className="w-14 h-14" />
+                    <Icon url={trashCan} title="trashCan" className="w-16 h-16" />
                   </button>
                 </div>
               </li>
