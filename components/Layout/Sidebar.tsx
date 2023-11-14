@@ -24,6 +24,7 @@ export default function Sidebar() {
 
   function handleChangeFilter(filter: FilterTypeEn) {
     console.log('filter', filter)
+    // 如果不是Draft,隐藏编辑框？
     setFilterType(filter);
     resetPageIndex();
   }

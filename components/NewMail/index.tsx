@@ -344,7 +344,11 @@ export default function NewMail() {
   }, 30000);
 
   function fileTypeSvg(type?: any) {
-    return <Image src={require(`assets/file/${type}.svg`)} alt={type} width={20} height={24} />
+    try {
+      return <Image src={require(`assets/file/${type}.svg`)} alt={type} width={20} height={24} />
+    } catch (err) {
+      return <Image src={require(`assets/file/DEFAULT.svg`)} alt={type} width={20} height={24} />
+    }
   }
 
   return (
