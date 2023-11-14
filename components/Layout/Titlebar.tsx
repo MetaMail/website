@@ -21,7 +21,8 @@ export default function Titlebar() {
   const [emailSizeLimit, setEmailSizeLimit] = useState<number>();
   const [dropdownShow, setDropdownShow] = useState<boolean>(false)
   const [theme, setTheme] = useState<string>();
-  const handleCopy = (txt: string) => {
+  const handleCopy = (e: React.MouseEvent, txt: string) => {
+    e.stopPropagation()
     navigator.clipboard.writeText(txt);
     toast.success('Copied to clipboard');
   };
@@ -48,11 +49,22 @@ export default function Titlebar() {
     document.querySelector('html').setAttribute('data-theme', theme);
   }, [theme])
   // 点击切换主题
-  const toggleTheme = () => {
+  const toggleTheme = (e: React.MouseEvent) => {
+    // console.log('点击切换主题')
+    e.stopPropagation()
     const changeToTheme = theme == 'dark' ? 'light' : 'dark';
     setTheme(changeToTheme);
     userLocalStorage.setTheme(changeToTheme)
+    setDropdownShow(false)
   };
+  const handleToggle = (e: React.MouseEvent) => {
+    // console.log('dropdownShow', dropdownShow)
+    setDropdownShow(!dropdownShow)
+  }
+  const handleBlur = () => {
+    console.log('blur')
+    setDropdownShow(false)
+  }
   return (
     <div className="navbar p-0 min-h-fit h-50 box-border py-10 flex items-center">
       {/* header-left 左边搜索框 */}
@@ -65,7 +77,7 @@ export default function Titlebar() {
       {/* header-right avatar */}
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
-        <div className={`dropdown dropdown-end  dropdown-bottom  w-100 `} onClick={() => { setDropdownShow(!dropdownShow) }} onBlur={() => { setDropdownShow(false) }}>
+        <div className={`dropdown dropdown-end  dropdown-bottom  w-100 `} onClick={handleToggle} onBlur={() => handleBlur}>
           <label tabIndex={0} className="rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
             <div className="w-31 h-31 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
@@ -88,8 +100,8 @@ export default function Titlebar() {
                 alt="copy"
                 title="copy"
                 className="w-18 h-18 p-0 cursor-pointer"
-                onClick={() => {
-                  handleCopy(`${address}${PostfixOfAddress}`);
+                onClick={(e) => {
+                  handleCopy(e, `${address}${PostfixOfAddress}`);
                 }}
               />
 
@@ -102,8 +114,8 @@ export default function Titlebar() {
                   alt="copy"
                   title="copy"
                   className="w-18 h-18 p-0 cursor-pointer"
-                  onClick={() => {
-                    handleCopy(ensName);
+                  onClick={(e) => {
+                    handleCopy(e, ensName);
                   }}
                 />
               </div>
