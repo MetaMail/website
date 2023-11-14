@@ -112,8 +112,8 @@ body {
 }
 .tooltip:before{
   font-size: 14px;
-  padding-top: 0px;
-   padding-bottom: 0px;
+  padding-top: 5px;
+   padding-bottom:5px;
    max-width: fit-content;
    word-break: keep-all;
    white-space:nowrap;

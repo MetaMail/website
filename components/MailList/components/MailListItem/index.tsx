@@ -158,7 +158,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
           {
             filterType === FilterTypeEn.Sent ? (
               <div className="tooltip" data-tip={renderMailTo(mail).join(';')}>
-                <span className={`w-[113px] max-w-[113px] ml-28  omit text-base-content ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
+                <span className={`w-[113px] max-w-[113px] ml-28  omit text-base-content text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
                 </span>
               </div>
 
