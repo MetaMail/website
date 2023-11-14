@@ -445,13 +445,14 @@ export default function NewMail() {
 
               <li key={index} className="flex text-[#878787]">
                 <div
-                  className="text-[14px] px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer flex items-center gap-8"
+                  className="text-[12px]  px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <span>{attr.filename}</span>
-                  <span className="">
+                  <span className="max-w-[62px] break-all overflow-ellipsis line-clamp-2">{attr.filename}</span>
+                  <span>
                     {attr.uploadProcess && !attr.attachment_id
-                      ? (<div className='flex items-center'><progress className="progress progress-success w-56" value={percentTransform(attr.uploadProcess)} max="100"></progress><span color='text-[#1F2937]'>{percentTransform(attr.uploadProcess) + '%'}</span></div>)
+                      ? (<div className='flex items-center'><progress className="progress progress-success w-56" value={percentTransform(attr.uploadProcess)} max="100"></progress>
+                        <span color='text-[#1F2937]'>{percentTransform(attr.uploadProcess) + '%'}</span></div>)
                       : ''}
                   </span>
 
