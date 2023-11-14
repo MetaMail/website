@@ -452,7 +452,7 @@ export default function NewMail() {
                   </span>
 
                   <button onClick={() => removeAttachment(index)}>
-                    <Icon url={trashCan} title="trashCan" className="w-14 h-14" />
+                    <Icon url={trashCan} title="trashCan" className="w-16 h-16" />
                   </button>
                 </div>
               </li>

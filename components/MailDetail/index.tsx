@@ -223,7 +223,7 @@ export default function MailDetail() {
   return (
     // 邮件详情
     <div
-      className={`relative flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all ease-in-out h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+      className={`absolute mailDetailShowAnimate w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all ease-in-out h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
         }`}>
       <header className="flex flex-col justify-between w-full mb-22">
         <div className="flex justify-between w-full">
@@ -234,7 +234,7 @@ export default function MailDetail() {
                   url={item.src}
                   title={item.title}
                   key={index}
-                  className="w-14 h-14 self-center"
+                  className="w-16 h-16 self-center"
                   onClick={item.handler}
                 />
               );
@@ -243,7 +243,7 @@ export default function MailDetail() {
           <div className="flex gap-10">
             <Icon
               url={extend}
-              className="w-14 h-14 self-center "
+              className="w-16 h-16 self-center "
               onClick={() => setIsDetailExtend(!isDetailExtend)}
             />
             <Icon
@@ -252,7 +252,7 @@ export default function MailDetail() {
                 setSelectedMail(null);
                 setIsDetailExtend(false);
               }}
-              className="w-14 h-14 self-center"
+              className="w-16 h-16 self-center"
             />
           </div>
         </div>
@@ -279,7 +279,7 @@ export default function MailDetail() {
                     url={item.src}
                     title={item.title}
                     onClick={item.handler}
-                    className="w-14 h-14 self-center"
+                    className="w-16 h-16 self-center"
                   />
                 );
               })}

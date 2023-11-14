@@ -107,7 +107,16 @@ body {
 .omit {
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
+  overflow-x: hidden;
+  display: block;
+}
+.tooltip:before{
+  font-size: 14px;
+  padding-top: 0px;
+   padding-bottom: 0px;
+   max-width: fit-content;
+   word-break: keep-all;
+   white-space:nowrap;
 }
 :deep(.ql-container){
    font-size: 14px;
@@ -198,3 +207,19 @@ button:disabled {
 .input:focus, .input:focus-within{
   outline: none;
 }
+/* 邮件详情出现动画 --- start */
+@keyframes mailDetailShow {
+  from {
+    right: -1000px;
+    opacity: 0;
+  }
+  to{
+    right: 0;
+    opacity: 1;
+  }
+}
+.mailDetailShowAnimate {
+  animation: mailDetailShow 0.2s ;
+  animation-fill-mode: forwards;
+}
+/* 邮件详情出现动画 --- end */
