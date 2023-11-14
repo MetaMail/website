@@ -70,6 +70,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
   const handleInputBlur = () => {
     setTimeout(() => {
       if (inputRef.current.value) {
+        addRecipient()
         setSuggestedReceivers([]);
       }
     }, 200);

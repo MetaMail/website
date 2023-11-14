@@ -14,7 +14,6 @@ import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
 import LoadingRing from 'components/LoadingRing';
 
-import sendMailIcon from 'assets/sendMail.svg';
 import {
   extend,
   cancel,
@@ -224,7 +223,7 @@ export default function MailDetail() {
   return (
     // 邮件详情
     <div
-      className={`relative flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+      className={`relative flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all ease-in-out h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
         }`}>
       <header className="flex flex-col justify-between w-full mb-22">
         <div className="flex justify-between w-full">

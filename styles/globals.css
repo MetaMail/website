@@ -171,26 +171,6 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-/* 
-.menu li > *:not(ul):not(.menu-title):not(details).active .mail-svg,
-.menu li > *:not(ul):not(.menu-title):not(details):active .mail-svg {
-  stroke: var(--icon-active-color);
-}
-
-.menu li > details > summary:active {
-  background-color: var(--menu-active-bg-color);
-  cursor: pointer;
-  color: var(--menu-active-color);
-  font-weight: bolder;
-}
-
-.menu li:not(.menu-title):not(.disabled) > details > summary:not(.menu-title):not(.active):hover {
-  background-color: var(--menu-hover-bg-color);
-}
-
-.menu li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title):not(.active):hover {
-  background-color: var(--menu-hover-bg-color);
-} */
 
 .mail-svg {
   stroke: var(--icon-color);

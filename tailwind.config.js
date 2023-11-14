@@ -52,6 +52,13 @@ module.exports = {
     },
     theme: {
         extend: {
+          keyframes:{
+            hoverSlider:{
+              from :{ backgroundColor: '#fff'},
+              to:{backgroundColor:'red'}
+              // CADCFF
+            }
+          },
             fontFamily: {
                 poppins: ['Poppins'],
                 'space-grotesk': ['"Space Grotesk"'],

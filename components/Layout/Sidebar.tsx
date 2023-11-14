@@ -59,7 +59,7 @@ export default function Sidebar() {
               handleChangeFilter(item.key);
             }}
             className='mb-2 text-[#545454]  dark:text-base-content'>
-            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between  ${filterType === Number(item.key) ? "active rounded-4 font-[600]" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
+            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between  ease-in-out duration-100 ${filterType === Number(item.key) ? "active rounded-4 font-[600]" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
               <div className='flex items-center gap-9'>
                 <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" />
                 <span className='leading-[20px] inline-block h-18'>{item.title}</span>
@@ -73,7 +73,7 @@ export default function Sidebar() {
         return (
           <li key={item.key} >
             {/* More */}
-            <div className={`rounded-5 flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
+            <div className={`rounded-5 flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 ease-in-out duration-100 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
               <Image src={item?.logo} alt={item?.title} className={`w-18 h-18 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
               <span className='leading-[36px] text-[#54545499] dark:text-[#E9E9E9]'>{item.title}</span>
               {item.childrenShow}
