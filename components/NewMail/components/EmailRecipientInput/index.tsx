@@ -77,22 +77,25 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
   };
 
   return (
-    <div className="flex flex-wrap text-[#878787] items-center relative">
-      {/* 添加收件人 */}
-      <input
-        type="email"
-        placeholder="Add Receipients"
-        onChange={debounce(handleChange, 200)}
-        onKeyDown={handleKeyPress}
-        className={`dark:bg-[unset] dark:text-[#fff] h-25 pl-0 py-5 box-border input focus:h-36 px-0 placeholder:text-[14px] text-[14px] text-[#000] ${isInputShow ? 'block' : 'hidden'}`}
-        onBlur={handleInputBlur}
-        ref={inputRef}
-      />
-      <button onClick={() => setIsInputShow(true)}>
-        {/* 添加收件人 */}
-        <Icon url={isDark ? addDark : add} title="add receivers" className="w-26 h-26" />
-      </button>
+    <div className="text-[#878787] items-center relative">
+
       <ul className='flex gap-10 flex-wrap'>
+        <li className='flex'>
+          {/* 添加收件人 */}
+          <input
+            type="email"
+            placeholder="Add Receipients"
+            onChange={debounce(handleChange, 200)}
+            onKeyDown={handleKeyPress}
+            className={`dark:bg-[unset] dark:text-[#fff] h-25 pl-0 py-5 box-border input focus:h-36 px-0 placeholder:text-[14px] text-[14px] text-[#000] ${isInputShow ? 'block' : 'hidden'}`}
+            onBlur={handleInputBlur}
+            ref={inputRef}
+          />
+          <button onClick={() => setIsInputShow(true)}>
+            {/* 添加收件人 */}
+            <Icon url={isDark ? addDark : add} title="add receivers" className="w-26 h-26" />
+          </button>
+        </li>
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div
