@@ -7,6 +7,7 @@ import { IPersonItem } from 'lib/constants/interfaces';
 import { mailHttp } from 'lib/http';
 import Icon from 'components/Icon';
 import { add, cancel, addDark } from 'assets/icons';
+import { useNewMailStore } from 'lib/zustand-store';
 
 interface EmailRecipientInputProps {
   receivers: IPersonItem[];
@@ -21,7 +22,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
   const inputRef = useRef<HTMLInputElement>();
   const [isInputShow, setIsInputShow] = useState(false)
   const [suggestedReceivers, setSuggestedReceivers] = useState<string[]>([]);
-
+  const { selectedDraft, setSelectedDraft } = useNewMailStore();
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const currentValue = e.target.value;
     if (!currentValue) {
@@ -43,15 +44,17 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
   const addRecipient = () => {
     const emailInput = inputRef.current.value;
     if (emailInput && validateEmail(emailInput)) {
-      onAddReceiver(emailInput);
-      inputRef.current.value = '';
+      // 回车要做去重
+      if (!selectedDraft.mail_to.find((item: { address: string }) => { return item.address === emailInput })) {
+        inputRef.current.value = '';
+        onAddReceiver(emailInput);
+      }
     } else {
       toast.error('Invalid Email Address.', {
         autoClose: 90000
       });
     }
   };
-
   const removeRecipient = (email: string) => {
     onRemoveReceiver(email);
   };
