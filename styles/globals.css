@@ -219,7 +219,21 @@ button:disabled {
   }
 }
 .mailDetailShowAnimate {
-  animation: mailDetailShow 0.2s ;
+  animation: mailDetailShow 0.25s ;
+  animation-fill-mode: forwards;
+}
+@keyframes mailDetailHide {
+  to {
+    right: -1000px;
+    opacity: 0;
+  }
+  from{
+    right: 0;
+    opacity: 1;
+  }
+}
+.mailDetailHideAnimate {
+  animation: mailDetailHide 0.5s ;
   animation-fill-mode: forwards;
 }
 /* 邮件详情出现动画 --- end */

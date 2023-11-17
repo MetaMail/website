@@ -63,11 +63,10 @@ export default function NewMail() {
       address: address,
       name: address.split('@')[0],
     };
-    // 要做去重
-    console.log('selectedDraft', selectedDraft, address)
     const newReceivers = [...selectedDraft.mail_to, newReceiver];
     setSelectedDraft({ ...selectedDraft, mail_to: newReceivers });
     mailChanged = true;
+
   };
 
   const removeReceiver = (email: string) => {

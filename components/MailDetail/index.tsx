@@ -223,93 +223,98 @@ export default function MailDetail() {
   return (
     // 邮件详情
     <div
-      className={`absolute mailDetailShowAnimate w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all ease-in-out h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+      className={`absolute ${selectedMail ? 'mailDetailShowAnimate' : 'mailDetailHideAnimate'} justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all ease-out h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
         }`}>
-      <header className="flex flex-col justify-between w-full mb-22">
-        <div className="flex justify-between w-full">
-          <div className="flex gap-10">
-            {topIcons.map((item, index) => {
-              return (
-                <Icon
-                  url={item.src}
-                  title={item.title}
-                  key={index}
-                  className="w-16 h-16 self-center"
-                  onClick={item.handler}
-                />
-              );
-            })}
-          </div>
-          <div className="flex gap-10">
-            <Icon
-              url={extend}
-              className="w-16 h-16 self-center "
-              onClick={() => setIsDetailExtend(!isDetailExtend)}
-            />
-            <Icon
-              url={cancel}
-              onClick={() => {
-                setSelectedMail(null);
-                setIsDetailExtend(false);
-              }}
-              className="w-16 h-16 self-center"
-            />
-          </div>
-        </div>
-        {/* 邮件详情 */}
-        <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '( no subject )'}</h1>
-        <div className="flex justify-between">
-          <div className="flex gap-20 items-center">
-            <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
-            <div className="">
-              <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
-              <div className="flex gap-3">
-                to:
-                <div className="flex-1 omit ml-4">{selectedMail?.mail_to[0]?.address}</div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
-            <div className="text-[12px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
-            <div className="flex gap-10 justify-end">
-              {rightIcons.map((item, index) => {
+      <div>
+        <header className="flex flex-col justify-between w-full mb-22">
+          <div className="flex justify-between w-full">
+            <div className="flex gap-10">
+              {topIcons.map((item, index) => {
                 return (
                   <Icon
-                    key={index}
                     url={item.src}
                     title={item.title}
-                    onClick={item.handler}
+                    key={index}
                     className="w-16 h-16 self-center"
+                    onClick={item.handler}
                   />
                 );
               })}
             </div>
-          </div>
-        </div>
-      </header>
-      {loading && <LoadingRing />}
-      {
-        <>
-          <h2 className="flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]">
-            {selectedMail?.part_html
-              ? parse(DOMPurify.sanitize(selectedMail?.part_html))
-              : selectedMail?.part_text}
-          </h2>
-          {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
-            <div className="flex">
-              {selectedMail?.attachments?.map((item, idx) => (
-                <AttachmentItem
-                  idx={idx}
-                  key={idx}
-                  url={item?.download?.url}
-                  name={item?.filename}
-                  randomBits={randomBits}
-                />
-              ))}
+            <div className="flex gap-10">
+              <Icon
+                url={extend}
+                className="w-16 h-16 self-center "
+                onClick={() => setIsDetailExtend(!isDetailExtend)}
+              />
+              <Icon
+                url={cancel}
+                onClick={() => {
+                  setSelectedMail(null);
+                  setIsDetailExtend(false);
+                }}
+                className="w-16 h-16 self-center"
+              />
             </div>
-          )}
-        </>
-      }
+          </div>
+          {/* 邮件详情 */}
+          <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '( no subject )'}</h1>
+          <div className="flex justify-between">
+            <div className="flex gap-20 items-center">
+              <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
+              <div className="">
+                <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
+                <div className="flex gap-3">
+                  to:
+                  <div className="flex-1 omit ml-4">{selectedMail?.mail_to[0]?.address}</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
+              <div className="text-[12px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
+              <div className="flex gap-10 justify-end">
+                {rightIcons.map((item, index) => {
+                  return (
+                    <Icon
+                      key={index}
+                      url={item.src}
+                      title={item.title}
+                      onClick={item.handler}
+                      className="w-16 h-16 self-center"
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </header>
+        <div className='relative'>
+          {loading && <LoadingRing />}
+          {
+            <>
+              <h2 className="flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]">
+                {selectedMail?.part_html
+                  ? parse(DOMPurify.sanitize(selectedMail?.part_html))
+                  : selectedMail?.part_text}
+              </h2>
+              {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
+                <div className="flex">
+                  {selectedMail?.attachments?.map((item, idx) => (
+                    <AttachmentItem
+                      idx={idx}
+                      key={idx}
+                      url={item?.download?.url}
+                      name={item?.filename}
+                      randomBits={randomBits}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          }
+        </div>
+      </div>
+
 
       <button
         className="flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
