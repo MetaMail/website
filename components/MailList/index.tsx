@@ -308,7 +308,7 @@ export default function MailList() {
       }
 
 
-      <div className={`flex flex-col ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
+      <div className={`flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
         {loading && <LoadingRing />}
         {list.length ? (
           list.map((item, index) => {
