@@ -219,7 +219,7 @@ button:disabled {
   }
 }
 .mailDetailShowAnimate {
-  animation: mailDetailShow 0.2s ;
+  animation: mailDetailShow 0.25s ;
   animation-fill-mode: forwards;
 }
 @keyframes mailDetailHide {
