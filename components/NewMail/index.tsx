@@ -87,7 +87,7 @@ export default function NewMail() {
     });
     return message_id;
   };
-
+  // 获取收件人的publicKey
   const getMailKeys = async () => {
     const { address, publicKey } = userLocalStorage.getUserInfo();
     const { encryptable, publicKeys } = await checkEncryptable(selectedDraft.mail_to);
@@ -110,6 +110,7 @@ export default function NewMail() {
 
       keys = result.map(item => item.key);
     }
+    console.log('获取收件人的publicKey', keys)
     return keys;
   };
 

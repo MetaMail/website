@@ -52,14 +52,14 @@ class MMAsymmetricEncrypt extends MMEncrypt {
     async encrypt(data: string, publicKey?: string): Promise<string> {
         try {
             // incoming data is hex string
-            const publicKeyBuffer = Buffer.from(publicKey || this._publicKey, 'hex');
+          const publicKeyBuffer = Buffer.from(publicKey || this._publicKey, 'hex');
             const publicCryptoKey = await window.crypto.subtle.importKey(
                 'spki',
                 publicKeyBuffer,
                 { name: 'RSA-OAEP', hash: { name: 'SHA-256' } },
                 false,
                 ['encrypt']
-            );
+          );
             const randomBitsBuffer = Buffer.from(data, 'utf-8');
             const encryptData = await window.crypto.subtle.encrypt(
                 { name: 'RSA-OAEP' },
@@ -68,7 +68,7 @@ class MMAsymmetricEncrypt extends MMEncrypt {
             );
             return Buffer.from(encryptData).toString('hex');
         } catch (error) {
-            console.error(error);
+            console.log(error);
             throw new Error('Asymmetric encrypt error');
         }
     }
@@ -96,17 +96,15 @@ class MMAsymmetricEncrypt extends MMEncrypt {
         }
     }
 
-    async generateKey() {
+  async generateKey() {
         const keyPair = await window.crypto.subtle.generateKey(
             {
-                name: 'RSA-OAEP',
-                modulusLength: 2048,
-                publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-                hash: { name: 'SHA-256' },
+              name: "ECDH",
+              namedCurve: "P-384",
             },
-            true,
-            ['encrypt', 'decrypt']
-        );
+            false,
+            ["deriveKey"],
+          );          
         const privateBuffer = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
         const publicBuffer = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
         this._privateKey = Buffer.from(privateBuffer).toString('hex');
@@ -116,6 +114,7 @@ class MMAsymmetricEncrypt extends MMEncrypt {
             publicKey: this._publicKey,
         };
     }
+    
 }
 
 export const asymmetricEncryptInstance = new MMAsymmetricEncrypt();
