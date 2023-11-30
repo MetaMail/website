@@ -15,15 +15,13 @@ export const generateEncryptionUserKey = async () => {
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
 
     const keyMeta = {
-        type: 'RSA-OAEP',
-        modulus_length: 2048,
-        public_exponent: '010001',
-        hash: { name: 'SHA-256' },
-        private_key_format: 'pkcs8',
-        public_key_format: 'spki',
-        key_usages: ['encrypt', 'decrypt'],
-        private_key_encoding: 'hex',
-        public_key_encoding: 'hex',
+      name: 'ECDH',
+      named_curve: 'P-384',
+      private_key_format: 'pkcs8',
+      public_key_format: 'spki',
+      key_usages: ['deriveKey'],
+      private_key_encoding: 'hex',
+      public_key_encoding: 'hex',
     };
 
     const signMessages = {
