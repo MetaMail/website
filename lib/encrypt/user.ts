@@ -3,8 +3,9 @@ import keccak256 from 'keccak256';
 
 import { asymmetricEncryptInstance, symmetricEncryptInstance } from '../base';
 import { saltSignInstance, keyDataSignInstance } from 'lib/sign';
-
+// 获取用户的密钥对
 export const generateEncryptionUserKey = async () => {
+  console.log('执行')
     const salt = crypto.randomBytes(32).toString('hex');
     const signedSalt = await saltSignInstance.doSign({
         hint: 'Sign this salt to generate encryption key',
@@ -12,6 +13,7 @@ export const generateEncryptionUserKey = async () => {
     });
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
     const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
+    // 把自己的私钥，用Storage_Encryption_Key对称加密了一下
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
 
     const keyMeta = {
@@ -42,7 +44,7 @@ export const generateEncryptionUserKey = async () => {
     };
     return reqMessage;
 };
-
+// 解密出经过对称加密的用户私钥
 export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) => {
     if (!encryptedPrivateKey || encryptedPrivateKey.length == 0) {
         throw new Error('error: no privateKey in session storage');
