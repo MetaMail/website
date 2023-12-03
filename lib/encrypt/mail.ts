@@ -33,12 +33,12 @@ export const createEncryptedMailKey = async (publicKey: string, address: string,
     purePrivateKey,
     publicKey
   )
-  console.log('secretKey', secretKey)
-  // console.log(await asymmetricEncryptInstance.encrypt(randomBits, secretKey))
-  // return {
-  //   key: await asymmetricEncryptInstance.encrypt(randomBits, secretKey),
-  //   randomBits,
-  // };
+
+  console.log(await symmetricEncryptInstance.encrypt(randomBits, secretKey))
+  return {
+    key: await symmetricEncryptInstance.encrypt(randomBits, secretKey),
+    randomBits,
+  };
 };
 
 /**
@@ -53,11 +53,11 @@ export const createEncryptedMailKey = async (publicKey: string, address: string,
 // 获取原始的randomBits
 export const decryptMailKey = async (encryptedMailKey: string, privateKey: string, publicKey: string) => {
   // rpc get alice's publicKey
-  const secretKey = await echEncrypt.deriveSecretKey(
+  const secretKey = await deriveSecretKey(
     privateKey,
     publicKey,
   );
-  return asymmetricEncryptInstance.decrypt(encryptedMailKey, secretKey);
+  // return asymmetricEncryptInstance.decrypt(encryptedMailKey, secretKey);
 };
 export const concatAddress = (item: IPersonItem) => (item?.name ?? '') + ' ' + '<' + item.address + '>';
 
