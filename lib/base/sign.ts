@@ -3,11 +3,9 @@ import { getAccount } from '@wagmi/core';
 import { ExternalProvider } from '@ethersproject/providers';
 import { userLocalStorage } from 'lib/utils';
 
-import { MMObject } from './object';
-
 const getEthereum = () => window.ethereum as ExternalProvider;
 
-export abstract class MMSign extends MMObject {
+export abstract class MMSign {
     private _address: string;
     private _signMethod = 'eth_signTypedData';
     private _domain = { name: 'MetaMail', version: '1.0.0' };

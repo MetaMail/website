@@ -96,9 +96,12 @@ interface IMailDetailBaseItem {
     meta_header?: {
         addr?: string;
         date?: string;
-        data?: string;
-        keys?: string[];
         signature?: string;
+        domain?: any;
+        types?: any;
+        value?: any;
+        encrypted_encryption_keys?: string[];
+        encryption_public_keys?: string[];
     };
 }
 

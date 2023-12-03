@@ -30,7 +30,8 @@ interface ISendMailParams {
     mail_id: string;
     date?: string;
     signature?: string;
-    keys: string[];
+    encrypted_encryption_keys: string[];
+    encryption_public_keys: string[];
     mail_decryption_key?: string;
 }
 

@@ -1,29 +1,30 @@
 import crypto from 'crypto';
 import keccak256 from 'keccak256';
 
-import { asymmetricEncryptInstance, symmetricEncryptInstance } from '../base';
+import { ecdh, symmetricCryptoJSEncryptInstance } from '../base';
 import { saltSignInstance, keyDataSignInstance } from 'lib/sign';
 // 获取用户的密钥对
 export const generateEncryptionUserKey = async () => {
-  console.log('执行')
+    console.log('执行');
     const salt = crypto.randomBytes(32).toString('hex');
     const signedSalt = await saltSignInstance.doSign({
         hint: 'Sign this salt to generate encryption key',
         salt: salt,
     });
     const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
-    const { privateKey, publicKey } = await asymmetricEncryptInstance.generateKey();
+    const { privateKey, publicKey } = await ecdh.generateKey();
     // 把自己的私钥，用Storage_Encryption_Key对称加密了一下
     const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
 
     const keyMeta = {
-      name: 'ECDH',
-      named_curve: 'P-384',
-      private_key_format: 'pkcs8',
-      public_key_format: 'spki',
-      key_usages: ['deriveKey'],
-      private_key_encoding: 'hex',
-      public_key_encoding: 'hex',
+        name: 'ECDH',
+        named_curve: 'P-384',
+        private_key_format: 'pkcs8',
+        public_key_format: 'spki',
+        private_key_encoding: 'hex',
+        public_key_encoding: 'hex',
+        key_usages: ['deriveKey'],
+        derived_key_name: 'AES-GCM',
     };
 
     const signMessages = {
@@ -61,11 +62,11 @@ export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) =
 };
 
 export const encryptPrivateKey = (privateKey: string, key: string) => {
-    return symmetricEncryptInstance.encrypt(privateKey, key);
+    return symmetricCryptoJSEncryptInstance.encrypt(privateKey, key);
 };
 
 export const decryptPrivateKey = (encryptedPrivateKey: string, key: string) => {
-    return symmetricEncryptInstance.decrypt(encryptedPrivateKey, key);
+    return symmetricCryptoJSEncryptInstance.decrypt(encryptedPrivateKey, key);
 };
 
 // TODO 所有的用户相关的加密解密都放在这里

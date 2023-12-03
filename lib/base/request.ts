@@ -1,5 +1,4 @@
 import axios, { Axios, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
-import { MMObject } from './object';
 import { userLocalStorage } from 'lib/utils';
 
 //const BASE_URL = 'https://api.metamail.ink/';
@@ -8,7 +7,7 @@ const BASE_URL = 'https://api-v2.mmail-test.ink/';
 
 export const PostfixOfAddress = '@mmail-test.ink';
 
-export abstract class MMHttp extends MMObject {
+export abstract class MMHttp {
     private _baseUrl: string;
     private _axios: Axios;
     private static _onUnAuthHandle: () => void;
@@ -18,7 +17,6 @@ export abstract class MMHttp extends MMObject {
     }
 
     constructor() {
-        super();
         this._baseUrl = BASE_URL;
 
         this._axios = axios.create({
