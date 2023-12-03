@@ -45,6 +45,9 @@ export default function Welcome() {
         signedMessage,
       });
       let encryptionData = await userHttp.getEncryptionKey(address);
+      console.log('await generateEncryptionUserKey()')
+      console.log(encryptionData)
+
       if (!encryptionData?.signature) {
         encryptionData = await generateEncryptionUserKey();
         // do upload
