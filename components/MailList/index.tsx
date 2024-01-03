@@ -81,7 +81,9 @@ export default function MailList() {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Operation failed, please try again later.');
+      toast.error('Operation failed, please try again later.', {
+        autoClose: 2000
+      });
     }
   };
 
@@ -119,7 +121,9 @@ export default function MailList() {
       setPageNum(page_num);
     } catch (error) {
       console.error(error);
-      toast.error('Fetch mail list failed, please try again later.');
+      toast.error('Fetch mail list failed, please try again later.', {
+        autoClose: 2000
+      });
     } finally {
       if (showLoading) setLoading(false);
     }
@@ -222,16 +226,17 @@ export default function MailList() {
               ref={inputCheckBoxRef}
               checked={selectedAll}
               onChange={handleSelectedAllChange}
-              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent`}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent ${!selectedMail ? 'block' : 'hidden'}`}
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
 
             />
+
 
             <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center">
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
-                <span className="text-[12px] text-[#707070]">{filter}</span>
+                <span className="text-[14px] text-[#707070]">{filter}</span>
               </label>
 
               <ul
@@ -327,6 +332,6 @@ export default function MailList() {
           <Image src={empty} alt="No Mail" className="w-auto h-136" />
         )}
       </div>
-    </div>
+    </div >
   );
 }

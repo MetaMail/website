@@ -66,7 +66,9 @@ export default function MailDetail() {
       setSelectedMail(_mail);
     } catch (error) {
       console.error(error);
-      showLoading && toast.error("Can't get mail detail, please try again later.");
+      showLoading && toast.error("Can't get mail detail, please try again later.", {
+        autoClose: 2000
+      });
     } finally {
       showLoading && setLoading(false);
     }
@@ -113,7 +115,9 @@ export default function MailDetail() {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Operation failed, please try again later.');
+      toast.error('Operation failed, please try again later.', {
+        autoClose: 2000
+      });
     }
   };
 
@@ -271,7 +275,7 @@ export default function MailDetail() {
               </div>
             </div>
             <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
-              <div className="text-[12px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
+              <div className="text-[14px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
               <div className="flex gap-10 justify-end">
                 {rightIcons.map((item, index) => {
                   return (

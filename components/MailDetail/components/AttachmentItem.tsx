@@ -34,7 +34,9 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
       }
     } catch (error) {
       console.error(error);
-      toast.error('Download failed.');
+      toast.error('Download failed.', {
+        autoClose: 2000
+      });
       return;
     }
 
@@ -49,7 +51,7 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
   };
   return (
     <div className='gap-10'>
-      <div onClick={handleClick} className="mb-20 mr-10 flex text-[#878787] text-[12px] px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer  items-center gap-8">
+      <div onClick={handleClick} className="mb-20 mr-10 flex text-[#878787] text-[14px] px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer  items-center gap-8">
         {/* <div>{name ?? `attachment${idx}`}</div> */}
         {fileTypeSvg(fileType(name).toLocaleUpperCase())}
         <span className='max-w-[80px] break-all overflow-ellipsis line-clamp-2'> {name ?? `attachment${idx}`} </span>

@@ -6,8 +6,8 @@ import { debounce } from 'lodash';
 import { IPersonItem } from 'lib/constants/interfaces';
 import { mailHttp } from 'lib/http';
 import Icon from 'components/Icon';
-import { add, cancel, addDark } from 'assets/icons';
-import { useNewMailStore } from 'lib/zustand-store';
+import { addSquare, close, addDark } from 'assets/icons';
+import { useNewMailStore, useIsInputShow } from 'lib/zustand-store';
 
 interface EmailRecipientInputProps {
   receivers: IPersonItem[];
@@ -20,9 +20,9 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
 
   const inputRef = useRef<HTMLInputElement>();
-  const [isInputShow, setIsInputShow] = useState(false)
   const [suggestedReceivers, setSuggestedReceivers] = useState<string[]>([]);
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
+  const { isInputShow, setIsInputShow } = useIsInputShow();
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const currentValue = e.target.value;
     if (!currentValue) {
@@ -51,7 +51,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
       }
     } else {
       toast.error('Invalid Email Address.', {
-        autoClose: 90000
+        autoClose: 2000
       });
     }
   };
@@ -76,38 +76,39 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
         addRecipient()
         setSuggestedReceivers([]);
       }
+      setIsInputShow(false)
     }, 200);
   };
 
   return (
     <div className="text-[#878787] items-center relative">
 
-      <ul className='flex gap-10 flex-wrap'>
-        <li className='flex'>
+      <ul className='flex gap-x-18 gap-y-6 flex-wrap'>
+        <li className='flex gap-y-14'>
           {/* 添加收件人 */}
           <input
             type="email"
             placeholder="Add Receipients"
             onChange={debounce(handleChange, 200)}
             onKeyDown={handleKeyPress}
-            className={`dark:bg-[unset] dark:text-[#fff] h-25 pl-0 py-5 box-border input focus:h-36 px-0 placeholder:text-[14px] text-[14px] text-[#000] ${isInputShow ? 'block' : 'hidden'}`}
+            className={`dark:bg-[unset] dark:text-[#fff] h-35 pl-0 box-border py-0 input focus:h-35 px-0 placeholder:text-[14px] text-[14px] text-[#000] ${isInputShow ? 'block' : 'hidden'}`}
             onBlur={handleInputBlur}
             ref={inputRef}
           />
           <button onClick={() => setIsInputShow(true)}>
-            {/* 添加收件人 */}
-            <Icon url={isDark ? addDark : add} title="add receivers" className="w-26 h-26" />
+            {   /* 添加收件人 */}
+            <Icon url={isDark ? addDark : addSquare} title="add receivers bg-[#F5F5F6] rounded-[5px]" className="w-35 h-35" />
           </button>
         </li>
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div
-              className="p-5 bg-[#4f4f4f0a] dark:bg-[#DCDCDC26] rounded-9 cursor-pointer flex items-center gap-8"
+              className="p-5 bg-[#4F4F4F0A] dark:bg-[#DCDCDC26] rounded-9 cursor-pointer flex items-center gap-8"
               title={email.address}>
               <JazziconGrid size={27} addr={email.address} />
               <span className="w-120 omit">{email.address}</span>
-              <button onClick={() => removeRecipient(email.address)}>
-                <Icon url={cancel} title="cancel" className="w-14 h-14" />
+              <button onClick={() => removeRecipient(email.address)} className='pr-[5px]'>
+                <Icon url={close} title="cancel" className="w-20 h-20" />
               </button>
             </div>
 

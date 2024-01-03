@@ -96,7 +96,9 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
     if (!fileList || !fileList.length) return;
     const isFilesSizeValid = checkFilesSize(fileList);
     if (!isFilesSizeValid) {
-      return toast.error('Single attachment size should be less than 20MB.');
+      return toast.error('Single attachment size should be less than 20MB.', {
+        autoClose: 2000
+      });
     }
     await onCheckDraft();
     const uploadResult = await Promise.all(Array.from(fileList).map((file: File) => handleSingleFileUpload(file)));

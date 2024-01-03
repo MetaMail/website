@@ -41,7 +41,9 @@ export default function Titlebar() {
       })
       .catch(error => {
         console.log(error);
-        toast.error('Get user profile failed.');
+        toast.error('Get user profile failed.', {
+          autoClose: 2000
+        });
       });
   }, []);
   useEffect(() => {
@@ -54,7 +56,7 @@ export default function Titlebar() {
     const changeToTheme = theme == 'dark' ? 'light' : 'dark';
     setTheme(changeToTheme);
     userLocalStorage.setTheme(changeToTheme)
-    setDropdownShow(false)
+    // setDropdownShow(false)
   };
 
   return (
@@ -66,10 +68,9 @@ export default function Titlebar() {
           <input type="text" className="input w-405 h-32 rounded-5 pl-7 text-[14px] dark:!bg-[#353739]" />
         </div>
       </div>
-      {/* header-right avatar */}
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
-        <div className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`} onClick={() => setDropdownShow(!dropdownShow)}>
+        <div className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`} onClick={() => setDropdownShow(!dropdownShow)} onMouseEnter={() => setDropdownShow(true)}>
           <label tabIndex={0} className="rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
             <div className="w-31 h-31 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
@@ -84,7 +85,7 @@ export default function Titlebar() {
             style={{ visibility: dropdownShow ? 'visible' : 'hidden' }}
             className={`mt-3 z-[1] px-24 py-12 shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
             <div className="text-[#93989A] flex flex-row items-center my-4">
-              <p className="flex-1 flex mr-4 cursor-default" title={`${address}${PostfixOfAddress}`}>
+              <p className="flex-1 flex mr-4 cursor-default dark:text-[#fff]" title={`${address}${PostfixOfAddress}`}>
                 {getShowAddress(address)}
                 {PostfixOfAddress}
               </p>
@@ -121,7 +122,7 @@ export default function Titlebar() {
                 <span>{percentTransform((emailSize < 0.1 ? 0 : emailSize) / emailSizeLimit)}%</span>
               </p>
               <progress
-                className="progress progress-primary w-222 mt-12"
+                className="progress progress-primary w-[100%] mt-12"
                 value={percentTransform(emailSize / emailSizeLimit)}
                 max="100"></progress>
               <p className="flex justify-between font-bold text-[14px] my-4">
@@ -134,22 +135,15 @@ export default function Titlebar() {
               <Image src={right} alt="go" />
             </div>
             <div className="form-control">
-              {theme == 'dark' && <label className="label cursor-pointer" >
-                <span className="label-text font-bold">Light theme</span>
-                <input
-                  type="checkbox"
-                  className="toggle"
-                  onClick={toggleTheme}
-                />
-              </label>}
-              {theme == 'light' && <label className="label cursor-pointer" >
+              <label className="label cursor-pointer" >
                 <span className="label-text font-bold">Dark theme</span>
                 <input
                   type="checkbox"
-                  className="toggle"
+                  className="toggle  checked:bg-[#fff]"
                   onClick={toggleTheme}
+                  checked={theme == 'dark'}
                 />
-              </label>}
+              </label>
             </div>
           </div>
         </div >
