@@ -34,7 +34,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : "text-[#000000] font-[600]";
+    return mail.read == ReadStatusTypeEn.Read ? 'text-[#333]' : "text-[#333] font-[600]";
   };
 
   // 有name展示name,没有就展示address
@@ -64,7 +64,9 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Operation failed, please try again later.');
+      toast.error('Operation failed, please try again later.', {
+        autoClose: 2000
+      });
     }
   };
 
@@ -158,7 +160,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
           {
             filterType === FilterTypeEn.Sent ? (
               <div className="tooltip" data-tip={renderMailTo(mail).join(';')}>
-                <span className={`w-[113px] max-w-[113px] ml-28  omit text-base-content text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
+                <span className={`w-[113px] max-w-[113px] ml-28 dark:text-[#fff] omit text-base-content text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
                 </span>
               </div>
 
@@ -178,9 +180,9 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
           <div className="flex-1 w-0 ml-28 omit dark:text-base-content">
             <Dot size={7} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             {/* ReadStatusTypeEn.Read 已读 */}
-            <span className={`ml-8 ${getIsReadTextClass(mail)} dark:text-base-content`}>{mail.subject || '( no subject )'}</span>
+            <span className={`ml-8 text-[#333333] dark:text-base-content ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600]' : ''}`}>{mail.subject || '( no subject )'}</span>
             <span className="pt-4 pl-2 pr-7 ">{'-'}</span>
-            <span className={`min-w-0 flex-1 ${mail.read === ReadStatusTypeEn.Unread ? 'text-base-content opacity-90' : 'text-[#70707099] '}`}>{renderDigest(mail)}</span>
+            <span className={`min-w-0 flex-1  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#70707099] '}`}>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
@@ -228,21 +230,21 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             <p className="flex justify-between items-center">
               {/* 邮件地址 */}
               <span
-                className={` flex-1  w-0  omit mr-4 font-['PoppinsBold']  leading-[20px] dark:text-base-content  ${getIsReadTextClass(mail)}`}
+                className={` flex-1  w-0  omit mr-4 font-['PoppinsBold']  leading-[20px] dark:text-base-content  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066]' : 'text-[#000]'}`}
                 title={getMailFrom(mail)}>
                 {getMailFrom(mail)}
               </span>
               {/* 邮件日期 */}
-              <span className={`max-w-[80px] text-[12px] text-right text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
+              <span className={`max-w-[80px] text-[14px] text-right text-[#7F7F7F] dark:text-base-content`}>{transformTime(mail.mail_date)}</span>
             </p>
             <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}
-              <span className={`omit mr-4 flex-1 w-0 text-[12px] dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
+              <span className={`omit mr-4 flex-1 w-0 text-[14px] dark:text-base-content ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] ' : 'text-base-content'}`}>
                 {mail.subject || '( no subject )'}
               </span>
               <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             </p>
-            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#70707099] text-[12px]`}>{renderDigest(mail)}</p>
+            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#70707099] `}>{renderDigest(mail)}</p>
           </div>
         </div >
       )
