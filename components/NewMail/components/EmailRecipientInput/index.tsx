@@ -95,9 +95,9 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
             onBlur={handleInputBlur}
             ref={inputRef}
           />
-          <button onClick={() => setIsInputShow(true)}>
+          <button onClick={() => setIsInputShow(true)} tooltips-title="add receivers" >
             {   /* 添加收件人 */}
-            <Icon url={isDark ? addDark : addSquare} title="add receivers bg-[#F5F5F6] rounded-[5px]" className="w-35 h-35" />
+            <Icon url={isDark ? addDark : addSquare} className="w-35 h-35 bg-[#F5F5F6] rounded-[5px]" />
           </button>
         </li>
         {receivers.map((email, index) => (
