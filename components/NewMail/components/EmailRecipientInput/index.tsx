@@ -6,7 +6,7 @@ import { debounce } from 'lodash';
 import { IPersonItem } from 'lib/constants/interfaces';
 import { mailHttp } from 'lib/http';
 import Icon from 'components/Icon';
-import { addSquare, close, addDark } from 'assets/icons';
+import { addSquare, addSquareDark, close, addDark } from 'assets/icons';
 import { useNewMailStore, useIsInputShow } from 'lib/zustand-store';
 
 interface EmailRecipientInputProps {
@@ -95,9 +95,9 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
             onBlur={handleInputBlur}
             ref={inputRef}
           />
-          <button onClick={() => setIsInputShow(true)} tooltips-title="add receivers" >
+          <button onClick={() => setIsInputShow(true)}  >
             {   /* 添加收件人 */}
-            <Icon url={isDark ? addDark : addSquare} className="w-35 h-35 bg-[#F5F5F6] rounded-[5px]" />
+            <Icon url={isDark ? addSquareDark : addSquare} className="w-35 h-35 dark:bg-unset  rounded-[5px]" />
           </button>
         </li>
         {receivers.map((email, index) => (

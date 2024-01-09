@@ -63,10 +63,11 @@ export default function Titlebar() {
     <div className="navbar p-0 min-h-fit h-50 box-border py-10 flex items-center">
       {/* header-left 左边搜索框 */}
       <div className="flex-1">
-        <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
+        {/* 这版先隐藏 */}
+        {/* <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
           <Image src={searchNormal} alt='search' title='search' className={`w-14 h-14`} />
           <input type="text" className="input w-405 h-32 rounded-5 pl-7 text-[14px] dark:!bg-[#353739]" />
-        </div>
+        </div> */}
       </div>
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
@@ -130,17 +131,19 @@ export default function Titlebar() {
                 <span>{emailSizeLimit}GB</span>
               </p>
             </div>
-            <div className="flex justify-between font-bold items-center my-12 cursor-pointer">
+            {/* 这版先隐藏 */}
+            {/* <div className="flex justify-between font-bold items-center my-12 cursor-pointer">
               <span>Setting</span>
               <Image src={right} alt="go" />
-            </div>
+            </div> */}
             <div className="form-control">
-              <label className="label cursor-pointer" >
-                <span className="label-text font-bold">Dark theme</span>
+              <label className="label cursor-pointer px-0" >
+                <span className="label-text font-bold ">Dark mode</span>
                 <input
                   type="checkbox"
                   className="toggle  checked:bg-[#fff]"
                   onClick={toggleTheme}
+                  onChange={() => { }}
                   checked={theme == 'dark'}
                 />
               </label>

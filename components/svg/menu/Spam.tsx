@@ -1,20 +1,10 @@
-export function SpamSvg() {
-    return (
-        <svg
-            className="mail-svg"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M8.00016 14.6668C11.6668 14.6668 14.6668 11.6668 14.6668 8.00016C14.6668 4.3335 11.6668 1.3335 8.00016 1.3335C4.3335 1.3335 1.3335 4.3335 1.3335 8.00016C1.3335 11.6668 4.3335 14.6668 8.00016 14.6668Z"
-                strokeWidth="0.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path d="M8 5.3335V8.66683" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M7.99658 10.6665H8.00257" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    );
+export default function SpamSvg() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.38623 14.25C11.8237 14.25 14.6362 11.4375 14.6362 8C14.6362 4.5625 11.8237 1.75 8.38623 1.75C4.94873 1.75 2.13623 4.5625 2.13623 8C2.13623 11.4375 4.94873 14.25 8.38623 14.25Z" stroke="#7F7F7F" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8.38623 5.5V8.625" stroke="#7F7F7F" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8.38257 10.5H8.38818" stroke="#7F7F7F" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+
+  );
 }

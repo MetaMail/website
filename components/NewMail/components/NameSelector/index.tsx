@@ -23,29 +23,31 @@ function NameSelector({ initValue, onChange }: IProps) {
   }, [initValue]);
 
   return (
-    <div className="flex items-center gap-9 w-fit p-5 pr-9  bg-[#0700200A] dark:bg-[#DCDCDC26] rounded-8 cursor-pointer text-[#706F6F]">
+    <div className="flex items-center gap-9 w-fit p-5 pr-9  bg-[#0700200A] dark:bg-[#B9B9B90A] rounded-8 cursor-pointer text-[#706F6F]">
       {/* 头像 */}
       <JazziconGrid size={27} addr={showAddress} />
       {ensName ? (
+        // from 有可选项
         <select
-          className="omit max-w-[90%]"
+          className="omit"
           onChange={e => {
             onChange(Number(e.target.value as unknown as MailFromType));
           }}
           defaultValue={initValue}>
-          <option value={MailFromType.address}>
+          <option value={MailFromType.address} className='w-[200px] text-ellipsis  flex-1 overflow-hidden'>
             {address}
             {PostfixOfAddress}
           </option>
           <option value={MailFromType.ensName}>
-            {ensName}
+            <span>{ensName}</span>
             {PostfixOfAddress}
           </option>
         </select>
       ) : (
         <span className='break-all'>{address + PostfixOfAddress}</span>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
 export default NameSelector;
