@@ -47,6 +47,7 @@ export default function NewMail() {
   const { filterType } = useMailListStore();
 
   const [isExtend, setIsExtend] = useState(false);
+  const [initValue, setInitValue] = useState(selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName);
   const [loading, setLoading] = useState(false);
   const dateRef = useRef<string>();
   const reactQuillRef = useRef<ReactQuillType>();
@@ -301,10 +302,13 @@ export default function NewMail() {
   };
 
   const handleChangeMailFrom = (from: MailFromType) => {
-    console.log('from', from)
+
+    setInitValue(from);
+    console.log('from', from, initValue)
     const { address, ensName } = userLocalStorage.getUserInfo();
+    // 这里的name优先ens;
     const mail_from = {
-      address: (MailFromType.address ? address : ensName) + PostfixOfAddress,
+      address: (from === MailFromType.address ? address : ensName) + PostfixOfAddress,
       name: ensName || address,
     };
     setSelectedDraft({
@@ -430,9 +434,7 @@ export default function NewMail() {
           <span className="w-65  text-[14px]  shrink-0 text-[#4F4F4F] dark:text-[#fff]">From</span>
           {/* From 发件人输入框 */}
           <NameSelector
-            initValue={
-              selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
-            }
+            initValue={initValue}
             onChange={handleChangeMailFrom}
           />
         </div>

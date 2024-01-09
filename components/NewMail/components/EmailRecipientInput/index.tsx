@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { debounce } from 'lodash';
@@ -13,16 +13,21 @@ interface EmailRecipientInputProps {
   receivers: IPersonItem[];
   onAddReceiver: (address: string) => void;
   onRemoveReceiver: (email: string) => void;
-  isDark: boolean
+  isDark: boolean;
 }
 
 const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, receivers, onAddReceiver, onRemoveReceiver }) => {
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
 
   const inputRef = useRef<HTMLInputElement>();
+  useEffect(() => {
+    // 在组件挂载后，将焦点设置到 input 元素
+    inputRef.current?.focus();
+  }, []); // 空依赖数组表示只在组件挂载时执行
   const [suggestedReceivers, setSuggestedReceivers] = useState<string[]>([]);
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
   const { isInputShow, setIsInputShow } = useIsInputShow();
+
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const currentValue = e.target.value;
     if (!currentValue) {
@@ -79,7 +84,12 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
       setIsInputShow(false)
     }, 200);
   };
-
+  const handleClickAdd = () => {
+    setIsInputShow(true);
+    setTimeout(() => {
+      inputRef.current?.focus()
+    }, 200)
+  }
   return (
     <div className="text-[#878787] items-center relative">
 
@@ -94,8 +104,9 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
             className={`dark:bg-[unset] dark:text-[#fff] h-35 pl-0 box-border py-0 input focus:h-35 px-0 placeholder:text-[14px] text-[14px] text-[#000] ${isInputShow ? 'block' : 'hidden'}`}
             onBlur={handleInputBlur}
             ref={inputRef}
+            autoFocus
           />
-          <button onClick={() => setIsInputShow(true)}  >
+          <button onClick={handleClickAdd}  >
             {   /* 添加收件人 */}
             <Icon url={isDark ? addSquareDark : addSquare} className="w-35 h-35 dark:bg-unset  rounded-[5px]" />
           </button>
