@@ -8,6 +8,7 @@ import filter from './filter.svg';
 import add from './add.svg';
 import addSquare from './addSquare.svg'
 import addSquareDark from './addSquareDark.svg'
+import arrowDown from './arrowDown.svg';
 import down from './down.svg';
 import addDark from './addDark.svg';
 import more from './more.svg';
@@ -55,6 +56,7 @@ import dark_delete from './darkSlider/delete.svg'
 import checkboxDark from './checkboxDark.svg'
 import favoriteDark from './favoriteDark.svg'
 export {
+  arrowDown,
   addDark,
   cancelDark,
   extendDark,
