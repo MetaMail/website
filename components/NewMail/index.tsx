@@ -47,12 +47,14 @@ export default function NewMail() {
   const { filterType } = useMailListStore();
 
   const [isExtend, setIsExtend] = useState(false);
+  const [initValue, setInitValue] = useState(selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName);
   const [loading, setLoading] = useState(false);
   const dateRef = useRef<string>();
   const reactQuillRef = useRef<ReactQuillType>();
   const subjectRef = useRef<HTMLInputElement>();
   const { isDark } = useThemeStore();
   const { isInputShow, setIsInputShow } = useIsInputShow();
+
   const getQuill = () => {
     if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
     return reactQuillRef.current.makeUnprivilegedEditor(reactQuillRef.current.getEditor());
@@ -300,9 +302,13 @@ export default function NewMail() {
   };
 
   const handleChangeMailFrom = (from: MailFromType) => {
+
+    setInitValue(from);
+    console.log('from', from, initValue)
     const { address, ensName } = userLocalStorage.getUserInfo();
+    // 这里的name优先ens;
     const mail_from = {
-      address: (MailFromType.address ? address : ensName) + PostfixOfAddress,
+      address: (from === MailFromType.address ? address : ensName) + PostfixOfAddress,
       name: ensName || address,
     };
     setSelectedDraft({
@@ -382,7 +388,7 @@ export default function NewMail() {
 
   return (
     <div
-      className={`dark:bg-[#2D2E2F] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
+      className={`dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
         } `}>
       <header className="flex justify-between">
         <div className="flex items-center">
@@ -428,9 +434,7 @@ export default function NewMail() {
           <span className="w-65  text-[14px]  shrink-0 text-[#4F4F4F] dark:text-[#fff]">From</span>
           {/* From 发件人输入框 */}
           <NameSelector
-            initValue={
-              selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName
-            }
+            initValue={initValue}
             onChange={handleChangeMailFrom}
           />
         </div>
@@ -439,7 +443,7 @@ export default function NewMail() {
           <input
             type="text"
             placeholder=""
-            className="flex box-border h-37 pl-[10px] py-4 flex-1 bg-[#0700200A] rounded-[8px] text-[#000000] dark:text-[#fff] focus:outline-none dark:bg-[unset]"
+            className="flex box-border h-37 pl-[10px] py-4 flex-1 bg-[#0700200A] dark:bg-[#B9B9B90A] rounded-[8px] text-[#000000] dark:text-[#fff] focus:outline-none "
             defaultValue={selectedDraft.subject}
             ref={subjectRef}
             onChange={throttle(() => {
@@ -463,6 +467,7 @@ export default function NewMail() {
             modules={EditorModules}
             formats={EditorFormats}
             onFocus={handleDynamicFocus}
+            isDark={isDark}
           />
           {isExtend && (
             <FileUploader
@@ -482,7 +487,7 @@ export default function NewMail() {
             {selectedDraft.attachments?.map((attr, index) => (
               <li key={index} className="flex text-[#878787]">
                 <div
-                  className="text-[14px]  px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer flex items-center gap-8"
+                  className="text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
                   <span className="max-w-[62px] break-all overflow-ellipsis line-clamp-2">
@@ -520,7 +525,7 @@ export default function NewMail() {
           onClick={handleClickSend}
           className="flex justify-center items-center bg-primary text-white px-14 py-8  rounded-[6px] text-[14px]">
           <Icon url={sendMailIcon} className="h-18" />
-          <span className="ml-8">Send</span>
+          <span className="ml-8 h-[18px] leading-[18px]">Send</span>
         </button>
 
         {/* 上传文件按钮   &&*/}

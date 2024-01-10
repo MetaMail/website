@@ -68,6 +68,9 @@ body {
   font-family: Poppins;
   font-size: 14px;
 }
+body *{
+   font-family: Poppins;
+}
 .home-bg {
   background-repeat: no-repeat;
 }
@@ -151,6 +154,9 @@ body {
 .ql-toolbar.ql-snow .ql-formats {
   margin-right: 0px !important;
 }
+.ql-snow.ql-toolbar button{
+  padding: 0;
+}
 
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
@@ -213,6 +219,26 @@ button:disabled {
   --tglbg:#3c6ff4;
    border: none;
 }
+/* 为所有带有 title 属性的元素添加伪元素 */
+[tooltips-title]::after {
+  content: attr(tooltips-title);  /* 使用 title 属性的值作为伪元素的内容 */
+  display: inline-block;
+  padding: 5px;
+  background-color: #333;
+  color: #fff;
+  border-radius: 3px;
+  position: absolute;
+  z-index: 1;
+  white-space: nowrap;
+  opacity: 0;  /* 默认隐藏 */
+  transition: opacity 0.3s ease;  /* 添加渐变效果 */
+}
+
+/* 鼠标移动到带有 title 属性的元素上时，显示伪元素 */
+[tooltips-title]:hover::after {
+  opacity: 1;
+}
+
 /* 邮件详情出现动画 --- start */
 @keyframes mailDetailShow {
   from {

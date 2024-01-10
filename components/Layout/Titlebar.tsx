@@ -63,10 +63,11 @@ export default function Titlebar() {
     <div className="navbar p-0 min-h-fit h-50 box-border py-10 flex items-center">
       {/* header-left 左边搜索框 */}
       <div className="flex-1">
-        <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
+        {/* 这版先隐藏 */}
+        {/* <div className='rounded-4 bg-white dark:!bg-[#353739] flex  pl-7 items-center'>
           <Image src={searchNormal} alt='search' title='search' className={`w-14 h-14`} />
           <input type="text" className="input w-405 h-32 rounded-5 pl-7 text-[14px] dark:!bg-[#353739]" />
-        </div>
+        </div> */}
       </div>
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
@@ -78,15 +79,17 @@ export default function Titlebar() {
             </div>
             <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18 ${dropdownShow ? 'transform rotate-180' : ''}`} />
           </label  >
-
+          {/*
+          
+           */}
           <div
-            onMouseLeave={() => setDropdownShow(false)}
+            onMouseLeave={() => setDropdownShow(true)}
             tabIndex={0}
             style={{ visibility: dropdownShow ? 'visible' : 'hidden' }}
-            className={`mt-3 z-[1] px-24 py-12 shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
+            className={`mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
             <div className="text-[#93989A] flex flex-row items-center my-4">
               <p className="flex-1 flex mr-4 cursor-default dark:text-[#fff]" title={`${address}${PostfixOfAddress}`}>
-                {getShowAddress(address)}
+                <span className='max-w-[184px] text-ellipsis flex-1 overflow-hidden'>{getShowAddress(address)}</span>
                 {PostfixOfAddress}
               </p>
               <Image
@@ -102,9 +105,9 @@ export default function Titlebar() {
             </div>
             {ensName && (
               <div className="text-[#93989A] flex flex-row items-center my-8">
-                <span className="flex-1 omit mr-4 cursor-default">{ensName}</span>
+                <span className="flex-1 dark:text-[#fff] omit mr-4 cursor-default max-w-[184px] text-ellipsis overflow-hidden ">{ensName}</span>
                 <Image
-                  src={copy}
+                  src={theme == 'light' ? copy : copyDark}
                   alt="copy"
                   title="copy"
                   className="w-18 h-18 p-0 cursor-pointer"
@@ -115,8 +118,8 @@ export default function Titlebar() {
               </div>
             )}
 
-            <div className="divider my-4"></div>
-            <div className="my-8">
+            {/* <div className="divider my-4"></div> */}
+            <div className="my-8 mt-[26px]">
               <p className="flex justify-between font-bold">
                 <span>Mailbox capacity</span>
                 <span>{percentTransform((emailSize < 0.1 ? 0 : emailSize) / emailSizeLimit)}%</span>
@@ -130,17 +133,19 @@ export default function Titlebar() {
                 <span>{emailSizeLimit}GB</span>
               </p>
             </div>
-            <div className="flex justify-between font-bold items-center my-12 cursor-pointer">
+            {/* 这版先隐藏 */}
+            {/* <div className="flex justify-between font-bold items-center my-12 cursor-pointer">
               <span>Setting</span>
               <Image src={right} alt="go" />
-            </div>
+            </div> */}
             <div className="form-control">
-              <label className="label cursor-pointer" >
-                <span className="label-text font-bold">Dark theme</span>
+              <label className="label cursor-pointer px-0" >
+                <span className="label-text font-bold ">Dark mode</span>
                 <input
                   type="checkbox"
                   className="toggle  checked:bg-[#fff]"
                   onClick={toggleTheme}
+                  onChange={() => { }}
                   checked={theme == 'dark'}
                 />
               </label>
@@ -148,6 +153,6 @@ export default function Titlebar() {
           </div>
         </div >
       </div>
-    </div>
+    </div >
   );
 }

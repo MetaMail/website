@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import jazzicon from 'jazzicon';
 
-const JazziconGrid = ({ size, addr }: { size: number; addr?: string }) => {
+const JazziconGrid = ({ size, addr, className }: { size: number; addr?: string; className?: string }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const address = addr?.slice(2, 10);
@@ -15,7 +15,7 @@ const JazziconGrid = ({ size, addr }: { size: number; addr?: string }) => {
     };
   }, []);
 
-  return <div className="flex items-center" ref={containerRef} />;
+  return <div className={`flex items-center  ${className}`} ref={containerRef} />;
 };
 
 export default JazziconGrid;

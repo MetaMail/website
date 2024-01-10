@@ -1,20 +1,14 @@
 
-import draft from './draft.svg';
-import draftActive from './draftActive.svg';
-import inbox from './inbox.svg';
-import inboxActive from './inboxActive.svg';
 import encryptedInbox from './encryptedInbox.svg';
 import searchNormal from './searchNormal.svg'
 import markUnread from './markUnread.svg';
 import update from './update.svg';
 import read from './read.svg';
 import filter from './filter.svg';
-import sent from './sent.svg';
-import sentActive from './sentActive.svg';
-import spam from './spam.svg';
-import spamActive from './spamActive.svg';
 import add from './add.svg';
 import addSquare from './addSquare.svg'
+import addSquareDark from './addSquareDark.svg'
+import arrowDown from './arrowDown.svg';
 import down from './down.svg';
 import addDark from './addDark.svg';
 import more from './more.svg';
@@ -32,8 +26,6 @@ import clipboard from './clipboard.svg';
 import downloadMail from './downloadmailcontent.svg';
 import reply from './reply.svg';
 import white from './white.svg';
-import starred from './starred.svg';
-import starredActive from './starredActive.svg';
 import trash from './delete.svg';
 import trashActive from './deleteActive.svg';
 import cancelSelected from './cancelselected.svg';
@@ -64,6 +56,7 @@ import dark_delete from './darkSlider/delete.svg'
 import checkboxDark from './checkboxDark.svg'
 import favoriteDark from './favoriteDark.svg'
 export {
+  arrowDown,
   addDark,
   cancelDark,
   extendDark,
@@ -82,17 +75,11 @@ export {
   dropdownImg,
   down,
   empty,
-  inboxActive,
   mailMore,
   back,
   temp1,
   filter,
   white,
-  starred,
-  starredActive,
-  draft,
-  draftActive,
-  inbox,
   update,
   encryptedInbox,
   markUnread,
@@ -101,13 +88,10 @@ export {
   extend,
   add,
   addSquare,
+  addSquareDark,
   more,
   moreActive,
   read,
-  sent,
-  sentActive,
-  spam,
-  spamActive,
   trash,
   trashCan,
   unread,

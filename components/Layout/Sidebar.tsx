@@ -12,8 +12,21 @@ import { FilterTypeEn, MenusMap, IMenuItem } from 'lib/constants';
 import logo from 'assets/logo.svg';
 import write from 'assets/mailbox/write.svg';
 
-
-
+// menu icons
+import Inbox from 'components/svg/menu/Inbox'
+import InboxActive from 'components/svg/menu/InboxActive'
+import Send from 'components/svg/menu/Send';
+import SendActive from 'components/svg/menu/SendActive'
+import Draft from 'components/svg/menu/Draft';
+import DraftActive from 'components/svg/menu/DraftActive'
+import Starred from 'components/svg/menu/Starred';
+import StarredActive from 'components/svg/menu/StarredActive'
+import More from 'components/svg/menu/More';
+import MoreActive from 'components/svg/menu/MoreActive'
+import Deleted from 'components/svg/menu/Deleted';
+import DeleteActive from 'components/svg/menu/DeleteActive'
+import Spam from 'components/svg/menu/Spam';
+import SpamActive from 'components/svg/menu/SpamActive'
 export default function Sidebar() {
   const { isDark } = useThemeStore()
   useEffect(() => {
@@ -50,6 +63,27 @@ export default function Sidebar() {
     const newList = [...list]
     setMenusMap(newList)
   }
+  const renderLogo = (logo: string, isActive: boolean) => {
+    switch (logo) {
+      case 'inbox':
+        return isActive ? isDark ? <InboxActive fill=' #fff ' /> : <InboxActive /> : <Inbox />
+      // 如果有其他情况，可以在这里继续添加 case 分支
+      case 'send':
+        return isActive ? isDark ? <SendActive fill=' #fff ' /> : <SendActive /> : <Send />
+      case 'draft':
+        return isActive ? isDark ? <DraftActive fill=' #fff ' /> : <DraftActive /> : <Draft />
+      case 'starred':
+        return isActive ? isDark ? <StarredActive fill=' #fff ' /> : <StarredActive /> : <Starred />
+      case 'more':
+        return isActive ? <MoreActive /> : <More />
+      case 'trash':
+        return isActive ? isDark ? <DeleteActive fill=' #fff ' /> : <DeleteActive /> : <Deleted />
+      case 'spam':
+        return isActive ? isDark ? <SpamActive fill=' #fff ' /> : <SpamActive /> : <Spam />
+      default:
+        return null; // 或者返回适当的默认值
+    }
+  }
 
   const renderLi = (menus_Map: IMenuItem[]) => {
     return menus_Map.map((item, index) => {
@@ -61,10 +95,11 @@ export default function Sidebar() {
               handleChangeFilter(item.key);
             }}
             className='mb-2 text-[#545454]  dark:text-base-content'>
-            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-[600]" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
-              <div className='flex items-center gap-9'>
-                <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" />
-                <span className='leading-[20px] inline-block h-18'>{item.title}</span>
+            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-[600]" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
+              <div className='flex items-center gap-x-9'>
+                {renderLogo(item.logo, filterType === Number(item.key))}
+                {/* <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" /> */}
+                <p className={`align-middle leading-[18px] h-[16px] ${filterType === Number(item.key) ? 'leading-[20px]' : ''}`}>{item.title}</p>
               </div>
               {renderBadge(item.key)}
             </a>
@@ -76,7 +111,8 @@ export default function Sidebar() {
           <li key={item.key} >
             {/* More */}
             <div className={`rounded-5 flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 transition-colors duration-75 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
-              <Image src={item?.logo} alt={item?.title} className={`w-18 h-18 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} />
+              {/* <Image src={item?.logo} alt={item?.title} className={`w-18 h-18 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} /> */}
+              <div className={`${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`}>{renderLogo(item.logo, filterType === Number(item.key))}</div>
               <span className='leading-[36px] text-[#54545499] dark:text-[#E9E9E9]'>{item.title}</span>
               {item.childrenShow}
             </div>
