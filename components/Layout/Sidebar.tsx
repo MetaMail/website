@@ -66,20 +66,20 @@ export default function Sidebar() {
   const renderLogo = (logo: string, isActive: boolean) => {
     switch (logo) {
       case 'inbox':
-        return isActive ? <InboxActive /> : <Inbox />
+        return isActive ? isDark ? <InboxActive fill=' #fff ' /> : <InboxActive /> : <Inbox />
       // 如果有其他情况，可以在这里继续添加 case 分支
       case 'send':
-        return isActive ? <SendActive /> : <Send />
+        return isActive ? isDark ? <SendActive fill=' #fff ' /> : <SendActive /> : <Send />
       case 'draft':
-        return isActive ? <DraftActive /> : <Draft />
+        return isActive ? isDark ? <DraftActive fill=' #fff ' /> : <DraftActive /> : <Draft />
       case 'starred':
-        return isActive ? <StarredActive /> : <Starred />
+        return isActive ? isDark ? <StarredActive fill=' #fff ' /> : <StarredActive /> : <Starred />
       case 'more':
         return isActive ? <MoreActive /> : <More />
       case 'trash':
-        return isActive ? <DeleteActive /> : <Deleted />
+        return isActive ? isDark ? <DeleteActive fill=' #fff ' /> : <DeleteActive /> : <Deleted />
       case 'spam':
-        return isActive ? <SpamActive /> : <Spam />
+        return isActive ? isDark ? <SpamActive fill=' #fff ' /> : <SpamActive /> : <Spam />
       default:
         return null; // 或者返回适当的默认值
     }
@@ -99,7 +99,7 @@ export default function Sidebar() {
               <div className='flex items-center gap-9'>
                 {renderLogo(item.logo, filterType === Number(item.key))}
                 {/* <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" /> */}
-                <span className='leading-[20px] inline-block h-18'>{item.title}</span>
+                <span className='leading-none'>{item.title}</span>
               </div>
               {renderBadge(item.key)}
             </a>

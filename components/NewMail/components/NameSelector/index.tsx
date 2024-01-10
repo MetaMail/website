@@ -40,7 +40,7 @@ function NameSelector({ initValue, onChange }: IProps) {
     setIsOpen(false);
   };
   return (
-    <div className="flex items-center relative w-fit p-5 pr-9  bg-[#F5F5F6] dark:bg-[#1F1F1F] rounded-t-[8px] cursor-pointer text-[#706F6F]">
+    <div className="flex items-center relative w-fit   cursor-pointer text-[#706F6F] ">
       {ensName ? (
         // from 有可选项
         // <select
@@ -59,8 +59,8 @@ function NameSelector({ initValue, onChange }: IProps) {
         //   </option>
         // </select>
         // 发件人选择框
-        <div onClick={handleToggle}>
-          <div className='flex items-center gap-8 '>
+        <div onClick={handleToggle} className={` dark:bg-[#1F1F1F]  ${isOpen ? 'rounded-t-[8px]' : 'rounded-[8px]'} overflow-hidden`}>
+          <div className={`flex items-center  gap-8 p-5 pr-9  dark:bg-[#1F1F1F] bg-[#F5F5F6]`}>
             {/* 头像 */}
             <JazziconGrid size={27} addr={showAddress} />
             <p className="w-[200px] overflow-x-hidden flex dark:text-[#B9B9B9]">
@@ -70,31 +70,33 @@ function NameSelector({ initValue, onChange }: IProps) {
             <Icon url={arrowDown} className={isOpen ? 'transform rotate-180 duration-75' : ''} />
           </div>
           {isOpen ? (
-            <ul className='absolute w-[100%]  z-999 left-0  top-[37px] bg-[#F5F5F6] dark:bg-[#1F1F1F] rounded-b-[8px]' onMouseEnter={handleHover} onMouseLeave={() => setIsHover(0)}>
-              {MailFromType.address !== initValue ?
-                (<li className='flex items-center gap-8 w-fit p-5 pr-9 hover:text-[#969696] dark:hover:text-[#969696CC] dark:text-[#B9B9B9]' onClick={() => handleOptionClick(MailFromType.address)}>
-                  <JazziconGrid size={27} addr={address} className={`${isHover === 1 ? 'opacity-40' : ''}`} />
-                  <p className="w-[200px] overflow-x-hidden flex">
-                    <span className='text-ellipsis  flex-1 overflow-hidden'>{address}</span>
-                    <span>{PostfixOfAddress}</span>
-                  </p>
-                </li>)
-                :
-                (
-                  <li className='flex items-center gap-8 w-fit p-5 pr-9 hover:text-[#969696] dark:hover:text-[#969696CC] dark:text-[#B9B9B9]' onClick={() => handleOptionClick(MailFromType.ensName)}>
-                    <JazziconGrid size={27} addr={ensName} className={`${isHover === 1 ? 'opacity-40' : ''}`} />
+            <div className=''>
+              <ul className='absolute text-[#969696] hover:bg-[#B0B0B033] bg-[#F5F5F6] w-[100%] py-[2px]  z-999 left-0  top-[37px] dark:hover:bg-[#B0B0B01A] dark:bg-[#1F1F1F]  ' onMouseEnter={handleHover} onMouseLeave={() => setIsHover(0)}>
+                {MailFromType.address !== initValue ?
+                  (<li className='w-[100%] px-5 py-3  flex items-center gap-8 pr-9 hover:text-[##969696CC] dark:hover:text-[##969696CCCC] dark:text-[#B9B9B9]' onClick={() => handleOptionClick(MailFromType.address)}>
+                    <JazziconGrid size={27} addr={address} className={`${isHover === 1 ? 'opacity-40' : ''}`} />
                     <p className="w-[200px] overflow-x-hidden flex">
-                      <span className='w-[200px] text-ellipsis  flex-1 overflow-hidden'>{ensName}</span>
-                      <span>{PostfixOfAddress}</span>{!isHover}
+                      <span className='text-ellipsis  flex-1 overflow-hidden'>{address}</span>
+                      <span>{PostfixOfAddress}</span>
                     </p>
-                  </li>
-                )
-              }
-            </ul>
+                  </li>)
+                  :
+                  (
+                    <li className='w-[100%] px-5 py-3  flex items-center gap-8  pr-9 hover:text-[#969696CC] dark:hover:text-[#969696CC] dark:text-[#B9B9B9]' onClick={() => handleOptionClick(MailFromType.ensName)}>
+                      <JazziconGrid size={27} addr={ensName} className={`${isHover === 1 ? 'opacity-40' : ''}`} />
+                      <p className="w-[200px] overflow-x-hidden flex">
+                        <span className='w-[200px] text-ellipsis  flex-1 overflow-hidden'>{ensName}</span>
+                        <span>{PostfixOfAddress}</span>{!isHover}
+                      </p>
+                    </li>
+                  )
+                }
+              </ul>
+            </div>
           ) : null}
         </div>
       ) : (
-        <div className='flex items-center gap-8'>
+        <div className='flex items-center gap-8 rounded-[8px] p-5 pr-9   bg-[#F5F5F6] dark:bg-[#1F1F1F]'>
           <JazziconGrid size={27} addr={showAddress} />
           <span className='break-all'>{address + PostfixOfAddress}</span>
         </div>
