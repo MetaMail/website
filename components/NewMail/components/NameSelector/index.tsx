@@ -40,7 +40,7 @@ function NameSelector({ initValue, onChange }: IProps) {
     setIsOpen(false);
   };
   return (
-    <div className="flex items-center relative w-fit p-5 pr-9  bg-[#F5F5F6] dark:bg-[#B9B9B90A] rounded-t-[8px] cursor-pointer text-[#706F6F]">
+    <div className="flex items-center relative w-fit p-5 pr-9  bg-[#F5F5F6] dark:bg-[#1F1F1F] rounded-t-[8px] cursor-pointer text-[#706F6F]">
       {ensName ? (
         // from 有可选项
         // <select
@@ -63,18 +63,16 @@ function NameSelector({ initValue, onChange }: IProps) {
           <div className='flex items-center gap-8 '>
             {/* 头像 */}
             <JazziconGrid size={27} addr={showAddress} />
-
-            <p className="w-[200px] overflow-x-hidden flex">
-
+            <p className="w-[200px] overflow-x-hidden flex dark:text-[#B9B9B9]">
               <span className=' text-ellipsis flex-1 overflow-hidden'>{showAddress}</span>
               <span className='block'>{PostfixOfAddress}</span>
             </p>
             <Icon url={arrowDown} className={isOpen ? 'transform rotate-180 duration-75' : ''} />
           </div>
           {isOpen ? (
-            <ul className='absolute w-[100%]  z-999 left-0  top-[37px] bg-[#F5F5F6] rounded-b-[8px]' onMouseEnter={handleHover} onMouseLeave={() => setIsHover(0)}>
+            <ul className='absolute w-[100%]  z-999 left-0  top-[37px] bg-[#F5F5F6] dark:bg-[#1F1F1F] rounded-b-[8px]' onMouseEnter={handleHover} onMouseLeave={() => setIsHover(0)}>
               {MailFromType.address !== initValue ?
-                (<li className='flex items-center gap-8 w-fit p-5 pr-9 hover:text-[#969696] ' onClick={() => handleOptionClick(MailFromType.address)}>
+                (<li className='flex items-center gap-8 w-fit p-5 pr-9 hover:text-[#969696] dark:hover:text-[#969696CC] dark:text-[#B9B9B9]' onClick={() => handleOptionClick(MailFromType.address)}>
                   <JazziconGrid size={27} addr={address} className={`${isHover === 1 ? 'opacity-40' : ''}`} />
                   <p className="w-[200px] overflow-x-hidden flex">
                     <span className='text-ellipsis  flex-1 overflow-hidden'>{address}</span>
@@ -83,7 +81,7 @@ function NameSelector({ initValue, onChange }: IProps) {
                 </li>)
                 :
                 (
-                  <li className='flex items-center gap-8 w-fit p-5 pr-9 hover:text-[#969696] ' onClick={() => handleOptionClick(MailFromType.ensName)}>
+                  <li className='flex items-center gap-8 w-fit p-5 pr-9 hover:text-[#969696] dark:hover:text-[#969696CC] dark:text-[#B9B9B9]' onClick={() => handleOptionClick(MailFromType.ensName)}>
                     <JazziconGrid size={27} addr={ensName} className={`${isHover === 1 ? 'opacity-40' : ''}`} />
                     <p className="w-[200px] overflow-x-hidden flex">
                       <span className='w-[200px] text-ellipsis  flex-1 overflow-hidden'>{ensName}</span>
