@@ -15,17 +15,17 @@ import AttachmentItem from './components/AttachmentItem';
 import LoadingRing from 'components/LoadingRing';
 
 import {
+  spam,
   extend,
   cancel,
-  sent,
   trash,
   read,
-  starred,
-  spam,
   back,
   mailMore,
   markFavorite,
   markUnread,
+  starred,
+  sent
 } from 'assets/icons';
 
 let randomBits: string = '';

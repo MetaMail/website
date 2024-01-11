@@ -38,7 +38,9 @@ import cancel from './cancel.svg';
 import close from './close.svg';
 import mailMore from './mailMore.svg';
 import dropdownImg from './dropdown.svg'
-
+import spam from './spam.svg';
+import starred from './starred.svg'
+import sent from './sent.svg'
 import arrowLeft from './arrowLeft.svg'
 import arrowRight from './arrowRight.svg'
 import arrowRightActive from './arrowRightActive.svg'
@@ -62,6 +64,9 @@ export {
   extendDark,
   favoriteDark,
   checkboxDark,
+  spam,
+  starred,
+  sent,
   dark_spam,
   dark_star,
   dark_send,

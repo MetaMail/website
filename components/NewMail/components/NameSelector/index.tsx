@@ -43,21 +43,6 @@ function NameSelector({ initValue, onChange }: IProps) {
     <div className="flex items-center relative w-fit   cursor-pointer text-[#706F6F] ">
       {ensName ? (
         // from 有可选项
-        // <select
-        //   className="omit "
-        //   onChange={e => {
-        //     onChange(Number(e.target.value as unknown as MailFromType));
-        //   }}
-        //   defaultValue={initValue}>
-        //   <option value={MailFromType.address} className=''>
-        //     {address}
-        //     {PostfixOfAddress}
-        //   </option>
-        //   <option value={MailFromType.ensName}>
-        //     {ensName}
-        //     {PostfixOfAddress}
-        //   </option>
-        // </select>
         // 发件人选择框
         <div onClick={handleToggle} className={` dark:bg-[#1F1F1F]  ${isOpen ? 'rounded-t-[8px]' : 'rounded-[8px]'} overflow-hidden`}>
           <div className={`flex items-center  gap-8 p-5 pr-9  dark:bg-[#1F1F1F] bg-[#F5F5F6]`}>
@@ -67,7 +52,7 @@ function NameSelector({ initValue, onChange }: IProps) {
               <span className=' text-ellipsis flex-1 overflow-hidden'>{showAddress}</span>
               <span className='block'>{PostfixOfAddress}</span>
             </p>
-            <Icon url={arrowDown} className={isOpen ? 'transform rotate-180 duration-75' : ''} />
+            <Icon url={arrowDown} className={`${isOpen ? 'rotate-180 ' : 'rotate-0'} transition-all duration-100 ease-in-out transform `} />
           </div>
           {isOpen ? (
             <div className=''>

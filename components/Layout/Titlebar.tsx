@@ -58,6 +58,15 @@ export default function Titlebar() {
     userLocalStorage.setTheme(changeToTheme)
     // setDropdownShow(false)
   };
+  const handleMouseEnter = () => {
+    // console.log('鼠标进入')
+    setDropdownShow(true)
+  }
+  const handleMouseLeave = () => {
+    // console.log('鼠标离开')
+    setDropdownShow(false)
+  }
+
 
   return (
     <div className="navbar p-0 min-h-fit h-50 box-border py-10 flex items-center">
@@ -71,22 +80,17 @@ export default function Titlebar() {
       </div>
       <div className="flex-none gap-2  ">
         <div className="form-control"></div>
-        <div className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`} onClick={() => setDropdownShow(!dropdownShow)} onMouseEnter={() => setDropdownShow(true)}>
+        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`} onClick={() => setDropdownShow(!dropdownShow)}>
           <label tabIndex={0} className="rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
             <div className="w-31 h-31 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
               <JazziconGrid size={31} addr={address} />
             </div>
-            <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18 ${dropdownShow ? 'transform rotate-180' : ''}`} />
-          </label  >
-          {/*
-          
-           */}
+            <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18  transition-all duration-300 ease-in-out transform ${dropdownShow ? 'transform rotate-180' : 'rotate-0'}`} />
+          </label>
           <div
-            onMouseLeave={() => setDropdownShow(true)}
             tabIndex={0}
-            style={{ visibility: dropdownShow ? 'visible' : 'hidden' }}
-            className={`mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
+            className={`${dropdownShow ? 'scale-100' : 'scale-0'} transition-all duration-300 ease-in-out transform   mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
             <div className="text-[#93989A] flex flex-row items-center my-4">
               <p className="flex-1 flex mr-4 cursor-default dark:text-[#fff]" title={`${address}${PostfixOfAddress}`}>
                 <span className='max-w-[184px] text-ellipsis flex-1 overflow-hidden'>{getShowAddress(address)}</span>
