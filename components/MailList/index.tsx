@@ -151,7 +151,6 @@ export default function MailList() {
       inputCheckBoxRef.current.indeterminate = isIndeterminate;
       setSelectedAll(list.length && list.every(item => item.selected));
     }
-
   }, [list]);
 
   useEffect(() => {
@@ -314,8 +313,7 @@ export default function MailList() {
 
 
       <div className={`flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
-        {loading && <LoadingRing />}
-        {list.length ? (
+        {loading ? <LoadingRing /> : list.length ? (
           list.map((item, index) => {
             // console.log(`${item.message_id}${item.mailbox}`)
             return (

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2023-11-03 16:07:51
- * @LastEditTime: 2024-01-06 17:31:28
+ * @LastEditTime: 2024-01-10 22:25:59
  * @LastEditors: 韦玮莹
  * @Description: In User Settings Edit
  * @FilePath: \website\components\NewMail\components\Dropzone\index.tsx
@@ -40,7 +40,7 @@ const UploadComponent = ({ onChange, isExtend }: IDropzone) => {
             !isExtend && (
               <label className="flex justify-center items-center bg-[#ddd] px-14 py-8 rounded-[8px]  cursor-pointer dark:bg-[#ddd4]">
                 {/* <Image src={AddAttach} className="h-18" alt="上传文件" /> */}
-                <AddAttach height={18} fill={isDark ? '#fff' : '#000'} />
+                <AddAttach height={18} width={18} fill={isDark ? '#fff' : '#000'} />
                 <span className="ml-6 font-Poppins h-[18px] leading-[20px]">Attach</span>
               </label>
             )
