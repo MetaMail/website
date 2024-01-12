@@ -69,7 +69,7 @@ export default function Titlebar() {
 
 
   return (
-    <div className="navbar p-0 min-h-fit h-50 box-border py-10 flex items-center">
+    <div className="navbar p-0 min-h-fit h-[50px] box-border py-[10px] flex items-center">
       {/* header-left 左边搜索框 */}
       <div className="flex-1">
         {/* 这版先隐藏 */}
@@ -78,7 +78,7 @@ export default function Titlebar() {
           <input type="text" className="input w-405 h-32 rounded-5 pl-7 text-[14px] dark:!bg-[#353739]" />
         </div> */}
       </div>
-      <div className="flex-none gap-2  ">
+      <div className="flex-none gap-2 text-[14px] ">
         <div className="form-control"></div>
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`} onClick={() => setDropdownShow(!dropdownShow)}>
           <label tabIndex={0} className="rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
@@ -88,11 +88,12 @@ export default function Titlebar() {
             </div>
             <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18  transition-all duration-300 ease-in-out transform ${dropdownShow ? 'transform rotate-180' : 'rotate-0'}`} />
           </label>
+          {/* */}
           <div
             tabIndex={0}
-            className={`${dropdownShow ? 'scale-100' : 'scale-0'} transition-all duration-300 ease-in-out transform   mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
-            <div className="text-[#93989A] flex flex-row items-center my-4">
-              <p className="flex-1 flex mr-4 cursor-default dark:text-[#fff]" title={`${address}${PostfixOfAddress}`}>
+            className={`${dropdownShow ? 'scale-100' : 'scale-0'}   transition-all duration-300 ease-in-out transform   mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
+            <div className={`text-[#93989A] flex flex-row items-center `}>
+              <p className="flex-1 leading-none flex mr-4 cursor-default dark:text-[#fff] text-[14px] " title={`${address}${PostfixOfAddress}`}>
                 <span className='max-w-[184px] text-ellipsis flex-1 overflow-hidden'>{getShowAddress(address)}</span>
                 {PostfixOfAddress}
               </p>
@@ -108,31 +109,31 @@ export default function Titlebar() {
 
             </div>
             {ensName && (
-              <div className="text-[#93989A] flex flex-row items-center my-8">
-                <span className="flex-1 dark:text-[#fff] omit mr-4 cursor-default max-w-[184px] text-ellipsis overflow-hidden ">{ensName}</span>
+              <div className="text-[#93989A] flex flex-row items-center mt-[10px]">
+                <span className="flex-1 leading-none dark:text-[#fff] omit mr-4 cursor-default max-w-[184px] text-ellipsis overflow-hidden text-[14px]">{ensName}{PostfixOfAddress}</span>
                 <Image
                   src={theme == 'light' ? copy : copyDark}
                   alt="copy"
                   title="copy"
                   className="w-18 h-18 p-0 cursor-pointer"
                   onClick={() => {
-                    handleCopy(ensName);
+                    handleCopy(`${ensName}${PostfixOfAddress}`);
                   }}
                 />
               </div>
             )}
 
             {/* <div className="divider my-4"></div> */}
-            <div className="my-8 mt-[26px]">
-              <p className="flex justify-between font-bold">
+            <div className="my-[8px] mt-[26px] text-[16px]">
+              <p className="flex justify-between font-bold text-[14px] leading-none">
                 <span>Mailbox capacity</span>
                 <span>{percentTransform((emailSize < 0.1 ? 0 : emailSize) / emailSizeLimit)}%</span>
               </p>
               <progress
-                className="progress progress-primary w-[100%] mt-12"
+                className="progress progress-primary w-[100%] mt-[12px]"
                 value={percentTransform(emailSize / emailSizeLimit)}
                 max="100"></progress>
-              <p className="flex justify-between font-bold text-[14px] my-4">
+              <p className="flex justify-between font-bold text-[14px] my-[4px] leading-none">
                 <span>0</span>
                 <span>{emailSizeLimit}GB</span>
               </p>
@@ -144,13 +145,14 @@ export default function Titlebar() {
             </div> */}
             <div className="form-control">
               <label className="label cursor-pointer px-0" >
-                <span className="label-text font-bold ">Dark mode</span>
+                <span className="label-text font-bold text-[14px] leading-none">Dark mode</span>
                 <input
                   type="checkbox"
-                  className="toggle  checked:bg-[#fff]"
+                  className={`toggle checked:bg-[#fff]`}
                   onClick={toggleTheme}
                   onChange={() => { }}
                   checked={theme == 'dark'}
+
                 />
               </label>
             </div>

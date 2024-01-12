@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useContext } from 'react';
 import CryptoJS from 'crypto-js';
 import type ReactQuillType from 'react-quill';
 import { toast } from 'react-toastify';
-import { throttle, toUpper } from 'lodash';
+import { throttle } from 'lodash';
 import Image from 'next/image';
 import MailBoxContext from 'context/mail';
 import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn, DarkEditorModules } from 'lib/constants';
@@ -19,7 +19,7 @@ import NameSelector, { MailFromType } from './components/NameSelector';
 import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
 import LoadingRing from 'components/LoadingRing';
-
+import { ShinkIcon, ExtendIcon, AttachIcon } from '../../components/svg/index'
 import { trashCan, extend, cancel, cancelDark, extendDark } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
@@ -47,6 +47,7 @@ export default function NewMail() {
   const { filterType } = useMailListStore();
 
   const [isExtend, setIsExtend] = useState(false);
+  const [isShowFileUpload, setIsShowFileUpload] = useState(false);
   const [initValue, setInitValue] = useState(selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName);
   const [loading, setLoading] = useState(false);
   const dateRef = useRef<string>();
@@ -402,12 +403,15 @@ export default function NewMail() {
           <span className=" text-[22px] font-['PoppinsBold'] text-[#000] dark:text-[#fff]">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
-          {/* 放大 */}
-          <Icon
-            url={isDark ? extendDark : extend}
-            className="w-14 h-auto self-center"
-            onClick={() => setIsExtend(!isExtend)}
-          />
+          {/* 放大/缩小 */}
+          {
+            <div onClick={() => setIsExtend(!isExtend)}>{
+              isExtend ? (
+                <ShinkIcon fill={isDark ? '#fff' : '#7f7f7f'} />
+              ) : <ExtendIcon stroke={isDark ? '#fff' : '#7f7f7f'} />
+            }
+            </div>
+          }
           {/* 关闭 */}
           <Icon
             url={isDark ? cancelDark : cancel}
@@ -475,7 +479,7 @@ export default function NewMail() {
             onFocus={handleDynamicFocus}
             key={iconKey}
           />
-          {isExtend && (
+          {isExtend && isShowFileUpload && (
             <FileUploader
               randomBits={randomBits}
               onChange={() => (mailChanged = true)}
@@ -526,6 +530,10 @@ export default function NewMail() {
       }
 
       <div className="flex items-center gap-13 mt-20">
+        {/* 展开状态的上传附件按钮 */}
+        {isExtend && (
+          <div onClick={() => setIsShowFileUpload(!isShowFileUpload)}> <AttachIcon fill={isDark ? '#fff' : 'black'} /></div>
+        )}
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
@@ -536,6 +544,7 @@ export default function NewMail() {
 
         {/* 上传文件按钮   &&*/}
         {!isExtend && (
+          // 拖拽上传文件区域
           <FileUploader
             randomBits={randomBits}
             onChange={() => (mailChanged = true)}
