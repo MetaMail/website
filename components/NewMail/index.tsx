@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { throttle, toUpper } from 'lodash';
 import Image from 'next/image';
 import MailBoxContext from 'context/mail';
-import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn } from 'lib/constants';
+import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn, DarkEditorModules } from 'lib/constants';
 import { useNewMailStore, useMailListStore, useThemeStore, useIsInputShow } from 'lib/zustand-store';
 import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent, fileType } from 'lib/utils';
 import { mailHttp } from 'lib/http';
@@ -54,11 +54,17 @@ export default function NewMail() {
   const subjectRef = useRef<HTMLInputElement>();
   const { isDark } = useThemeStore();
   const { isInputShow, setIsInputShow } = useIsInputShow();
-
+  // 控制富文本编辑器icon要不要变颜色
+  const [iconKey, setIconKey] = useState(0);
+  useEffect(() => {
+    console.log('改变了')
+    setIconKey(iconKey + 1)
+  }, [isDark]);
   const getQuill = () => {
     if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
     return reactQuillRef.current.makeUnprivilegedEditor(reactQuillRef.current.getEditor());
   };
+
   // 把输入的正确的收件人加入待发送列表；
   const addReceiver = (address: string) => {
     const newReceiver = {
@@ -464,10 +470,10 @@ export default function NewMail() {
               }`}
             theme={'snow'}
             placeholder={''}
-            modules={EditorModules}
+            modules={!isDark ? EditorModules : DarkEditorModules}
             formats={EditorFormats}
             onFocus={handleDynamicFocus}
-            isDark={isDark}
+            key={iconKey}
           />
           {isExtend && (
             <FileUploader
