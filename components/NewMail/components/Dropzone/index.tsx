@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2023-11-03 16:07:51
- * @LastEditTime: 2024-01-10 22:25:59
+ * @LastEditTime: 2024-01-12 14:22:21
  * @LastEditors: 韦玮莹
  * @Description: In User Settings Edit
  * @FilePath: \website\components\NewMail\components\Dropzone\index.tsx
@@ -11,6 +11,8 @@ import React, { ReactNode } from 'react';
 import Dropzone from 'react-dropzone';
 import AddAttach from 'components/svg/AddAttach';
 import { useThemeStore } from 'lib/zustand-store';
+export * from './'
+
 interface IDropzone {
   children: ReactNode;
   onChange: any;
@@ -30,7 +32,7 @@ const UploadComponent = ({ onChange, isExtend }: IDropzone) => {
           <input {...getInputProps()} />
           {
             isExtend && (
-              <div className="mb-20 flex-col text-[16px] text-[#1F2937] font-['PoppinsBold'] w-full h-[120px] border-dashed leading-24 border-[#E5E7EB] border-2 flex justify-center items-center">
+              <div className="dark:text-[#fff] mb-20 flex-col text-[16px] text-[#1F2937] font-['PoppinsBold'] w-full h-[120px] border-2 border-dashed leading-24 border-dashed-[#E5E7EB]  flex justify-center items-center">
                 <p>Drop your files here or <span> browse </span></p>
                 <p className='text-[#9CA3AF] leading-[20px] mt-5'>Maximum size: 50MB</p>
               </div>
