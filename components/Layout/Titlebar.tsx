@@ -133,7 +133,7 @@ export default function Titlebar() {
                 className="progress progress-primary w-[100%] mt-[12px]"
                 value={percentTransform(emailSize / emailSizeLimit)}
                 max="100"></progress>
-              <p className="flex justify-between font-bold text-[14px] my-[4px] leading-none">
+              <p className="flex justify-between text-[12px] my-[4px] leading-none">
                 <span>0</span>
                 <span>{emailSizeLimit}GB</span>
               </p>
