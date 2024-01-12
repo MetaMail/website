@@ -4,14 +4,23 @@
 @tailwind utilities;
 
 
-
+/* 普通字体 */
   @font-face {
     font-family:'Poppins';
     src: url('/static/fonts/poppins-regular.ttf') format('ttf'),
              url('/static/fonts/poppins-regular.woff2') format('woff2'),
          url('/static/fonts/poppins-regular.woff') format('woff');
   }
-  
+/* logo字体 */
+  @font-face {
+    font-family: 'PoppinsBold';
+    src: url('/static/fonts/poppins-bold.ttf') format('ttf'),
+         url('/static/fonts/poppins-bold.woff2') format('woff2'),
+         url('/static/fonts/poppins-bold.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+
+}
 
 [data-theme="light"] {
   --primary: #3c6ff4;
