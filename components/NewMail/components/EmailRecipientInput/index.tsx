@@ -50,7 +50,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
     const emailInput = inputRef.current.value;
     if (emailInput && validateEmail(emailInput)) {
       // 回车要做去重
-      if (!selectedDraft.mail_to.find((item: { address: string }) => { return item.address === emailInput })) {
+      if (!selectedDraft.mail_to.find((item: IPersonItem) => { return item.address === emailInput })) {
         inputRef.current.value = '';
         onAddReceiver(emailInput);
       }

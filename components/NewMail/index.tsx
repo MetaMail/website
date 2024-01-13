@@ -182,7 +182,9 @@ export default function NewMail() {
         !encrypted_encryption_keys.length ? randomBits : ''
       );
       if (messageId) {
-        toast.success('Your email has been sent successfully.');
+        toast.success('Your email has been sent successfully.', {
+          autoClose: 2000
+        });
         setSelectedDraft(null);
       } else {
         throw new Error('No message id returned.');

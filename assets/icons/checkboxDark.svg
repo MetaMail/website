@@ -1,5 +1,3 @@
-<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Component 1">
-<path id="Check Box" d="M1 3C1 1.89543 1.89543 1 3 1H9C10.1046 1 11 1.89543 11 3V9C11 10.1046 10.1046 11 9 11H3C1.89543 11 1 10.1046 1 9V3Z" stroke="#B3B3B3" stroke-opacity="0.6" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
+  <path d="M1 3.27661C1 2.17204 1.89543 1.27661 3 1.27661H9C10.1046 1.27661 11 2.17204 11 3.27661V9.27661C11 10.3812 10.1046 11.2766 9 11.2766H3C1.89543 11.2766 1 10.3812 1 9.27661V3.27661Z" stroke="#B3B3B3" stroke-opacity="0.6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

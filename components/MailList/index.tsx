@@ -16,6 +16,7 @@ import {
   checkboxSvg, checkboxedSvg,
   trash, read, starred, markUnread, spam, filter as filterIcon, update
 } from 'assets/icons';
+import { random } from 'lodash';
 
 const MailListFilters = ['All', 'Read', 'Unread', 'Encrypted', 'UnEncrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
@@ -254,27 +255,25 @@ export default function MailList() {
                 })}
               </ul>
             </div>
+            <div className={`transition-all duration-300 ease-in-out transform flex gap-5 border-l-2 border-[#EFEFEF] pl-10 ${getSelectedList().length > 0 ? 'scale-100' : 'scale-0'}`}>
+              {/* 筛选旁边的小icon */}
+              {!selectedMail && mailActions.map((item, index) => {
+                return (
+                  <div className="box-border bg-opacity-0 rounded-10 hover:bg-opacity-60 p-4 hover:bg-[#EDF3FF]">
+                    <Icon
+                      title={item.title}
+                      url={item.src}
+                      key={index}
+                      onClick={async () => {
+                        await handleMailActionsClick(item.httpParams);
+                      }}
+                      className="w-16 h-16 self-center box-border bg-opacity-0 "
+                    />
+                  </div>
+                );
+              })}
+            </div>
 
-            {getSelectedList().length > 0 && (
-              <div className="flex gap-5 border-l-2 border-[#EFEFEF] pl-10">
-                {/* 筛选旁边的小icon */}
-                {!selectedMail && mailActions.map((item, index) => {
-                  return (
-                    <div className="box-border bg-opacity-0 rounded-10 hover:bg-opacity-60 p-4 hover:bg-[#EDF3FF]">
-                      <Icon
-                        title={item.title}
-                        url={item.src}
-                        key={index}
-                        onClick={async () => {
-                          await handleMailActionsClick(item.httpParams);
-                        }}
-                        className="w-16 h-16 self-center box-border bg-opacity-0 "
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
           {/* 分页 */}
           <div className="flex items-center flex-row justify-end space-x-8  text-[#7F7F7F]">
