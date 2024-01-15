@@ -231,7 +231,7 @@ export default function MailDetail() {
   return (
     // 邮件详情
     <div
-      className={`absolute ${selectedMail ? 'mailDetailShowAnimate' : 'mailDetailHideAnimate'} justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all ease-out h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+      className={`absolute right-0 justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
         }`}>
       <div>
         <header className="flex flex-col justify-between w-full mb-22">

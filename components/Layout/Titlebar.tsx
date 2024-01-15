@@ -154,13 +154,13 @@ export default function Titlebar() {
             <div className="my-[8px] mt-[26px] text-[16px]">
               <p className="flex justify-between font-bold text-[14px] leading-none">
                 <span>Space Used</span>
-                <span>{percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit)}%</span>
+                {/* <span>{percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit)}%</span> */}
               </p>
               <progress
                 className="progress progress-primary w-[100%] mt-[12px]"
                 value={percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit)}
                 max="100"></progress>
-              <p className='text-[12px] leading-none mt-[5px]'>Using {formatFileSize(emailSize)} of {formatFileSize(emailSizeLimit)} Storage</p>
+              <p className="text-[12px]  font-['Poppins'] leading-none mt-[5px]">Using {formatFileSize(emailSize)} of {formatFileSize(emailSizeLimit)} Storage</p>
               {/* <p className="flex justify-between text-[12px] my-[4px] leading-none">
                 <span>0</span>
                 <span>{emailSizeLimit}GB</span>
