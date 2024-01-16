@@ -61,13 +61,13 @@ export default function Titlebar() {
     const gigabyte = megabyte * 1024;
 
     if (sizeInBytes < kilobyte) {
-      return sizeInBytes + ' B';
+      return sizeInBytes + 'B';
     } else if (sizeInBytes < megabyte) {
-      return (sizeInBytes / kilobyte).toFixed(2) + ' KB';
+      return (sizeInBytes / kilobyte).toFixed(2) + 'KB';
     } else if (sizeInBytes < gigabyte) {
-      return (sizeInBytes / megabyte).toFixed(2) + ' MB';
+      return (sizeInBytes / megabyte).toFixed(2) + 'MB';
     } else {
-      return (sizeInBytes / gigabyte).toFixed(2) + ' GB';
+      return (sizeInBytes / gigabyte).toFixed(2) + 'GB';
     }
   }
 
@@ -158,7 +158,7 @@ export default function Titlebar() {
               </p>
               <progress
                 className="progress progress-primary w-[100%] mt-[12px]"
-                value={percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit)}
+                value={emailSize > 0 ? percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit) : 0}
                 max="100"></progress>
               <p className="text-[12px]  font-['Poppins'] leading-none mt-[5px]">Using {formatFileSize(emailSize)} of {formatFileSize(emailSizeLimit)} Storage</p>
               {/* <p className="flex justify-between text-[12px] my-[4px] leading-none">
