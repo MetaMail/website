@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { IMailContentItem, FilterTypeEn, IMailContentAttachment, MailListItemType } from 'lib/constants';
+import { IMailContentItem, FilterTypeEn, MailListItemType } from 'lib/constants';
 
 interface IMailListState {
   filterType: FilterTypeEn;

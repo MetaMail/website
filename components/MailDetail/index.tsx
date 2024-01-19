@@ -6,7 +6,7 @@ import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
 
 import MailBoxContext from 'context/mail';
-import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn } from 'lib/constants';
+import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { useMailDetailStore, useMailListStore } from 'lib/zustand-store';
 import { decryptMailContent } from 'lib/encrypt';
@@ -223,11 +223,15 @@ export default function MailDetail() {
       currentMailId = '';
     };
   }, [selectedMail.message_id]);
-
+  const renderTo = (list: IPersonItem[]) => {
+    return list.map((i: IPersonItem) => {
+      return (<span>{i.address ? i.address : i.name}；</span>)
+    })
+  }
   return (
     // 邮件详情
     <div
-      className={`absolute ${selectedMail ? 'mailDetailShowAnimate' : 'mailDetailHideAnimate'} justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16 transition-all ease-out h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+      className={`absolute right-0 justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
         }`}>
       <div>
         <header className="flex flex-col justify-between w-full mb-22">
@@ -270,7 +274,10 @@ export default function MailDetail() {
                 <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
                 <div className="flex gap-3">
                   to:
-                  <div className="flex-1 omit ml-4">{selectedMail?.mail_to[0]?.address}</div>
+                  <div className="flex-1 omit ml-4">
+                    {/* {selectedMail?.mail_to[0]?.address} */}
+                    {renderTo(selectedMail?.mail_to)}
+                  </div>
                 </div>
               </div>
             </div>

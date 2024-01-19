@@ -12,6 +12,7 @@ import copy from 'assets/mailbox/copy.svg';
 import copyDark from 'assets/mailbox/copyDark.svg'
 import right from 'assets/mailbox/right.svg';
 import { dropdownImg, searchNormal } from 'assets/icons';
+
 export default function Titlebar() {
   const { logout } = useContext(MailBoxContext);
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
@@ -21,9 +22,14 @@ export default function Titlebar() {
   const [emailSizeLimit, setEmailSizeLimit] = useState<number>();
   const [dropdownShow, setDropdownShow] = useState<boolean>(false)
   const [theme, setTheme] = useState<string>();
-  const handleCopy = (txt: string) => {
+  const handleCopy = (e: React.MouseEvent, txt: string) => {
+    console.log(e);
+    e.stopPropagation();
+    setDropdownShow(true);
     navigator.clipboard.writeText(txt);
-    toast.success('Copied to clipboard');
+    toast.success('Copied to clipboard', {
+      autoClose: 2000
+    });
   };
 
   useEffect(() => {
@@ -36,8 +42,8 @@ export default function Titlebar() {
     userHttp
       .getUserProfile()
       .then(res => {
-        setEmailSize(res.total_email_size / 1024 / 1024 / 1024);
-        setEmailSizeLimit(res.total_email_size_limit / 1024 / 1024 / 1024);
+        setEmailSize(res.total_email_size);
+        setEmailSizeLimit(res.total_email_size_limit);
       })
       .catch(error => {
         console.log(error);
@@ -49,22 +55,44 @@ export default function Titlebar() {
   useEffect(() => {
     document.querySelector('html').setAttribute('data-theme', theme);
   }, [theme])
+  function formatFileSize(sizeInBytes: number) {
+    const kilobyte = 1024;
+    const megabyte = kilobyte * 1024;
+    const gigabyte = megabyte * 1024;
+
+    if (sizeInBytes < kilobyte) {
+      return sizeInBytes + 'B';
+    } else if (sizeInBytes < megabyte) {
+      return (sizeInBytes / kilobyte).toFixed(2) + 'KB';
+    } else if (sizeInBytes < gigabyte) {
+      return (sizeInBytes / megabyte).toFixed(2) + 'MB';
+    } else {
+      return (sizeInBytes / gigabyte).toFixed(2) + 'GB';
+    }
+  }
+
   // 点击切换主题
   const toggleTheme = (e: React.MouseEvent) => {
-    // console.log('点击切换主题')
     e.stopPropagation()
     const changeToTheme = theme == 'dark' ? 'light' : 'dark';
     setTheme(changeToTheme);
     userLocalStorage.setTheme(changeToTheme)
-    // setDropdownShow(false)
   };
   const handleMouseEnter = () => {
     // console.log('鼠标进入')
     setDropdownShow(true)
   }
-  const handleMouseLeave = () => {
-    // console.log('鼠标离开')
-    setDropdownShow(false)
+  const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
+    // console.log('鼠标离开', event)
+    // 获取触发事件的元素
+    const targetElement = event.target as HTMLElement;
+    // 判断元素是否包含特定的类名
+    const hasClassName = targetElement?.classList.contains('dropdown-content') || targetElement.classList.contains('dropdown-label');
+    if (hasClassName) {
+      // console.log('元素包含指定类名');
+      setDropdownShow(false);
+    }
+
   }
 
 
@@ -81,7 +109,7 @@ export default function Titlebar() {
       <div className="flex-none gap-2 text-[14px] ">
         <div className="form-control"></div>
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`} onClick={() => setDropdownShow(!dropdownShow)}>
-          <label tabIndex={0} className="rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
+          <label tabIndex={0} className="dropdown-label rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
             <div className="w-31 h-31 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
               <JazziconGrid size={31} addr={address} />
@@ -91,7 +119,7 @@ export default function Titlebar() {
           {/* */}
           <div
             tabIndex={0}
-            className={`${dropdownShow ? 'scale-100' : 'scale-0'}   transition-all duration-300 ease-in-out transform   mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
+            className={`${dropdownShow ? 'scale-100' : 'scale-0'}  transition-all duration-300 ease-in-out transform   mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
             <div className={`text-[#93989A] flex flex-row items-center `}>
               <p className="flex-1 leading-none flex mr-4 cursor-default dark:text-[#fff] text-[14px] " title={`${address}${PostfixOfAddress}`}>
                 <span className='max-w-[184px] text-ellipsis flex-1 overflow-hidden'>{getShowAddress(address)}</span>
@@ -102,11 +130,10 @@ export default function Titlebar() {
                 alt="copy"
                 title="copy"
                 className="w-18 h-18 p-0 cursor-pointer"
-                onMouseDown={() => {
-                  handleCopy(`${address}${PostfixOfAddress}`);
+                onClick={(e) => {
+                  handleCopy(e, `${address}${PostfixOfAddress}`);
                 }}
               />
-
             </div>
             {ensName && (
               <div className="text-[#93989A] flex flex-row items-center mt-[10px]">
@@ -116,33 +143,30 @@ export default function Titlebar() {
                   alt="copy"
                   title="copy"
                   className="w-18 h-18 p-0 cursor-pointer"
-                  onClick={() => {
-                    handleCopy(`${ensName}${PostfixOfAddress}`);
+                  onClick={(e) => {
+                    handleCopy(e, `${ensName}${PostfixOfAddress}`);
                   }}
                 />
               </div>
             )}
 
-            {/* <div className="divider my-4"></div> */}
+
             <div className="my-[8px] mt-[26px] text-[16px]">
               <p className="flex justify-between font-bold text-[14px] leading-none">
-                <span>Mailbox capacity</span>
-                <span>{percentTransform((emailSize < 0.1 ? 0 : emailSize) / emailSizeLimit)}%</span>
+                <span>Space Used</span>
+                {/* <span>{percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit)}%</span> */}
               </p>
               <progress
                 className="progress progress-primary w-[100%] mt-[12px]"
-                value={percentTransform(emailSize / emailSizeLimit)}
+                value={emailSize > 0 ? percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit) : 0}
                 max="100"></progress>
-              <p className="flex justify-between text-[12px] my-[4px] leading-none">
+              <p className="text-[12px]  font-['Poppins'] leading-none mt-[5px]">Using {formatFileSize(emailSize)} of {formatFileSize(emailSizeLimit)} Storage</p>
+              {/* <p className="flex justify-between text-[12px] my-[4px] leading-none">
                 <span>0</span>
                 <span>{emailSizeLimit}GB</span>
-              </p>
+              </p> */}
             </div>
-            {/* 这版先隐藏 */}
-            {/* <div className="flex justify-between font-bold items-center my-12 cursor-pointer">
-              <span>Setting</span>
-              <Image src={right} alt="go" />
-            </div> */}
+
             <div className="form-control">
               <label className="label cursor-pointer px-0" >
                 <span className="label-text font-bold text-[14px] leading-none">Dark mode</span>
@@ -152,9 +176,12 @@ export default function Titlebar() {
                   onClick={toggleTheme}
                   onChange={() => { }}
                   checked={theme == 'dark'}
-
                 />
               </label>
+            </div>
+            <div onClick={logout} className="flex justify-between font-bold   items-center my-12 cursor-pointer">
+              <span>Log out</span>
+              <Image src={right} alt="go" />
             </div>
           </div>
         </div >

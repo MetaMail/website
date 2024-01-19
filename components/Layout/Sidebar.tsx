@@ -136,9 +136,8 @@ export default function Sidebar() {
   return (
     <div className="w-203 px-12 flex flex-col justify-between font-poppins flex-shrink-0 text-[16px]">
       <div className="flex flex-col">
-        <button onClick={logout} className="flex items-center justify-center py-10">
+        <button className="flex items-center justify-center py-10">
           <Image src={logo} alt="logo" className="w-auto h-36 mr-3" />
-          {/* <Image src={logoBrand} alt="logo-brand" className="w-116" /> */}
           <p className="text-[27px] text-[#000] font-['PoppinsBold']  leading-[43px] h-36 dark:text-[#fff]">MetaMail</p>
         </button>
         <button className="btn-primary flex items-center justify-center text-white h-45 rounded-9 gap-9" onClick={handleClickNewMail}>

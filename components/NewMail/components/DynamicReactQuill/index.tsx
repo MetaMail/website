@@ -11,9 +11,9 @@ const DynamicReactQuill = dynamic(
     console.log('isDarkisDark', localTheme)
     const { default: RQ } = await import('react-quill');
     var icons = RQ.Quill.import('ui/icons');
-    icons['list'].bold = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-<path d="M2.44141 2.25C2.44141 1.7 2.89141 1.25 3.44141 1.25H6.00141C7.31141 1.25 8.37641 2.315 8.37641 3.625C8.37641 4.935 7.31141 6 6.00141 6H2.44141V2.25Z" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2.44141 6H7.19141C8.50141 6 9.56641 7.065 9.56641 8.375C9.56641 9.685 8.50141 10.75 7.19141 10.75H3.44141C2.89141 10.75 2.44141 10.3 2.44141 9.75V6V6Z" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+    icons['list'].bold = `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+  <path d="M3.37988 3.12484C3.37988 2.3915 3.97988 1.7915 4.71322 1.7915H8.12655C9.87322 1.7915 11.2932 3.2115 11.2932 4.95817C11.2932 6.70484 9.87322 8.12484 8.12655 8.12484H3.37988V3.12484Z" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M3.37988 8.125H9.71322C11.4599 8.125 12.8799 9.545 12.8799 11.2917C12.8799 13.0383 11.4599 14.4583 9.71322 14.4583H4.71322C3.97988 14.4583 3.37988 13.8583 3.37988 13.125V8.125V8.125Z" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`
     icons['bold'] = localTheme === 'dark' ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
 <path d="M2.44141 2.25C2.44141 1.7 2.89141 1.25 3.44141 1.25H6.00141C7.31141 1.25 8.37641 2.315 8.37641 3.625C8.37641 4.935 7.31141 6 6.00141 6H2.44141V2.25Z" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -36,9 +36,9 @@ const DynamicReactQuill = dynamic(
 <path d="M9.5 2L6.5 14" stroke="black" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
     // 下划线
-    icons['list'].underline = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-<path d="M2.5 10.5H9.5" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2.5 1.5V5C2.5 6.935 4.065 8.5 6 8.5C7.935 8.5 9.5 6.935 9.5 5V1.5" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+    icons['list'].underline = `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+  <path d="M3.45801 14.125H12.7913" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M3.45801 2.125V6.79167C3.45801 9.37167 5.54467 11.4583 8.12467 11.4583C10.7047 11.4583 12.7913 9.37167 12.7913 6.79167V2.125" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`
     icons[
       'underline'
@@ -50,9 +50,9 @@ const DynamicReactQuill = dynamic(
   <path d="M3.33301 2V6.66667C3.33301 9.24667 5.41967 11.3333 7.99967 11.3333C10.5797 11.3333 12.6663 9.24667 12.6663 6.66667V2" stroke="black" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
     // 删除线
-    icons['list'].strike = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-<path d="M0.599609 4.7998H11.3996" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2.40039 1.2002V5.4002C2.40039 7.72219 4.0101 9.60019 6.00039 9.60019C7.99068 9.60019 9.60039 7.72219 9.60039 5.4002V1.2002" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+    icons['list'].strike = `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+  <path d="M0.925781 6.5249H15.3258" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M3.32422 1.7251V7.3251C3.32422 10.4211 5.4705 12.9251 8.12422 12.9251C10.7779 12.9251 12.9242 10.4211 12.9242 7.3251V1.7251" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`
     icons[
       'strike'
@@ -63,11 +63,11 @@ const DynamicReactQuill = dynamic(
   <path d="M0.800781 6.3999H15.2008" stroke="black" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M3.19922 1.6001V7.2001C3.19922 10.2961 5.3455 12.8001 7.99922 12.8001C10.6529 12.8001 12.7992 10.2961 12.7992 7.2001V1.6001" stroke="black" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
-    icons['list'].blockquote = `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="12" viewBox="0 0 10 12" fill="none">
-<path d="M0.833984 6.17529H3.25065C3.88815 6.17529 4.32565 6.7553 4.32565 7.4653V9.07532C4.32565 9.78532 3.88815 10.3653 3.25065 10.3653H1.90899C1.31732 10.3653 0.833984 9.78532 0.833984 9.07532V6.17529" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M0.833984 6.17511C0.833984 3.15011 1.30483 2.65014 2.7215 1.64014" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M5.67969 6.17529H8.09635C8.73385 6.17529 9.17136 6.7553 9.17136 7.4653V9.07532C9.17136 9.78532 8.73385 10.3653 8.09635 10.3653H6.75469C6.16303 10.3653 5.67969 9.78532 5.67969 9.07532V6.17529" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M5.67969 6.17511C5.67969 3.15011 6.15051 2.65014 7.56717 1.64014" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+    icons['list'].blockquote = `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+  <path d="M1.45898 8.35889H5.32564C6.34564 8.35889 7.04565 9.13223 7.04565 10.0789V12.2256C7.04565 13.1723 6.34564 13.9456 5.32564 13.9456H3.179C2.23233 13.9456 1.45898 13.1723 1.45898 12.2256V8.35889" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1.45898 8.35864C1.45898 4.32531 2.21234 3.65868 4.479 2.31201" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9.21191 8.35889H13.0786C14.0986 8.35889 14.7986 9.13223 14.7986 10.0789V12.2256C14.7986 13.1723 14.0986 13.9456 13.0786 13.9456H10.9319C9.98526 13.9456 9.21191 13.1723 9.21191 12.2256V8.35889" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9.21191 8.35864C9.21191 4.32531 9.96523 3.65868 12.2319 2.31201" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`
     icons[
       'blockquote'
@@ -123,9 +123,9 @@ const DynamicReactQuill = dynamic(
     // a链接
     icons[
       'list'
-    ].link = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-<path d="M6.52992 5.47021C7.65492 6.59521 7.65492 8.41522 6.52992 9.53522C5.40492 10.6552 3.58492 10.6602 2.46492 9.53522C1.34492 8.41022 1.33992 6.59021 2.46492 5.47021" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M5.29547 6.70494C4.12547 5.53494 4.12547 3.63494 5.29547 2.45994C6.46547 1.28494 8.36547 1.28994 9.54047 2.45994C10.7155 3.62994 10.7105 5.52994 9.54047 6.70494" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+    ].link = `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+  <path d="M8.83156 7.41895C10.3316 8.91895 10.3316 11.3456 8.83156 12.8389C7.33156 14.3323 4.9049 14.3389 3.41156 12.8389C1.91823 11.3389 1.91156 8.91228 3.41156 7.41895" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M7.18465 9.06443C5.62465 7.50443 5.62465 4.9711 7.18465 3.40443C8.74465 1.83777 11.278 1.84443 12.8446 3.40443C14.4113 4.96443 14.4046 7.49777 12.8446 9.06443" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`
     icons[
       'link'

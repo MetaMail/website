@@ -96,7 +96,7 @@ export default function Welcome() {
         </div>
         <div className="pt-43 relative">
           <header className="flex flex-row justify-between px-40 lg:px-102">
-            <Image src={logoBrand} alt="logo" className="w-298 h-52" />
+            <Image src={logoBrand} alt="logo" width={298} height={52} />
             <div className="text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
               <RainbowLogin content="Connect Wallet" />
             </div>
@@ -109,7 +109,7 @@ export default function Welcome() {
           </h1>
           <p className="text-4xl font-light leading-snug">Create And Use Your Crypto Email</p>
           <div
-            className="mt-80 relative z-[10] font-poppins flex items-center justify-center w-219 h-69 rounded-20 text-white font-['PoppinsBold'] 
+            className="mt-80 relative z-[10]  flex items-center justify-center w-219 h-69 rounded-20 text-white font-['PoppinsBold'] 
     text-2xl bg-black ">
             <RainbowLogin content="Try It Now" />
           </div>
