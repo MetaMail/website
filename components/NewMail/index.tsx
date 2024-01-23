@@ -300,8 +300,9 @@ export default function NewMail() {
       initHtml = part_html;
 
       setContentsToQuill(part_html);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示失败
       toast.error("Can't get draft detail, please try again later.", {
         autoClose: 2000
       });

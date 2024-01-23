@@ -67,7 +67,7 @@ export default function Welcome() {
     } catch (error: any) {
       // console.log('@@@@@@@@@@@@@@@@@', error)
       console.error(error);
-      if (error.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示登录失败
+      if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示登录失败
       toast.error('Login failed, please try again later.', {
         autoClose: 2000
       });
