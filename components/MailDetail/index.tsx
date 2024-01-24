@@ -308,31 +308,35 @@ export default function MailDetail() {
                   ? parse(DOMPurify.sanitize(selectedMail?.part_html))
                   : selectedMail?.part_text}
               </h2>
-              {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
-                <div className="flex">
-                  {selectedMail?.attachments?.map((item, idx) => (
-                    <AttachmentItem
-                      idx={idx}
-                      key={idx}
-                      url={item?.download?.url}
-                      name={item?.filename}
-                      randomBits={randomBits}
-                    />
-                  ))}
-                </div>
-              )}
+
             </>
           }
         </div>
       </div>
 
 
-      <button
-        className="flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
-        onClick={handleReply}>
-        {/* <Icon url={sendMailIcon} /> */}
-        <span className="">Reply</span>
-      </button>
+      <div>
+        {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
+          <div className="flex">
+            {/* 文件s */}
+            {selectedMail?.attachments?.map((item, idx) => (
+              <AttachmentItem
+                idx={idx}
+                key={idx}
+                url={item?.download?.url}
+                name={item?.filename}
+                randomBits={randomBits}
+              />
+            ))}
+          </div>
+        )}
+        <button
+          className="flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
+          onClick={handleReply}>
+          {/* <Icon url={sendMailIcon} /> */}
+          <span className="">Reply</span>
+        </button>
+      </div>
     </div>
   );
 }

@@ -505,7 +505,7 @@ export default function NewMail() {
                   className="text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <span className="max-w-[62px] break-all overflow-ellipsis line-clamp-2">
+                  <span className="max-w-[150] break-all overflow-ellipsis line-clamp-2">
                     {attr.filename}
                   </span>
                   <span>

@@ -40,9 +40,9 @@ const UploadComponent = ({ onChange, isExtend }: IDropzone) => {
           }
           {
             !isExtend && (
-              <label className="flex justify-center items-center bg-[#ddd] px-14 py-8 rounded-[8px]  cursor-pointer dark:bg-[#ddd4]">
+              <label className="flex justify-center items-center btn-primary px-14 py-8 rounded-[8px]  cursor-pointer dark:bg-[#ddd4]">
                 {/* <Image src={AddAttach} className="h-18" alt="上传文件" /> */}
-                <AddAttach height={18} width={18} fill={isDark ? '#fff' : '#000'} />
+                <AddAttach height={18} width={18} fill={isDark ? '#fff' : '#fff'} />
                 <span className="ml-6 font-Poppins h-[18px] leading-[20px]">Attach</span>
               </label>
             )
