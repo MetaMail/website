@@ -8,27 +8,27 @@ import git from 'assets/git.png';
 
 const allLinks = [
   {
-    href: '',
+    href: 'https://twitter.com/MetaMailInk',
     logo: twitter,
     alt: 'twitter',
   },
+  // {
+  //   href: '',
+  //   logo: facebook,
+  //   alt: 'facebook',
+  // },
   {
-    href: '',
-    logo: facebook,
-    alt: 'facebook',
-  },
-  {
-    href: '',
+    href: 'https://discord.com/invite/URYGebMHye',
     logo: discord,
     alt: 'discord',
   },
   {
-    href: '',
+    href: 'https://t.me/metamailink',
     logo: tg,
     alt: 'telegram',
   },
   {
-    href: '',
+    href: 'https://github.com/MetaMail',
     logo: git,
     alt: 'github',
   },

@@ -30,7 +30,7 @@ import SpamActive from 'components/svg/menu/SpamActive'
 export default function Sidebar() {
   const { isDark } = useThemeStore()
   useEffect(() => {
-    console.log('isDark', isDark)
+    // console.log('isDark', isDark)
   }, [isDark])
   const { logout, getMailStat, createDraft } = useContext(MailBoxContext);
   const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();

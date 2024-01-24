@@ -64,8 +64,10 @@ export default function Welcome() {
       });
 
       router.push('/mailbox');
-    } catch (error) {
+    } catch (error: any) {
+      // console.log('@@@@@@@@@@@@@@@@@', error)
       console.error(error);
+      if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示登录失败
       toast.error('Login failed, please try again later.', {
         autoClose: 2000
       });
@@ -84,7 +86,7 @@ export default function Welcome() {
   }, [address]);
 
   return (
-    <div className="flex flex-col mx-auto max-w-[2000px]">
+    <div className="!font-[space-grotesk] flex flex-col mx-auto max-w-[2000px]">
       <Head>
         <title>MetaMail</title>
       </Head>
@@ -97,7 +99,7 @@ export default function Welcome() {
         <div className="pt-43 relative">
           <header className="flex flex-row justify-between px-40 lg:px-102">
             <Image src={logoBrand} alt="logo" width={298} height={52} />
-            <div className="text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
+            <div className="hover:shadow-md font-[600] text-[#000]  text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible font-poppins flex items-center justify-center">
               <RainbowLogin content="Connect Wallet" />
             </div>
           </header>
@@ -109,7 +111,7 @@ export default function Welcome() {
           </h1>
           <p className="text-4xl font-light leading-snug">Create And Use Your Crypto Email</p>
           <div
-            className="mt-80 relative z-[10]  flex items-center justify-center w-219 h-69 rounded-20 text-white font-['PoppinsBold'] 
+            className="hover:shadow-md mt-80 relative z-[10]  flex items-center justify-center w-219 h-69 rounded-20 text-white font-['PoppinsBold'] 
     text-2xl bg-black ">
             <RainbowLogin content="Try It Now" />
           </div>
@@ -140,7 +142,7 @@ export default function Welcome() {
             Use the wallet to log in our mailbox directly, send and receive mails with users of our mailbox
             and other common mainstream mailboxes. Totally free!
           </div>
-          <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
+          <div className="hover:shadow-md font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
             <RainbowLogin content="Connect Wallet" />
           </div>
         </div>
@@ -151,7 +153,7 @@ export default function Welcome() {
           <div className="text-3xl font-normal leading-normal">
             Sign evey mail digitally with your wallet. No forged mails anymore!
           </div>
-          <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
+          <div className="hover:shadow-md  font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
             <RainbowLogin content="Start Now" />
           </div>
         </div>
@@ -167,7 +169,7 @@ export default function Welcome() {
             Mails sent and received by MetaMail users could be optionally encrypted, and only the recipient
             has the private key to decrypt the mails, ensuring the ultimate security.
           </div>
-          <div className=" w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
+          <div className="hover:shadow-md  font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible font-poppins flex items-center justify-center">
             <RainbowLogin content="Encrypt Now" />
           </div>
         </div>
