@@ -2,7 +2,7 @@ import Image, { StaticImageData } from 'next/image';
 import suneal from 'assets/suneal.svg';
 import colin from 'assets/colin.png';
 import fiveStar from 'assets/5star.png';
-
+import Carousel from '../Carousel'
 interface IReview {
   imgSrc: string | StaticImageData;
   content: string;
@@ -26,10 +26,9 @@ function Review({ imgSrc, content, role, role2 }: IReview) {
     </div>
   );
 }
-
-export default function ReviewInfo() {
-  return (
-    <div className="relative hidden lg:flex h-410 md:h-373 xl:h-343 flex-row w-11/12 xl:w-5/6 2xl:w-2/3 max-w-500 -top-200 mx-auto border border-[#1e1e1e] bg-white rounded-28 py-75 justify-around z-10">
+const slides = [
+  {
+    content: <div className="swiper relative h-full lg:flex  flex-row   mx-auto  justify-around z-10">
       <Review
         imgSrc={suneal}
         role={'Suneal'}
@@ -49,5 +48,36 @@ export default function ReviewInfo() {
         content={'MetaMail is an amazing product, web3 style, and it evolves cautiously'}
       />
     </div>
+  }, {
+    content: <div className="swiper relative h-full lg:flex  flex-row   mx-auto  justify-around z-10">
+      <Review
+        imgSrc={suneal}
+        role={'Suneal'}
+        role2={'dev @ WeChat'}
+        content={'MetaMail is the most secure mail application with end-to-end encryption.'}
+      />
+      <Review
+        imgSrc={suneal}
+        role={'suneal'}
+        role2={'dev @ WeChat'}
+        content={'MetaMail is the most secure mail application with end-to-end encryption.'}
+      />
+      <Review
+        imgSrc={colin}
+        role={'colin'}
+        role2={'dev @ scroll.io'}
+        content={'MetaMail is an amazing product, web3 style, and it evolves cautiously'}
+      />
+    </div>
+  },
+];
+
+
+export default function ReviewInfo() {
+  return (
+    //
+    // <div >
+    <Carousel slides={slides} autoplayInterval={3000} />
+    // </div>
   );
 }
