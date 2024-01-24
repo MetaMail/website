@@ -44,10 +44,14 @@ export const useMailDetailStore = create<IMailDetailState>()(set => ({
 }));
 
 interface INewMailState {
+  isSendSuccess: boolean;
+  setIsSendSuccess: (isSendSuccess: boolean) => void
   selectedDraft: MailListItemType;
   setSelectedDraft: (selectedDraft: MailListItemType) => void;
 }
 export const useNewMailStore = create<INewMailState>()(set => ({
+  isSendSuccess: false,
+  setIsSendSuccess: (isSendSuccess: boolean) => set(() => ({ isSendSuccess })),
   selectedDraft: null,
   setSelectedDraft: (selectedDraft: MailListItemType) => set(() => ({ selectedDraft })),
 }));

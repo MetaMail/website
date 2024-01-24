@@ -43,7 +43,7 @@ let initHtml = '';
 
 export default function NewMail() {
   const { checkEncryptable, setShowLoading, getRandomBits } = useContext(MailBoxContext);
-  const { selectedDraft, setSelectedDraft } = useNewMailStore();
+  const { selectedDraft, setSelectedDraft, isSendSuccess, setIsSendSuccess } = useNewMailStore();
   const { filterType } = useMailListStore();
 
   const [isExtend, setIsExtend] = useState(false);
@@ -58,7 +58,7 @@ export default function NewMail() {
   // 控制富文本编辑器icon要不要变颜色
   const [iconKey, setIconKey] = useState(0);
   useEffect(() => {
-    console.log('改变了')
+    // console.log('改变了')
     setIconKey(iconKey + 1)
   }, [isDark]);
   const getQuill = () => {
@@ -133,7 +133,7 @@ export default function NewMail() {
       encryption_public_keys,
     };
   };
-
+  // 点击发送邮件
   const handleClickSend = async () => {
     if (selectedDraft.mail_to?.length < 1) {
       return toast.error("Can't send mail without receivers.", {
@@ -182,6 +182,8 @@ export default function NewMail() {
         !encrypted_encryption_keys.length ? randomBits : ''
       );
       if (messageId) {
+        // 发送成功
+        setIsSendSuccess(true)
         toast.success('Your email has been sent successfully.', {
           autoClose: 2000
         });

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
-import { useMailListStore, useMailDetailStore } from 'lib/zustand-store';
+import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userLocalStorage } from 'lib/utils';
 import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
@@ -16,12 +16,13 @@ import {
   checkboxSvg, checkboxedSvg,
   trash, read, starred, markUnread, spam, filter as filterIcon, update
 } from 'assets/icons';
-import { random } from 'lodash';
 
 const MailListFilters = ['All', 'Read', 'Unread', 'Encrypted', 'UnEncrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
 export default function MailList() {
+  // 发送邮件成功，刷新列表
+  const { isSendSuccess, setIsSendSuccess } = useNewMailStore();
   const { getMailStat } = useContext(MailBoxContext);
   const { filterType, pageIndex, list, setList, addPageIndex, subPageIndex } = useMailListStore();
   // isDetailExtend : 详情是否占满全屏
@@ -120,6 +121,8 @@ export default function MailList() {
       });
       setList(mailsList ?? []);
       setPageNum(page_num);
+      // 发送邮件成功，刷新列表
+      setIsSendSuccess(false)
     } catch (error) {
       console.error(error);
       toast.error('Fetch mail list failed, please try again later.', {
@@ -153,10 +156,10 @@ export default function MailList() {
       setSelectedAll(list.length && list.every(item => item.selected));
     }
   }, [list]);
-
+  // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
-  }, [pageIndex, filterType]);
+  }, [pageIndex, filterType, isSendSuccess]);
 
   useEffect(() => {
     // console.log('执行了')
