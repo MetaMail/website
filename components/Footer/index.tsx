@@ -36,16 +36,16 @@ const allLinks = [
 
 export default function Footer() {
   return (
-    <footer className="h-262 bg-white flex flex-row justify-between py-83 px-130 ">
+    <footer className="relative h-262 bg-white flex flex-row justify-between py-83 px-130 ">
       <div className="hidden lg:flex flex-col gap-21">
         <div className="text-[#0069E5] text-3xl font-black font-poppins">MetaMail</div>
         <div className="w-370 text-3xl font-light leading-tight ">Create And Use Your Crypto Email</div>
       </div>
-      <div className="flex flex-row justify-between gap-30 font-poppins">
-        <Link className="font-extrabold text-ml pt-10" href="http://www.example.com">
+      <div className="flex flex-row justify-between gap-30 font-poppins absolute bottom-83 right-130 zIndex-9">
+        <a className="font-extrabold text-ml pt-10" href="https://docs.google.com/document/d/1K9H3oqeot-SJ1tzCjLxUe9Iu0RySxmMdomsvjZU51iI/edit">
           FAQs
-        </Link>
-        <Link className="font-extrabold text-ml pr-20 pt-10" href="http://www.example.com">
+        </a>
+        <Link className="font-extrabold text-ml pr-20 pt-10" href="https://mirror.xyz/metamailink.eth">
           Blog
         </Link>
         <div className="flex flex-col gap-23">

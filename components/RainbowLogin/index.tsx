@@ -23,7 +23,7 @@ interface IString {
 const RainbowLogin = ({ content }: IString) => {
   //const USER_NONCE_URL='https://api.metamail.ink';
   return (
-    <WagmiConfig client={WagmiClient}>
+    <WagmiConfig client={WagmiClient} >
       <RainbowKitProvider chains={chains}>
         <ConnectBtn content={content} />
       </RainbowKitProvider>
