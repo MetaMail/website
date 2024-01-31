@@ -61,7 +61,7 @@ module.exports = {
           },
             fontFamily: {
                 poppins: ['Poppins'],
-                'space-grotesk': ['"Space Grotesk"'],
+                spaceGrotesk: ['SpaceGrotesk'],
             },
             fontSize: {
                 sm: ['12px', '18px'],
