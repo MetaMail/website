@@ -52,7 +52,7 @@ export default function Sidebar() {
     }
     const count = type === FilterTypeEn.Inbox ? unreadCount : spamCount;
     if (count <= 0) return null;
-    return <p className="badge badge-sm rounded-2 btn-primary p-0 w-30 h-18">
+    return <p className="badge badge-sm rounded-2 btn-primary p-0 w-30 h-18 lh-18">
       <span className='text-[18px] scale-50'> {count > 99 ? '99+' : count}</span>
     </p>;
   };

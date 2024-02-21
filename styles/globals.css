@@ -21,6 +21,14 @@
     font-style: normal;
 
 }
+/* 首页字体 */
+    @font-face {
+    font-family:'SpaceGrotesk';
+       src: url('/static/fonts/SpaceGrotesk-Light.ttf') format('ttf'),
+       url('/static/fonts/SpaceGrotesk-Light.otf') format('otf'),
+           url('/static/fonts/SpaceGrotesk-Regular.woff2') format('woff2'),
+         url('/static/fonts/SpaceGrotesk-Regular.woff') format('woff');
+  }
 
 [data-theme="light"] {
   --primary: #3c6ff4;
@@ -54,11 +62,7 @@ body {
   background-color: #f2f8ff;
   background-repeat: no-repeat;
   background-size: cover;
-  font-family: Poppins;
   font-size: 14px;
-}
-body *{
-   font-family: Poppins;
 }
 .home-bg {
   background-repeat: no-repeat;

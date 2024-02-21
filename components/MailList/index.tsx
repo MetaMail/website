@@ -262,7 +262,7 @@ export default function MailList() {
               {/* 筛选旁边的小icon */}
               {!selectedMail && mailActions.map((item, index) => {
                 return (
-                  <div className="box-border bg-opacity-0 rounded-10 hover:bg-opacity-60 p-4 hover:bg-[#EDF3FF]">
+                  <div key={index} className="box-border bg-opacity-0 rounded-10 hover:bg-opacity-60 p-4 hover:bg-[#EDF3FF]">
                     <Icon
                       title={item.title}
                       url={item.src}

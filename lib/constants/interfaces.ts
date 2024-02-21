@@ -75,7 +75,6 @@ export interface IMailDetailBaseItem {
   read?: ReadStatusTypeEn;
   mailbox?: MailBoxTypeEn;
   mark?: MarkTypeEn;
-
   meta_type?: MetaMailTypeEn;
   subject?: string;
   mail_from?: IPersonItem;
@@ -87,7 +86,7 @@ export interface IMailDetailBaseItem {
     expire_at: string;
     url: string;
   };
-  in_reply_to?: IPersonItem;
+  in_reply_to?: string;
   reply_to?: IPersonItem;
   digest?: string;
   part_text?: string;

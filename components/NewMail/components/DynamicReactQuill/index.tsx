@@ -1,4 +1,4 @@
-import React, { MutableRefObject } from 'react';
+import React, { MutableRefObject, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { StringMap } from 'quill';
 import { ReactQuillProps } from 'react-quill';
@@ -155,13 +155,15 @@ const DynamicReactQuill = dynamic(
           readonly theme?: string;
           forwardedRef?: MutableRefObject<any>;
         } & { key: number }
-    ) => <RQ ref={props.forwardedRef}
-      {...props}
-      // 在这里根据主题设置不同的图标
-      modules={{
-        ...props.modules,
-      }}
-      />;
+    ) => {
+      return <RQ ref={props.forwardedRef}
+        {...props}
+        // 在这里根据主题设置不同的图标
+        modules={{
+          ...props.modules,
+        }}
+      />
+    };
   },
   {
     ssr: false,
