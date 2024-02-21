@@ -213,7 +213,7 @@ export default function MailDetail() {
 
   const handleReply = () => {
     // console.log(selectedMail)
-    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail);
+    createDraft([selectedMail.mail_from], selectedMail.message_id);
   };
 
   useEffect(() => {
