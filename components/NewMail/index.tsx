@@ -6,7 +6,7 @@ import { throttle } from 'lodash';
 import Image from 'next/image';
 import MailBoxContext from 'context/mail';
 import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn, DarkEditorModules } from 'lib/constants';
-import { useNewMailStore, useMailListStore, useThemeStore, useIsInputShow } from 'lib/zustand-store';
+import { useNewMailStore, useMailListStore, useThemeStore, useIsInputShow, useMailDetailStore } from 'lib/zustand-store';
 import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent, fileType } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
@@ -19,13 +19,12 @@ import NameSelector, { MailFromType } from './components/NameSelector';
 import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
 import LoadingRing from 'components/LoadingRing';
-import { ShinkIcon, ExtendIcon, AttachIcon } from '../../components/svg/index'
+import { ShinkIcon, ExtendIcon, AttachIcon, MailMore } from '../../components/svg/index'
 import { trashCan, extend, cancel, cancelDark, extendDark } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
-
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
  * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
@@ -65,7 +64,7 @@ export default function NewMail() {
     if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
     return reactQuillRef.current.makeUnprivilegedEditor(reactQuillRef.current.getEditor());
   };
-
+  const { selectedMail } = useMailDetailStore();
   // 把输入的正确的收件人加入待发送列表；
   const addReceiver = (address: string) => {
     const newReceiver = {
@@ -193,9 +192,9 @@ export default function NewMail() {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to send mail.', {
-        autoClose: 2000
-      });
+      // toast.error('Failed to send mail.', {
+      //   autoClose: 2000
+      // });
     } finally {
       toast.done(id);
     }
@@ -249,6 +248,8 @@ export default function NewMail() {
     const fromLocalDraft = !selectedDraft.message_id;
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
     fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
+    console.log('selectedDraft', selectedDraft)
+    if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to
     const { mail_date, message_id } = await mailHttp.updateMail(json);
     selectedDraft.message_id = message_id;
     selectedDraft.mail_date = mail_date;
@@ -259,7 +260,7 @@ export default function NewMail() {
     filterType === FilterTypeEn.Draft && dispatchEvent('refresh-list', { showLoading: false });
     return { html, text };
   };
-
+  // 向文本框设置内容
   const setContentsToQuill = (html: string) => {
     const editor = reactQuillRef.current?.getEditor();
     if (editor) {
@@ -397,6 +398,7 @@ export default function NewMail() {
       return <Image src={require(`assets/file/DEFAULT.svg`)} alt={type} width={20} height={24} />;
     }
   }
+  const [emailContent, setEmailContent] = useState('');
 
   return (
     <div
@@ -474,6 +476,8 @@ export default function NewMail() {
         <>
           {/* DynamicReactQuill 富文本编辑器 */}
           <DynamicReactQuill
+            onChange={setEmailContent}
+            readOnly={false}
             forwardedRef={reactQuillRef}
             className={`flex-1 py-16 flex flex-col-reverse text-[#464646] dark:text-[#fff] overflow-hidden  leading-[21px] ${isDark ? 'dark' : ''
               }`}
@@ -483,6 +487,7 @@ export default function NewMail() {
             formats={EditorFormats}
             onFocus={handleDynamicFocus}
             key={iconKey}
+            preserveWhitespace={true} // 保留空白符
           />
           {isExtend && isShowFileUpload && (
             <FileUploader

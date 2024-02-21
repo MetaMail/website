@@ -212,7 +212,8 @@ export default function MailDetail() {
   };
 
   const handleReply = () => {
-    createDraft([selectedMail.mail_from]);
+    // console.log(selectedMail)
+    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail);
   };
 
   useEffect(() => {
@@ -330,6 +331,7 @@ export default function MailDetail() {
             ))}
           </div>
         )}
+        {/* 回复按钮 */}
         <button
           className="flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
           onClick={handleReply}>

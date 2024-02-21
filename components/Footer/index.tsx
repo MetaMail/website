@@ -54,10 +54,10 @@ export default function Footer() {
               <LinkItem {...link} key={index} />
             ))}
           </div>
-          {/* <div className="font-normal text-[20px] flex flex-row justify-between gap-30 text-[#3E3E3E] font-poppins">
-            <Link href="http://www.example.com">Terms of Service</Link>
-            <Link href="http://www.example.com">Privacy</Link>
-          </div> */}
+          <div className="font-normal text-[20px] flex flex-row justify-between gap-30 text-[#3E3E3E] font-poppins">
+            <Link href="https://docs.google.com/document/d/1saH6h8sMjIUtojf3DPu2yaYYzn5pv5ZDKIHE9JHkMdU/edit?usp=sharing">Terms of Service</Link>
+            <Link href=" https://docs.google.com/document/d/1y3EfVHCieAMXSxyZJbQJhAjZyf45XRMVnAy78OZbBbE/edit?usp=sharing">Privacy</Link>
+          </div>
         </div>
       </div>
     </footer>

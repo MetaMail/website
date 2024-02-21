@@ -5,3 +5,4 @@ export * from './AddAttach';
 export * from './Attach'
 export * from './Shink'
 export * from './Extend'
+export * from './mailMore'
