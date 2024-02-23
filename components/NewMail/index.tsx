@@ -503,16 +503,16 @@ export default function NewMail() {
             />
           )}
           {/* 上传成功得文件列表 */}
-          <ul className="flex gap-10">
+          <ul className="flex gap-10 flex-wrap">
             {selectedDraft.attachments?.map((attr, index) => (
               <li key={index} className="flex text-[#878787]">
                 <div
                   className="text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <span className="max-w-[150] break-all overflow-ellipsis line-clamp-2">
-                    {attr.filename}
-                  </span>
+                  <div className="max-w-[200px] truncate"> {attr.filename}</div>
+
+                  {attr.filename}
                   <span>
                     {attr.uploadProcess && !attr.attachment_id ? (
                       <div className="flex items-center">
