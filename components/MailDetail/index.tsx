@@ -219,9 +219,19 @@ export default function MailDetail() {
   };
   const handleHighlineLink = (link: string) => {
     // 匹配字符串中的所有 <a> 标签
-    const regex = /<a\b[^>]*>(.*?)<\/a>/gi;
-    // 使用 replace 方法替换匹配的 <a> 标签
-    const result = link.replace(regex, '<a style="color: #06c;text-decoration:underline">$1</a>');
+    const regex = /<a\s+([^>]*)>/gi;
+
+    // 使用 replace 方法替换匹配的 <a> 标签，并添加 style 属性
+    const result = link.replace(regex, function (match, attributes) {
+      // 如果标签中已经包含 style 属性，则在原有的属性后面添加 style='color:blue'
+      if (attributes.includes('style')) {
+        return match.replace('>', `style='color: #06c;text-decoration:underline'>`);
+      } else {
+        // 如果标签中没有 style 属性，则在标签的末尾添加 style='color:blue'
+        return match.replace('>', `style='color: #06c;text-decoration:underline'>`);
+      }
+    });
+
     return result;
   }
 
@@ -314,6 +324,7 @@ export default function MailDetail() {
           {
             <>
               <h2 className="flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]">
+                {/* {parse(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))} */}
                 {/* {selectedMail?.part_html
                   ? parse(DOMPurify.sanitize(selectedMail?.part_html))
                   : selectedMail?.part_text} */}
