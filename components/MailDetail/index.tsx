@@ -53,8 +53,10 @@ export default function MailDetail() {
       if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
         if (currentMailId !== _mail.message_id) return;
         randomBits = await getRandomBits('detail');
+        console.log('解密出来', _mail)
         if (_mail?.part_html) {
           _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
+
         }
         if (_mail?.part_text) {
           _mail.part_text = decryptMailContent(_mail.part_text, randomBits);
@@ -215,6 +217,13 @@ export default function MailDetail() {
     // console.log(selectedMail)
     createDraft([selectedMail.mail_from], selectedMail.message_id);
   };
+  const handleHighlineLink = (link: string) => {
+    // 匹配字符串中的所有 <a> 标签
+    const regex = /<a\b[^>]*>(.*?)<\/a>/gi;
+    // 使用 replace 方法替换匹配的 <a> 标签
+    const result = link.replace(regex, '<a style="color: #06c;text-decoration:underline">$1</a>');
+    return result;
+  }
 
   useEffect(() => {
     currentMailId = selectedMail.message_id;
@@ -305,9 +314,10 @@ export default function MailDetail() {
           {
             <>
               <h2 className="flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]">
-                {selectedMail?.part_html
+                {/* {selectedMail?.part_html
                   ? parse(DOMPurify.sanitize(selectedMail?.part_html))
-                  : selectedMail?.part_text}
+                  : selectedMail?.part_text} */}
+                {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
               </h2>
 
             </>
