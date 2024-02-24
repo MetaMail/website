@@ -232,13 +232,11 @@ export default function MailList() {
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
 
             />
-
-
             <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
               {/* 筛选漏斗icon */}
-              <label tabIndex={0} className="cursor-pointer flex items-center">
+              <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
-                <span className="text-[14px] text-[#B3B3B3]">{filter}</span>
+                <span className="text-[14px] h-16 leading-16 text-[#B3B3B3]">{filter}</span>
               </label>
 
               <ul

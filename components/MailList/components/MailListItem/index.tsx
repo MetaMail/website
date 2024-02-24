@@ -168,15 +168,15 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
           {/* inbox展示from;send展示同 */}
           {
             mail.mailbox === MailBoxTypeEn.Send ? (
-              <div className="tooltip" data-tip={renderMailTo(mail).join(';')}>
-                <span className={`w-[113px] max-w-[113px] ml-28  omit  text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
+              <div className="tooltip" title={renderMailTo(mail).join(';')}>
+                <span className={`w-[226px] max-w-[226px] ml-28  omit  text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
                 </span>
               </div>
 
             ) : (
               // Inbox
-              <div className="tooltip" data-tip={getMailFrom(mail)}>
-                <span className={`w-[113px]  max-w-[113px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? 'font-[400]' : ''}`} >
+              <div className="tooltip" title={getMailFrom(mail)}>
+                <span className={`w-[226px]  max-w-[226px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? 'font-[400]' : ''}`} >
                   {getMailFrom(mail)}
                 </span>
               </div>
