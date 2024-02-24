@@ -36,7 +36,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-[#B3B3B3] font-[600] dark:text-[#A7A1A1]' : "text-[#333] font-[600] dark:text-[#fff]";
+    return mail.read == ReadStatusTypeEn.Read ? 'text-[#707070] font-[600] dark:text-[#A7A1A1]' : "text-[#333] font-[600] dark:text-[#fff]";
   };
 
   // 有name展示name,没有就展示address
@@ -175,7 +175,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             ) : (
               // Inbox
               <div className="tooltip" data-tip={getMailFrom(mail)}>
-                <span className={`w-[113px]  max-w-[113px]  ml-28  omit  ${getIsReadTextClass(mail)}`} >
+                <span className={`w-[113px]  max-w-[113px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? 'font-[400]' : ''}`} >
                   {getMailFrom(mail)}
                 </span>
               </div>
@@ -188,9 +188,9 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
           <div className="flex-1 w-0 ml-28 omit dark:text-base-content">
             <Dot size={7} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             {/* ReadStatusTypeEn.Read 已读 */}
-            <span className={`ml-8  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#B3B3B3] dark:text-[#A7A1A1]'}`}>{mail.subject || '( no subject )'}</span>
+            <span className={`ml-8  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#707070] dark:text-[#A7A1A1]'}`}>{mail.subject || '( no subject )'}</span>
             <span className="pt-4 pl-2 pr-7 ">{'-'}</span>
-            <span className={`min-w-0 flex-1  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#707070] '}`}>{renderDigest(mail)}</span>
+            <span className={`min-w-0 flex-1  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#b3b3b3] '}`}>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
