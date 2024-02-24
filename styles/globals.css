@@ -256,7 +256,7 @@ button:disabled {
 }
 .fadeInAnima .listContainer{
   animation-name: fadeIn;
-  animation-duration: 200ms;
+  animation-duration: 150ms;
   animation-fill-mode: forwards;
 }
 .fadeOutAnima .listContainer{
