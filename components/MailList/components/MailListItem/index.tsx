@@ -49,6 +49,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
   };
 
   const handleChangeMailStatus = async (options: IMailChangeOptions) => {
+    console.log('handleChangeMailStatus')
     try {
       await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
       // 当列表长度=1，操作去掉收藏，把收藏列表清空掉
@@ -135,7 +136,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={` overflow-y-visible py-6 flex flex-row px-12 items-center group h-36 cursor-pointe transition-colors  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10 hover:dark:bg-base-300 '
+          className={`listStatus overflow-y-visible py-6 flex flex-row px-12 items-center group h-36 cursor-pointe  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10 hover:dark:bg-base-300 '
             }`}>
           <div className="flex flex-row gap-12">
             <input
@@ -228,7 +229,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
         // 查看详情时候的邮件列表
         <div
           onClick={handleClick}
-          className={`text-base-content  items-start box-border px-17 py-9 flex group cursor-pointer transition-colors duration-75 hover:bg-base-200 dark:hover:bg-[#F3F7FF] dark:hover:bg-opacity-10 dark:bg-opacity-10 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
+          className={`detailDtatus text-base-content  items-start box-border px-17 py-9 flex group cursor-pointer transition-colors duration-75 hover:bg-base-200 dark:hover:bg-[#F3F7FF] dark:hover:bg-opacity-10 dark:bg-opacity-10 ${mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
             }`}>
           <div className='pt-5'>
             {/* 头像 */}

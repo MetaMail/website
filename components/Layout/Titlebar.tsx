@@ -108,7 +108,7 @@ export default function Titlebar() {
       </div>
       <div className="flex-none gap-2 text-[14px] ">
         <div className="form-control"></div>
-        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`} onClick={() => setDropdownShow(!dropdownShow)}>
+        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`}>
           <label tabIndex={0} className="dropdown-label rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
             <div className="w-31 h-31 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
@@ -120,9 +120,9 @@ export default function Titlebar() {
           <div
             tabIndex={0}
             className={`${dropdownShow ? 'scale-100' : 'scale-0'}  transition-all duration-200 ease-in-out transform   mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
-            <div className={`text-[#93989A] flex flex-row items-center `}>
-              <p className="flex-1 leading-none flex mr-4 cursor-default dark:text-[#fff] text-[14px] " title={`${address}${PostfixOfAddress}`}>
-                <span className='max-w-[184px] text-ellipsis flex-1 overflow-hidden'>{getShowAddress(address)}</span>
+            <div className={` flex flex-row items-center `}>
+              <p className="flex-1 leading-[16px] flex mr-4 cursor-default dark:text-[#fff] text-[14px] " title={`${address}${PostfixOfAddress}`}>
+                <span className='max-w-[184px] text-ellipsis flex-1 overflow-x-hidden'>{getShowAddress(address)}</span>
                 {PostfixOfAddress}
               </p>
               <Image
@@ -136,7 +136,7 @@ export default function Titlebar() {
               />
             </div>
             {ensName && (
-              <div className="text-[#93989A] flex flex-row items-center mt-[10px]">
+              <div className=" flex flex-row items-center mt-[10px]">
                 <span className="flex-1 leading-none dark:text-[#fff] omit mr-4 cursor-default max-w-[184px] text-ellipsis overflow-hidden text-[14px]">{ensName}{PostfixOfAddress}</span>
                 <Image
                   src={theme == 'light' ? copy : copyDark}
@@ -154,17 +154,12 @@ export default function Titlebar() {
             <div className="my-[8px] mt-[26px] text-[16px]">
               <p className="flex justify-between font-bold text-[14px] leading-none">
                 <span>Space Used</span>
-                {/* <span>{percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit)}%</span> */}
               </p>
               <progress
                 className="progress progress-primary w-[100%] mt-[12px]"
                 value={emailSize > 0 ? percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit) : 0}
                 max="100"></progress>
               <p className="text-[12px]  font-['Poppins'] leading-none mt-[5px]">Using {formatFileSize(emailSize)} of {formatFileSize(emailSizeLimit)} Storage</p>
-              {/* <p className="flex justify-between text-[12px] my-[4px] leading-none">
-                <span>0</span>
-                <span>{emailSizeLimit}GB</span>
-              </p> */}
             </div>
 
             <div className="form-control">
@@ -179,7 +174,7 @@ export default function Titlebar() {
                 />
               </label>
             </div>
-            <div onClick={logout} className="flex justify-between font-bold   items-center my-12 cursor-pointer">
+            <div onClick={logout} className="flex justify-between font-bold   items-center mt-12 cursor-pointer">
               <span>Log out</span>
               <Image src={right} alt="go" />
             </div>

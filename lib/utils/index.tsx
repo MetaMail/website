@@ -79,8 +79,13 @@ export function fileType(name: string) {
   const index = name.lastIndexOf(".");
   //获取后缀
   const ext = name.substring(index + 1);
-  console.log(ext);
   return ext
+}
+
+export function originFileName(name: string) {
+  //获取最后一个.的位置
+  const index = name.lastIndexOf(".");
+  return name.substring(0, index)
 }
 
 export * from './session-storage';
