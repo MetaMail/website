@@ -24,9 +24,10 @@ import { favorite, markFavorite, trash, markUnread, read, checkboxSvg, checkboxe
 interface IMailItemProps {
   mail: MailListItemType;
   onSelect: () => void;
+  loading: boolean
 }
 
-export default function MailListItem({ mail, onSelect }: IMailItemProps) {
+export default function MailListItem({ mail, onSelect, loading }: IMailItemProps) {
   const { isDark } = useThemeStore()
   const { getMailStat } = useContext(MailBoxContext);
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
@@ -35,7 +36,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066] font-[600] dark:text-[#A7A1A1]' : "text-[#333] font-[600] dark:text-[#fff]";
+    return mail.read == ReadStatusTypeEn.Read ? 'text-[#B3B3B3] font-[600] dark:text-[#A7A1A1]' : "text-[#333] font-[600] dark:text-[#fff]";
   };
 
   // 有name展示name,没有就展示address
@@ -50,6 +51,11 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
   const handleChangeMailStatus = async (options: IMailChangeOptions) => {
     try {
       await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
+      // 当列表长度=1，操作去掉收藏，把收藏列表清空掉
+      if (list.length === 1 && options.mark === MarkTypeEn.Normal) {
+        setList([])
+        return;
+      }
       // 更新列表
       const newList = list.map(item => {
         if (item.message_id === mail.message_id) {
@@ -129,7 +135,7 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={`overflow-y-visible py-6 flex flex-row px-12 items-center group h-30 cursor-pointe transition-colors duration-75  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10 hover:dark:bg-base-300'
+          className={` overflow-y-visible py-6 flex flex-row px-12 items-center group h-30 cursor-pointe transition-colors  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10 hover:dark:bg-base-300 '
             }`}>
           <div className="flex flex-row gap-12">
             <input
@@ -182,9 +188,9 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
           <div className="flex-1 w-0 ml-28 omit dark:text-base-content">
             <Dot size={7} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             {/* ReadStatusTypeEn.Read 已读 */}
-            <span className={`ml-8  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#00000066] dark:text-[#A7A1A1]'}`}>{mail.subject || '( no subject )'}</span>
+            <span className={`ml-8  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#B3B3B3] dark:text-[#A7A1A1]'}`}>{mail.subject || '( no subject )'}</span>
             <span className="pt-4 pl-2 pr-7 ">{'-'}</span>
-            <span className={`min-w-0 flex-1  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#70707099] '}`}>{renderDigest(mail)}</span>
+            <span className={`min-w-0 flex-1  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#707070] '}`}>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
@@ -234,12 +240,12 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
               {/* 邮件地址 */}
               {
                 mail.mailbox === MailBoxTypeEn.Send ? (<span
-                  className={`mailFrom flex-1  w-0  omit mr-4 font-['PoppinsBold']  leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff]'}`}
+                  className={`mailFrom flex-1  w-0  omit mr-15 font-['Poppins'] font-[600]  leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff]'}`}
                   title={renderMailTo(mail).join(';')}>
                   {renderMailTo(mail).join(';')}
                 </span>) : (
                   <span
-                    className={`mailFrom flex-1  w-0  omit mr-4 font-['PoppinsBold']  leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#00000066] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff]'}`}
+                    className={`mailFrom flex-1  w-0  omit mr-15 font-['Poppins'] font-[600]  leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff]'}`}
                     title={getMailFrom(mail)}>
                     {getMailFrom(mail)}
                   </span>
@@ -251,12 +257,12 @@ export default function MailListItem({ mail, onSelect }: IMailItemProps) {
             </p>
             <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}
-              <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#33333366] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
+              <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
                 {mail.subject || '( no subject )'}
               </span>
               <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
             </p>
-            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#70707099] `}>{renderDigest(mail)}</p>
+            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#adadad] `}>{renderDigest(mail)}</p>
           </div>
         </div >
       )

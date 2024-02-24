@@ -5,9 +5,7 @@ const commonModules = {
   // 禁用内容过滤
   clipboard: {
     matchVisual: false, // 禁用视觉匹配
-  },
-  // 禁用内容过滤
-  sanitize: false,
+  }
 }
 export const EditorModules = {
   ...commonModules,

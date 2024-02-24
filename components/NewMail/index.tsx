@@ -407,7 +407,7 @@ export default function NewMail() {
       <header className="flex justify-between">
         <div className="flex items-center">
           {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
-          <span className=" text-[22px] font-['PoppinsBold'] text-[#000] dark:text-[#fff]">New Message</span>
+          <span className=" text-[22px] font-['Poppins'] font-extrabold text-[#000] dark:text-[#fff]">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
           {/* 放大/缩小 */}

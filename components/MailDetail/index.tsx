@@ -13,7 +13,7 @@ import { decryptMailContent } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
 import LoadingRing from 'components/LoadingRing';
-
+import Modal from '../Common/Modal'
 import {
   spam,
   extend,
@@ -27,6 +27,7 @@ import {
   starred,
   sent
 } from 'assets/icons';
+import { useRouter } from 'next/router';
 
 let randomBits: string = '';
 let currentMailId: string = '';
@@ -244,114 +245,169 @@ export default function MailDetail() {
       return (<span>{i.address ? i.address : i.name}；</span>)
     })
   }
+  const [isOpen, setIsOpen] = useState(false);
+  const [link, setLink] = useState('');
+  const openModal = () => setIsOpen(true);
+
+  const closeModal = () => {
+    setIsOpen(false);
+    setLink('')
+  };
+
+  const handleConfirm = () => {
+    setIsOpen(false);
+    window.open(link);
+  };
+  useEffect(() => {
+    // 获取所有包含 <a> 标签的元素
+    const anchorElements = document.querySelectorAll('a[rel="noopener noreferrer"]');
+
+    // 为每个 <a> 标签添加点击事件处理函数
+    anchorElements.forEach(anchorElement => {
+      // console.log(anchorElement);
+      anchorElement.addEventListener('click', handleClick);
+    });
+
+    // 移除事件监听器以避免内存泄漏
+    return () => {
+      anchorElements.forEach(anchorElement => {
+        anchorElement.removeEventListener('click', handleClick);
+      });
+    };
+  }, [selectedMail]);
+
+  const handleClick = (event) => {
+    event.preventDefault();
+    const href = event.target?.attributes?.href?.value;
+    // openModal()
+    console.log('href', href)
+    if (!href.startsWith(window.location.origin)) {
+      setLink(href)
+      openModal()
+    }
+  };
+
   return (
     // 邮件详情
-    <div
-      className={`absolute right-0 justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
-        }`}>
-      <div>
-        <header className="flex flex-col justify-between w-full mb-22">
-          <div className="flex justify-between w-full">
-            <div className="flex gap-10">
-              {topIcons.map((item, index) => {
-                return (
-                  <Icon
-                    url={item.src}
-                    title={item.title}
-                    key={index}
-                    className="w-16 h-16 self-center"
-                    onClick={item.handler}
-                  />
-                );
-              })}
-            </div>
-            <div className="flex gap-10">
-              <Icon
-                url={extend}
-                className="w-16 h-16 self-center "
-                onClick={() => setIsDetailExtend(!isDetailExtend)}
-              />
-              <Icon
-                url={cancel}
-                onClick={() => {
-                  setSelectedMail(null);
-                  setIsDetailExtend(false);
-                }}
-                className="w-16 h-16 self-center"
-              />
-            </div>
-          </div>
-          {/* 邮件详情 */}
-          <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '( no subject )'}</h1>
-          <div className="flex justify-between">
-            <div className="flex gap-20 items-center">
-              <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
-              <div className="">
-                <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
-                <div className="flex gap-3">
-                  to:
-                  <div className="flex-1 omit ml-4">
-                    {/* {selectedMail?.mail_to[0]?.address} */}
-                    {renderTo(selectedMail?.mail_to)}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-6 stroke-current text-[#707070] max-w-[160]">
-              <div className="text-[14px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
-              <div className="flex gap-10 justify-end">
-                {rightIcons.map((item, index) => {
+    <div>
+      <div
+        className={`absolute right-0 justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+          }`}>
+        <div>
+          <header className="flex flex-col justify-between w-full mb-22">
+            <div className="flex justify-between w-full">
+              <div className="flex gap-10">
+                {topIcons.map((item, index) => {
                   return (
                     <Icon
-                      key={index}
                       url={item.src}
                       title={item.title}
-                      onClick={item.handler}
+                      key={index}
                       className="w-16 h-16 self-center"
+                      onClick={item.handler}
                     />
                   );
                 })}
               </div>
+              <div className="flex gap-10">
+                <Icon
+                  url={extend}
+                  className="w-16 h-16 self-center "
+                  onClick={() => setIsDetailExtend(!isDetailExtend)}
+                />
+                <Icon
+                  url={cancel}
+                  onClick={() => {
+                    setSelectedMail(null);
+                    setIsDetailExtend(false);
+                  }}
+                  className="w-16 h-16 self-center"
+                />
+              </div>
             </div>
+            {/* 邮件详情 */}
+            <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '( no subject )'}</h1>
+            <div className="flex justify-between">
+              <div className="flex gap-20 items-center">
+                <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
+                <div className="">
+                  <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
+                  <div className="flex gap-3">
+                    to:
+                    <div className="flex-1 omit ml-4">
+                      {/* {selectedMail?.mail_to[0]?.address} */}
+                      {renderTo(selectedMail?.mail_to)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-6 stroke-current text-[#B3B3B3] max-w-[160]">
+                <div className="text-[14px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
+                <div className="flex gap-10 justify-end">
+                  {rightIcons.map((item, index) => {
+                    return (
+                      <Icon
+                        key={index}
+                        url={item.src}
+                        title={item.title}
+                        onClick={item.handler}
+                        className="w-16 h-16 self-center"
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </header>
+          <div className='relative'>
+            {loading && <LoadingRing />}
+            {
+              <>
+                <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]`}>
+                  <div className='listContainer'>
+                    {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
+                  </div>
+                </div>
+              </>
+            }
           </div>
-        </header>
-        <div className='relative'>
-          {loading && <LoadingRing />}
-          {
-            <>
-              <h2 className="flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]">
-                {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
-              </h2>
-
-            </>
-          }
         </div>
-      </div>
 
 
-      <div>
-        {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
-          <div className="flex">
-            {/* 文件s */}
-            {selectedMail?.attachments?.map((item, idx) => (
-              <AttachmentItem
-                idx={idx}
-                key={idx}
-                url={item?.download?.url}
-                name={item?.filename}
-                randomBits={randomBits}
-              />
-            ))}
-          </div>
-        )}
-        {/* 回复按钮 */}
-        <button
-          className="flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
-          onClick={handleReply}>
-          {/* <Icon url={sendMailIcon} /> */}
-          <span className="">Reply</span>
-        </button>
+        <div>
+          {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
+            <div className="flex">
+              {/* 文件s */}
+              {selectedMail?.attachments?.map((item, idx) => (
+                <AttachmentItem
+                  idx={idx}
+                  key={idx}
+                  url={item?.download?.url}
+                  name={item?.filename}
+                  randomBits={randomBits}
+                />
+              ))}
+            </div>
+          )}
+          {/* 回复按钮 */}
+          <button
+            className="flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
+            onClick={handleReply}>
+            {/* <Icon url={sendMailIcon} /> */}
+            <span className="">Reply</span>
+          </button>
+        </div>
+
       </div>
+      <Modal
+        title="warning"
+        content="You are about to leave our site."
+        isOpen={isOpen}
+        onClose={closeModal}
+        onConfirm={handleConfirm}
+      />
+
     </div>
+
   );
 }

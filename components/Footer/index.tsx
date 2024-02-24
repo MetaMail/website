@@ -42,10 +42,10 @@ export default function Footer() {
         <div className="w-370 text-3xl font-light leading-tight ">Create And Use Your Crypto Email</div>
       </div>
       <div className="flex flex-row justify-between gap-30 font-poppins absolute bottom-83 right-130 zIndex-9">
-        <a className="font-extrabold text-ml pt-10" href="https://docs.google.com/document/d/1K9H3oqeot-SJ1tzCjLxUe9Iu0RySxmMdomsvjZU51iI/edit">
+        <a className="font-extrabold text-ml pt-10" target='_blank' href="https://docs.google.com/document/d/18dDLwFBFJkEdpAzVbkrHk1lYwAOqHbkXqKrahIQbOSU/edit?usp=sharing">
           FAQs
         </a>
-        <Link className="font-extrabold text-ml pr-20 pt-10" href="https://mirror.xyz/metamailink.eth">
+        <Link className="font-extrabold text-ml pr-20 pt-10" target='_blank' href="https://mirror.xyz/metamailink.eth">
           Blog
         </Link>
         <div className="flex flex-col gap-23">
@@ -55,8 +55,8 @@ export default function Footer() {
             ))}
           </div>
           <div className="font-normal text-[20px] flex flex-row justify-between gap-30 text-[#3E3E3E] font-poppins">
-            <Link href="https://docs.google.com/document/d/1saH6h8sMjIUtojf3DPu2yaYYzn5pv5ZDKIHE9JHkMdU/edit?usp=sharing">Terms of Service</Link>
-            <Link href=" https://docs.google.com/document/d/1y3EfVHCieAMXSxyZJbQJhAjZyf45XRMVnAy78OZbBbE/edit?usp=sharing">Privacy</Link>
+            <Link target='_blank' href="https://docs.google.com/document/d/1saH6h8sMjIUtojf3DPu2yaYYzn5pv5ZDKIHE9JHkMdU/edit?usp=sharing">Terms of Service</Link>
+            <Link target='_blank' href="https://docs.google.com/document/d/1y3EfVHCieAMXSxyZJbQJhAjZyf45XRMVnAy78OZbBbE/edit?usp=sharing">Privacy</Link>
           </div>
         </div>
       </div>
