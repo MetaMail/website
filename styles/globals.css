@@ -256,11 +256,11 @@ button:disabled {
 }
 .fadeInAnima .listContainer{
   animation-name: fadeIn;
-  animation-duration: 1s;
+  animation-duration: 0.2s;
   animation-fill-mode: forwards;
 }
 .fadeOutAnima .listContainer{
   animation-name: fadeOut;
-  animation-duration: 1s;
+  animation-duration: 0.2s;
   animation-fill-mode: forwards;
 }

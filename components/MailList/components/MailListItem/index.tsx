@@ -135,7 +135,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={` overflow-y-visible py-6 flex flex-row px-12 items-center group h-30 cursor-pointe transition-colors  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10 hover:dark:bg-base-300 '
+          className={` overflow-y-visible py-6 flex flex-row px-12 items-center group h-36 cursor-pointe transition-colors  ${mail.selected ? `bg-base-300  bg-opacity-50` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10 hover:dark:bg-base-300 '
             }`}>
           <div className="flex flex-row gap-12">
             <input
