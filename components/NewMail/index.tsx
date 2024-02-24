@@ -7,7 +7,7 @@ import Image from 'next/image';
 import MailBoxContext from 'context/mail';
 import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn, DarkEditorModules } from 'lib/constants';
 import { useNewMailStore, useMailListStore, useThemeStore, useIsInputShow, useMailDetailStore } from 'lib/zustand-store';
-import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent, fileType } from 'lib/utils';
+import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent, fileType, originFileName } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
@@ -510,19 +510,18 @@ export default function NewMail() {
                   className="text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <div className="max-w-[200px] truncate"> {attr.filename}</div>
-
-                  {attr.filename}
+                  <span className="max-w-[150px] truncate"> {originFileName(attr.filename)}</span><span>.{fileType(attr.filename)}</span>
                   <span>
                     {attr.uploadProcess && !attr.attachment_id ? (
                       <div className="flex items-center">
-                        <progress
+                        {/* <progress
                           className="progress progress-success w-56"
                           value={percentTransform(attr.uploadProcess)}
-                          max="100"></progress>
-                        <span color="text-[#1F2937]">
+                          max="100"></progress> */}
+                        <span className="loading loading-spinner loading-xs"></span>
+                        {/* <span color="text-[#1F2937]">
                           {percentTransform(attr.uploadProcess) + '%'}
-                        </span>
+                        </span> */}
                       </div>
                     ) : (
                       ''

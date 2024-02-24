@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
-import { convertWordArrayToUint8Array, fileType } from 'lib/utils';
+import { convertWordArrayToUint8Array, fileType, originFileName } from 'lib/utils';
 import { decryptMailAttachment } from 'lib/encrypt';
 import Image from 'next/image';
 type AttachmentItemProps = {
@@ -51,9 +51,10 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
   };
   return (
     <div className='gap-10'>
-      <div onClick={handleClick} className="mb-20 mr-10 flex text-[#878787] text-[14px] px-12 py-12 bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer  items-center gap-8">
+      <div title={name} onClick={handleClick} className="mb-20 mr-10 flex text-[#878787] text-[14px] px-12 py-12  bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer  items-center gap-8">
         {fileTypeSvg(fileType(name).toLocaleUpperCase())}
-        <span className='max-w-[80px] break-all overflow-ellipsis line-clamp-2'> {name ?? `attachment${idx}`} </span>
+        <span className="max-w-[150px] truncate"> {originFileName(name ?? `attachment${idx}`)}</span>
+        <span>.{fileType((name ?? `attachment${idx}`))}</span>
       </div>
     </div>
   );
