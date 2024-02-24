@@ -1,5 +1,6 @@
 import Image, { StaticImageData } from 'next/image';
 import suneal from 'assets/suneal.svg';
+import mvs from 'assets/mvs.jpg';
 import colin from 'assets/colin.png';
 import fiveStar from 'assets/5star.png';
 import Carousel from '../Carousel'
@@ -36,16 +37,16 @@ const slides = [
         content={'MetaMail is the most secure mail application with end-to-end encryption.'}
       />
       <Review
-        imgSrc={suneal}
-        role={'suneal'}
-        role2={'dev @ WeChat'}
-        content={'MetaMail is the most secure mail application with end-to-end encryption.'}
+        imgSrc={mvs}
+        role={'mvs'}
+        role2={'UI designer'}
+        content={'We designed Metamail with the hope that users feel their data is valued, the internet is trustworthy, and they are empowered.'}
       />
       <Review
         imgSrc={colin}
-        role={'colin'}
-        role2={'dev @ scroll.io'}
-        content={'MetaMail is an amazing product, web3 style, and it evolves cautiously'}
+        role={'Colin'}
+        role2={'protocol co-designer'}
+        content={'MetaMail protocol: Secure, verifiable, interoperable, evolving towards more trustless.'}
       />
     </div>
   }, {
@@ -57,16 +58,16 @@ const slides = [
         content={'MetaMail is the most secure mail application with end-to-end encryption.'}
       />
       <Review
-        imgSrc={suneal}
-        role={'suneal'}
-        role2={'dev @ WeChat'}
-        content={'MetaMail is the most secure mail application with end-to-end encryption.'}
+        imgSrc={mvs}
+        role={'mvs'}
+        role2={'UI designer'}
+        content={'We designed Metamail with the hope that users feel their data is valued, the internet is trustworthy, and they are empowered.'}
       />
       <Review
         imgSrc={colin}
-        role={'colin'}
-        role2={'dev @ scroll.io'}
-        content={'MetaMail is an amazing product, web3 style, and it evolves cautiously'}
+        role={'Colin'}
+        role2={'protocol co-designer'}
+        content={'MetaMail protocol: Secure, verifiable, interoperable, evolving towards more trustless.'}
       />
     </div>
   },
