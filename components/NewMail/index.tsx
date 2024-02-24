@@ -407,7 +407,7 @@ export default function NewMail() {
       <header className="flex justify-between">
         <div className="flex items-center">
           {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
-          <span className=" text-[22px] font-['PoppinsBold'] text-[#000] dark:text-[#fff]">New Message</span>
+          <span className=" text-[22px] font-['Poppins'] font-extrabold text-[#000] dark:text-[#fff]">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
           {/* 放大/缩小 */}
@@ -503,16 +503,16 @@ export default function NewMail() {
             />
           )}
           {/* 上传成功得文件列表 */}
-          <ul className="flex gap-10">
+          <ul className="flex gap-10 flex-wrap">
             {selectedDraft.attachments?.map((attr, index) => (
               <li key={index} className="flex text-[#878787]">
                 <div
                   className="text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center gap-8"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <span className="max-w-[150] break-all overflow-ellipsis line-clamp-2">
-                    {attr.filename}
-                  </span>
+                  <div className="max-w-[200px] truncate"> {attr.filename}</div>
+
+                  {attr.filename}
                   <span>
                     {attr.uploadProcess && !attr.attachment_id ? (
                       <div className="flex items-center">

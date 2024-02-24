@@ -222,7 +222,6 @@ export default function MailList() {
         list.length > 0 ? (<div className="flex flex-row w-full justify-between px-12 box-border py-9 pt-0">
           <div className="flex flex-row space-x-10 items-center">
             {/* 全选按钮 */}
-
             <input
               type="checkbox"
               title="Select"
@@ -239,7 +238,7 @@ export default function MailList() {
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center">
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
-                <span className="text-[14px] text-[#707070]">{filter}</span>
+                <span className="text-[14px] text-[#B3B3B3]">{filter}</span>
               </label>
 
               <ul
@@ -276,12 +275,10 @@ export default function MailList() {
                 );
               })}
             </div>
-
           </div>
           {/* 分页 */}
           <div className="flex items-center flex-row justify-end space-x-8  text-[#7F7F7F]">
             {/* <span className="text-md">total page: {pageNum}</span> */}
-
             <button
               disabled={pageIndex === 1}
               className="w-18"
@@ -314,12 +311,14 @@ export default function MailList() {
       }
 
 
-      <div className={`flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
-        {loading ? <LoadingRing /> : list.length ? (
-          list.map((item, index) => {
-            // console.log(`${item.message_id}${item.mailbox}`)
+      <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
+        {/* {} */}
+        {loading && <LoadingRing />}
+        {list.length ? (<div className='listContainer'>
+          {list.map((item, index) => {
             return (
               <MailListItem
+                loading={loading}
                 key={`${item.message_id}${item.mailbox}`}
                 mail={item}
                 onSelect={() => {
@@ -328,9 +327,12 @@ export default function MailList() {
               />
             );
           })
-        ) : (
-          <Image src={empty} alt="No Mail" className="w-auto h-136" />
-        )}
+          }
+        </div>)
+          : (
+            <Image src={empty} alt="No Mail" className="w-auto h-136" />
+          )
+        }
       </div>
     </div >
   );

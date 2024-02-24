@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2023-11-03 16:07:51
- * @LastEditTime: 2024-01-12 14:22:21
+ * @LastEditTime: 2024-02-24 14:14:41
  * @LastEditors: 韦玮莹
  * @Description: In User Settings Edit
  * @FilePath: \website\components\NewMail\components\Dropzone\index.tsx
@@ -32,7 +32,7 @@ const UploadComponent = ({ onChange, isExtend }: IDropzone) => {
           <input {...getInputProps()} />
           {
             isExtend && (
-              <div className="dark:text-[#fff] mb-20 flex-col text-[16px] text-[#1F2937] font-['PoppinsBold'] w-full h-[120px] border-2 border-dashed leading-24 border-dashed-[#E5E7EB]  flex justify-center items-center">
+              <div className="dark:text-[#fff] mb-20 flex-col text-[16px] text-[#1F2937] font-['Poppins'] font-[600] w-full h-[120px] border-2 border-dashed leading-24 border-dashed-[#E5E7EB]  flex justify-center items-center">
                 <p>Drop your files here or <span> browse </span></p>
                 <p className='text-[#9CA3AF] leading-[20px] mt-5'>Maximum size: 50MB</p>
               </div>
