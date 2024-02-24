@@ -507,28 +507,19 @@ export default function NewMail() {
             {selectedDraft.attachments?.map((attr, index) => (
               <li key={index} className="flex text-[#878787]">
                 <div
-                  className="text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center gap-8"
+                  className="text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <span className="max-w-[150px] truncate"> {originFileName(attr.filename)}</span><span>.{fileType(attr.filename)}</span>
-                  <span>
-                    {attr.uploadProcess && !attr.attachment_id ? (
-                      <div className="flex items-center">
-                        {/* <progress
-                          className="progress progress-success w-56"
-                          value={percentTransform(attr.uploadProcess)}
-                          max="100"></progress> */}
-                        <span className="loading loading-spinner loading-xs"></span>
-                        {/* <span color="text-[#1F2937]">
-                          {percentTransform(attr.uploadProcess) + '%'}
-                        </span> */}
+                  <p className='ml-8 flex justify-start items-center'><span className="max-w-[150px] truncate">{originFileName(attr.filename)}</span><span>&nbsp;.{fileType(attr.filename)}</span></p>
+                  <p>
+                    {attr.uploadProcess && !attr.attachment_id && (
+                      <div className={`ml-8 flex items-center ${attr.uploadProcess && !attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
+                        <span className="loading loading-dots loading-xs"></span>
                       </div>
-                    ) : (
-                      ''
                     )}
-                  </span>
-
-                  <button onClick={() => removeAttachment(index)}>
+                  </p>
+                  {/* TODO:正在上传不能删除 */}
+                  <button className={`ml-8 ${attr.uploadProcess && attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}`} onClick={() => removeAttachment(index)}>
                     <Icon url={trashCan} title="trashCan" className="w-16 h-16" />
                   </button>
                 </div>
