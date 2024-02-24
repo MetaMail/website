@@ -86,7 +86,7 @@ export default function Welcome() {
   }, [address]);
 
   return (
-    <div className="!font-[spaceGrotesk] flex flex-col mx-auto max-w-[2000px]">
+    <div className="!font-[spaceGrotesk] flex flex-col mx-auto max-w-[3000px]">
       <Head>
         <title>MetaMail</title>
       </Head>
