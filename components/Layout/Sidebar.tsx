@@ -112,7 +112,7 @@ export default function Sidebar() {
             {/* More */}
             <div className={`rounded-5 flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 transition-colors duration-75 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
               {/* <Image src={item?.logo} alt={item?.title} className={`w-18 h-18 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} /> */}
-              <div className={`transition-all duration-300 ease-in-out transform ${item.childrenShow ? ' rotate-180  ' : 'rotate-0'}`}>{renderLogo(item.logo, filterType === Number(item.key))}</div>
+              <div className={`transition-all duration-200 ease-in-out transform ${item.childrenShow ? ' rotate-180  ' : 'rotate-0'}`}>{renderLogo(item.logo, filterType === Number(item.key))}</div>
               <span className='leading-[36px] text-[#54545499] dark:text-[#E9E9E9]'>{item.title}</span>
               {item.childrenShow}
             </div>

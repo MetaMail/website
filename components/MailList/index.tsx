@@ -17,7 +17,7 @@ import {
   trash, read, starred, markUnread, spam, filter as filterIcon, update
 } from 'assets/icons';
 
-const MailListFilters = ['All', 'Read', 'Unread', 'Encrypted', 'UnEncrypted'] as const;
+const MailListFilters = ['All', 'Read', 'Unread', 'Plain', 'Encrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
 export default function MailList() {
@@ -184,14 +184,14 @@ export default function MailList() {
           item.selected = item.read === ReadStatusTypeEn.Unread;
         });
         break;
+      case 'Plain':
+        list.map(item => {
+          item.selected = item.meta_type === MetaMailTypeEn.Plain;
+        });
+        break;
       case 'Encrypted':
         list.map(item => {
           item.selected = item.meta_type === MetaMailTypeEn.Encrypted;
-        });
-        break;
-      case 'UnEncrypted':
-        list.map(item => {
-          item.selected = item.meta_type === MetaMailTypeEn.Plain;
         });
         break;
       default:
@@ -257,7 +257,7 @@ export default function MailList() {
                 })}
               </ul>
             </div>
-            <div className={`transition-all duration-300 ease-in-out transform flex gap-5 border-l-2 border-[#EFEFEF] pl-10 ${getSelectedList().length > 0 ? 'scale-100' : 'scale-0'}`}>
+            <div className={`transition-all duration-200 ease-in-out transform flex gap-5 border-l-2 border-[#EFEFEF] pl-10 ${getSelectedList().length > 0 ? 'scale-100' : 'scale-0'}`}>
               {/* 筛选旁边的小icon */}
               {!selectedMail && mailActions.map((item, index) => {
                 return (
