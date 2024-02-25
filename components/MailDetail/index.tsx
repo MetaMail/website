@@ -37,7 +37,7 @@ export default function MailDetail() {
   const { createDraft, getMailStat, getRandomBits } = useContext(MailBoxContext);
   const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
   const { list, setList } = useMailListStore();
-
+  const [isMoreExtend, setIsMoreExtend] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLoad = async (showLoading = true) => {
@@ -185,12 +185,21 @@ export default function MailDetail() {
         handleReply();
       },
     },
-    {
-      src: mailMore,
-      title: 'More',
-      handler: () => { },
-    },
+    // {
+    //   src: mailMore,
+    //   title: 'More',
+    //   options: [
+    //     {
+    //       title: 'download emil',
+    //       handler: () => { },
+    //     }
+    //   ],
+
+    // },
   ];
+  const handleDownload = () => {
+    selectedMail.download?.url && window.open(selectedMail.download.url)
+  }
 
   const changeInnerHTML = (data: IMailContentItem) => {
     if (data.part_html) {
@@ -276,7 +285,7 @@ export default function MailDetail() {
     };
   }, [selectedMail]);
 
-  const handleClick = (event) => {
+  const handleClick = (event: any) => {
     event.preventDefault();
     const href = event.target?.attributes?.href?.value;
     // openModal()
@@ -295,7 +304,7 @@ export default function MailDetail() {
           }`}>
         <div>
           <header className="flex flex-col justify-between w-full mb-22">
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full ">
               <div className="flex gap-10">
                 {topIcons.map((item, index) => {
                   return (
@@ -327,23 +336,24 @@ export default function MailDetail() {
             </div>
             {/* 邮件详情 */}
             <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '( no subject )'}</h1>
-            <div className="flex justify-between">
-              <div className="flex gap-20 items-center">
+            <div className="flex justify-between ">
+              <div className="flex gap-20 items-start">
                 <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
                 <div className="">
                   <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
                   <div className="flex gap-3">
                     to:
-                    <div className="flex-1 omit ml-4">
+                    <div className="flex-1  ml-4">
                       {/* {selectedMail?.mail_to[0]?.address} */}
                       {renderTo(selectedMail?.mail_to)}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-6 stroke-current text-[#B3B3B3] max-w-[160]">
+              <div className="flex shrink-0 flex-col gap-6 stroke-current text-[#B3B3B3] max-w-[160]">
                 <div className="text-[14px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
                 <div className="flex gap-10 justify-end">
+                  {/* 收藏，转发，更多 */}
                   {rightIcons.map((item, index) => {
                     return (
                       <Icon
@@ -355,6 +365,30 @@ export default function MailDetail() {
                       />
                     );
                   })}
+                  <div className={`dropdown dropdown-bottom }`}>
+                    {/* 筛选漏斗icon */}
+                    <label tabIndex={0} className="cursor-pointer flex items-center">
+                      <Icon
+                        url={mailMore}
+                        title={'More'}
+                        onClick={() => setIsMoreExtend(!isMoreExtend)}
+                        className="w-16 h-16 self-center"
+                      />
+                    </label>
+
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content right-0 z-[1] menu p-2 shadow bg-base-100 rounded-5 w-150">
+                      <li
+                        onClick={() => {
+                          handleDownload()
+                        }}
+                        title='download emil'>
+                        <a className='text-[#333]'>download emil</a>
+                      </li>
+
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -400,7 +434,7 @@ export default function MailDetail() {
 
       </div>
       <Modal
-        title="warning"
+        title="Warning!"
         content="You are about to leave our site."
         isOpen={isOpen}
         onClose={closeModal}

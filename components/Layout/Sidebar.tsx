@@ -26,7 +26,8 @@ import MoreActive from 'components/svg/menu/MoreActive'
 import Deleted from 'components/svg/menu/Deleted';
 import DeleteActive from 'components/svg/menu/DeleteActive'
 import Spam from 'components/svg/menu/Spam';
-import SpamActive from 'components/svg/menu/SpamActive'
+import SpamActive from 'components/svg/menu/SpamActive';
+import { dispatchEvent } from 'lib/utils';
 export default function Sidebar() {
   const { isDark } = useThemeStore()
   useEffect(() => {
@@ -36,10 +37,10 @@ export default function Sidebar() {
   const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();
 
   function handleChangeFilter(filter: FilterTypeEn) {
-    console.log('filter', filter)
     // 如果不是Draft,隐藏编辑框？
     setFilterType(filter);
     resetPageIndex();
+    filterType === filter && dispatchEvent('refresh-list', { showLoading: true })
   }
 
   async function handleClickNewMail() {
