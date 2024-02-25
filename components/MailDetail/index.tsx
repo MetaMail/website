@@ -285,7 +285,7 @@ export default function MailDetail() {
     };
   }, [selectedMail]);
 
-  const handleClick = (event) => {
+  const handleClick = (event: any) => {
     event.preventDefault();
     const href = event.target?.attributes?.href?.value;
     // openModal()
