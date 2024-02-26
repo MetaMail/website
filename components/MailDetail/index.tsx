@@ -13,7 +13,7 @@ import { decryptMailContent } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
 import LoadingRing from 'components/LoadingRing';
-import Modal from '../Common/Modal'
+import Modal from '../Common/Modal';
 import {
   spam,
   extend,
@@ -343,7 +343,7 @@ export default function MailDetail() {
                   <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
                   <div className="flex gap-3">
                     to:
-                    <div className="flex-1  ml-4">
+                    <div className="flex-1  ml-4 break-all">
                       {/* {selectedMail?.mail_to[0]?.address} */}
                       {renderTo(selectedMail?.mail_to)}
                     </div>

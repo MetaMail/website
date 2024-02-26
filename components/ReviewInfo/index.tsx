@@ -3,7 +3,7 @@ import suneal from 'assets/suneal.svg';
 import mvs from 'assets/mvs.jpg';
 import colin from 'assets/colin.png';
 import fiveStar from 'assets/5star.png';
-import Carousel from '../Carousel'
+import Carousel from '../Carousel';
 interface IReview {
   imgSrc: string | StaticImageData;
   content: string;
@@ -76,9 +76,6 @@ const slides = [
 
 export default function ReviewInfo() {
   return (
-    //
-    // <div >
-    <Carousel slides={slides} autoplayInterval={3000} />
-    // </div>
+    <Carousel slides={slides} autoplayInterval={5000} />
   );
 }
