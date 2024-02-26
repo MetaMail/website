@@ -54,7 +54,7 @@ export default function MailDetail() {
       if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
         if (currentMailId !== _mail.message_id) return;
         randomBits = await getRandomBits('detail');
-        console.log('解密出来', _mail)
+
         if (_mail?.part_html) {
           _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
 
@@ -207,7 +207,6 @@ export default function MailDetail() {
       el.innerHTML = data.part_html;
       {
         data?.attachments?.map(item => {
-          //imgReplace = document.getElementById(item.filename);
           el.querySelectorAll('img').forEach(function (element) {
             if (element.alt == item.filename) {
               element.src = item.download.url;
@@ -251,7 +250,7 @@ export default function MailDetail() {
   }, [selectedMail.message_id]);
   const renderTo = (list: IPersonItem[]) => {
     return list.map((i: IPersonItem) => {
-      return (<span>{i.address ? i.address : i.name}；</span>)
+      return (<span key={i.address}>{i.address ? i.address : i.name}；</span>)
     })
   }
   const [isOpen, setIsOpen] = useState(false);

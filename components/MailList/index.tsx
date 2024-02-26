@@ -38,7 +38,7 @@ export default function MailList() {
   const inputCheckBoxRef = useRef<HTMLInputElement>();
 
   const handleFilterChange = (currentFilter: MailListFiltersType) => {
-    // console.log('handleFilterChange', currentFilter)
+
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
@@ -134,10 +134,16 @@ export default function MailList() {
   };
   // 选中某一条邮件
   const handleSelectItem = (item: MailListItemType) => {
+    // console.log('选中某一条邮件', filter, item.selected)
+    if (filter && item.selected) {
+      // 之前是选中状态，取消选中,之后把filter置空
+      setFilter(null)
+    }
     item.selected = !item.selected;
-    console.log(list)
+
     setList([...list]);
     setSelectedAll(list.length && list.every(item => item.selected));
+
   };
   // 点击全选
   const handleSelectedAllChange = () => {
@@ -147,7 +153,11 @@ export default function MailList() {
     setList([...list]);
     setSelectedAll(!selectedAll);
   };
-
+  // selectedAll
+  useEffect(() => {
+    if (selectedAll) setFilter('All')
+  }, [selectedAll])
+  //  list
   useEffect(() => {
     if (list.length) {
       const selectedListNum = getSelectedList().length;
@@ -156,24 +166,43 @@ export default function MailList() {
       setSelectedAll(list.length && list.every(item => item.selected));
     }
   }, [list]);
+
+  // 遍历list后反填入filter
+  const isAllFilter = () => {
+    const selectList = list.filter(item => item.selected)
+    // console.log('selectList', selectList)
+    if (list.every(item => item.selected)) {
+      setFilter('All')
+    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Read)) {
+      setFilter('Read')
+    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
+      setFilter('Unread')
+    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
+      setFilter('Plain')
+    } else if (selectList.every(item => item.meta_type === MetaMailTypeEn.Encrypted)) {
+      setFilter('Encrypted')
+    }
+  }
+  useEffect(() => { if (filter) isAllFilter() }, [filter, list])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
+    setFilter(null)
   }, [pageIndex, filterType, isSendSuccess]);
-
+  //  filter
   useEffect(() => {
-    // console.log('执行了')
     switch (filter) {
       case 'All':
         list.map(item => {
           item.selected = true;
         });
+        setSelectedAll(true)
         break;
-      case null:
-        list.map(item => {
-          item.selected = false;
-        });
-        break;
+      // case null:
+      //   list.map(item => {
+      //     item.selected = false;
+      //   });
+      //   break;
       case 'Read':
         list.map(item => {
           item.selected = item.read === ReadStatusTypeEn.Read;
@@ -199,8 +228,9 @@ export default function MailList() {
     }
     setList([...list]);
     setSelectedAll(list.length && list.every(item => item.selected));
-  }, [filter]);
 
+  }, [filter]);
+  //  filterType
   useEffect(() => {
     setFilter(null);
     const onRefresh: (e: Event) => Promise<void> = async event => {
