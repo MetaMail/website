@@ -177,7 +177,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             ) : (
               // Inbox
               <div title={getMailFrom(mail)}>
-                <span className={`w-[226px]  max-w-[226px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? 'font-[400]' : ''}`} >
+                <span className={`w-[226px]  max-w-[226px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? '!font-[400]' : ''}`} >
                   {getMailFrom(mail)}
                 </span>
               </div>
