@@ -48,7 +48,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       return mail.mail_from.name;
     } else return getShowAddress(mail.mail_from.address)
   };
-
+  // 收藏/取消收藏 已读/未读操作的时候会执行
   const handleChangeMailStatus = async (options: IMailChangeOptions) => {
     console.log('handleChangeMailStatus');
     try {
@@ -263,7 +263,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
                 {mail.subject || '( no subject )'}
               </span>
-              <Dot color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
+              {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
             </p>
             <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#adadad] `}>{renderDigest(mail)}</p>
           </div>
