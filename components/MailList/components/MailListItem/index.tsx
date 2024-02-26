@@ -169,14 +169,14 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
           {/* inbox展示from;send展示同 */}
           {
             mail.mailbox === MailBoxTypeEn.Send ? (
-              <div className="tooltip" title={renderMailTo(mail).join(';')}>
+              <div title={renderMailTo(mail).join(';')}>
                 <span className={`w-[226px] max-w-[226px] ml-28  omit  text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
                 </span>
               </div>
 
             ) : (
               // Inbox
-              <div className="tooltip" title={getMailFrom(mail)}>
+              <div title={getMailFrom(mail)}>
                 <span className={`w-[226px]  max-w-[226px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? 'font-[400]' : ''}`} >
                   {getMailFrom(mail)}
                 </span>
@@ -187,12 +187,12 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
 
           {/* </div> */}
           {/* 邮件list-item */}
-          <div className="flex-1 flex items-center w-0 ml-28 omit items-center dark:text-base-content">
+          <div className="flex-1 flex items-center w-0 ml-28 omit  dark:text-base-content">
             {/* 加密邮件的小锁 */}
             {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
             {/* ReadStatusTypeEn.Read 已读 */}
             <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#707070] dark:text-[#A7A1A1]'}`}>{mail.subject || '( no subject )'}</span>
-            <span className="pt-4 pl-2 pr-7 leading-[initial] ">{'-'}</span>
+            <span className="pt-4 px-7 leading-[initial] ">{'-'}</span>
             <span className={`min-w-0 flex-1 leading-[initial]  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#b3b3b3] '}`}>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
