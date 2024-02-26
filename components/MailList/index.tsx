@@ -38,7 +38,7 @@ export default function MailList() {
   const inputCheckBoxRef = useRef<HTMLInputElement>();
 
   const handleFilterChange = (currentFilter: MailListFiltersType) => {
-    console.log('handleFilterChange', currentFilter)
+    // console.log('handleFilterChange', currentFilter)
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }

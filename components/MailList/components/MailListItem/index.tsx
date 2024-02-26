@@ -19,6 +19,7 @@ import { useMailListStore, useMailDetailStore, useNewMailStore, useThemeStore } 
 import MailBoxContext from 'context/mail';
 import Icon from 'components/Icon';
 import Dot from 'components/Dot';
+import { Lock } from 'components/svg/index'
 import { favorite, markFavorite, trash, markUnread, read, checkboxSvg, checkboxedSvg, checkboxDark, favoriteDark } from 'assets/icons';
 
 interface IMailItemProps {
@@ -49,7 +50,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
   };
 
   const handleChangeMailStatus = async (options: IMailChangeOptions) => {
-    console.log('handleChangeMailStatus')
+    console.log('handleChangeMailStatus');
     try {
       await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
       // 当列表长度=1，操作去掉收藏，把收藏列表清空掉
@@ -186,12 +187,13 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
 
           {/* </div> */}
           {/* 邮件list-item */}
-          <div className="flex-1 w-0 ml-28 omit dark:text-base-content">
-            <Dot size={7} color={mail.meta_type === MetaMailTypeEn.Encrypted ? '#006AD4' : 'transparent'} />
+          <div className="flex-1 flex items-center w-0 ml-28 omit items-center dark:text-base-content">
+            {/* 加密邮件的小锁 */}
+            {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
             {/* ReadStatusTypeEn.Read 已读 */}
-            <span className={`ml-8  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#707070] dark:text-[#A7A1A1]'}`}>{mail.subject || '( no subject )'}</span>
-            <span className="pt-4 pl-2 pr-7 ">{'-'}</span>
-            <span className={`min-w-0 flex-1  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#b3b3b3] '}`}>{renderDigest(mail)}</span>
+            <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#707070] dark:text-[#A7A1A1]'}`}>{mail.subject || '( no subject )'}</span>
+            <span className="pt-4 pl-2 pr-7 leading-[initial] ">{'-'}</span>
+            <span className={`min-w-0 flex-1 leading-[initial]  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#b3b3b3] '}`}>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
@@ -217,7 +219,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
                 title={mail.read === ReadStatusTypeEn.Read ? 'Read' : 'Unread'}
                 className="ml-12">
                 <Image
-                  src={mail.read === ReadStatusTypeEn.Read ? markUnread : read}
+                  src={mail.read === ReadStatusTypeEn.Read ? read : markUnread}
                   alt=""
                   className="scale-125"
                 />

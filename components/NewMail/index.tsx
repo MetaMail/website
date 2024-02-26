@@ -460,7 +460,7 @@ export default function NewMail() {
           <input
             type="text"
             placeholder=""
-            className="flex box-border h-37 pl-[10px] py-4 flex-1 bg-[#0700200A] dark:bg-[#B9B9B90A] rounded-[8px] text-[#000000] dark:text-[#fff] focus:outline-none "
+            className="flex box-border h-37 leading-[39px]  pl-[10px] py-4 flex-1 bg-[#0700200A] dark:bg-[#B9B9B90A] rounded-[8px] text-[#000000] dark:text-[#fff] focus:outline-none "
             defaultValue={selectedDraft.subject}
             ref={subjectRef}
             onChange={throttle(() => {
