@@ -512,14 +512,14 @@ export default function NewMail() {
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
                   <p className='ml-8 flex justify-start items-center'><span className="max-w-[150px] truncate">{originFileName(attr.filename)}</span><span>&nbsp;.{fileType(attr.filename)}</span></p>
                   <p>
-                    {attr.uploadProcess && !attr.attachment_id && (
-                      <div className={`ml-8 flex items-center ${attr.uploadProcess && !attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
+                    {!attr.attachment_id && (
+                      <div className={`ml-8 flex items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
                         <span className="loading loading-dots loading-xs"></span>
                       </div>
                     )}
                   </p>
                   {/* TODO:正在上传不能删除 */}
-                  <button className={`ml-8 ${attr.uploadProcess && attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}`} onClick={() => removeAttachment(index)}>
+                  <button className={`ml-8 ${attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}`} onClick={() => removeAttachment(index)}>
                     <Icon url={trashCan} title="trashCan" className="w-16 h-16" />
                   </button>
                 </div>
