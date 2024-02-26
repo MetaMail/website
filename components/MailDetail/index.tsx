@@ -220,7 +220,7 @@ export default function MailDetail() {
   };
 
   const getMailFrom = (mail: IMailContentItem): string => {
-    return mail.mail_from?.name && mail.mail_from.name.length > 0 ? mail.mail_from.name : mail.mail_from.address;
+    return mail.mail_from?.name && mail.mail_from.name.length > 0 ? `${mail.mail_from.name} <${mail.mail_from.address}>` : mail.mail_from.address;
   };
 
   const handleReply = () => {
@@ -335,7 +335,7 @@ export default function MailDetail() {
               </div>
             </div>
             {/* 邮件详情 */}
-            <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '( no subject )'}</h1>
+            <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '(no subject)'}</h1>
             <div className="flex justify-between ">
               <div className="flex gap-20 items-start">
                 <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
