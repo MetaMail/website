@@ -177,7 +177,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             ) : (
               // Inbox
               <div title={getMailFrom(mail)}>
-                <span className={`w-[226px]  max-w-[226px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? 'font-[400]' : ''}`} >
+                <span className={`w-[226px]  max-w-[226px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? '!font-[400]' : ''}`} >
                   {getMailFrom(mail)}
                 </span>
               </div>
@@ -189,11 +189,11 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
           {/* 邮件list-item */}
           <div className="flex-1 flex items-center w-0 ml-28 omit  dark:text-base-content">
             {/* 加密邮件的小锁 */}
-            {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
+            {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Unread ? '#333333' : '#b3b3b3'} />}</span>}
             {/* ReadStatusTypeEn.Read 已读 */}
             <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#707070] dark:text-[#A7A1A1]'}`}>{mail.subject || '(no subject)'}</span>
             <span className=" px-7 leading-[initial] ">{'-'}</span>
-            <span className={`min-w-0 flex-1 leading-[initial]  dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#b3b3b3] '}`}>{renderDigest(mail)}</span>
+            <span className={`min-w-0 flex-1 leading-[15px] truncate dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333333]  ' : 'text-[#b3b3b3] '}`}>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
@@ -263,9 +263,9 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
                 {mail.subject || '(no subject)'}
               </span>
-              {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
+              {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Read ? '#adadad' : '#333'} />}</span>}
             </p>
-            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#adadad] `}>{renderDigest(mail)}</p>
+            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#adadad]  leading-[15px]`}>{renderDigest(mail)}</p>
           </div>
         </div >
       )
