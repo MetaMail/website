@@ -49,33 +49,34 @@ const slides = [
         content={'MetaMail protocol: Secure, verifiable, interoperable, evolving towards more trustless.'}
       />
     </div>
-  }, {
-    content: <div className="swiper relative h-full lg:flex  flex-row   mx-auto  justify-around z-10">
-      <Review
-        imgSrc={suneal}
-        role={'Suneal'}
-        role2={'dev @ WeChat'}
-        content={'MetaMail is the most secure mail application with end-to-end encryption.'}
-      />
-      <Review
-        imgSrc={mvs}
-        role={'mvs'}
-        role2={'UI designer'}
-        content={'We designed Metamail with the hope that users feel their data is valued, the internet is trustworthy, and they are empowered.'}
-      />
-      <Review
-        imgSrc={colin}
-        role={'Colin'}
-        role2={'protocol co-designer'}
-        content={'MetaMail protocol: Secure, verifiable, interoperable, evolving towards more trustless.'}
-      />
-    </div>
   },
+  // {
+  //   content: <div className="swiper relative h-full lg:flex  flex-row   mx-auto  justify-around z-10">
+  //     <Review
+  //       imgSrc={suneal}
+  //       role={'Suneal'}
+  //       role2={'dev @ WeChat'}
+  //       content={'MetaMail is the most secure mail application with end-to-end encryption.'}
+  //     />
+  //     <Review
+  //       imgSrc={mvs}
+  //       role={'mvs'}
+  //       role2={'UI designer'}
+  //       content={'We designed Metamail with the hope that users feel their data is valued, the internet is trustworthy, and they are empowered.'}
+  //     />
+  //     <Review
+  //       imgSrc={colin}
+  //       role={'Colin'}
+  //       role2={'protocol co-designer'}
+  //       content={'MetaMail protocol: Secure, verifiable, interoperable, evolving towards more trustless.'}
+  //     />
+  //   </div>
+  // },
 ];
 
 
 export default function ReviewInfo() {
   return (
-    <Carousel slides={slides} autoplayInterval={5000} />
+    <Carousel slides={slides} autoplayInterval={5000000} />
   );
 }
