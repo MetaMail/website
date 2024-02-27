@@ -397,7 +397,7 @@ export default function MailDetail() {
             {
               <>
                 <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]`}>
-                  <div className='listContainer'>
+                  <div className='listContainer pl-[57px]'>
                     {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
                   </div>
                 </div>
@@ -422,13 +422,15 @@ export default function MailDetail() {
               ))}
             </div>
           )}
-          {/* 回复按钮 */}
-          <button
-            className="flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
-            onClick={handleReply}>
-            {/* <Icon url={sendMailIcon} /> */}
-            <span className="">Reply</span>
-          </button>
+          <div className='pl-[57px]'>
+            {/* 回复按钮 */}
+            <button
+              className=" flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
+              onClick={handleReply}>
+              {/* <Icon url={sendMailIcon} /> */}
+              <span className="">Reply</span>
+            </button>
+          </div>
         </div>
 
       </div>

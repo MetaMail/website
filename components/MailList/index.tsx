@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
@@ -16,7 +16,7 @@ import {
   checkboxSvg, checkboxedSvg,
   trash, read, starred, markUnread, spam, filter as filterIcon, update
 } from 'assets/icons';
-
+import { FixedSizeList } from 'react-window';
 const MailListFilters = ['All', 'Read', 'Unread', 'Plain', 'Encrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
@@ -244,6 +244,17 @@ export default function MailList() {
     };
   }, [filterType]);
 
+
+  const renderItem = useCallback(({ index, style }) => (
+    <MailListItem
+      loading={loading}
+      key={`${list[index].message_id}${list[index].mailbox}`}
+      mail={list[index]}
+      onSelect={() => {
+        handleSelectItem(list[index]);
+      }}
+    />
+  ), [list]);
   return (
     <div
       className={`flex flex-col h-full transition-all text-[14px] pt-28 overflow-y-scroll ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
@@ -342,20 +353,11 @@ export default function MailList() {
       <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
         {/* {} */}
         {loading && <LoadingRing />}
+
         {list.length ? (<div className='listContainer'>
-          {list.map((item, index) => {
-            return (
-              <MailListItem
-                loading={loading}
-                key={`${item.message_id}${item.mailbox}`}
-                mail={item}
-                onSelect={() => {
-                  handleSelectItem(item);
-                }}
-              />
-            );
-          })
-          }
+          <FixedSizeList height={36 * list.length} itemCount={list.length} itemSize={36} width={'100%'}>
+            {renderItem}
+          </FixedSizeList>
         </div>)
           : (
             <Image src={empty} alt="No Mail" className="w-auto h-136" />
