@@ -16,7 +16,7 @@ import {
   checkboxSvg, checkboxedSvg,
   trash, read, starred, markUnread, spam, filter as filterIcon, update
 } from 'assets/icons';
-import { FixedSizeList } from 'react-window';
+
 const MailListFilters = ['All', 'Read', 'Unread', 'Plain', 'Encrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
@@ -245,16 +245,7 @@ export default function MailList() {
   }, [filterType]);
 
 
-  const renderItem = useCallback(({ index, style }) => (
-    <MailListItem
-      loading={loading}
-      key={`${list[index].message_id}${list[index].mailbox}`}
-      mail={list[index]}
-      onSelect={() => {
-        handleSelectItem(list[index]);
-      }}
-    />
-  ), [list]);
+
   return (
     <div
       className={`flex flex-col h-full transition-all text-[14px] pt-28 overflow-y-scroll ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
@@ -355,9 +346,19 @@ export default function MailList() {
         {loading && <LoadingRing />}
 
         {list.length ? (<div className='listContainer'>
-          <FixedSizeList height={36 * list.length} itemCount={list.length} itemSize={36} width={'100%'}>
-            {renderItem}
-          </FixedSizeList>
+          {list.map(item => {
+            return (
+              <MailListItem
+                loading={loading}
+                key={`${item.message_id}${item.mailbox}`}
+                mail={item}
+                onSelect={() => {
+                  handleSelectItem(item);
+                }}
+              />
+            )
+          })
+          }
         </div>)
           : (
             <Image src={empty} alt="No Mail" className="w-auto h-136" />
