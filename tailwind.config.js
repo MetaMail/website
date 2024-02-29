@@ -60,7 +60,7 @@ module.exports = {
             }
           },
             fontFamily: {
-                poppins: ['Poppins'],
+                poppins: ['PoppinsSemiBold'],
                 spaceGrotesk: ['SpaceGrotesk'],
             },
             fontSize: {

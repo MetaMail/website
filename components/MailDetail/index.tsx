@@ -236,9 +236,21 @@ export default function MailDetail() {
       return match.replace('>', `style='color: #06c;text-decoration:underline'>`);
 
     });
-
+    return addTargetAttribute(result);
+  }
+  function addTargetAttribute(htmlString: string) {
+    const regex = /<a([^>]*)>/g;
+    const result = htmlString.replace(regex, (match, p1) => {
+      if (!p1.includes('target=')) {
+        return `<a${p1} target="_blank">`;
+      } else {
+        return match;
+      }
+    });
     return result;
   }
+
+
 
   useEffect(() => {
     currentMailId = selectedMail.message_id;
@@ -268,18 +280,19 @@ export default function MailDetail() {
   };
   useEffect(() => {
     // 获取所有包含 <a> 标签的元素
-    const anchorElements = document.querySelectorAll('a[rel="noopener noreferrer"]');
+    const anchorElements: HTMLElement | null = document.querySelector('#mailHtml');
+    const links: NodeListOf<HTMLAnchorElement> = anchorElements.querySelectorAll('a');
 
     // 为每个 <a> 标签添加点击事件处理函数
-    anchorElements.forEach(anchorElement => {
+    links.forEach(link => {
       // console.log(anchorElement);
-      anchorElement.addEventListener('click', handleClick);
+      link.addEventListener('click', handleClick);
     });
 
     // 移除事件监听器以避免内存泄漏
     return () => {
-      anchorElements.forEach(anchorElement => {
-        anchorElement.removeEventListener('click', handleClick);
+      links.forEach(link => {
+        link.removeEventListener('click', handleClick);
       });
     };
   }, [selectedMail]);
@@ -299,7 +312,7 @@ export default function MailDetail() {
     // 邮件详情
     <div>
       <div
-        className={`absolute right-0 justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+        className={`absolute right-0 justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['PoppinsSemiBold'] p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
           }`}>
         <div>
           <header className="flex flex-col justify-between w-full mb-22">
@@ -349,7 +362,7 @@ export default function MailDetail() {
                   </div>
                 </div>
               </div>
-              <div className="flex shrink-0 flex-col gap-6 stroke-current text-[#B3B3B3] max-w-[160]">
+              <div className="flex shrink-0 flex-col gap-6 stroke-current text-[#b2b2b2] max-w-[160]">
                 <div className="text-[14px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
                 <div className="flex gap-10 justify-end">
                   {/* 收藏，转发，更多 */}
@@ -397,7 +410,7 @@ export default function MailDetail() {
             {
               <>
                 <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]`}>
-                  <div className='listContainer pl-[57px]'>
+                  <div id="mailHtml" className='listContainer px-[57px]'>
                     {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
                   </div>
                 </div>
@@ -407,9 +420,9 @@ export default function MailDetail() {
         </div>
 
 
-        <div>
+        <div className=''>
           {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
-            <div className="flex">
+            <div className="flex pl-[57px]">
               {/* 文件s */}
               {selectedMail?.attachments?.map((item, idx) => (
                 <AttachmentItem

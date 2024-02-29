@@ -407,7 +407,7 @@ export default function NewMail() {
       <header className="flex justify-between">
         <div className="flex items-center">
           {/* <div className="w-6 h-24 bg-primary rounded-4" /> */}
-          <span className=" text-[22px] font-['Poppins'] font-extrabold text-[#000] dark:text-[#fff]">New Message</span>
+          <span className=" text-[22px] font-['PoppinsSemiBold'] font-extrabold text-[#000] dark:text-[#fff]">New Message</span>
         </div>
         <div className="flex gap-10 self-start">
           {/* 放大/缩小 */}
@@ -507,21 +507,23 @@ export default function NewMail() {
             {selectedDraft.attachments?.map((attr, index) => (
               <li key={index} className="flex text-[#878787]">
                 <div
-                  className="text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center"
+                  className="box-border text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
                   <p className='ml-8 flex justify-start items-center'><span className="max-w-[150px] truncate">{originFileName(attr.filename)}</span><span>&nbsp;.{fileType(attr.filename)}</span></p>
-                  <p>
-                    {!attr.attachment_id && (
-                      <div className={`ml-8 flex items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
-                        <span className="loading loading-dots loading-xs"></span>
-                      </div>
-                    )}
-                  </p>
-                  {/* TODO:正在上传不能删除 */}
-                  <button className={`ml-8 ${attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}`} onClick={() => removeAttachment(index)}>
-                    <Icon url={trashCan} title="trashCan" className="w-16 h-16" />
-                  </button>
+                  <div className='w-16 flex justify-start items-center'>
+                    <p>
+                      {!attr.attachment_id && (
+                        <div className={`ml-6 flex items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
+                          <span className="loading loading-spinner loading-xs"></span>
+                        </div>
+                      )}
+                    </p>
+                    {/* TODO:正在上传不能删除 */}
+                    <button className={`ml-6 ${attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}`} onClick={() => removeAttachment(index)}>
+                      <Icon url={trashCan} title="trashCan" className="w-16 h-16" />
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}

@@ -32,7 +32,7 @@ const UploadComponent = ({ onChange, isExtend }: IDropzone) => {
           <input {...getInputProps()} />
           {
             isExtend && (
-              <div className="dark:text-[#fff] mb-20 flex-col text-[16px] text-[#1F2937] font-['Poppins'] font-[600] w-full h-[120px] border-2 border-dashed leading-24 border-dashed-[#E5E7EB]  flex justify-center items-center">
+              <div className="dark:text-[#fff] mb-20 flex-col text-[16px] text-[#1F2937] font-['PoppinsSemiBold'] font-[600] w-full h-[120px] border-2 border-dashed leading-24 border-dashed-[#E5E7EB]  flex justify-center items-center">
                 <p>Drop your files here or <span> browse </span></p>
                 <p className='text-[#9CA3AF] leading-[20px] mt-5'>Maximum size: 50MB</p>
               </div>

@@ -28,7 +28,9 @@ export default function MailList() {
   // isDetailExtend : 详情是否占满全屏
   // selectedMail : 选中查看详情的邮件
   const { selectedMail, isDetailExtend } = useMailDetailStore();
-  // console.log('selectedMail', selectedMail)
+  useEffect(() => {
+    console.log(isDetailExtend)
+  }, [isDetailExtend])
   const [loading, setLoading] = useState(false);
 
   const [pageNum, setPageNum] = useState(0);
@@ -38,12 +40,48 @@ export default function MailList() {
   const inputCheckBoxRef = useRef<HTMLInputElement>();
 
   const handleFilterChange = (currentFilter: MailListFiltersType) => {
-
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
     if (filter === currentFilter) return;
     setFilter(currentFilter);
+    switch (currentFilter) {
+      case 'All':
+        list.map(item => {
+          item.selected = true;
+        });
+        setSelectedAll(true)
+        break;
+      case null:
+        list.map(item => {
+          item.selected = false;
+        });
+        break;
+      case 'Read':
+        list.map(item => {
+          item.selected = item.read === ReadStatusTypeEn.Read;
+        });
+        break;
+      case 'Unread':
+        list.map(item => {
+          item.selected = item.read === ReadStatusTypeEn.Unread;
+        });
+        break;
+      case 'Plain':
+        list.map(item => {
+          item.selected = item.meta_type === MetaMailTypeEn.Plain;
+        });
+        break;
+      case 'Encrypted':
+        list.map(item => {
+          item.selected = item.meta_type === MetaMailTypeEn.Encrypted;
+        });
+        break;
+      default:
+        break;
+    }
+    setList([...list]);
+    setSelectedAll(list.length && list.every(item => item.selected));
   };
 
   const mailActions = [
@@ -153,83 +191,50 @@ export default function MailList() {
     setList([...list]);
     setSelectedAll(!selectedAll);
   };
-  // selectedAll
-  useEffect(() => {
-    if (selectedAll) setFilter('All')
-  }, [selectedAll])
+
   //  list
   useEffect(() => {
+    // console.log('list', list)
     if (list.length) {
       const selectedListNum = getSelectedList().length;
       const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
       inputCheckBoxRef.current.indeterminate = isIndeterminate;
       setSelectedAll(list.length && list.every(item => item.selected));
+      isAllFilter()
     }
   }, [list]);
 
   // 遍历list后反填入filter
   const isAllFilter = () => {
     const selectList = list.filter(item => item.selected)
-    // console.log('selectList', selectList)
-    if (list.every(item => item.selected)) {
+    // console.log('selectList', selectList, selectList.length, list.length)
+    if (selectList.length === list.length) {
       setFilter('All')
-    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Read)) {
-      setFilter('Read')
-    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
-      setFilter('Unread')
-    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
-      setFilter('Plain')
-    } else if (selectList.every(item => item.meta_type === MetaMailTypeEn.Encrypted)) {
-      setFilter('Encrypted')
+    } else if (selectList.length > 0) {
+      if (selectList.every(item => item.read === ReadStatusTypeEn.Read)) {
+        setFilter('Read')
+      }
+      if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
+        setFilter('Unread')
+      }
+      if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
+        setFilter('Plain')
+      }
+      if (selectList.every(item => item.meta_type === MetaMailTypeEn.Encrypted)) {
+        setFilter('Encrypted')
+      }
+    } else {
+      setFilter(null)
     }
   }
-  useEffect(() => { if (filter) isAllFilter() }, [filter, list])
+  useEffect(() => { console.log(filter) }, [filter])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     setFilter(null)
   }, [pageIndex, filterType, isSendSuccess]);
-  //  filter
-  useEffect(() => {
-    switch (filter) {
-      case 'All':
-        list.map(item => {
-          item.selected = true;
-        });
-        setSelectedAll(true)
-        break;
-      // case null:
-      //   list.map(item => {
-      //     item.selected = false;
-      //   });
-      //   break;
-      case 'Read':
-        list.map(item => {
-          item.selected = item.read === ReadStatusTypeEn.Read;
-        });
-        break;
-      case 'Unread':
-        list.map(item => {
-          item.selected = item.read === ReadStatusTypeEn.Unread;
-        });
-        break;
-      case 'Plain':
-        list.map(item => {
-          item.selected = item.meta_type === MetaMailTypeEn.Plain;
-        });
-        break;
-      case 'Encrypted':
-        list.map(item => {
-          item.selected = item.meta_type === MetaMailTypeEn.Encrypted;
-        });
-        break;
-      default:
-        break;
-    }
-    setList([...list]);
-    setSelectedAll(list.length && list.every(item => item.selected));
 
-  }, [filter]);
+
   //  filterType
   useEffect(() => {
     setFilter(null);
@@ -252,7 +257,7 @@ export default function MailList() {
         }`}>
       {
         list.length > 0 ? (<div className="flex flex-row w-full justify-between px-12 box-border py-9 pt-0">
-          <div className="flex flex-row space-x-10 items-center">
+          <div className="flex flex-row space-x-10 items-center" >
             {/* 全选按钮 */}
             <input
               type="checkbox"
@@ -262,13 +267,13 @@ export default function MailList() {
               onChange={handleSelectedAllChange}
               className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent ${!selectedMail ? 'block' : 'hidden'}`}
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
-
             />
-            <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
+
+            <div className={`dropdown dropdown-bottom ${selectedMail ? 'invisible' : 'visible'}`}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
-                <span className="text-[14px] h-16 leading-16 text-[#B3B3B3]">{filter}</span>
+                <span className="text-[14px] h-16 leading-16 text-[#b2b2b2]">{filter}</span>
               </label>
 
               <ul
