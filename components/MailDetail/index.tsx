@@ -236,9 +236,24 @@ export default function MailDetail() {
       return match.replace('>', `style='color: #06c;text-decoration:underline'>`);
 
     });
-
+    return addTargetAttribute(result);
+  }
+  function addTargetAttribute(htmlString: string) {
+    const regex = /<a([^>]*)>/g;
+    const result = htmlString.replace(regex, (match, p1) => {
+      if (!p1.includes('target=')) {
+        return `<a${p1} target="_blank">`;
+      } else {
+        return match;
+      }
+    });
     return result;
   }
+
+  // 示例用法
+  const inputString = '<a href="https://example.com">Link</a>';
+  const outputString = addTargetAttribute(inputString);
+  console.log(outputString); // 输出：<a href="https://example.com" target="_blank">Link</a>
 
   useEffect(() => {
     currentMailId = selectedMail.message_id;
