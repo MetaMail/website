@@ -299,7 +299,7 @@ export default function MailDetail() {
     // 邮件详情
     <div>
       <div
-        className={`absolute right-0 justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['Poppins'] p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+        className={`absolute right-0 justify-between w-[calc(100%-333px)]  flex-1 rounded-10 flex flex-col pt-28 font-['PoppinsSemiBold'] p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
           }`}>
         <div>
           <header className="flex flex-col justify-between w-full mb-22">
@@ -349,7 +349,7 @@ export default function MailDetail() {
                   </div>
                 </div>
               </div>
-              <div className="flex shrink-0 flex-col gap-6 stroke-current text-[#B3B3B3] max-w-[160]">
+              <div className="flex shrink-0 flex-col gap-6 stroke-current text-[#b2b2b2] max-w-[160]">
                 <div className="text-[14px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
                 <div className="flex gap-10 justify-end">
                   {/* 收藏，转发，更多 */}
@@ -407,9 +407,9 @@ export default function MailDetail() {
         </div>
 
 
-        <div>
+        <div className=''>
           {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
-            <div className="flex">
+            <div className="flex pl-[57px]">
               {/* 文件s */}
               {selectedMail?.attachments?.map((item, idx) => (
                 <AttachmentItem

@@ -38,12 +38,48 @@ export default function MailList() {
   const inputCheckBoxRef = useRef<HTMLInputElement>();
 
   const handleFilterChange = (currentFilter: MailListFiltersType) => {
-
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
     if (filter === currentFilter) return;
     setFilter(currentFilter);
+    switch (currentFilter) {
+      case 'All':
+        list.map(item => {
+          item.selected = true;
+        });
+        setSelectedAll(true)
+        break;
+      case null:
+        list.map(item => {
+          item.selected = false;
+        });
+        break;
+      case 'Read':
+        list.map(item => {
+          item.selected = item.read === ReadStatusTypeEn.Read;
+        });
+        break;
+      case 'Unread':
+        list.map(item => {
+          item.selected = item.read === ReadStatusTypeEn.Unread;
+        });
+        break;
+      case 'Plain':
+        list.map(item => {
+          item.selected = item.meta_type === MetaMailTypeEn.Plain;
+        });
+        break;
+      case 'Encrypted':
+        list.map(item => {
+          item.selected = item.meta_type === MetaMailTypeEn.Encrypted;
+        });
+        break;
+      default:
+        break;
+    }
+    setList([...list]);
+    setSelectedAll(list.length && list.every(item => item.selected));
   };
 
   const mailActions = [
@@ -153,83 +189,50 @@ export default function MailList() {
     setList([...list]);
     setSelectedAll(!selectedAll);
   };
-  // selectedAll
-  useEffect(() => {
-    if (selectedAll) setFilter('All')
-  }, [selectedAll])
+
   //  list
   useEffect(() => {
+    // console.log('list', list)
     if (list.length) {
       const selectedListNum = getSelectedList().length;
       const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
       inputCheckBoxRef.current.indeterminate = isIndeterminate;
       setSelectedAll(list.length && list.every(item => item.selected));
+      isAllFilter()
     }
   }, [list]);
 
   // 遍历list后反填入filter
   const isAllFilter = () => {
     const selectList = list.filter(item => item.selected)
-    // console.log('selectList', selectList)
-    if (list.every(item => item.selected)) {
+    // console.log('selectList', selectList, selectList.length, list.length)
+    if (selectList.length === list.length) {
       setFilter('All')
-    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Read)) {
-      setFilter('Read')
-    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
-      setFilter('Unread')
-    } else if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
-      setFilter('Plain')
-    } else if (selectList.every(item => item.meta_type === MetaMailTypeEn.Encrypted)) {
-      setFilter('Encrypted')
+    } else if (selectList.length > 0) {
+      if (selectList.every(item => item.read === ReadStatusTypeEn.Read)) {
+        setFilter('Read')
+      }
+      if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
+        setFilter('Unread')
+      }
+      if (selectList.every(item => item.read === ReadStatusTypeEn.Unread)) {
+        setFilter('Plain')
+      }
+      if (selectList.every(item => item.meta_type === MetaMailTypeEn.Encrypted)) {
+        setFilter('Encrypted')
+      }
+    } else {
+      setFilter(null)
     }
   }
-  useEffect(() => { if (filter) isAllFilter() }, [filter, list])
+  useEffect(() => { console.log(filter) }, [filter])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     setFilter(null)
   }, [pageIndex, filterType, isSendSuccess]);
-  //  filter
-  useEffect(() => {
-    switch (filter) {
-      case 'All':
-        list.map(item => {
-          item.selected = true;
-        });
-        setSelectedAll(true)
-        break;
-      // case null:
-      //   list.map(item => {
-      //     item.selected = false;
-      //   });
-      //   break;
-      case 'Read':
-        list.map(item => {
-          item.selected = item.read === ReadStatusTypeEn.Read;
-        });
-        break;
-      case 'Unread':
-        list.map(item => {
-          item.selected = item.read === ReadStatusTypeEn.Unread;
-        });
-        break;
-      case 'Plain':
-        list.map(item => {
-          item.selected = item.meta_type === MetaMailTypeEn.Plain;
-        });
-        break;
-      case 'Encrypted':
-        list.map(item => {
-          item.selected = item.meta_type === MetaMailTypeEn.Encrypted;
-        });
-        break;
-      default:
-        break;
-    }
-    setList([...list]);
-    setSelectedAll(list.length && list.every(item => item.selected));
 
-  }, [filter]);
+
   //  filterType
   useEffect(() => {
     setFilter(null);
@@ -268,7 +271,7 @@ export default function MailList() {
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
-                <span className="text-[14px] h-16 leading-16 text-[#B3B3B3]">{filter}</span>
+                <span className="text-[14px] h-16 leading-16 text-[#b2b2b2]">{filter}</span>
               </label>
 
               <ul
