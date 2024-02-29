@@ -250,10 +250,7 @@ export default function MailDetail() {
     return result;
   }
 
-  // 示例用法
-  const inputString = '<a href="https://example.com">Link</a>';
-  const outputString = addTargetAttribute(inputString);
-  console.log(outputString); // 输出：<a href="https://example.com" target="_blank">Link</a>
+
 
   useEffect(() => {
     currentMailId = selectedMail.message_id;
@@ -283,7 +280,7 @@ export default function MailDetail() {
   };
   useEffect(() => {
     // 获取所有包含 <a> 标签的元素
-    const anchorElements = document.querySelectorAll('a[rel="noopener noreferrer"]');
+    const anchorElements = document.querySelectorAll('#mailHtml');
 
     // 为每个 <a> 标签添加点击事件处理函数
     anchorElements.forEach(anchorElement => {
@@ -412,7 +409,7 @@ export default function MailDetail() {
             {
               <>
                 <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]`}>
-                  <div className='listContainer px-[57px]'>
+                  <div id="mailHtml" className='listContainer px-[57px]'>
                     {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
                   </div>
                 </div>
