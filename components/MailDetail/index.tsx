@@ -280,18 +280,19 @@ export default function MailDetail() {
   };
   useEffect(() => {
     // 获取所有包含 <a> 标签的元素
-    const anchorElements = document.querySelectorAll('#mailHtml');
+    const anchorElements: HTMLElement | null = document.querySelector('#mailHtml');
+    const links: NodeListOf<HTMLAnchorElement> = anchorElements.querySelectorAll('a');
 
     // 为每个 <a> 标签添加点击事件处理函数
-    anchorElements.forEach(anchorElement => {
+    links.forEach(link => {
       // console.log(anchorElement);
-      anchorElement.addEventListener('click', handleClick);
+      link.addEventListener('click', handleClick);
     });
 
     // 移除事件监听器以避免内存泄漏
     return () => {
-      anchorElements.forEach(anchorElement => {
-        anchorElement.removeEventListener('click', handleClick);
+      links.forEach(link => {
+        link.removeEventListener('click', handleClick);
       });
     };
   }, [selectedMail]);
