@@ -255,7 +255,7 @@ export default function MailList() {
         }`}>
       {
         list.length > 0 ? (<div className="flex flex-row w-full justify-between px-12 box-border py-9 pt-0">
-          <div className="flex flex-row space-x-10 items-center">
+          <div className="flex flex-row space-x-10 items-center" >
             {/* 全选按钮 */}
             <input
               type="checkbox"
@@ -265,9 +265,8 @@ export default function MailList() {
               onChange={handleSelectedAllChange}
               className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent ${!selectedMail ? 'block' : 'hidden'}`}
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
-
             />
-            <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : ''}`}>
+            <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : 'hidden'}`}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />

@@ -397,7 +397,7 @@ export default function MailDetail() {
             {
               <>
                 <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]`}>
-                  <div className='listContainer pl-[57px]'>
+                  <div className='listContainer px-[57px]'>
                     {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
                   </div>
                 </div>
