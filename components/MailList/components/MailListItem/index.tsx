@@ -239,12 +239,12 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               {/* 邮件地址 */}
               {
                 mail.mailbox === MailBoxTypeEn.Send ? (<span
-                  className={`mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold'] font-[600]  leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff]'}`}
+                  className={`text-[15px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff] font-[600]'}`}
                   title={renderMailTo(mail).join(';')}>
                   {renderMailTo(mail).join(';')}
                 </span>) : (
                   <span
-                    className={`mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold'] font-[600]  leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff]'}`}
+                    className={`text-[15px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] font-[600] dark:text-[#fff]'}`}
                     title={getMailFrom(mail)}>
                     {getMailFrom(mail)}
                   </span>
@@ -256,12 +256,12 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             </p>
             <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}
-              <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
+              <span className={`omit mr-4 flex-1 w-0 text-[13px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
                 {mail.subject || '(no subject)'}
               </span>
               {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Read ? '#adadad' : '#333'} />}</span>}
             </p>
-            <p className={`omit text-[14px]  dark:text-[#A7A1A1]  text-[#adadad]  leading-[15px]`}>{renderDigest(mail)}</p>
+            <p className={`omit text-[13px]  dark:text-[#A7A1A1]  text-[#adadad]  leading-[16px]`}>{renderDigest(mail)}</p>
           </div>
         </div >
       )

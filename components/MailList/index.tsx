@@ -28,7 +28,9 @@ export default function MailList() {
   // isDetailExtend : 详情是否占满全屏
   // selectedMail : 选中查看详情的邮件
   const { selectedMail, isDetailExtend } = useMailDetailStore();
-  // console.log('selectedMail', selectedMail)
+  useEffect(() => {
+    console.log(isDetailExtend)
+  }, [isDetailExtend])
   const [loading, setLoading] = useState(false);
 
   const [pageNum, setPageNum] = useState(0);
@@ -266,7 +268,8 @@ export default function MailList() {
               className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent ${!selectedMail ? 'block' : 'hidden'}`}
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
             />
-            <div className={`dropdown dropdown-bottom ${isDetailExtend ? 'invisible' : 'hidden'}`}>
+
+            <div className={`dropdown dropdown-bottom ${selectedMail ? 'invisible' : 'visible'}`}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
