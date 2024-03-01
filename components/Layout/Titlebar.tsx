@@ -159,7 +159,7 @@ export default function Titlebar() {
                 className="progress progress-primary w-[100%] mt-[12px]"
                 value={emailSize > 0 ? percentTransform(emailSize / emailSizeLimit) < 0.1 ? 1 : percentTransform(emailSize / emailSizeLimit) : 0}
                 max="100"></progress>
-              <p className="text-[12px]  font-['PoppinsBold'] leading-none mt-[5px]">Using {formatFileSize(emailSize)} of {formatFileSize(emailSizeLimit)} Storage</p>
+              <p className="text-[12px]  font-['PoppinsSemiBold'] leading-none mt-[5px]">Using {formatFileSize(emailSize)} of {formatFileSize(emailSizeLimit)} Storage</p>
             </div>
 
             <div className="form-control">

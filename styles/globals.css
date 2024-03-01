@@ -6,7 +6,7 @@
 
 /* 普通字体 */
   @font-face {
-    font-family:'PoppinsBold';
+    font-family:'Poppins';
     src: url('/static/fonts/poppins-regular.ttf') format('ttf'),
              url('/static/fonts/poppins-regular.woff2') format('woff2'),
          url('/static/fonts/poppins-regular.woff') format('woff');
@@ -21,7 +21,7 @@
 }
 
   @font-face {
-    font-family: 'PoppinsBold';
+    font-family: 'PoppinsSemiBold';
     src: url('/static/fonts/Poppins-SemiBold.ttf') format('ttf');
     font-style: normal;
 }
