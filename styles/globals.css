@@ -232,7 +232,7 @@ button:disabled {
   width: 350px!important;
 }
 .Toastify__toast-body > div:last-child{
-  word-break: keep-all;
+  word-break: keep-all!important;
 }
 
 /* animation */
