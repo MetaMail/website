@@ -2,16 +2,13 @@ import React from 'react';
 import styles from './index.module.scss';
 
 interface ILoadingProps {
-  show: boolean;
   text: string
 }
 
-export default function Loading({ show, text }: ILoadingProps) {
+export default function Loading({ text }: ILoadingProps) {
   return (
-    <div className={`${styles.loadingWrap} ${show ? '' : styles.loadingWrapHide}`}>
-      <div className={styles.ctx}>
-        <span>{text}...</span>
-      </div>
+    <div className={`absolute top-0 left-0 w-[100%] h-[100%] pt-[20%] text-center z-10  `}>
+      <span className={`${styles.loader} inline-block`}></span>
     </div>
   );
 }

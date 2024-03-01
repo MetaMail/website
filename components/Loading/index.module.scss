@@ -1,26 +1,38 @@
-.loadingWrap {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    .ctx {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        span {
-            background-color: #f9edbe;
-            border: 1px solid #f0c36d;
-            border-radius: 0 0 2px 2px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            color: #222;
-            padding: 6px 10px;
-            font-size: 14px;
-            font-weight: 700;
-        }
-    }
+.loader {
+  color: #779af7;
+  position: relative;
+  font-size: 11px;
+  background: #779af7;
+  animation: escaleY 1s infinite ease-in-out;
+  width: 1em;
+  height: 4em;
+  animation-delay: -0.16s;
+  transform: scale(0.5); /* 缩小至原来尺寸的一半 */
+  transform-origin:center; /* 设置缩放原点为左上角 */
+}
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 2em;
+  background: #779af7;
+  width: 1em;
+  height: 4em;
+  animation: escaleY 1s infinite ease-in-out;
+}
+.loader:before {
+  left: -2em;
+  animation-delay: -0.32s;
 }
 
-.loadingWrapHide {
-    display: none;
+@keyframes escaleY {
+  0%, 80%, 100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
 }
