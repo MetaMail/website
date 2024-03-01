@@ -139,7 +139,7 @@ export default function Sidebar() {
       <div className="flex flex-col">
         <button className="flex items-center justify-center py-10">
           <Image src={logo} alt="logo" className="w-auto h-36 mr-3" />
-          <p className="text-[27px] text-[#000] font-['PoppinsBold']  leading-[43px] h-36 dark:text-[#fff]">MetaMail</p>
+          <p className="text-[27px] text-[#000] font-['Poppins']  leading-[43px] h-36 dark:text-[#fff]">MetaMail</p>
         </button>
         <button className="btn-primary flex items-center justify-center text-white h-45 rounded-9 gap-9" onClick={handleClickNewMail}>
           <Image src={write} alt="new_mail" className="w-18 h-auto" />
