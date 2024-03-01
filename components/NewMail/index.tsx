@@ -187,7 +187,7 @@ export default function NewMail() {
         setIsSendSuccess(true)
         toast.success('Your email has been sent successfully.', {
           position: 'top-center',
-          autoClose: 200
+          autoClose: 2000
         });
         setSelectedDraft(null);
       } else {
