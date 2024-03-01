@@ -366,7 +366,7 @@ export default function MailList() {
             }
           </div>)
             : (
-              <Image src={empty} alt="No Mail" className="w-auto h-136 mt-[20%]" />
+              !loading && <Image src={empty} alt="No Mail" className="w-auto h-136 mt-[20%]" />
             )
           }
         </div>
