@@ -75,6 +75,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
     } catch (error) {
       console.error(error);
       toast.error('Operation failed, please try again later.', {
+        position: 'top-center',
         autoClose: 2000
       });
     }

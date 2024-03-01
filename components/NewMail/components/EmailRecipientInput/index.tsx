@@ -56,6 +56,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
       }
     } else {
       toast.error('Invalid Email Address.', {
+        position: 'top-center',
         autoClose: 2000
       });
     }

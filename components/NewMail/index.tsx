@@ -137,11 +137,12 @@ export default function NewMail() {
   const handleClickSend = async () => {
     if (selectedDraft.mail_to?.length < 1) {
       return toast.error("Can't send mail without receivers.", {
+        position: 'top-center',
         autoClose: 2000
       });
     }
     autoSaveMail = false;
-    const id = toast.loading('Sending mail...');
+    const id = toast.loading('Sending mail...', { position: 'top-center', });
     try {
       const { html, text } = await handleSave();
       const { encrypted_encryption_keys, encryption_public_keys } = await getMailKeys();
@@ -185,6 +186,7 @@ export default function NewMail() {
         // 发送成功
         setIsSendSuccess(true)
         toast.success('Your email has been sent successfully.', {
+          position: 'top-center',
           autoClose: 2000
         });
         setSelectedDraft(null);
@@ -193,9 +195,7 @@ export default function NewMail() {
       }
     } catch (error) {
       console.error(error);
-      // toast.error('Failed to send mail.', {
-      //   autoClose: 2000
-      // });
+
     } finally {
       toast.done(id);
     }
@@ -308,6 +308,7 @@ export default function NewMail() {
       console.error(error);
       if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示失败
       toast.error("Can't get draft detail, please try again later.", {
+        position: 'top-center',
         autoClose: 2000
       });
     } finally {

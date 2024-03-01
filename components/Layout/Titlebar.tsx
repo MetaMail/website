@@ -28,7 +28,8 @@ export default function Titlebar() {
     setDropdownShow(true);
     navigator.clipboard.writeText(txt);
     toast.success('Copied to clipboard', {
-      autoClose: 2000
+      autoClose: 2000,
+      position: 'top-center',
     });
   };
 
@@ -48,6 +49,7 @@ export default function Titlebar() {
       .catch(error => {
         console.error(error);
         toast.error('Get user profile failed.', {
+          position: 'top-center',
           autoClose: 2000
         });
       });

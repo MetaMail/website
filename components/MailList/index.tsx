@@ -122,6 +122,7 @@ export default function MailList() {
     } catch (error) {
       console.error(error);
       toast.error('Operation failed, please try again later.', {
+        position: 'top-center',
         autoClose: 2000
       });
     }
@@ -164,6 +165,7 @@ export default function MailList() {
     } catch (error) {
       console.error(error);
       toast.error('Fetch mail list failed, please try again later.', {
+        position: 'top-center',
         autoClose: 2000
       });
     } finally {
