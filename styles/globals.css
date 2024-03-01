@@ -229,7 +229,10 @@ button:disabled {
   opacity: 1;
 }
 .Toastify__toast-container{
-  width: fit-content;
+  width: fit-content!important;
+}
+.Toastify__toast-body > div:last-child{
+  word-break: keep-all;
 }
 
 /* animation */
