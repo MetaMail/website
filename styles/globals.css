@@ -229,7 +229,7 @@ button:disabled {
   opacity: 1;
 }
 .Toastify__toast-container{
-  width: fit-content!important;
+  width: 350px!important;
 }
 .Toastify__toast-body > div:last-child{
   word-break: keep-all;
