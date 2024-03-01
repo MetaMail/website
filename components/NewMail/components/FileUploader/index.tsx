@@ -97,6 +97,7 @@ const FileUploader = ({ randomBits, onChange, onCheckDraft, isExtend }: IFileUpl
     const isFilesSizeValid = checkFilesSize(fileList);
     if (!isFilesSizeValid) {
       return toast.error('Single attachment size should be less than 20MB.', {
+        position: 'top-center',
         autoClose: 2000
       });
     }

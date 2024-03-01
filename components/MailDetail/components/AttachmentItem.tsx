@@ -35,6 +35,7 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
     } catch (error) {
       console.error(error);
       toast.error('Download failed.', {
+        position: 'top-center',
         autoClose: 2000
       });
       return;

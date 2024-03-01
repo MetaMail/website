@@ -12,6 +12,7 @@ import MailList from 'components/MailList';
 import MailDetail from 'components/MailDetail';
 import NewMail from 'components/NewMail';
 import Loading from 'components/Loading';
+import { isEmptyObject } from 'utils';
 
 export default function MailBoxPage() {
   const router = useRouter();
@@ -31,8 +32,10 @@ export default function MailBoxPage() {
 
   const checkEncryptable = async (receivers: IPersonItem[]) => {
     const getSinglePublicKey = async (receiver: IPersonItem) => {
+
       try {
         const encryptionData = await userHttp.getEncryptionKey(receiver.address.split('@')[0]);
+
         return encryptionData.public_key;
       } catch (error) {
         console.error('Failed to get public key of receiver: ', receiver.address);
@@ -87,7 +90,7 @@ export default function MailBoxPage() {
   const getRandomBits = async (type: 'detail' | 'draft') => {
     let currentKey: string;
     let currentEncryptionPublicKey: string;
-    if (type === 'draft') {
+    if (type === 'draft' && !isEmptyObject(selectedDraft.meta_header)) {
       currentKey = selectedDraft.meta_header?.encrypted_encryption_keys?.[0];
       currentEncryptionPublicKey = selectedDraft.meta_header?.encryption_public_keys?.[0];
     } else {
@@ -113,6 +116,7 @@ export default function MailBoxPage() {
     if (!currentKey) {
       throw new Error('not find current key');
     }
+
     let purePrivateKey = userSessionStorage.getPurePrivateKey();
     if (!purePrivateKey) {
       const { privateKey, salt } = userLocalStorage.getUserInfo();

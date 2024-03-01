@@ -1,0 +1,34 @@
+.loader {
+  width: 64px;
+  height: 48px;
+  position: relative;
+  animation: split 1s ease-in infinite alternate;
+  transform: scale(0.5); /* 缩小至原来尺寸的一半 */
+  transform-origin: 0 0; /* 设置缩放原点为左上角 */
+}
+.loader::before , .loader::after {
+  content: '';
+  position: absolute;
+  height: 48px;
+  width: 48px;
+  border-radius: 50%;
+  left: 0;
+  top: 0;
+  transform: translateX(-10px);
+  background: #779af7   ;
+  opacity: 0.75;
+  backdrop-filter: blur(20px);
+}
+
+.loader::after {
+  left: auto;
+  right: 0;
+  background: #c8dbff;
+  transform: translateX(10px);
+}
+
+@keyframes split {
+ 0% , 25%{ width: 64px }
+ 100%{ width: 148px }
+}
+  

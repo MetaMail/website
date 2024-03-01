@@ -70,6 +70,7 @@ export default function MailDetail() {
     } catch (error) {
       console.error(error);
       showLoading && toast.error("Can't get mail detail, please try again later.", {
+        position: 'top-center',
         autoClose: 2000
       });
     } finally {
@@ -119,6 +120,7 @@ export default function MailDetail() {
     } catch (error) {
       console.error(error);
       toast.error('Operation failed, please try again later.', {
+        position: 'top-center',
         autoClose: 2000
       });
     }

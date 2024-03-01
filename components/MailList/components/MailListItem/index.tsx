@@ -49,7 +49,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
   };
   // 收藏/取消收藏 已读/未读操作的时候会执行
   const handleChangeMailStatus = async (options: IMailChangeOptions) => {
-    console.log('handleChangeMailStatus');
+
     try {
       await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
       // 当列表长度=1，操作去掉收藏，把收藏列表清空掉
@@ -75,6 +75,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
     } catch (error) {
       console.error(error);
       toast.error('Operation failed, please try again later.', {
+        position: 'top-center',
         autoClose: 2000
       });
     }
@@ -189,7 +190,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             {/* ReadStatusTypeEn.Read 已读 */}
             <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#666] dark:text-[#A7A1A1]'}`}>{mail.subject || '(no subject)'}</span>
 
-            <span className={`min-w-0 flex-1 leading-[17px] truncate dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333]  ' : 'text-[#b2b2b2] '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
+            <span className={`min-w-0 flex-1 leading-[18px] truncate dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333]  ' : 'text-[#b2b2b2] '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
@@ -239,12 +240,12 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               {/* 邮件地址 */}
               {
                 mail.mailbox === MailBoxTypeEn.Send ? (<span
-                  className={`text-[15px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff] font-[600]'}`}
+                  className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff] font-[600]'}`}
                   title={renderMailTo(mail).join(';')}>
                   {renderMailTo(mail).join(';')}
                 </span>) : (
                   <span
-                    className={`text-[15px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] font-[600] dark:text-[#fff]'}`}
+                    className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] font-[600] dark:text-[#fff]'}`}
                     title={getMailFrom(mail)}>
                     {getMailFrom(mail)}
                   </span>
@@ -256,12 +257,12 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             </p>
             <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}
-              <span className={`omit mr-4 flex-1 w-0 text-[13px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
+              <span className={`omit mr-4 flex-1 w-0 text-[12px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
                 {mail.subject || '(no subject)'}
               </span>
               {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Read ? '#adadad' : '#333'} />}</span>}
             </p>
-            <p className={`omit text-[13px]  dark:text-[#A7A1A1]  text-[#adadad]  leading-[16px]`}>{renderDigest(mail)}</p>
+            <p className={`omit text-[12px]  dark:text-[#A7A1A1]  text-[#adadad]  leading-[17px]`}>{renderDigest(mail)}</p>
           </div>
         </div >
       )

@@ -23,12 +23,13 @@ export default function Titlebar() {
   const [dropdownShow, setDropdownShow] = useState<boolean>(false)
   const [theme, setTheme] = useState<string>();
   const handleCopy = (e: React.MouseEvent, txt: string) => {
-    console.log(e);
+
     e.stopPropagation();
     setDropdownShow(true);
     navigator.clipboard.writeText(txt);
     toast.success('Copied to clipboard', {
-      autoClose: 2000
+      autoClose: 2000,
+      position: 'top-center',
     });
   };
 
@@ -46,8 +47,9 @@ export default function Titlebar() {
         setEmailSizeLimit(res.total_email_size_limit);
       })
       .catch(error => {
-        console.log(error);
+        console.error(error);
         toast.error('Get user profile failed.', {
+          position: 'top-center',
           autoClose: 2000
         });
       });
@@ -79,17 +81,14 @@ export default function Titlebar() {
     userLocalStorage.setTheme(changeToTheme)
   };
   const handleMouseEnter = () => {
-    // console.log('鼠标进入')
     setDropdownShow(true)
   }
   const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
-    // console.log('鼠标离开', event)
     // 获取触发事件的元素
     const targetElement = event.target as HTMLElement;
     // 判断元素是否包含特定的类名
     const hasClassName = targetElement?.classList.contains('dropdown-content') || targetElement.classList.contains('dropdown-label');
     if (hasClassName) {
-      // console.log('元素包含指定类名');
       setDropdownShow(false);
     }
 

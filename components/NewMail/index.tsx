@@ -25,6 +25,7 @@ import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
+import { isEmptyObject } from 'utils';
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
  * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
@@ -136,11 +137,12 @@ export default function NewMail() {
   const handleClickSend = async () => {
     if (selectedDraft.mail_to?.length < 1) {
       return toast.error("Can't send mail without receivers.", {
+        position: 'top-center',
         autoClose: 2000
       });
     }
     autoSaveMail = false;
-    const id = toast.loading('Sending mail...');
+    const id = toast.loading('Sending mail...', { position: 'top-center', });
     try {
       const { html, text } = await handleSave();
       const { encrypted_encryption_keys, encryption_public_keys } = await getMailKeys();
@@ -184,6 +186,7 @@ export default function NewMail() {
         // 发送成功
         setIsSendSuccess(true)
         toast.success('Your email has been sent successfully.', {
+          position: 'top-center',
           autoClose: 2000
         });
         setSelectedDraft(null);
@@ -192,9 +195,7 @@ export default function NewMail() {
       }
     } catch (error) {
       console.error(error);
-      // toast.error('Failed to send mail.', {
-      //   autoClose: 2000
-      // });
+
     } finally {
       toast.done(id);
     }
@@ -244,11 +245,11 @@ export default function NewMail() {
       mark: selectedDraft.mark,
       mailbox: selectedDraft.mailbox,
       read: selectedDraft.read,
+      meta_header: selectedDraft.meta_header
     };
-    const fromLocalDraft = !selectedDraft.message_id;
+    const fromLocalDraft = !selectedDraft.message_id;// true:新建全新的草稿；false是从草稿列表中读的草稿
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
-    fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
-    console.log('selectedDraft', selectedDraft)
+    // fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
     if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to
     const { mail_date, message_id } = await mailHttp.updateMail(json);
     selectedDraft.message_id = message_id;
@@ -273,7 +274,7 @@ export default function NewMail() {
     try {
       setLoading(true);
 
-      if (!selectedDraft.message_id) {
+      if (!selectedDraft.message_id || isEmptyObject(selectedDraft.meta_header)) {
         // create a temp randomBits
         const { publicKey, address } = userLocalStorage.getUserInfo();
         const { encrypted_encryption_key, randomBits: tempRandomBits } = await createEncryptedMailKey(
@@ -307,6 +308,7 @@ export default function NewMail() {
       console.error(error);
       if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示失败
       toast.error("Can't get draft detail, please try again later.", {
+        position: 'top-center',
         autoClose: 2000
       });
     } finally {
@@ -317,7 +319,6 @@ export default function NewMail() {
   const handleChangeMailFrom = (from: MailFromType) => {
 
     setInitValue(from);
-    console.log('from', from, initValue)
     const { address, ensName } = userLocalStorage.getUserInfo();
     // 这里的name优先ens;
     const mail_from = {
@@ -515,7 +516,7 @@ export default function NewMail() {
                     <p>
                       {!attr.attachment_id && (
                         <div className={`ml-6 flex items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
-                          <span className="loading loading-spinner loading-xs"></span>
+                          <span className="loading loading-spinner loading-xs text-[#31A608]"></span>
                         </div>
                       )}
                     </p>

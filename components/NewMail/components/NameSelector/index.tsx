@@ -30,7 +30,6 @@ function NameSelector({ initValue, onChange }: IProps) {
     setIsOpen(!isOpen);
   };
   const handleHover = () => {
-    console.log('hover')
     setIsHover(1)
   }
 
