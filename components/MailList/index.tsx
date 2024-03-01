@@ -347,30 +347,29 @@ export default function MailList() {
         ) : ''
       }
 
-
-      <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
-        {/* {loading} */}
-        {loading && <LoadingRing />}
-
-        {list.length ? (<div className='listContainer'>
-          {list.map(item => {
-            return (
-              <MailListItem
-                loading={loading}
-                key={`${item.message_id}${item.mailbox}`}
-                mail={item}
-                onSelect={() => {
-                  handleSelectItem(item);
-                }}
-              />
+      <div className="relative">
+        {loading && <LoadingRing loading={loading} />}
+        <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
+          {list.length ? (<div className='listContainer'>
+            {list.map(item => {
+              return (
+                <MailListItem
+                  loading={loading}
+                  key={`${item.message_id}${item.mailbox}`}
+                  mail={item}
+                  onSelect={() => {
+                    handleSelectItem(item);
+                  }}
+                />
+              )
+            })
+            }
+          </div>)
+            : (
+              <Image src={empty} alt="No Mail" className="w-auto h-136 mt-[20%]" />
             )
-          })
           }
-        </div>)
-          : (
-            <Image src={empty} alt="No Mail" className="w-auto h-136" />
-          )
-        }
+        </div>
       </div>
     </div >
   );

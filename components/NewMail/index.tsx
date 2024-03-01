@@ -187,7 +187,7 @@ export default function NewMail() {
         setIsSendSuccess(true)
         toast.success('Your email has been sent successfully.', {
           position: 'top-center',
-          autoClose: 2000
+          autoClose: 200
         });
         setSelectedDraft(null);
       } else {
@@ -245,11 +245,11 @@ export default function NewMail() {
       mark: selectedDraft.mark,
       mailbox: selectedDraft.mailbox,
       read: selectedDraft.read,
-      meta_header: selectedDraft.meta_header
+      // meta_header: selectedDraft.meta_header
     };
     const fromLocalDraft = !selectedDraft.message_id;// true:新建全新的草稿；false是从草稿列表中读的草稿
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
-    // fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
+    fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
     if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to
     const { mail_date, message_id } = await mailHttp.updateMail(json);
     selectedDraft.message_id = message_id;
@@ -472,7 +472,7 @@ export default function NewMail() {
         </div>
       </div>
 
-      {loading && <LoadingRing />}
+      {loading && <LoadingRing loading={loading} />}
       {
         <>
           {/* DynamicReactQuill 富文本编辑器 */}

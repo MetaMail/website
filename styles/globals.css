@@ -228,8 +228,9 @@ button:disabled {
 [tooltips-title]:hover::after {
   opacity: 1;
 }
-
-
+.Toastify__toast-container{
+  width: fit-content;
+}
 
 /* animation */
 /* fadeIn 动画 */
@@ -261,3 +262,35 @@ button:disabled {
   animation-duration: 200ms;
   animation-fill-mode: forwards;
 }
+
+/* // ------------------ */
+ .fadeInAnimation {
+    display: none; /* 初始状态隐藏 */
+    opacity: 0; /* 初始透明度为0 */
+    animation: fadeIn 2s ease-in-out forwards; /* 淡入动画 */
+  }
+
+  .fadeOutAnimation {
+    opacity: 1; /* 初始透明度为1 */
+    animation: fadeOut 2s ease-in-out forwards; /* 淡出动画 */
+  }
+
+  @keyframes fadeIn {
+    0% {
+      display: block; /* 在0%时刻显示 */
+      opacity: 0; /* 初始透明度为0 */
+    }
+    100% {
+      opacity: 1; /* 在100%时刻透明度为1 */
+    }
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 1; /* 初始透明度为1 */
+    }
+    100% {
+      opacity: 0; /* 在100%时刻透明度为0 */
+      display: none; /* 在100%时刻隐藏 */
+    }
+  }

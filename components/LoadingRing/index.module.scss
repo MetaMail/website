@@ -2,9 +2,9 @@
   width: 64px;
   height: 48px;
   position: relative;
-  animation: split 1s ease-in infinite alternate;
+  animation: split 0.5s ease-in infinite alternate;
   transform: scale(0.5); /* 缩小至原来尺寸的一半 */
-  transform-origin: 0 0; /* 设置缩放原点为左上角 */
+  transform-origin:center; /* 设置缩放原点为左上角 */
 }
 .loader::before , .loader::after {
   content: '';
@@ -27,8 +27,28 @@
   transform: translateX(10px);
 }
 
+.lightTheme::after{
+        background: #c8dbff;
+}
+.lightTheme::before{
+         background: #779af7   ;
+}
+  .darkTheme{
+      &::after{
+        background-color: #8598Bc;
+     }
+     &::before{
+      background-color:#3357B4;
+     }
+  }
+
+
 @keyframes split {
  0% , 25%{ width: 64px }
  100%{ width: 148px }
 }
   
+
+
+
+

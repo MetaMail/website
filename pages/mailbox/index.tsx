@@ -13,6 +13,7 @@ import MailDetail from 'components/MailDetail';
 import NewMail from 'components/NewMail';
 import Loading from 'components/Loading';
 import { isEmptyObject } from 'utils';
+import LoadingRing from 'components/LoadingRing';
 
 export default function MailBoxPage() {
   const router = useRouter();
@@ -138,7 +139,8 @@ export default function MailBoxPage() {
         {selectedMail && <MailDetail />}
         {selectedDraft && <NewMail />}
       </Layout>
-      <Loading show={showLoading} />
+      {/* {show = { showLoading }} */}
+      {showLoading && <LoadingRing loading={showLoading} />}
     </MailBoxContext.Provider>
   );
 }
