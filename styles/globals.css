@@ -228,8 +228,9 @@ button:disabled {
 [tooltips-title]:hover::after {
   opacity: 1;
 }
-
-
+.Toastify__toast-container{
+  width: fit-content;
+}
 
 /* animation */
 /* fadeIn 动画 */
