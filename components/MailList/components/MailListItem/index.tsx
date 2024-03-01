@@ -239,12 +239,12 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               {/* 邮件地址 */}
               {
                 mail.mailbox === MailBoxTypeEn.Send ? (<span
-                  className={`text-[15px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff] font-[600]'}`}
+                  className={`text-[15px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] dark:text-[#fff] font-[600]'}`}
                   title={renderMailTo(mail).join(';')}>
                   {renderMailTo(mail).join(';')}
                 </span>) : (
                   <span
-                    className={`text-[15px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] font-[600] dark:text-[#fff]'}`}
+                    className={`text-[15px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-[#999] dark:text-[#A7A1A1]' : 'text-[#000] font-[600] dark:text-[#fff]'}`}
                     title={getMailFrom(mail)}>
                     {getMailFrom(mail)}
                   </span>
