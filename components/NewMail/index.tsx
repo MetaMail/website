@@ -25,6 +25,7 @@ import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
+import { isEmptyObject } from 'utils';
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
  * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
@@ -244,11 +245,11 @@ export default function NewMail() {
       mark: selectedDraft.mark,
       mailbox: selectedDraft.mailbox,
       read: selectedDraft.read,
+      meta_header: selectedDraft.meta_header
     };
-    const fromLocalDraft = !selectedDraft.message_id;
+    const fromLocalDraft = !selectedDraft.message_id;// true:新建全新的草稿；false是从草稿列表中读的草稿
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
-    fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
-    console.log('selectedDraft', selectedDraft)
+    // fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
     if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to
     const { mail_date, message_id } = await mailHttp.updateMail(json);
     selectedDraft.message_id = message_id;
@@ -273,7 +274,7 @@ export default function NewMail() {
     try {
       setLoading(true);
 
-      if (!selectedDraft.message_id) {
+      if (!selectedDraft.message_id || isEmptyObject(selectedDraft.meta_header)) {
         // create a temp randomBits
         const { publicKey, address } = userLocalStorage.getUserInfo();
         const { encrypted_encryption_key, randomBits: tempRandomBits } = await createEncryptedMailKey(
