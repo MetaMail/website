@@ -187,7 +187,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             {/* 加密邮件的小锁 */}
             {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Unread ? isDark ? '#fff' : '#333333' : '#b2b2b2'} />}</span>}
             {/* ReadStatusTypeEn.Read 已读 */}
-            <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#333] dark:text-[#A7A1A1]'}`}>{mail.subject || '(no subject)'}</span>
+            <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#666] dark:text-[#A7A1A1]'}`}>{mail.subject || '(no subject)'}</span>
 
             <span className={`min-w-0 flex-1 leading-[17px] truncate dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333]  ' : 'text-[#b2b2b2] '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
           </div>
