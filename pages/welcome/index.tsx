@@ -26,7 +26,9 @@ import gdL from 'assets/gdL.png';
 export default function Welcome() {
   const router = useRouter();
   let address = useAccount().address?.toLowerCase();
-
+  useEffect(() => {
+    document.body.style.fontFamily = 'SpaceGrotesk'; // 应用字体样式
+  }, []);
   const handleAutoLogin = async () => {
     try {
       if (!address) return;
