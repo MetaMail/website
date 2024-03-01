@@ -91,7 +91,7 @@ export default function MailBoxPage() {
   const getRandomBits = async (type: 'detail' | 'draft') => {
     let currentKey: string;
     let currentEncryptionPublicKey: string;
-    if (type === 'draft' && !isEmptyObject(selectedDraft.meta_header)) {
+    if (type === 'draft') {
       currentKey = selectedDraft.meta_header?.encrypted_encryption_keys?.[0];
       currentEncryptionPublicKey = selectedDraft.meta_header?.encryption_public_keys?.[0];
     } else {

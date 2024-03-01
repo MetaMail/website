@@ -274,7 +274,7 @@ export default function NewMail() {
     try {
       setLoading(true);
 
-      if (!selectedDraft.message_id || isEmptyObject(selectedDraft.meta_header)) {
+      if (!selectedDraft.message_id) {
         // create a temp randomBits
         const { publicKey, address } = userLocalStorage.getUserInfo();
         const { encrypted_encryption_key, randomBits: tempRandomBits } = await createEncryptedMailKey(
