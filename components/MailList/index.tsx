@@ -347,7 +347,7 @@ export default function MailList() {
 
 
       <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
-        {/* {} */}
+        {/* {loading} */}
         {loading && <LoadingRing />}
 
         {list.length ? (<div className='listContainer'>

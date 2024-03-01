@@ -515,7 +515,7 @@ export default function NewMail() {
                     <p>
                       {!attr.attachment_id && (
                         <div className={`ml-6 flex items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
-                          <span className="loading loading-spinner loading-xs"></span>
+                          <span className="loading loading-spinner loading-xs text-[#31A608]"></span>
                         </div>
                       )}
                     </p>
