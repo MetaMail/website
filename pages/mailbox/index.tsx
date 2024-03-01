@@ -32,10 +32,10 @@ export default function MailBoxPage() {
 
   const checkEncryptable = async (receivers: IPersonItem[]) => {
     const getSinglePublicKey = async (receiver: IPersonItem) => {
-      console.log('receiver', receiver)
+
       try {
         const encryptionData = await userHttp.getEncryptionKey(receiver.address.split('@')[0]);
-        console.log('encryptionData', encryptionData)
+
         return encryptionData.public_key;
       } catch (error) {
         console.error('Failed to get public key of receiver: ', receiver.address);
@@ -118,7 +118,6 @@ export default function MailBoxPage() {
     }
 
     let purePrivateKey = userSessionStorage.getPurePrivateKey();
-    console.log('purePrivateKey', purePrivateKey)
     if (!purePrivateKey) {
       const { privateKey, salt } = userLocalStorage.getUserInfo();
       purePrivateKey = await getPrivateKey(privateKey, salt);

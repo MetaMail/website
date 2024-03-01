@@ -31,7 +31,6 @@ import { dispatchEvent } from 'lib/utils';
 export default function Sidebar() {
   const { isDark } = useThemeStore()
   useEffect(() => {
-    // console.log('isDark', isDark)
   }, [isDark])
   const { logout, getMailStat, createDraft } = useContext(MailBoxContext);
   const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();

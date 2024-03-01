@@ -49,7 +49,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
   };
   // 收藏/取消收藏 已读/未读操作的时候会执行
   const handleChangeMailStatus = async (options: IMailChangeOptions) => {
-    console.log('handleChangeMailStatus');
+
     try {
       await mailHttp.changeMailStatus([{ message_id: mail.message_id, mailbox: mail.mailbox }], options);
       // 当列表长度=1，操作去掉收藏，把收藏列表清空掉

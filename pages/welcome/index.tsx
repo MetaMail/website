@@ -45,8 +45,8 @@ export default function Welcome() {
         signedMessage,
       });
       let encryptionData = await userHttp.getEncryptionKey(address);
-      console.log('await generateEncryptionUserKey()');
-      console.log(encryptionData);
+
+
 
       if (!encryptionData?.signature) {
         encryptionData = await generateEncryptionUserKey();
@@ -65,7 +65,6 @@ export default function Welcome() {
 
       router.push('/mailbox');
     } catch (error: any) {
-      // console.log('@@@@@@@@@@@@@@@@@', error)
       console.error(error);
       if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示登录失败
       toast.error('Login failed, please try again later.', {
@@ -73,13 +72,12 @@ export default function Welcome() {
       });
     } finally {
       await disconnect();
-      console.log('Disconnected');
     }
   };
 
   useEffect(() => {
     window.ethereum?.on('accountsChanged', (accounts: string[]) => {
-      console.log('accountsChanged', accounts);
+
       address = accounts[0].toLowerCase();
     });
     handleAutoLogin();

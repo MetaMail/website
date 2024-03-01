@@ -318,7 +318,6 @@ export default function NewMail() {
   const handleChangeMailFrom = (from: MailFromType) => {
 
     setInitValue(from);
-    console.log('from', from, initValue)
     const { address, ensName } = userLocalStorage.getUserInfo();
     // 这里的name优先ens;
     const mail_from = {
