@@ -138,7 +138,7 @@ export default function MailBoxPage() {
         {selectedMail && <MailDetail />}
         {selectedDraft && <NewMail />}
       </Layout>
-      <Loading show={showLoading} />
+      <Loading show={showLoading} text={'saving'} />
     </MailBoxContext.Provider>
   );
 }
