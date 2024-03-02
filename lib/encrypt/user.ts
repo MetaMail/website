@@ -23,7 +23,7 @@ export const generateEncryptionUserKey = async () => {
   // 把自己的私钥，用Storage_Encryption_Key对称加密了一下
   const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, Storage_Encryption_Key);
 
-  const keyMeta = {
+  const keysMeta = {
     name: 'ECDH',
     named_curve: 'P-384',
     private_key_format: 'pkcs8',
@@ -34,10 +34,13 @@ export const generateEncryptionUserKey = async () => {
     derived_key_name: 'AES-GCM',
   };
 
+  const public_key_hash = crypto.createHash('sha256').update(publicKey).digest('hex');
+  const encrypted_private_key_hash = crypto.createHash('sha256').update(Encrypted_Private_Store_Key).digest('hex');
+  const keys_hash = crypto.createHash('sha256').update(public_key_hash+encrypted_private_key_hash).digest('hex');
   const signMessages = {
     salt: salt,
-    public_key_hash: crypto.createHash('sha256').update(publicKey).digest('hex'),
-    key_meta: JSON.stringify(keyMeta), // stringifying the key meta object
+    keys_hash: keys_hash,
+    keys_meta: JSON.stringify(keysMeta), // stringifying the key meta object
     date: new Date().toISOString(),
   };
 
@@ -47,7 +50,7 @@ export const generateEncryptionUserKey = async () => {
     salt: salt,
     encrypted_private_key: Encrypted_Private_Store_Key,
     public_key: publicKey,
-    key_meta: JSON.stringify(keyMeta),
+    keys_meta: JSON.stringify(keysMeta),
     date: signMessages.date,
   };
   return reqMessage;
