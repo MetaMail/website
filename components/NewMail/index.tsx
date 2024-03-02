@@ -305,11 +305,16 @@ export default function NewMail() {
       setContentsToQuill(part_html);
     } catch (error: any) {
       console.error(error);
-      if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示失败
-      toast.error("Can't get draft detail, please try again later.", {
-        position: 'top-center',
-        autoClose: 2000
-      });
+      if (error?.code === 'ACTION_REJECTED') {
+        // 用户拒绝签名，不提示失败
+        setSelectedDraft(null)
+      } else {
+        toast.error("Can't get draft detail, please try again later.", {
+          position: 'top-center',
+          autoClose: 2000
+        });
+      }
+
     } finally {
       setLoading(false);
     }
@@ -402,7 +407,7 @@ export default function NewMail() {
 
   return (
     <div
-      className={`dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
+      className={`${selectedDraft ? 'fadeInAnimation' : 'fadeInAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
         } `}>
       <header className="flex justify-between">
         <div className="flex items-center">

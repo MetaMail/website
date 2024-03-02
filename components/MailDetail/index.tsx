@@ -29,6 +29,8 @@ import {
   sent
 } from 'assets/icons';
 import { useRouter } from 'next/router';
+import Avatar from 'components/Avatar';
+import { PostfixOfAddress } from 'lib/base';
 
 let randomBits: string = '';
 let currentMailId: string = '';
@@ -311,7 +313,15 @@ export default function MailDetail() {
       openModal()
     }
   };
-
+  const renderAvator = () => {
+    if (selectedMail.mail_from.address.endsWith(PostfixOfAddress)) {
+      // 我们的用户
+      return <JazziconGrid size={34} addr={selectedMail.mail_from.address || ''} />
+    } else {
+      // 别的用户
+      return <Avatar size={34} addr={selectedMail.mail_from.name || selectedMail.mail_from.address || ''} />
+    }
+  }
   return (
     // 邮件详情
     <div>
@@ -354,7 +364,8 @@ export default function MailDetail() {
             <h1 className="omit  font-bold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '(no subject)'}</h1>
             <div className="flex justify-between ">
               <div className="flex gap-20 items-start">
-                <JazziconGrid size={37} addr={selectedMail.mail_from.address || ''} />
+                {/* 头像 */}
+                <div className='shrink-0'> {renderAvator()}</div>
                 <div className="">
                   <div className="text-[#0075EA] font-medium">{getMailFrom(selectedMail)}</div>
                   <div className="flex gap-3">
