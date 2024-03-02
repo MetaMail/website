@@ -453,7 +453,7 @@ export default function MailDetail() {
       </div>
       <Modal
         title="Warning!"
-        content="You are about to leave our site."
+        content={`You are about to leave our site to: ${link}`}
         isOpen={isOpen}
         onClose={closeModal}
         onConfirm={handleConfirm}

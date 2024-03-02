@@ -25,15 +25,15 @@ const Modal: React.FC<ModalProps> = ({ title, content, isOpen, onClose, onConfir
             <h3 className="font-bold text-lg">{title}</h3>
             <p className="py-4">{content}</p>
             <div className="modal-action">
-              <form method="dialog" className="flex justify-end pt-2">
+              <form method="dialog" className="flex justify-end gap-8">
                 <button
-                  className="btn bg-transparent  rounded-lg text-[#999] mr-2"
+                  className="bg-transparent   h-34 flex justify-center items-center text-[#666] border-neutral-400 border-[1px] dark:text-white px-14 py-8  rounded-[6px] text-[14px]"
                   onClick={onClose}
                 >
                   Cancel
                 </button>
                 <button
-                  className="btn modal-close  bg-indigo-500  rounded-lg text-white hover:bg-indigo-400"
+                  className="modal-close h-34 flex justify-center items-center bg-primary text-white px-14 py-8  rounded-[6px] text-[14px]"
                   onClick={onConfirm}
                 >
                   Confirm
