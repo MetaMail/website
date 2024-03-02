@@ -413,8 +413,8 @@ export default function MailDetail() {
             {<LoadingRing loading={loading} />}
             {
               <>
-                <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]`}>
-                  <div id="mailHtml" className='listContainer px-[57px] text-[#fff]'>
+                <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
+                  <div id="mailHtml" className='listContainer px-[57px] '>
                     {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
                   </div>
                 </div>
