@@ -190,7 +190,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             {/* ReadStatusTypeEn.Read 已读 */}
             <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff]' : 'text-[#666] dark:text-[#A7A1A1]'}`}>{mail.subject || '(no subject)'}</span>
 
-            <span className={`min-w-0 flex-1 leading-[18px] truncate dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333]  ' : 'text-[#b2b2b2] '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
+            <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-[#333]  ' : 'text-[#b2b2b2] '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
@@ -253,7 +253,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               }
 
               {/* 邮件日期 */}
-              <span className={`max-w-[80px] text-[14px] text-right text-[#7F7F7F] `}>{transformTime(mail.mail_date)}</span>
+              <span className={`max-w-[80px] text-[12px] text-right text-[#7F7F7F] `}>{transformTime(mail.mail_date)}</span>
             </p>
             <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}

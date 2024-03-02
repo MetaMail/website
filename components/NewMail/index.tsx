@@ -510,7 +510,7 @@ export default function NewMail() {
                   className="box-border text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <p className='ml-8 flex justify-start items-center'><span className="max-w-[150px] truncate">{originFileName(attr.filename)}</span><span>&nbsp;.{fileType(attr.filename)}</span></p>
+                  <p className='ml-8 flex justify-start items-center'><span className="max-w-[150px] text-ellipsis overflow-hidden">{originFileName(attr.filename)}</span><span>&nbsp;.{fileType(attr.filename)}</span></p>
                   <div className='w-16 flex justify-start items-center'>
                     <p>
                       {!attr.attachment_id && (
