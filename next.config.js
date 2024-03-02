@@ -25,6 +25,21 @@ const nextConfig = {
     sassOptions: {
         includePaths: ['**/*.scss'],
     },
+    // 配置页面缓存
+    // 这里使用了缓存策略，可以根据需要进行调整
+    async headers() {
+      return [
+        {
+          source: '/(.*)',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=3600, must-revalidate',
+            },
+          ],
+        },
+      ]
+    },
 };
 
 module.exports = withBundleAnalyzer(nextConfig);
