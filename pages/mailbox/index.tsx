@@ -140,7 +140,7 @@ export default function MailBoxPage() {
         {selectedDraft && <NewMail />}
       </Layout>
       {/* {show = { showLoading }} */}
-      {showLoading && <LoadingRing loading={showLoading} />}
+      {<LoadingRing loading={showLoading} />}
     </MailBoxContext.Provider>
   );
 }

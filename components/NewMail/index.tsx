@@ -471,7 +471,7 @@ export default function NewMail() {
         </div>
       </div>
 
-      {loading && <LoadingRing loading={loading} />}
+      {<LoadingRing loading={loading} />}
       {
         <>
           {/* DynamicReactQuill 富文本编辑器 */}
@@ -507,20 +507,20 @@ export default function NewMail() {
             {selectedDraft.attachments?.map((attr, index) => (
               <li key={index} className="flex text-[#878787]">
                 <div
-                  className="box-border text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center"
+                  className="gap-[8px] box-border text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <p className='ml-8 flex justify-start items-center'><span className="max-w-[150px] text-ellipsis overflow-hidden">{originFileName(attr.filename)}</span><span>&nbsp;.{fileType(attr.filename)}</span></p>
+                  <p className=' flex justify-start items-center'><span className="max-w-[150px] text-ellipsis overflow-hidden">{originFileName(attr.filename)}</span><span>&nbsp;.{fileType(attr.filename)}</span></p>
                   <div className='w-16 flex justify-start items-center'>
-                    <p>
-                      {!attr.attachment_id && (
-                        <div className={`ml-6 flex items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
-                          <span className="loading loading-spinner loading-xs text-[#31A608]"></span>
-                        </div>
-                      )}
-                    </p>
+
+                    {!attr.attachment_id && (
+                      <div className={`flex items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
+                        <span className="loading loading-spinner loading-xs text-[#31A608]"></span>
+                      </div>
+                    )}
+
                     {/* TODO:正在上传不能删除 */}
-                    <button className={`ml-6 ${attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}`} onClick={() => removeAttachment(index)}>
+                    <button className={` ${attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}`} onClick={() => removeAttachment(index)}>
                       <Icon url={trashCan} title="trashCan" className="w-16 h-16" />
                     </button>
                   </div>

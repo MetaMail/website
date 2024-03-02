@@ -180,7 +180,7 @@ export default function Welcome() {
         </div>
       </div>
       <Footer />
-      {loading && <LoadingRing loading={loading} />}
+      {<LoadingRing loading={loading} />}
     </div>
   );
 }

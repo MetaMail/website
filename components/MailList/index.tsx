@@ -275,9 +275,8 @@ export default function MailList() {
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
-                <span className="text-[14px] h-16 leading-16 text-[#b2b2b2]">{filter}</span>
+                <span className="text-[14px] h-16 leading-[15px] text-[#b2b2b2]">{filter}</span>
               </label>
-
               <ul
                 tabIndex={0}
                 className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-130">
@@ -348,8 +347,8 @@ export default function MailList() {
       }
 
       <div className="relative">
-        {loading && <LoadingRing loading={loading} />}
-        <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
+        {<LoadingRing loading={loading} />}
+        <div className={`${loading ? `fadeOutAnimation` : 'fadeInAnimation'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
           {list.length ? (<div className='listContainer'>
             {list.map(item => {
               return (
