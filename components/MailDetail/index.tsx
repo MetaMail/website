@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import MailBoxContext from 'context/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
-import { useMailDetailStore, useMailListStore } from 'lib/zustand-store';
+import { useMailDetailStore, useMailListStore, useThemeStore } from 'lib/zustand-store';
 import { decryptMailContent } from 'lib/encrypt';
 import Icon from 'components/Icon';
 import AttachmentItem from './components/AttachmentItem';
@@ -22,6 +22,7 @@ import {
   read,
   back,
   mailMore,
+  darkMailMore,
   markFavorite,
   markUnread,
   starred,
@@ -33,6 +34,7 @@ let randomBits: string = '';
 let currentMailId: string = '';
 
 export default function MailDetail() {
+  const { isDark } = useThemeStore()
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const { createDraft, getMailStat, getRandomBits } = useContext(MailBoxContext);
   const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
@@ -383,7 +385,7 @@ export default function MailDetail() {
                     {/* 筛选漏斗icon */}
                     <label tabIndex={0} className="cursor-pointer flex items-center">
                       <Icon
-                        url={mailMore}
+                        url={isDark ? darkMailMore : mailMore}
                         title={'More'}
                         onClick={() => setIsMoreExtend(!isMoreExtend)}
                         className="w-16 h-16 self-center"
@@ -392,13 +394,13 @@ export default function MailDetail() {
 
                     <ul
                       tabIndex={0}
-                      className="dropdown-content right-0 z-[1] menu p-2 shadow bg-base-100 rounded-5 w-150">
+                      className="dropdown-content dark:text-[#fff] right-0 z-[1] menu p-2 shadow bg-base-100  rounded-5 w-150">
                       <li
                         onClick={() => {
                           handleDownload()
                         }}
                         title='download emil'>
-                        <a className='text-[#333]'>download emil</a>
+                        <a className='text-[#333] dark:text-[#fff]' >Download eml</a>
                       </li>
 
                     </ul>
@@ -412,7 +414,7 @@ export default function MailDetail() {
             {
               <>
                 <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]`}>
-                  <div id="mailHtml" className='listContainer px-[57px]'>
+                  <div id="mailHtml" className='listContainer px-[57px] text-[#fff]'>
                     {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
                   </div>
                 </div>
@@ -437,7 +439,7 @@ export default function MailDetail() {
               ))}
             </div>
           )}
-          <div className='pl-[57px]'>
+          <div className='pl-[57px] mt-[20px]'>
             {/* 回复按钮 */}
             <button
               className=" flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"

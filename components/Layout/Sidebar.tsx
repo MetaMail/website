@@ -99,7 +99,7 @@ export default function Sidebar() {
               <div className='flex items-center gap-x-9'>
                 {renderLogo(item.logo, filterType === Number(item.key))}
                 {/* <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" /> */}
-                <p className={`align-middle leading-[18px] h-[16px] ${filterType === Number(item.key) ? 'leading-[18px]' : ''}`}>{item.title}</p>
+                <p className={`align-middle ${filterType === Number(item.key) ? 'leading-[18px]' : ''}`}>{item.title}</p>
               </div>
               {renderBadge(item.key)}
             </a>
