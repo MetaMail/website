@@ -21,6 +21,7 @@ import Icon from 'components/Icon';
 import { Lock } from 'components/svg/index'
 import { favorite, markFavorite, trash, markUnread, read, checkboxSvg, checkboxedSvg, checkboxDark, favoriteDark } from 'assets/icons';
 import Avatar from 'components/Avatar';
+import { PostfixOfAddress } from 'lib/base';
 
 interface IMailItemProps {
   mail: MailListItemType;
@@ -132,6 +133,15 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       } else return getShowAddress(item.address)
     })
   }
+  const renderAvator = () => {
+    if (mail.mail_from.address.endsWith(PostfixOfAddress)) {
+      // 我们的用户
+      return <JazziconGrid size={34} addr={mail.mail_from.address || ''} />
+    } else {
+      // 别的用户
+      return <Avatar size={34} addr={mail.mail_from.name || mail.mail_from.address || ''} />
+    }
+  }
 
   return (
     <>
@@ -233,8 +243,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             }`}>
           <div className='pt-5'>
             {/* 头像 */}
-            {mail.mailbox === MailBoxTypeEn.Send && <JazziconGrid size={34} addr={mail.mail_from.address || ''} />}
-            {mail.mailbox === MailBoxTypeEn.Inbox && <Avatar size={34} addr={mail.mail_from.address || ''} />}
+            {renderAvator()}
           </div>
           <div className="flex-1 pl-15 w-0 " >
             <p className="flex justify-between items-center">
