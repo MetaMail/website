@@ -408,7 +408,7 @@ export default function MailDetail() {
             </div>
           </header>
           <div className='relative'>
-            {loading && <LoadingRing loading={loading} />}
+            {<LoadingRing loading={loading} />}
             {
               <>
                 <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-[#040404] dark:text-[#7F7F7F]`}>

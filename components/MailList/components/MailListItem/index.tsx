@@ -137,7 +137,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={`${!selectedMail ? 'fadeInAnimation' : 'fadeOutAnimation'} listStatus overflow-y-visible py-6 flex flex-row px-12 items-center group h-36 cursor-pointe  ${mail.selected ? `bg-base-300  bg-opacity-50 dark:bg-[rgba(243,247,255,.1)]` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10  '
+          className={` listStatus overflow-y-visible py-6 flex flex-row px-12 items-center group h-36 cursor-pointe  ${mail.selected ? `bg-base-300  bg-opacity-50 dark:bg-[rgba(243,247,255,.1)]` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10  '
             }`}>
           <div className="flex flex-row gap-12">
             <input
@@ -253,16 +253,16 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               }
 
               {/* 邮件日期 */}
-              <span className={`max-w-[80px] text-[12px] text-right text-[#7F7F7F] `}>{transformTime(mail.mail_date)}</span>
+              <span className={`max-w-[80px] text-[14px] text-right text-[#7F7F7F] `}>{transformTime(mail.mail_date)}</span>
             </p>
             <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}
-              <span className={`omit mr-4 flex-1 w-0 text-[12px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
+              <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-[#adadad] dark:text-[#A7A1A1]' : 'text-base-content dark:text-[#fff]'}`}>
                 {mail.subject || '(no subject)'}
               </span>
               {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Read ? '#adadad' : '#333'} />}</span>}
             </p>
-            <p className={`omit text-[12px]  dark:text-[#A7A1A1]  text-[#adadad]  leading-[17px]`}>{renderDigest(mail)}</p>
+            <p className={`omit text-[13px]  dark:text-[#A7A1A1]  text-[#adadad]  leading-[17px]`}>{renderDigest(mail)}</p>
           </div>
         </div >
       )
