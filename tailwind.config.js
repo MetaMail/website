@@ -60,7 +60,7 @@ module.exports = {
             }
           },
             fontFamily: {
-                poppins: ['PoppinsSemiBold'],
+                poppins: ['Poppins,Roboto, Helvetica, Arial, sans-serif'],
                 spaceGrotesk: ['SpaceGrotesk'],
             },
             fontSize: {
@@ -91,13 +91,14 @@ module.exports = {
                 ...gen(v => `${v}px`)(PERCENT_SIZE),
             },
             colors:{
-                "lightMailDate":'#7F7F7F',
+              
                 "lightMailAddressRead":'#666',//浅色模式下，已读，发件人地址
                 "lightMailAddressUnRead":'#333',//浅色模式下，未读，发件人地址
                 "lightMailTitleRead":'#666',//浅色模式下，已读，title
                 "lightMailTitleUnRead":'#333',//浅色模式下，未读，title
                  "lightMailDetailRead":'#b2b2b2',//浅色模式下，已读，邮件详情
                 "lightMailDetailUnRead":'#333',//浅色模式下，未读，邮件详情
+                  "lightMailDate":'#7F7F7F',// 深浅色式下，查看邮件详情时邮件列表address旁边的日期
                  "lightMailContent":"#040404", //邮件正文
                 // ----------------------------
                 "DarkMailAddressRead":'#c6c6c6',//深模式下，已读，发件人地址
@@ -106,8 +107,8 @@ module.exports = {
                 "DarkMailTitleUnRead":'#fff',//深模式下，未读，title
                 "DarkMailDetailRead":'#b2b2b2',//深模式下，已读，邮件详情
                 "DarkMailDetailUnRead":'#fff',//深模式下，未读，邮件详情
-                "DarkMailDate":'#7F7F7F',
-                "DarkMailContent":"#fff" //邮件正文
+                "DarkMailDate":'#7F7F7F', // 深模式下，查看邮件详情时邮件列表address旁边的日期
+                "DarkMailContent":"#fff" //深模式下，邮件正文
             }
         },
     },
