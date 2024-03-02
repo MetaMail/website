@@ -51,7 +51,7 @@ export default function MailBoxPage() {
     };
   };
   // 创建草稿
-  const createDraft = async (mailTo: IPersonItem[], message_id?: string,) => {
+  const createDraft = async (mailTo: IPersonItem[], message_id?: string, subject?: string) => {
     const { address, ensName } = userLocalStorage.getUserInfo();
     const mailFrom = {
       address: (ensName || address) + PostfixOfAddress,
@@ -72,8 +72,12 @@ export default function MailBoxPage() {
       digest: '',
       local_id: new Date().toString(),
     }
-    if (message_id) selectMailObj.in_reply_to = message_id;
-    // console.log('草稿', selectMailObj)
+    if (message_id) {
+      // 回复邮件
+      selectMailObj.in_reply_to = message_id;
+      selectMailObj.subject = 'Re:' + subject;
+    };
+    console.log('草稿', selectMailObj)
     setSelectedDraft(selectMailObj);
   };
 

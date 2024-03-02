@@ -3,7 +3,7 @@ import { IPersonItem } from 'lib/constants';
 
 interface IMailBoxContext {
   checkEncryptable?: (receivers: IPersonItem[]) => Promise<{ encryptable: boolean; publicKeys: string[] }>;
-  createDraft?: (mailTo: IPersonItem[], message_id?: string) => void;
+  createDraft?: (mailTo: IPersonItem[], message_id?: string, subject?: string) => void;
   setShowLoading?: (show: boolean) => void;
   logout?: () => void;
   getMailStat?: () => Promise<void>;

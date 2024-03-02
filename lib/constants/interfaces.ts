@@ -106,6 +106,7 @@ export interface IMailDetailBaseItem {
 
 export interface IMailContentItem extends IMailDetailBaseItem {
   message_id?: string;
+  subject?: string
 }
 
 export interface IUpdateMailContentParams extends IMailDetailBaseItem {

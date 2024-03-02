@@ -230,7 +230,7 @@ export default function MailDetail() {
 
   const handleReply = () => {
     // console.log(selectedMail)
-    createDraft([selectedMail.mail_from], selectedMail.message_id);
+    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject);
   };
   const handleHighlineLink = (link: string) => {
     // 匹配字符串中的所有 <a> 标签
