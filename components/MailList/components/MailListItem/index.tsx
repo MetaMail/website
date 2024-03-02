@@ -233,8 +233,8 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             }`}>
           <div className='pt-5'>
             {/* 头像 */}
-            {filterType !== FilterTypeEn.Inbox && <JazziconGrid size={34} addr={mail.mail_from.address || ''} />}
-            {filterType === FilterTypeEn.Inbox && <Avatar size={34} addr={mail.mail_from.address || ''} />}
+            {mail.mailbox === MailBoxTypeEn.Send && <JazziconGrid size={34} addr={mail.mail_from.address || ''} />}
+            {mail.mailbox === MailBoxTypeEn.Inbox && <Avatar size={34} addr={mail.mail_from.address || ''} />}
           </div>
           <div className="flex-1 pl-15 w-0 " >
             <p className="flex justify-between items-center">
