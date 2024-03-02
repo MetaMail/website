@@ -244,7 +244,7 @@ export default function NewMail() {
       mark: selectedDraft.mark,
       mailbox: selectedDraft.mailbox,
       read: selectedDraft.read,
-      // meta_header: selectedDraft.meta_header
+      meta_header: selectedDraft.meta_header
     };
     const fromLocalDraft = !selectedDraft.message_id;// true:新建全新的草稿；false是从草稿列表中读的草稿
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));

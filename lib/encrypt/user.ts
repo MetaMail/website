@@ -7,10 +7,17 @@ import { saltSignInstance, keyDataSignInstance } from 'lib/sign';
 export const generateEncryptionUserKey = async () => {
 
   const salt = crypto.randomBytes(32).toString('hex');
-  const signedSalt = await saltSignInstance.doSign({
-    hint: 'Sign this salt to generate encryption key',
-    salt: salt,
-  });
+  let signedSalt;
+  try {
+    signedSalt = await saltSignInstance.doSign({
+      salt: salt,
+      hint: 'Sign this salt to generate encryption key',
+    });
+  } catch (error) {
+    // Handle the case where signing is refused by the user
+    // Throw a new error or handle it in a way that your application expects
+    throw new Error('error: User refused to sign the salt');
+  }
   const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
   const { privateKey, publicKey } = await ecdh.generateKey();
   // 把自己的私钥，用Storage_Encryption_Key对称加密了一下
@@ -53,10 +60,17 @@ export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) =
   if (!salt || salt.length == 0) {
     throw new Error('error: no salt in session storage');
   }
-  const signedSalt = await saltSignInstance.doSign({
-    salt: salt,
-    hint: 'Sign this salt to generate encryption key',
-  });
+  let signedSalt;
+  try {
+    signedSalt = await saltSignInstance.doSign({
+      salt: salt,
+      hint: 'Sign this salt to generate encryption key',
+    });
+  } catch (error) {
+    // Handle the case where signing is refused by the user
+    // Throw a new error or handle it in a way that your application expects
+    throw new Error('error: User refused to sign the salt');
+  }
   const Storage_Encryption_Key = keccak256(signedSalt).toString('hex');
   return decryptPrivateKey(encryptedPrivateKey, Storage_Encryption_Key);
 };
