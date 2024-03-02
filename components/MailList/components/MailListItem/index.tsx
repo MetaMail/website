@@ -137,7 +137,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={`listStatus overflow-y-visible py-6 flex flex-row px-12 items-center group h-36 cursor-pointe  ${mail.selected ? `bg-base-300  bg-opacity-50 dark:bg-[rgba(243,247,255,.1)]` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10  '
+          className={`${!selectedMail ? 'fadeInAnimation' : 'fadeOutAnimation'} listStatus overflow-y-visible py-6 flex flex-row px-12 items-center group h-36 cursor-pointe  ${mail.selected ? `bg-base-300  bg-opacity-50 dark:bg-[rgba(243,247,255,.1)]` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10  '
             }`}>
           <div className="flex flex-row gap-12">
             <input
