@@ -306,7 +306,7 @@ export default function NewMail() {
     } catch (error: any) {
       console.error(error);
       setSelectedDraft(null)
-      if (error?.code === 'ACTION_REJECTED') return;
+      if (error?.code === 'ACTION_REJECTED' || error?.code === 4001) return;
       toast.error("Can't get draft detail, please try again later.", {
         position: 'top-center',
         autoClose: 2000
