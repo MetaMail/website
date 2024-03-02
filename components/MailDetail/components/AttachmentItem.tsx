@@ -2,6 +2,7 @@ import { toast } from 'react-toastify';
 import { convertWordArrayToUint8Array, fileType, originFileName } from 'lib/utils';
 import { decryptMailAttachment } from 'lib/encrypt';
 import Image from 'next/image';
+import { download } from 'assets/icons/index'
 type AttachmentItemProps = {
   url: string;
   name: string;
@@ -51,11 +52,14 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
     a.remove();
   };
   return (
-    <div className='gap-10'>
-      <div title={name} onClick={handleClick} className="mb-20 mr-10 flex text-[#878787] text-[14px] px-12 py-12  bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer  items-center gap-8">
+
+    <div className='gap-10 relative mb-20 mr-10' onClick={handleClick}>
+      <div className="absolute opacity-0 hover:opacity-100 w-full h-full hover:bg-[rgba(0,0,0,.7)]  rounded-4 flex justify-center items-center">
+        <Image src={download} alt="" className='w-30 h-30 ' />
+      </div>
+      <div title={name} className=" flex text-[#878787] text-[14px] px-12 py-12  bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer  items-center gap-8">
         {fileTypeSvg(fileType(name).toLocaleUpperCase())}
-        <span className="max-w-[150px] text-ellipsis overflow-hidden"> {originFileName(name ?? `attachment${idx}`)}</span>
-        <span>.{fileType((name ?? `attachment${idx}`))}</span>
+        <div className='flex items-center '><p className="max-w-[150px] truncate">{originFileName(name ?? `attachment${idx}`)}</p><span>.{fileType((name ?? `attachment${idx}`))}</span></div>
       </div>
     </div>
   );

@@ -19,6 +19,7 @@
   "dependencies": {
     "@metamask/eth-sig-util": "^5.0.2",
     "@rainbow-me/rainbowkit": "^0.8.1",
+    "avvvatars-react": "^0.4.2",
     "axios": "^1.2.3",
     "buffer": "^6.0.3",
     "crypto": "^1.0.1",

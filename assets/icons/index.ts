@@ -37,6 +37,7 @@ import extendDark from './extendDark.svg';
 import cancel from './cancel.svg';
 import close from './close.svg';
 import mailMore from './mailMore.svg';
+import darkMailMore from './darkMailMore.svg';
 import dropdownImg from './dropdown.svg'
 import spam from './spam.svg';
 import starred from './starred.svg'
@@ -44,7 +45,7 @@ import sent from './sent.svg'
 import arrowLeft from './arrowLeft.svg'
 import arrowRight from './arrowRight.svg'
 import arrowRightActive from './arrowRightActive.svg'
-
+import download from './download.svg'
 
 // Dark theme slider icon 
 import dark_spam from './darkSlider/spam.svg';
@@ -59,6 +60,7 @@ import dark_delete from './darkSlider/delete.svg'
 import checkboxDark from './checkboxDark.svg'
 import favoriteDark from './favoriteDark.svg'
 export {
+  download,
   arrowDown,
   addDark,
   cancelDark,
@@ -82,6 +84,7 @@ export {
   down,
   empty,
   mailMore,
+  darkMailMore,
   back,
   temp1,
   filter,

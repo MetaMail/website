@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
 import { userLocalStorage } from 'lib/utils';
-import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType } from 'lib/constants';
+import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType, FilterTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import MailBoxContext from 'context/mail';
 import MailListItem from './components/MailListItem';
@@ -113,6 +113,12 @@ export default function MailList() {
   ];
 
   const handleMailActionsClick = async (httpParams: IMailChangeOptions) => {
+    // console.log('httpParams', httpParams)
+    // console.log('filterType', filterType)
+    // 如果在Delete列表里面删除，应该传4
+    if (filterType === FilterTypeEn.Trash) {
+      httpParams.mark = MarkTypeEn.Deleted;
+    }
     try {
       await mailHttp.changeMailStatus(getSelectedMailsParams(), httpParams);
       await fetchMailList(false);
