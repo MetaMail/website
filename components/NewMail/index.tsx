@@ -305,15 +305,13 @@ export default function NewMail() {
       setContentsToQuill(part_html);
     } catch (error: any) {
       console.error(error);
-      if (error?.code === 'ACTION_REJECTED') {
-        // 用户拒绝签名，不提示失败
-        setSelectedDraft(null)
-      } else {
-        toast.error("Can't get draft detail, please try again later.", {
-          position: 'top-center',
-          autoClose: 2000
-        });
-      }
+      setSelectedDraft(null)
+      if (error?.code === 'ACTION_REJECTED') return;
+      toast.error("Can't get draft detail, please try again later.", {
+        position: 'top-center',
+        autoClose: 2000
+      });
+
 
     } finally {
       setLoading(false);
