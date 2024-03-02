@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -22,17 +22,20 @@ import pic1Left from 'assets/pic1left.svg';
 import pic2Right from 'assets/pic2Right.svg';
 import pic3Left from 'assets/pic3Left.svg';
 import gdL from 'assets/gdL.png';
+import LoadingRing from 'components/LoadingRing';
 
 export default function Welcome() {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   let address = useAccount().address?.toLowerCase();
   useEffect(() => {
     document.body.style.fontFamily = 'SpaceGrotesk'; // 应用字体样式
   }, []);
   const handleAutoLogin = async () => {
+
     try {
       if (!address) return;
-
+      setLoading(true); // 开始请求时设置 loading 为 true
       const { address: localAddress } = userLocalStorage.getUserInfo();
       const token = userLocalStorage.getToken();
       if (localAddress && token) {
@@ -75,6 +78,7 @@ export default function Welcome() {
       });
     } finally {
       await disconnect();
+      setLoading(false); // 请求结束后设置 loading 为 false
     }
   };
 
@@ -176,6 +180,7 @@ export default function Welcome() {
         </div>
       </div>
       <Footer />
+      {loading && <LoadingRing loading={loading} />}
     </div>
   );
 }

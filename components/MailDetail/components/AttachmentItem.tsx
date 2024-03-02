@@ -54,7 +54,7 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
     <div className='gap-10'>
       <div title={name} onClick={handleClick} className="mb-20 mr-10 flex text-[#878787] text-[14px] px-12 py-12  bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer  items-center gap-8">
         {fileTypeSvg(fileType(name).toLocaleUpperCase())}
-        <span className="max-w-[150px] truncate"> {originFileName(name ?? `attachment${idx}`)}</span>
+        <span className="max-w-[150px] text-ellipsis overflow-hidden"> {originFileName(name ?? `attachment${idx}`)}</span>
         <span>.{fileType((name ?? `attachment${idx}`))}</span>
       </div>
     </div>
