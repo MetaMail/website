@@ -115,7 +115,7 @@ const EmailRecipientInput: React.FC<EmailRecipientInputProps> = ({ isDark, recei
         {receivers.map((email, index) => (
           <li key={index} className="flex">
             <div
-              className="p-5 bg-[#4F4F4F0A] dark:bg-[#DCDCDC26] rounded-9 cursor-pointer flex items-center gap-8"
+              className="p-5 bg-[#4F4F4F0A] dark:bg-[#DCDCDC26] text-lightMailContent dark:text-DarkMailContent rounded-9 cursor-pointer flex items-center gap-8"
               title={email.address}>
               <JazziconGrid size={27} addr={email.address} />
               <span className="w-120 omit">{email.address}</span>

@@ -108,7 +108,10 @@ module.exports = {
                 "DarkMailDetailRead":'#b6b6b6',//深模式下，已读，邮件详情
                 "DarkMailDetailUnRead":'#f6f6f6',//深模式下，未读，邮件详情
                 "DarkMailDate":'#b6b6b6', // 深模式下，查看邮件详情时邮件列表address旁边的日期
-                "DarkMailContent":"#f6f6f6" //深模式下，邮件正文
+                "DarkMailContent":"#f6f6f6", //深模式下，邮件正文
+                // ----------------------------
+
+                "lightGrayBg": "#0700200A"
             }
         },
     },

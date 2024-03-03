@@ -26,7 +26,8 @@ import {
   markFavorite,
   markUnread,
   starred,
-  sent
+  sent,
+  shrink
 } from 'assets/icons';
 import { useRouter } from 'next/router';
 import Avatar from 'components/Avatar';
@@ -346,7 +347,7 @@ export default function MailDetail() {
               </div>
               <div className="flex gap-10">
                 <Icon
-                  url={extend}
+                  url={isDetailExtend ? shrink : extend}
                   className="w-16 h-16 self-center "
                   onClick={() => setIsDetailExtend(!isDetailExtend)}
                 />

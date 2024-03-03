@@ -20,7 +20,7 @@ import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
 import LoadingRing from 'components/LoadingRing';
 import { ShinkIcon, ExtendIcon, AttachIcon, MailMore } from '../../components/svg/index'
-import { trashCan, extend, cancel, cancelDark, extendDark } from 'assets/icons';
+import { trashCan, extend, cancel, cancelDark, extendDark, shrinkDark, shrink } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
@@ -417,8 +417,12 @@ export default function NewMail() {
           {
             <div onClick={() => setIsExtend(!isExtend)}>{
               isExtend ? (
-                <ShinkIcon fill={isDark ? '#fff' : '#7f7f7f'} />
-              ) : <ExtendIcon stroke={isDark ? '#fff' : '#7f7f7f'} />
+                <Icon url={isDark ? shrinkDark : shrink}
+                className="w-14 h-auto self-center" />
+              ) : (
+                <Icon url={isDark ? extendDark : extend}
+                className="w-14 h-auto self-center" />
+              )
             }
             </div>
           }
@@ -463,7 +467,7 @@ export default function NewMail() {
           <input
             type="text"
             placeholder=""
-            className="flex box-border h-37 leading-[39px]  pl-[10px] py-4 flex-1 bg-[#0700200A] dark:bg-[#B9B9B90A] rounded-[8px] text-[#000000] dark:text-[#fff] focus:outline-none "
+            className="flex box-border h-37 leading-[39px]  pl-[10px] py-4 flex-1 bg-lightGrayBg dark:bg-[#B9B9B90A] rounded-[8px] text-lightMailContent dark:text-DarkMailContent focus:outline-none "
             defaultValue={selectedDraft.subject}
             ref={subjectRef}
             onChange={throttle(() => {
@@ -482,7 +486,7 @@ export default function NewMail() {
             onChange={setEmailContent}
             readOnly={false}
             forwardedRef={reactQuillRef}
-            className={`flex-1 py-16 flex flex-col-reverse text-[#464646] dark:text-[#fff] overflow-hidden  leading-[21px] ${isDark ? 'dark' : ''
+            className={`flex-1 pt-16 flex flex-col-reverse text-lightMailContent dark:text-DarkMailContent overflow-hidden  leading-[21px] ${isDark ? 'dark' : ''
               }`}
             theme={'snow'}
             placeholder={''}
@@ -534,11 +538,8 @@ export default function NewMail() {
         </>
       }
 
-      <div className="flex items-center gap-13 mt-20">
-        {/* 展开状态的上传附件按钮 */}
-        {isExtend && (
-          <div onClick={() => setIsShowFileUpload(!isShowFileUpload)}> <AttachIcon fill={isDark ? '#fff' : 'black'} /></div>
-        )}
+      <div className="flex items-center gap-13 mt-8">
+
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
@@ -546,9 +547,12 @@ export default function NewMail() {
           <Icon url={sendMailIcon} className="h-18" />
           <span className="ml-8 h-[18px] leading-[18px]">Send</span>
         </button>
-
+        {/* 展开状态的上传附件按钮 */}
+        {/* {isExtend && (
+          <div onClick={() => setIsShowFileUpload(!isShowFileUpload)}> <AttachIcon fill={isDark ? '#fff' : 'black'} /></div>
+        )} */}
         {/* 上传文件按钮   &&*/}
-        {!isExtend && (
+        { (
           // 拖拽上传文件区域
           <FileUploader
             randomBits={randomBits}

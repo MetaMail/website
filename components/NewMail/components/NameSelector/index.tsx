@@ -39,7 +39,7 @@ function NameSelector({ initValue, onChange }: IProps) {
     setIsOpen(false);
   };
   return (
-    <div className="flex items-center relative w-fit   cursor-pointer text-[#706F6F] ">
+    <div className="flex items-center relative w-fit cursor-pointer text-lightMailAddressRead dark:text-DarkMailAddressRead">
       {ensName ? (
         // from 有可选项
         // 发件人选择框
