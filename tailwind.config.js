@@ -60,8 +60,9 @@ module.exports = {
             }
           },
             fontFamily: {
-                poppins: ['Poppins,Roboto, Helvetica, Arial, sans-serif'],
-                spaceGrotesk: ['SpaceGrotesk'],
+                poppins: ['Poppins, Roboto, Helvetica, Arial, sans-serif'],
+                poppinsSemiBold: ['PoppinsSemiBold, Roboto, Helvetica, Arial, sans-serif'],
+                spaceGrotesk: ['SpaceGrotesk, Roboto, Helvetica, Arial, sans-serif'],
             },
             fontSize: {
                 sm: ['12px', '18px'],
