@@ -19,9 +19,9 @@ class MMSendEmailInfoSign extends MMSign {
                 { name: 'subject', type: 'string' },
                 { name: 'text_hash', type: 'string' },
                 { name: 'html_hash', type: 'string' },
-                { name: 'attachments_hash', type: 'string[]' },
-                { name: 'encrypted_encryption_keys', type: 'string[]' },
-                { name: 'encryption_public_keys', type: 'string[]' },
+                { name: 'attachment_hashes', type: 'string[]' },
+                { name: 'encrypted_encryption_key_hashes', type: 'string[]' },
+                { name: 'encryption_public_key_hashes', type: 'string[]' },
             ],
         };
     }

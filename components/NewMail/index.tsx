@@ -166,11 +166,9 @@ export default function NewMail() {
         subject: subjectRef.current.value,
         text_hash: CryptoJS.SHA256(pureText).toString(),
         html_hash: CryptoJS.SHA256(pureHtml).toString(),
-        attachments_hash: selectedDraft.attachments.map(att =>
-          encrypted_encryption_keys.length ? att.encrypted_sha256 : att.plain_sha256
-        ),
-        encrypted_encryption_keys: encrypted_encryption_keys,
-        encryption_public_keys: encryption_public_keys,
+        attachment_hashes: selectedDraft.attachments.map(att => encrypted_encryption_keys.length ? att.encrypted_sha256 : att.plain_sha256),
+        encrypted_encryption_key_hashes: encrypted_encryption_keys ? encrypted_encryption_keys.map(key => CryptoJS.SHA256(key).toString()) : [],
+        encryption_public_key_hashes: encryption_public_keys ? encryption_public_keys.map(key => CryptoJS.SHA256(key).toString()) : [],
       });
 
       // 如果是非加密邮件，则需要将randomBits传给后端，后端发送邮件之前会先解出原始正文
