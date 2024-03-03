@@ -116,7 +116,7 @@ export default function MailBoxPage() {
         throw new Error('not find index from address list');
       }
       currentKey = keys[idx];
-      currentEncryptionPublicKey = encryption_public_keys[idx];
+      currentEncryptionPublicKey = encryption_public_keys[0]; // Use the sender's pubkey to derive randomBits
     }
     if (!currentKey) {
       throw new Error('not find current key');
