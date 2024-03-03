@@ -22,8 +22,9 @@
 
   @font-face {
     font-family: 'PoppinsSemiBold';
-    src: url('/static/fonts/Poppins-SemiBold.ttf') format('ttf');
-    
+    src: url('/static/fonts/Poppins-SemiBold.ttf') format('ttf'),
+         url('/static/fonts/Poppins-SemiBold.woff2') format('woff2'),
+         url('/static/fonts/Poppins-SemiBold.woff') format('woff');
     font-style: normal;
 }
 /* 首页字体 */
