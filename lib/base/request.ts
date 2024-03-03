@@ -3,9 +3,8 @@ import { userLocalStorage } from 'lib/utils';
 
 //const BASE_URL = 'https://api.metamail.ink/';
 //const BASE_URL = 'http://localhost:8080';
-const BASE_URL = 'https://api-v2.mmail-test.ink/';
-
-export const PostfixOfAddress = '@mmail-test.ink';
+const BASE_URL = process.env.REACT_APP_API_URL || 'https://api-v2.mmail-test.ink/';
+export const PostfixOfAddress = process.env.REACT_APP_EMAIL_DOMAIN || '@mmail-test.ink';
 
 export abstract class MMHttp {
     private _baseUrl: string;
