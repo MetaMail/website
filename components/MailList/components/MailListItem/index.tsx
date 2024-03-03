@@ -38,7 +38,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:text-[#c6c6c6]' : "text-lightMailAddressUnRead font-[600] dark:text-[#fff]";
+    return mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:text-DarkMailAddressRead' : "text-lightMailAddressUnRead font-[600] dark:text-[#fff]";
   };
 
   // 有name展示name,没有就展示address
@@ -136,10 +136,10 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
   const renderAvator = () => {
     if (mail.mail_from.address.endsWith(PostfixOfAddress)) {
       // 我们的用户
-      return <JazziconGrid size={34} addr={mail.mail_from.address || ''} />
+      return <JazziconGrid size={38} addr={mail.mail_from.address || ''} />
     } else {
       // 别的用户
-      return <Avatar size={34} addr={mail.mail_from.name || mail.mail_from.address || ''} />
+      return <Avatar size={38} addr={mail.mail_from.name || mail.mail_from.address || ''} />
     }
   }
 
@@ -204,7 +204,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
-            <div className="group-hover:hidden text-base-content opacity-70">{transformTime(mail.mail_date)}</div>
+            <div className="group-hover:hidden text-base-content text-lightMailDate dark:text-DarkMailDate">{transformTime(mail.mail_date)}</div>
             <div className="hidden group-hover:flex items-center justify-end">
               <div
                 onClick={async e => {
@@ -251,12 +251,12 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               {/* 邮件地址 */}
               {
                 mail.mailbox === MailBoxTypeEn.Send ? (<span
-                  className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:text-[#c6c6c6]' : 'text-[#000] dark:DarkMailAddressUnRead font-[600]'}`}
+                  className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:dark:text-DarkMailAddressRead' : 'text-[#000] dark:DarkMailAddressUnRead font-[600]'}`}
                   title={renderMailTo(mail).join(';')}>
                   {renderMailTo(mail).join(';')}
                 </span>) : (
                   <span
-                    className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:text-[#c6c6c6]' : 'text-[#000] font-[600] dark:text-DarkMailAddressUnRead'}`}
+                    className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-['PoppinsSemiBold']   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:dark:text-DarkMailAddressRead' : 'text-[#000] font-[600] dark:text-DarkMailAddressUnRead'}`}
                     title={getMailFrom(mail)}>
                     {getMailFrom(mail)}
                   </span>

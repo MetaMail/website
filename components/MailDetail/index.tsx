@@ -316,10 +316,10 @@ export default function MailDetail() {
   const renderAvator = () => {
     if (selectedMail.mail_from.address.endsWith(PostfixOfAddress)) {
       // 我们的用户
-      return <JazziconGrid size={34} addr={selectedMail.mail_from.address || ''} />
+      return <JazziconGrid size={38} addr={selectedMail.mail_from.address || ''} />
     } else {
       // 别的用户
-      return <Avatar size={34} addr={selectedMail.mail_from.name || selectedMail.mail_from.address || ''} />
+      return <Avatar size={38} addr={selectedMail.mail_from.name || selectedMail.mail_from.address || ''} />
     }
   }
   return (

@@ -109,9 +109,9 @@ export default function Titlebar() {
         <div className="form-control"></div>
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className={`dropdown dropdown-end  dropdown-bottom  w-100  dropdown-hover`}>
           <label tabIndex={0} className="dropdown-label rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
-            <div className="w-31 h-31 rounded-full  hover:border-5 flex items-center">
+            <div className="w-32 h-32 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
-              <JazziconGrid size={31} addr={address} />
+              <JazziconGrid size={32} addr={address} />
             </div>
             <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18  transition-all duration-200 ease-in-out transform ${dropdownShow ? 'transform rotate-180' : 'rotate-0'}`} />
           </label>

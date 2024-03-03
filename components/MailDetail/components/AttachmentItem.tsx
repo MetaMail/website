@@ -53,11 +53,11 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
   };
   return (
 
-    <div className='gap-10 relative mb-20 mr-10' onClick={handleClick}>
-      <div className="absolute opacity-0 hover:opacity-100 w-full h-full hover:bg-[rgba(0,0,0,.7)]  rounded-4 flex justify-center items-center">
+    <div className='gap-10 relative mb-20 mr-10 cursor-pointer' onClick={handleClick}>
+      <div className="absolute transition-all duration-200 opacity-0 hover:opacity-100 w-full h-full hover:bg-[rgba(64,64,64,.9)]  rounded-4 flex justify-center items-center">
         <Image src={download} alt="" className='w-30 h-30 ' />
       </div>
-      <div title={name} className=" flex text-[#878787] text-[14px] px-12 py-12  bg-[#F4F4F466] dark:bg-[#DCDCDC26] rounded-4 cursor-pointer  items-center gap-8">
+      <div title={name} className=" flex text-lightMailContent dark:text-DarkMailContent text-[14px] px-12 py-12  bg-[#DCDCDC33] dark:bg-[#DCDCDC33] rounded-4 cursor-pointer  items-center gap-8">
         {fileTypeSvg(fileType(name).toLocaleUpperCase())}
         <div className='flex items-center '><p className="max-w-[150px] truncate">{originFileName(name ?? `attachment${idx}`)}</p><span>.{fileType((name ?? `attachment${idx}`))}</span></div>
       </div>

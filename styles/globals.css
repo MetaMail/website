@@ -257,7 +257,7 @@ button:disabled {
 }
 .fadeInAnima .listContainer{
   animation-name: fadeIn;
-  animation-duration: 150ms;
+  animation-duration: 200ms;
   animation-fill-mode: forwards;
 }
 .fadeOutAnima .listContainer{
@@ -270,12 +270,12 @@ button:disabled {
  .fadeInAnimation {
     display: none; /* 初始状态隐藏 */
     opacity: 0; /* 初始透明度为0 */
-    animation: fadeIn 500ms ease-in forwards; /* 淡入动画 */
+    animation: fadeIn 200ms ease-in forwards; /* 淡入动画 */
   }
 
   .fadeOutAnimation {
     opacity: 1; /* 初始透明度为1 */
-    animation: fadeOut 200ms ease-in forwards; /* 淡出动画 */
+    animation: fadeOut 200ms ease-out forwards; /* 淡出动画 */
   }
 
   @keyframes fadeIn {

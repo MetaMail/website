@@ -92,23 +92,23 @@ module.exports = {
             },
             colors:{
               
-                "lightMailAddressRead":'#666',//浅色模式下，已读，发件人地址
-                "lightMailAddressUnRead":'#333',//浅色模式下，未读，发件人地址
-                "lightMailTitleRead":'#666',//浅色模式下，已读，title
-                "lightMailTitleUnRead":'#333',//浅色模式下，未读，title
-                 "lightMailDetailRead":'#b2b2b2',//浅色模式下，已读，邮件详情
-                "lightMailDetailUnRead":'#333',//浅色模式下，未读，邮件详情
-                  "lightMailDate":'#7F7F7F',// 深浅色式下，查看邮件详情时邮件列表address旁边的日期
-                 "lightMailContent":"#040404", //邮件正文
+                "lightMailAddressRead":'#444',//浅色模式下，已读，发件人地址
+                "lightMailAddressUnRead":'#222',//浅色模式下，未读，发件人地址
+                "lightMailTitleRead":'#444',//浅色模式下，已读，title
+                "lightMailTitleUnRead":'#222',//浅色模式下，未读，title
+                 "lightMailDetailRead":'#a2a2a2',//浅色模式下，已读，邮件详情
+                "lightMailDetailUnRead":'#444',//浅色模式下，未读，邮件详情
+                  "lightMailDate":'#a2a2a2',// 浅色式下，查看邮件详情时邮件列表address旁边的日期
+                 "lightMailContent":"#222", //邮件正文
                 // ----------------------------
-                "DarkMailAddressRead":'#c6c6c6',//深模式下，已读，发件人地址
-                "DarkMailAddressUnRead":'#fff',//深模式下，未读，发件人地址
-                "DarkMailTitleRead":'#c6c6c6',//深模式下，已读，title
-                "DarkMailTitleUnRead":'#fff',//深模式下，未读，title
-                "DarkMailDetailRead":'#b2b2b2',//深模式下，已读，邮件详情
-                "DarkMailDetailUnRead":'#fff',//深模式下，未读，邮件详情
-                "DarkMailDate":'#7F7F7F', // 深模式下，查看邮件详情时邮件列表address旁边的日期
-                "DarkMailContent":"#fff" //深模式下，邮件正文
+                "DarkMailAddressRead":'#d6d6d6',//深模式下，已读，发件人地址
+                "DarkMailAddressUnRead":'#f6f6f6',//深模式下，未读，发件人地址
+                "DarkMailTitleRead":'#d6d6d6',//深模式下，已读，title
+                "DarkMailTitleUnRead":'#f6f6f6',//深模式下，未读，title
+                "DarkMailDetailRead":'#b6b6b6',//深模式下，已读，邮件详情
+                "DarkMailDetailUnRead":'#f6f6f6',//深模式下，未读，邮件详情
+                "DarkMailDate":'#b6b6b6', // 深模式下，查看邮件详情时邮件列表address旁边的日期
+                "DarkMailContent":"#f6f6f6" //深模式下，邮件正文
             }
         },
     },
