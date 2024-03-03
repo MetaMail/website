@@ -34,6 +34,8 @@ import back from './back.svg';
 import extend from './extend.svg';
 import cancelDark from './cancelDark.svg';
 import extendDark from './extendDark.svg';
+import shrink from './shrink.svg';
+import shrinkDark from './shrinkDark.svg';
 import cancel from './cancel.svg';
 import close from './close.svg';
 import mailMore from './mailMore.svg';
@@ -115,4 +117,6 @@ export {
   cancelSelected,
   reply,
   trashActive,
+  shrinkDark,
+  shrink
 };
