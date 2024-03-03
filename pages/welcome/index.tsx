@@ -51,8 +51,6 @@ export default function Welcome() {
       });
       let encryptionData = await userHttp.getEncryptionKey(address);
 
-
-
       if (!encryptionData?.signature) {
         encryptionData = await generateEncryptionUserKey();
         // do upload
@@ -72,7 +70,8 @@ export default function Welcome() {
     } catch (error: any) {
       console.error(error);
       if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示登录失败
-      toast.error('Login failed, please try again later.', {
+
+      toast.error('Login failed. Please make sure your balance is not enpty in ETH Mainnet.', {
         position: 'top-center',
         autoClose: 2000
       });
