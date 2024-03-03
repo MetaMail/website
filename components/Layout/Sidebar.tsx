@@ -95,7 +95,7 @@ export default function Sidebar() {
               handleChangeFilter(item.key);
             }}
             className='mb-2 text-[#545454]  dark:text-base-content'>
-            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-[600]" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
+            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-['PoppinsSemiBold']" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
               <div className='flex items-center gap-x-9'>
                 {renderLogo(item.logo, filterType === Number(item.key))}
                 {/* <Image src={filterType === Number(item.key) && !isDark ? item.activeLogo : item?.logo} alt={item?.title} className="w-18 h-18 self-center stroke-width-100 fill-primary filter-primary" /> */}

@@ -38,7 +38,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
 
   const getIsReadTextClass = (mail: IMailContentItem) => {
-    return mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:text-DarkMailAddressRead' : "text-lightMailAddressUnRead font-[600] dark:text-[#fff]";
+    return mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:text-DarkMailAddressRead' : "text-lightMailAddressUnRead font-['PoppinsSemiBold'] dark:text-[#fff]";
   };
 
   // 有name展示name,没有就展示address
@@ -181,25 +181,25 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
           {
             mail.mailbox === MailBoxTypeEn.Send ? (
               <div title={renderMailTo(mail).join(';')}>
-                <span className={`w-[226px] max-w-[226px] ml-28  omit  text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
+                <span className={`w-[160px] max-w-[160px] ml-32  omit  text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
                 </span>
               </div>
 
             ) : (
               // Inbox
               <div title={getMailFrom(mail)}>
-                <span className={`w-[226px]  max-w-[226px]  ml-28  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? '!font-[400]' : ''}`} >
+                <span className={`w-[160px]  max-w-[160px]  ml-32  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? '!font-[400]' : ''}`} >
                   {getMailFrom(mail)}
                 </span>
               </div>
             )
           }
           {/* 邮件list-item */}
-          <div className="flex-1 flex items-center w-0 ml-28 omit  dark:text-base-content">
+          <div className="flex-1 flex items-center w-0 ml-32 omit  dark:text-base-content">
             {/* 加密邮件的小锁 */}
             {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Unread ? isDark ? '#fff' : '#333333' : '#b2b2b2'} />}</span>}
             {/* ReadStatusTypeEn.Read 已读 */}
-            <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? 'font-[600] dark:text-[#fff] text-lightMailTitleUnRead' : 'text-lightMailTitleRead dark:text-DarkMailTitleRead'}`}>{mail.subject || '(no subject)'}</span>
+            <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? "font-['PoppinsSemiBold'] dark:text-[#fff] text-lightMailTitleUnRead" : 'text-lightMailTitleRead dark:text-DarkMailTitleRead'}`}>{mail.subject || '(no subject)'}</span>
 
             <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
           </div>
@@ -251,12 +251,12 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               {/* 邮件地址 */}
               {
                 mail.mailbox === MailBoxTypeEn.Send ? (<span
-                  className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-poppins   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:dark:text-DarkMailAddressRead' : 'text-[#000] dark:DarkMailAddressUnRead font-[600]'}`}
+                  className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-poppins   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:dark:text-DarkMailAddressRead' : "text-[#000] dark:DarkMailAddressUnRead font-['PoppinsSemiBold']"}`}
                   title={renderMailTo(mail).join(';')}>
                   {renderMailTo(mail).join(';')}
                 </span>) : (
                   <span
-                    className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-poppins   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:dark:text-DarkMailAddressRead' : 'text-[#000] font-[600] dark:text-DarkMailAddressUnRead'}`}
+                    className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 font-poppins   leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:dark:text-DarkMailAddressRead' : "text-[#000] font-['PoppinsSemiBold'] dark:text-DarkMailAddressUnRead"}`}
                     title={getMailFrom(mail)}>
                     {getMailFrom(mail)}
                   </span>
@@ -268,7 +268,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             </p>
             <p className="flex justify-between items-center text-[14px] ">
               {/* 邮件主体 */}
-              <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailTitleRead dark:text-DarkMailTitleRead' : 'text-base-content font-[600] dark:text-DarkMailTitleUnRead'}`}>
+              <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailTitleRead dark:text-DarkMailTitleRead' : "text-base-content font-['PoppinsSemiBold'] dark:text-DarkMailTitleUnRead"}`}>
                 {mail.subject || '(no subject)'}
               </span>
               {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Read ? '#adadad' : '#333'} />}</span>}
