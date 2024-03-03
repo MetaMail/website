@@ -71,7 +71,7 @@ export default function Welcome() {
       console.error(error);
       if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示登录失败
 
-      toast.error('Login failed. Please make sure your balance is not enpty in ETH Mainnet.', {
+      toast.error('Login failed. Please make sure your balance > 0 in ETH Mainnet.', {
         position: 'top-center',
         autoClose: 2000
       });
