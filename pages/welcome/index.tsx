@@ -108,8 +108,8 @@ export default function Welcome() {
             </div>
           </header>
         </div>
-        <div className="pt-78 lg:pt-136 relative left-174 2xl:left-[18%] w-399">
-          <h1 className="font-bold text-5xl leading-snug ">
+        <div className="pt-78 lg:pt-136 relative left-174 2xl:left-[18%] w-399 ">
+          <h1 className="font-bold text-5xl leading-snug text-[#333]">
             <p>Your</p>
             <p>Web3 Email</p>
           </h1>

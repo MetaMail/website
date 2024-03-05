@@ -77,7 +77,7 @@ body {
   position: absolute;
   right: 0;
   top: 190px;
-  background: #00d1ff;
+  background: rgb(0, 209, 255);
   opacity: 0.2;
   filter: blur(100px);
   width: 210px;

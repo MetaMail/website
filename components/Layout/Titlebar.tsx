@@ -118,7 +118,7 @@ export default function Titlebar() {
           {/* */}
           <div
             tabIndex={0}
-            className={`${dropdownShow ? 'scale-100' : 'scale-0'}  transition-all duration-200 ease-in-out transform   mt-3 z-[1] px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
+            className={`${dropdownShow ? 'scale-100' : 'scale-0'} z-20 transition-all duration-200 ease-in-out transform   mt-3 px-[34px] py-[28px] shadow menu menu-sm bg-base-100 rounded-box w-280 dropdown-content `}>
             <div className={` flex flex-row items-center `}>
               <p className="flex-1 leading-[16px] flex mr-4 cursor-default dark:text-[#fff] text-[14px] " title={`${address}${PostfixOfAddress}`}>
                 <span className='max-w-[184px] text-ellipsis flex-1 overflow-x-hidden'>{getShowAddress(address)}</span>

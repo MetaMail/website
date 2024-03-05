@@ -261,10 +261,10 @@ export default function MailList() {
 
   return (
     <div
-      className={`flex flex-col h-full transition-all text-[14px] pt-16 overflow-y-scroll ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
+      className={`flex flex-col h-full transition-all text-[14px]  overflow-y-scroll ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
         }`}>
       {
-        list.length > 0 ? (<div className="flex flex-row w-full justify-between px-12 box-border py-9 pt-0">
+        list.length > 0 ? (<div className="sticky  top-0 bg-base-100 flex flex-row w-full justify-between px-12 box-border pt-12 pb-6 z-10 ">
           <div className="flex flex-row space-x-10 items-center" >
             {/* 全选按钮 */}
             <input
