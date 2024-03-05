@@ -4,7 +4,7 @@ import DOMPurify from 'dompurify';
 import moment from 'moment';
 import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
-
+import ReactDOM from 'react-dom';
 import MailBoxContext from 'context/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
@@ -27,7 +27,8 @@ import {
   markUnread,
   starred,
   sent,
-  shrink
+  shrink,
+  replyMail
 } from 'assets/icons';
 import { useRouter } from 'next/router';
 import Avatar from 'components/Avatar';
@@ -186,23 +187,12 @@ export default function MailDetail() {
       handler: handleStar,
     },
     {
-      src: sent,
+      src: replyMail,
       title: 'Reply',
       handler: () => {
         handleReply();
       },
     },
-    // {
-    //   src: mailMore,
-    //   title: 'More',
-    //   options: [
-    //     {
-    //       title: 'download emil',
-    //       handler: () => { },
-    //     }
-    //   ],
-
-    // },
   ];
   const handleDownload = () => {
     selectedMail.download?.url && window.open(selectedMail.download.url)
@@ -306,11 +296,13 @@ export default function MailDetail() {
 
   const handleClick = (event: any) => {
     event.preventDefault();
-    const href = event.target?.attributes?.href?.value;
+    const targetHref = event.currentTarget.getAttribute('href');
+    console.log(targetHref);
     // openModal()
-    console.log('href', href)
-    if (!href.startsWith(window.location.origin)) {
-      setLink(href)
+    console.log('event', event)
+    console.log('href', targetHref)
+    if (targetHref && !targetHref.startsWith(window.location.origin)) {
+      setLink(targetHref)
       openModal()
     }
   };
@@ -327,11 +319,11 @@ export default function MailDetail() {
     // 邮件详情
     <div>
       <div
-        className={`absolute right-0 justify-between w-[calc(100%-333px)] h-full overflow-y-scroll flex-1 rounded-10 flex flex-col pt-16 font-poppins p-16  h-[100%] bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
+        className={`absolute right-0 justify-between w-[calc(100%-333px)] h-full overflow-y-scroll flex-1 rounded-10 flex flex-col pb-16 font-poppins px-16  bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
           }`}>
-        <div>
-          <header className="flex flex-col justify-between w-full mb-22">
-            <div className="flex justify-between w-full ">
+        <div className='relative h-full overflow-y-scroll'>
+          <header className="flex flex-col justify-between w-full  sticky bg-base-100 top-0 z-10 pt-16 ">
+            <div className="flex justify-between w-full pb-[10px]">
               <div className="flex gap-10">
                 {topIcons.map((item, index) => {
                   return (
@@ -363,7 +355,7 @@ export default function MailDetail() {
             </div>
             {/* 邮件详情 */}
             <h1 className="omit font-poppinsSemiBold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '(no subject)'}</h1>
-            <div className="flex justify-between ">
+            <div className="flex justify-between py-10">
               <div className="flex gap-20 items-start">
                 {/* 头像 */}
                 <div className='shrink-0'> {renderAvator()}</div>
@@ -426,7 +418,7 @@ export default function MailDetail() {
             {
               <>
                 <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
-                  <div id="mailHtml" className='listContainer px-[57px] '>
+                  <div id="mailHtml" className='listContainer px-[57px] box-border'>
                     {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
                   </div>
                 </div>
@@ -438,7 +430,7 @@ export default function MailDetail() {
 
         <div className=''>
           {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
-            <div className="flex pl-[57px]">
+            <div className="flex gap-10 absolute pl-57 bottom-56 w-[100%] box-border py-10 bg-base-100 flex-wrap">
               {/* 文件s */}
               {selectedMail?.attachments?.map((item, idx) => (
                 <AttachmentItem
@@ -451,25 +443,28 @@ export default function MailDetail() {
               ))}
             </div>
           )}
-          <div className='pl-[57px] mt-[20px]'>
-            {/* 回复按钮 */}
-            <button
-              className=" flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
-              onClick={handleReply}>
-              {/* <Icon url={sendMailIcon} /> */}
-              <span className="">Reply</span>
-            </button>
+          <div className='absolute pl-57 bottom-0 w-full py-10 bg-base-100'>
+            <div className=''>
+              {/* 回复按钮 */}
+              <button
+                className=" flex justify-center items-center bg-primary text-white px-18 py-6 rounded-[7px] self-start  leading-[24px]"
+                onClick={handleReply}>
+                {/* <Icon url={sendMailIcon} /> */}
+                <span className="">Reply</span>
+              </button>
+            </div>
           </div>
         </div>
 
       </div>
       <Modal
         title="Warning!"
-        content={`You are about to leave our site to: ${link}`}
         isOpen={isOpen}
         onClose={closeModal}
         onConfirm={handleConfirm}
-      />
+      >
+        <p className='text-[#666]'><span className='text-[#999] '>You are about to leave our site to：</span><span className='underline'>{`${link}`}</span></p>
+      </Modal>
 
     </div>
 

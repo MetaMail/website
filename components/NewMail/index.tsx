@@ -403,7 +403,7 @@ export default function NewMail() {
 
   return (
     <div
-      className={`${selectedDraft ? 'fadeInAnimation' : 'fadeInAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
+      className={`z-22 ${selectedDraft ? 'fadeInAnimation' : 'fadeInAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
         } `}>
       <header className="flex justify-between">
         <div className="flex items-center">
@@ -416,10 +416,10 @@ export default function NewMail() {
             <div onClick={() => setIsExtend(!isExtend)}>{
               isExtend ? (
                 <Icon url={isDark ? shrinkDark : shrink}
-                className="w-14 h-auto self-center" />
+                  className="w-14 h-auto self-center" />
               ) : (
                 <Icon url={isDark ? extendDark : extend}
-                className="w-14 h-auto self-center" />
+                  className="w-14 h-auto self-center" />
               )
             }
             </div>
@@ -550,7 +550,7 @@ export default function NewMail() {
           <div onClick={() => setIsShowFileUpload(!isShowFileUpload)}> <AttachIcon fill={isDark ? '#fff' : 'black'} /></div>
         )} */}
         {/* 上传文件按钮   &&*/}
-        { (
+        {(
           // 拖拽上传文件区域
           <FileUploader
             randomBits={randomBits}
