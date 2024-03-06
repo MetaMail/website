@@ -204,7 +204,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
-            <div className="group-hover:hidden text-base-content text-lightMailDate dark:text-DarkMailDate">{transformTime(mail.mail_date)}</div>
+            <div className="group-hover:hidden  text-lightMailDate dark:text-DarkMailDate">{transformTime(mail.mail_date)}</div>
             <div className="hidden group-hover:flex items-center justify-end">
               <div
                 onClick={async e => {
