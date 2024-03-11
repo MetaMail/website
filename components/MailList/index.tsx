@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
@@ -21,6 +22,7 @@ const MailListFilters = ['All', 'Read', 'Unread', 'Plain', 'Encrypted'] as const
 type MailListFiltersType = (typeof MailListFilters)[number];
 
 export default function MailList() {
+  let intervalId: NodeJS.Timeout;
   // 发送邮件成功，刷新列表
   const { isSendSuccess, setIsSendSuccess } = useNewMailStore();
   const { getMailStat } = useContext(MailBoxContext);
@@ -29,7 +31,6 @@ export default function MailList() {
   // selectedMail : 选中查看详情的邮件
   const { selectedMail, isDetailExtend } = useMailDetailStore();
   useEffect(() => {
-    console.log(isDetailExtend)
   }, [isDetailExtend])
   const [loading, setLoading] = useState(false);
 
@@ -238,6 +239,7 @@ export default function MailList() {
   useEffect(() => { console.log(filter) }, [filter])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
+    console.log('zhixing')
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     setFilter(null)
   }, [pageIndex, filterType, isSendSuccess]);
@@ -245,6 +247,7 @@ export default function MailList() {
 
   //  filterType
   useEffect(() => {
+    console.log('zhixing1')
     setFilter(null);
     const onRefresh: (e: Event) => Promise<void> = async event => {
       const e = event as CustomEvent;
@@ -252,11 +255,15 @@ export default function MailList() {
     };
 
     window.addEventListener('refresh-list', onRefresh);
+    // 每隔 30 秒执行一次
+    intervalId = setInterval(() => fetchMailList(false), 30000);
+
+    // 组件卸载时清除定时器
     return () => {
       window.removeEventListener('refresh-list', onRefresh);
+      clearInterval(intervalId);
     };
   }, [filterType]);
-
 
 
   return (
