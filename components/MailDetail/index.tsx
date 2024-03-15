@@ -319,8 +319,7 @@ export default function MailDetail() {
     // 邮件详情
     <>
       <div
-        className={`absolute right-0 justify-between w-[calc(100%-333px)] h-full overflow-y-scroll flex-1 rounded-10 flex flex-col pb-16 font-poppins px-16  bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
-          }`}>
+        className={`absolute right-0 justify-between  h-full overflow-y-scroll flex-1 rounded-10 flex flex-col pb-16 font-poppins px-16  bg-base-100 ${isDetailExtend ? 'w-full ' : 'w-[calc(100%-333px)]'}`}>
         <div className='relative h-full overflow-y-scroll'>
           <header className="flex flex-col justify-between w-full  sticky bg-base-100 top-0 z-10 pt-16 ">
             <div className="flex justify-between w-full pb-[10px]">
