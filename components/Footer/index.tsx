@@ -42,12 +42,14 @@ export default function Footer() {
         <div className="w-370 text-3xl font-light leading-tight ">Create And Use Your Crypto Email</div>
       </div>
       <div className="flex  flex-col md:flex-row justify-between gap-30 font-poppins md:absolute bottom-0 md:bottom-83 right-0 md:right-130 zIndex-9">
-        <a className="font-extrabold text-ml pt-10" target='_blank' href="https://docs.google.com/document/d/18dDLwFBFJkEdpAzVbkrHk1lYwAOqHbkXqKrahIQbOSU/edit?usp=sharing">
+      <div className="flex  gap-40 md:gap-20">
+      <a className="font-extrabold text-ml pt-10" target='_blank' href="https://docs.google.com/document/d/18dDLwFBFJkEdpAzVbkrHk1lYwAOqHbkXqKrahIQbOSU/edit?usp=sharing">
           FAQs
         </a>
         <Link className="font-extrabold text-ml pr-20 pt-10" target='_blank' href="https://mirror.xyz/metamailink.eth">
           Blog
         </Link>
+      </div>
         <div className="flex flex-col gap-23">
           <div className="flex flex-row gap-10">
             {allLinks.map((link, index) => (
