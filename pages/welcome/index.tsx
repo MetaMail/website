@@ -108,7 +108,8 @@ export default function Welcome() {
             </div>
           </header>
         </div>
-        <div className="pt-78 lg:pt-136 relative left-174 2xl:left-[18%] w-399 ">
+        {/* -------- */}
+        <div className="pt-78 lg:pt-136 relative scale-[80%] md:scale-100 left-0 md:left-174 2xl:left-[18%] w-399 ">
           <h1 className="font-bold text-5xl leading-snug text-[#333]">
             <p>Your</p>
             <p>Web3 Email</p>
@@ -134,42 +135,43 @@ export default function Welcome() {
             />
           </div>
         </div>
+        {/* 轮播图 */}
         <ReviewInfo />
       </div>
-      <div className="relative h-960 description-bg mt-150 lg:-mt-360 lg:flex flex-row justify-between xl:justify-center pt-153 px-57 gap-40 2xl:gap-200">
-        <Image src={pic1Left} className="hidden lg:flex w-452 h-auto" alt="first carton pic" />
+      <div className="relative h-960 description-bg mt-50 lg:-mt-360 lg:flex flex-row justify-between 2xl:justify-center pt-60 md:pt-153 px-20  md:px-141 gap-40 2xl:gap-200">
+        <Image src={pic1Left} className=" lg:flex w-452 h-auto" alt="first carton pic" />
         <Image src={gradientDot} alt="dot SW" className="absolute w-36 top-217 right-903" />
         <Image src={gradientDot} alt="dot NE" className="absolute w-19 bottom-86 right-346" />
-        <div className="flex flex-col self-start justify-between gap-52 w-519 pt-0 lg:pt-140 ">
-          <div className="text-5xl font-medium leading-normal">Use your wallet or ens as email address</div>
-          <div className="text-3xl font-normal leading-normal">
+        <div className="flex flex-col self-start justify-between gap-52 w-full md:w-519 pt-0 lg:pt-140 mt-50 md:mt-0">
+          <div className="text-[30px] md:text-5xl font-medium leading-normal">Use your wallet or ens as email address</div>
+          <div className="text-[20px] md:text-3xl font-normal leading-normal">
             Use the wallet to log in our mailbox directly, send and receive mails with users of our mailbox
             and other common mainstream mailboxes. Totally free!
           </div>
-          <div className="relative hover:shadow-md font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible  flex items-center justify-center">
+          <div className="relative hover:shadow-md font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 visible  flex items-center justify-center">
             <RainbowLogin content="Connect Wallet" />
           </div>
         </div>
       </div>
-      <div className="relative h-820 description-bg2 flex flex-row justify-between px-141 gap-40 2xl:gap-200 2xl:justify-center">
-        <div className="hidden lg:flex flex-col self-start justify-between gap-52 w-519 pt-246 font-[SpaceGrotesk]">
-          <div className="text-5xl font-medium leading-normal">Sign every mail you send</div>
-          <div className="text-3xl font-normal leading-normal">
+      <div className="relative h-820 description-bg2 flex flex-col md:flex-row justify-start md:justify-between px-20 md:px-141 gap-40 2xl:gap-200 2xl:justify-center">
+        <div className=" lg:flex flex-col self-start justify-between gap-52 w-full md:w-519 pt-100 md:pt-246 font-[SpaceGrotesk]">
+          <div className="text-[30px] md:text-5xl font-medium leading-normal">Sign every mail you send</div>
+          <div className="text-[20px] md:text-3xl font-normal leading-normal">
             Sign evey mail digitally with your wallet. No forged mails anymore!
           </div>
-          <div className="relative hover:shadow-md  font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible  flex items-center justify-center">
+          <div className="mb-10 md:mb-0 mt-40 md:mt-0 relative hover:shadow-md  font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 visible  flex items-center justify-center">
             <RainbowLogin content="Start Now" />
           </div>
         </div>
-        <Image src={pic2Right} alt="second carton pic" className="scale-125 lg:scale-100 w-420" />
-        <Image src={gradientDot} alt="dot NW" className="absolute w-31 top-118 left-356" />
+        <Image src={pic2Right} alt="second carton pic" className="origin-top scale-[80%] sm:scale-[60%] md:scale-125 lg:scale-100 w-full md:w-420" />
+        <Image src={gradientDot} alt="dot NW" className="absolute w-31 top-50 md:top-118 left-[90%] md:left-356" />
       </div>
-      <div className="relative h-820 description-bg3 lg:flex flex-row justify-between xl:justify-center px-57 gap-40 2xl:gap-200">
-        <Image src={pic3Left} className="hidden lg:inline py-200 w-452" alt="third carton pic" />
-        <Image src={gradientDot} alt="dot" className="absolute w-32 bottom-97 left-388" />
-        <div className="flex flex-col self-start justify-between gap-52 w-519 pt-140">
-          <div className="text-5xl font-medium leading-normal">Protect mail with p2p encryption</div>
-          <div className="text-3xl font-normal leading-normal">
+      <div className="relative h-820 description-bg3 lg:flex flex-col md:flex-row justify-center md:justify-between 2xl:justify-center px-20 md:px-141 md:px-57 md:gap-40 2xl:gap-200">
+        <Image src={pic3Left} className=" origin-top scale-[90%] sm:scale-[60%] md:scale-100 lg:inline pt-100 pb-50 md:py-200 w-full md:w-452" alt="third carton pic" />
+        <Image src={gradientDot} alt="dot" className="absolute w-32 bottom-97 left-[90%] md:left-388" />
+        <div className="flex flex-col self-start justify-between gap-52 w-full md:w-519 pt-20 md:pt-140">
+          <div className="text-[30px] md:text-5xl font-medium leading-normal">Protect mail with p2p encryption</div>
+          <div className="text-[20px] md:text-3xl font-normal leading-normal">
             Mails sent and received by MetaMail users could be optionally encrypted, and only the recipient
             has the private key to decrypt the mails, ensuring the ultimate security.
           </div>
