@@ -317,7 +317,7 @@ export default function MailDetail() {
   }
   return (
     // 邮件详情
-    <div>
+    <>
       <div
         className={`absolute right-0 justify-between w-[calc(100%-333px)] h-full overflow-y-scroll flex-1 rounded-10 flex flex-col pb-16 font-poppins px-16  bg-base-100 ${isDetailExtend ? 'w-full h-full' : ''
           }`}>
@@ -466,7 +466,7 @@ export default function MailDetail() {
         <p className='text-[#666]'><span className='text-[#999] '>You are about to leave our site to：</span><span className='underline'>{`${link}`}</span></p>
       </Modal>
 
-    </div>
+    </>
 
   );
 }
