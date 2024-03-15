@@ -98,7 +98,7 @@ export default function Sidebar() {
             <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-poppinsSemiBold" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
               <div className='flex items-center gap-x-9'>
                 {renderLogo(item.logo, filterType === Number(item.key))}
-                <span className={` inline-block h-[16px] leading-[16px] ${Number(item.key) != FilterTypeEn.Inbox ? 'leading-[19px]' : ''} ${filterType === Number(item.key) ? '' : ''}`}>{item.title}</span>
+                <span className={` inline-block h-[16px]  ${index !==0 ? 'leading-[16px]' : 'leading-[20px]'} ${filterType === Number(item.key) ? '' : ''}`}>{item.title}</span>
               </div>
               {renderBadge(item.key)}
             </a>
@@ -137,7 +137,7 @@ export default function Sidebar() {
       <div className="flex flex-col">
         <button className="flex items-center justify-center py-10">
           <Image src={logo} alt="logo" className="w-auto h-36 mr-3" />
-          <p className="text-[27px] text-[#000] font-poppinsSemiBold  leading-[43px] h-36 dark:text-[#fff]">MetaMail</p>
+          <p className="text-[27px] text-[#000] font-poppinsSemiBold  leading-[36px] h-36 dark:text-[#fff]">MetaMail</p>
         </button>
         <button className="btn-primary flex items-center justify-center text-white h-45 rounded-9 gap-9" onClick={handleClickNewMail}>
           <Image src={write} alt="new_mail" className="w-18 h-auto" />
