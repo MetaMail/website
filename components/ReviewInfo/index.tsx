@@ -30,7 +30,7 @@ function Review({ imgSrc, content, role, role2 }: IReview) {
 
 export default function ReviewInfo() {
     return (
-        <div className="relative  lg:flex xl:h-343 flex-col  lg:flex-row w-11/12 xl:w-5/6 2xl:w-2/3 max-w-500 top-0 md:-top-200 mx-auto border border-[#1e1e1e] bg-white rounded-28 py-70 flex lg:justify-around justify-between z-10 h-700  lg:h-360 px-20 lg:px-0">
+        <div className="relative  lg:flex xl:h-343 flex-col  lg:flex-row w-11/12 xl:w-5/6 2xl:w-2/3 max-w-500 top-0 md:-top-200 mx-auto border border-[#1e1e1e] bg-white rounded-28 py-30 lg:py-70 flex lg:justify-around justify-between z-10 h-700  lg:h-360 px-20 lg:px-0">
                  <Review
                     imgSrc={suneal}
                     role={'Suneal'}
