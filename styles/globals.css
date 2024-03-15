@@ -61,7 +61,9 @@
     --tglbg:#3c6ff4;
     --tooltip-color:'#1F1F1F'
 } 
-
+html{
+  overflow-x: hidden;
+}
 body {
   width: 100%;
   margin: auto;
@@ -69,6 +71,7 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   font-size: 14px;
+  overflow: hidden;
 }
 .home-bg {
   background-repeat: no-repeat;

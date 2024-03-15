@@ -96,7 +96,7 @@ export default function Welcome() {
       </Head>
       <div className="home-bg">
         <div className="flex justify-between relative">
-          <Image src={gdL} alt="gradient NW" className="fixed w-1069 h-auto" />
+          <Image src={gdL} alt="gradient NW" className="fixed w-[300px] md:w-1069 h-auto" />
           <div className="gradient-dot-NE" />
           <div className="gradient-dot-middle" />
         </div>
@@ -166,7 +166,7 @@ export default function Welcome() {
         <Image src={pic2Right} alt="second carton pic" className="origin-top scale-[80%] sm:scale-[60%] md:scale-125 lg:scale-100 w-full md:w-420" />
         <Image src={gradientDot} alt="dot NW" className="absolute w-31 top-50 md:top-118 left-[90%] md:left-356" />
       </div>
-      <div className="relative h-820 description-bg3 lg:flex flex-col md:flex-row justify-center md:justify-between 2xl:justify-center px-20 md:px-141 md:px-57 md:gap-40 2xl:gap-200">
+      <div className="relative h-820 description-bg3 lg:flex flex-col md:flex-row justify-center md:justify-between 2xl:justify-center px-20 md:px-141  md:gap-40 2xl:gap-200">
         <Image src={pic3Left} className=" origin-top scale-[90%] sm:scale-[60%] md:scale-100 lg:inline pt-100 pb-50 md:py-200 w-full md:w-452" alt="third carton pic" />
         <Image src={gradientDot} alt="dot" className="absolute w-32 bottom-97 left-[90%] md:left-388" />
         <div className="flex flex-col self-start justify-between gap-52 w-full md:w-519 pt-20 md:pt-140">
