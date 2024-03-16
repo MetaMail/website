@@ -321,7 +321,7 @@ export default function MailDetail() {
       <div
         className={`absolute right-0 justify-between  h-full overflow-y-scroll flex-1 rounded-10 flex flex-col pb-16 font-poppins px-16  bg-base-100 ${isDetailExtend ? 'w-full ' : 'w-[calc(100%-333px)]'}`}>
         <div className='relative h-full overflow-y-scroll'>
-          <header className="flex flex-col justify-between w-full  sticky bg-base-100 top-0 z-10 pt-16 ">
+          <header className="flex flex-col justify-between w-full  sticky bg-base-100 top-0 z-10 pt-14">
             <div className="flex justify-between w-full pb-[10px]">
               <div className="flex gap-10">
                 {topIcons.map((item, index) => {
@@ -330,7 +330,7 @@ export default function MailDetail() {
                       url={item.src}
                       title={item.title}
                       key={index}
-                      className="w-16 h-16 self-center"
+                      className="w-18 h-18 self-center"
                       onClick={item.handler}
                     />
                   );
@@ -339,7 +339,7 @@ export default function MailDetail() {
               <div className="flex gap-10">
                 <Icon
                   url={isDetailExtend ? shrink : extend}
-                  className="w-16 h-16 self-center "
+                  className="w-18 h-18 self-center "
                   onClick={() => setIsDetailExtend(!isDetailExtend)}
                 />
                 <Icon
@@ -348,7 +348,7 @@ export default function MailDetail() {
                     setSelectedMail(null);
                     setIsDetailExtend(false);
                   }}
-                  className="w-16 h-16 self-center"
+                  className="w-18 h-18 self-center"
                 />
               </div>
             </div>
@@ -380,7 +380,7 @@ export default function MailDetail() {
                         url={item.src}
                         title={item.title}
                         onClick={item.handler}
-                        className="w-16 h-16 self-center"
+                        className="w-18 h-18 self-center"
                       />
                     );
                   })}
@@ -391,7 +391,7 @@ export default function MailDetail() {
                         url={isDark ? darkMailMore : mailMore}
                         title={'More'}
                         onClick={() => setIsMoreExtend(!isMoreExtend)}
-                        className="w-16 h-16 self-center"
+                        className="w-18 h-18 self-center"
                       />
                     </label>
 
@@ -412,16 +412,16 @@ export default function MailDetail() {
               </div>
             </div>
           </header>
-          <div className='relative'>
+          <div className='relative flex justify-center text-left'>
             {<LoadingRing loading={loading} />}
             {
-              <>
+              <div className='max-w-[800px]'>
                 <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
                   <div id="mailHtml" className='listContainer pl-[57px] pr-[5px] box-border'>
                     {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
                   </div>
                 </div>
-              </>
+              </div>
             }
           </div>
         </div>
