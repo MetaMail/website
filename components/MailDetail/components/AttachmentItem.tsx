@@ -52,8 +52,7 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
     a.remove();
   };
   return (
-
-    <div className='gap-10 relative mb-20 mr-10 cursor-pointer' onClick={handleClick}>
+    <div className='relative  cursor-pointer' onClick={handleClick}>
       <div className="absolute transition-all duration-200 opacity-0 hover:opacity-100 w-full h-full hover:bg-[rgba(64,64,64,.9)]  rounded-4 flex justify-center items-center">
         <Image src={download} alt="" className='w-30 h-30 ' />
       </div>

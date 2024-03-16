@@ -148,13 +148,13 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       {!selectedMail ? (
         <div
           onClick={handleClick}
-          className={` listStatus overflow-y-visible py-6 flex flex-row px-12 items-center group h-36 cursor-pointe  ${mail.selected ? `bg-base-300  bg-opacity-50 dark:bg-[rgba(243,247,255,.1)]` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10  '
+          className={` listStatus overflow-y-visible py-6 flex flex-row px-16 items-center group h-36 cursor-pointe  ${mail.selected ? `bg-base-300  bg-opacity-50 dark:bg-[rgba(243,247,255,.1)]` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10  '
             }`}>
           <div className="flex flex-row gap-12">
             <input
               type="checkbox"
               title="Select"
-              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-18 h-18 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
               style={{ backgroundImage: `url(${mail.selected ? checkboxedSvg.src : isDark ? checkboxDark.src : checkboxSvg.src})` }}
               checked={mail.selected}
               onClick={e => {
@@ -165,7 +165,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
 
             <Icon
               url={mail.mark === MarkTypeEn.Starred ? markFavorite : isDark ? favoriteDark : favorite}
-              className="w-16 h-16"
+              className="w-18 h-18"
               title={mail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star'}
               onClick={async e => {
                 e.stopPropagation();
@@ -204,7 +204,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
             <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
           </div>
           <div className="w-100 text-right text-[14px]">
-            <div className="group-hover:hidden text-base-content text-lightMailDate dark:text-DarkMailDate">{transformTime(mail.mail_date)}</div>
+            <div className="group-hover:hidden  text-lightMailDate dark:text-DarkMailDate">{transformTime(mail.mail_date)}</div>
             <div className="hidden group-hover:flex items-center justify-end">
               <div
                 onClick={async e => {
@@ -212,7 +212,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
                   await handleTrash();
                 }}
                 title="Trash">
-                <Image src={trash} alt="" />
+                <Image src={trash} alt="" className='w-18 h-18'/>
               </div>
               <div
                 onClick={async e => {
@@ -229,7 +229,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
                 <Image
                   src={mail.read === ReadStatusTypeEn.Read ? markUnread : read}
                   alt=""
-                  className="scale-125"
+                  className="w-18 h-18"
                 />
               </div>
             </div>

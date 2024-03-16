@@ -6,14 +6,14 @@
  * @Description: In User Settings Edit
  * @FilePath: \website\components\svg\menu\DraftActive.tsx
  */
-export default function DraftActiveSvg({ fill = "#3C6FF4", stroke = '#7F7F7F' }) {
+export default function DraftActiveSvg({ fill = "#3C6FF4", stroke = '#7F7F7F',size=18 }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       version="1.1"
-      width="16"
-      height="16"
+      width={size}
+      height={size}
       viewBox="0 0 16 16"
     >
       <g>

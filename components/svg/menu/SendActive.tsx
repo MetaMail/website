@@ -1,12 +1,12 @@
 
-export default function SendActive({ fill = "#3C6FF4" }) {
+export default function SendActive({ fill = "#3C6FF4",size=18 }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       version="1.1"
-      width="16"
-      height="16"
+      width={size}
+      height={size}
       viewBox="0 0 16 16"
     >
       <g>
