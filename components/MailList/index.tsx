@@ -271,7 +271,7 @@ export default function MailList() {
       className={`flex flex-col h-full transition-all text-[14px]  overflow-y-scroll ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
         }`}>
       {
-        list.length > 0 ? (<div className="sticky  top-0 bg-base-100 flex flex-row w-full justify-between px-12 box-border pt-12 pb-6 z-10 ">
+        list.length > 0 ? (<div className="sticky  top-0 bg-base-100 flex flex-row w-full justify-between px-16 box-border pt-12 pb-6 z-10 ">
           <div className="flex flex-row space-x-10 items-center" >
             {/* 全选按钮 */}
             <input
@@ -280,14 +280,14 @@ export default function MailList() {
               ref={inputCheckBoxRef}
               checked={selectedAll}
               onChange={handleSelectedAllChange}
-              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-16 h-16 rounded-2 border-0 bg-transparent ${!selectedMail ? 'block' : 'hidden'}`}
+              className={`checkbox bg-no-repeat bg-cover checkbox-sm w-18 h-18 rounded-2 border-0 bg-transparent ${!selectedMail ? 'block' : 'hidden'}`}
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
             />
 
             <div className={`dropdown dropdown-bottom ${selectedMail ? 'invisible' : 'visible'}`}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
-                <Icon url={filterIcon} title="Filter" className="w-16 h-16" />
+                <Icon url={filterIcon} title="Filter" className="w-18 h-18" />
                 <span className="text-[14px] h-16 leading-[15px] text-[#b2b2b2]">{filter}</span>
               </label>
               <ul
@@ -318,7 +318,7 @@ export default function MailList() {
                       onClick={async () => {
                         await handleMailActionsClick(item.httpParams);
                       }}
-                      className="w-16 h-16 self-center box-border bg-opacity-0 "
+                      className="w-18 h-18 self-center box-border bg-opacity-0 "
                     />
                   </div>
                 );
@@ -335,7 +335,7 @@ export default function MailList() {
                 if (pageIndex > 1) subPageIndex();
               }}>
               {/* 当是第一页 */}
-              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-16 h-16 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-16 h-16 rotate-180"></Icon>)}
+              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-18 h-18 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-16 h-16 rotate-180"></Icon>)}
             </button>
 
             <button
@@ -344,12 +344,12 @@ export default function MailList() {
               onClick={() => {
                 if (pageIndex < pageNum) addPageIndex();
               }}>
-              <Icon url={arrowRight} title="arrowRight" className="w-16 h-16"></Icon>
+              <Icon url={arrowRight} title="arrowRight" className="w-18 h-18"></Icon>
             </button>
             <Icon
               url={update}
               title="Refresh"
-              className="w-16 h-16"
+              className="w-18 h-18"
               onClick={() => {
                 fetchMailList(true);
               }}
