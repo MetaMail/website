@@ -24,7 +24,7 @@
     "buffer": "^6.0.3",
     "crypto": "^1.0.1",
     "crypto-js": "^4.1.1",
-    "dompurify": "^2.4.3",
+    "dompurify": "^3.0.9",
     "ethers": "^5.7.2",
     "fs": "^0.0.1-security",
     "html-react-parser": "^3.0.9",

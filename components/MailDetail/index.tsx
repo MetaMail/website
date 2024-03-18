@@ -57,13 +57,14 @@ export default function MailDetail() {
         mark: selectedMail.mark,
         read: selectedMail.read,
       };
+      console.log('selectedMail', selectedMail.part_html)
       if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
         if (currentMailId !== _mail.message_id) return;
         randomBits = await getRandomBits('detail');
 
         if (_mail?.part_html) {
           _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
-
+          console.log('解密出来', _mail.part_html)
         }
         if (_mail?.part_text) {
           _mail.part_text = decryptMailContent(_mail.part_text, randomBits);
@@ -198,22 +199,6 @@ export default function MailDetail() {
     selectedMail.download?.url && window.open(selectedMail.download.url)
   }
 
-  const changeInnerHTML = (data: IMailContentItem) => {
-    if (data.part_html) {
-      var el = document.createElement('html');
-      el.innerHTML = data.part_html;
-      {
-        data?.attachments?.map(item => {
-          el.querySelectorAll('img').forEach(function (element) {
-            if (element.alt == item.filename) {
-              element.src = item.download.url;
-              data.part_html = el.innerHTML;
-            }
-          });
-        });
-      }
-    }
-  };
 
   const getMailFrom = (mail: IMailContentItem): string => {
     return mail.mail_from?.name && mail.mail_from.name.length > 0 ? `${mail.mail_from.name} <${mail.mail_from.address}>` : mail.mail_from.address;
@@ -233,21 +218,8 @@ export default function MailDetail() {
       return match.replace('>', `style='color: #06c;text-decoration:underline'>`);
 
     });
-    return addTargetAttribute(result);
-  }
-  function addTargetAttribute(htmlString: string) {
-    const regex = /<a([^>]*)>/g;
-    const result = htmlString.replace(regex, (match, p1) => {
-      if (!p1.includes('target=')) {
-        return `<a${p1} target="_blank">`;
-      } else {
-        return match;
-      }
-    });
     return result;
   }
-
-
 
   useEffect(() => {
     currentMailId = selectedMail.message_id;
@@ -298,9 +270,6 @@ export default function MailDetail() {
     event.preventDefault();
     const targetHref = event.currentTarget.getAttribute('href');
     console.log(targetHref);
-    // openModal()
-    console.log('event', event)
-    console.log('href', targetHref)
     if (targetHref && !targetHref.startsWith(window.location.origin)) {
       setLink(targetHref)
       openModal()
@@ -315,6 +284,16 @@ export default function MailDetail() {
       return <Avatar size={38} addr={selectedMail.mail_from.name || selectedMail.mail_from.address || ''} />
     }
   }
+  // Add a hook to make all links open a new window
+  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    if ('target' in node) {
+      node.setAttribute('target', '_blank');
+      node.setAttribute('rel', 'noopener noreferrer');
+    }
+    if (!node.hasAttribute('target') && (node.hasAttribute('xlink:href') || node.hasAttribute('href'))) {
+      node.setAttribute('xlink:show', 'new');
+    }
+  });
   return (
     // 邮件详情
     <>
@@ -415,11 +394,9 @@ export default function MailDetail() {
           <div className='relative flex justify-center text-left'>
             {<LoadingRing loading={loading} />}
             {
-              <div className='max-w-[800px] flex-1'>
-                <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
-                  <div id="mailHtml" className='listContainer  box-border'>
-                    {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'] }))) : selectedMail?.part_text}
-                  </div>
+              <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
+                <div id="mailHtml" className='listContainer pl-[57px] pr-[5px] box-border'>
+                  {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'], FORBID_TAGS: ['html', 'body'] })), { decodeEntities: true }) : selectedMail?.part_text}
                 </div>
               </div>
             }

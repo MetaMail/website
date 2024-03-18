@@ -239,7 +239,7 @@ export default function MailList() {
   useEffect(() => { console.log(filter) }, [filter])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
-    console.log('zhixing')
+    // console.log('zhixing')
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     setFilter(null)
   }, [pageIndex, filterType, isSendSuccess]);
@@ -247,7 +247,7 @@ export default function MailList() {
 
   //  filterType
   useEffect(() => {
-    console.log('zhixing1')
+    // console.log('zhixing1')
     setFilter(null);
     const onRefresh: (e: Event) => Promise<void> = async event => {
       const e = event as CustomEvent;
