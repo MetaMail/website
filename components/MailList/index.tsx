@@ -256,7 +256,7 @@ export default function MailList() {
 
     window.addEventListener('refresh-list', onRefresh);
     // 每隔 30 秒执行一次
-    intervalId = setInterval(() => fetchMailList(false), 30000);
+    intervalId = setInterval(() => fetchMailList(false), 20000);
 
     // 组件卸载时清除定时器
     return () => {
