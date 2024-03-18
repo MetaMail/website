@@ -24,7 +24,7 @@ const Modal: React.FC<ModalProps> = ({ title, content, isOpen, onClose, onConfir
         <dialog id="my_modal_1" className="modal modal-open">
           <div className="modal-box box-border">
             <h3 className="font-bold text-lg">{title}</h3>
-            <p className="py-4 box-border break-all">{children}</p>
+            <p className="py-4 box-border break-all text-left">{children}</p>
             <div className="modal-action">
               <form method="dialog" className="flex justify-end gap-8">
                 <button
