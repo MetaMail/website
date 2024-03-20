@@ -111,7 +111,9 @@ export default function Titlebar() {
           <label tabIndex={0} className="dropdown-label rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
             <div className="w-32 h-32 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
-              <JazziconGrid size={32} addr={address} />
+
+              <JazziconGrid size={32} addr={address} className='opacity-70' />
+
             </div>
             <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18  transition-all duration-200 ease-in-out transform ${dropdownShow ? 'transform rotate-180' : 'rotate-0'}`} />
           </label>
