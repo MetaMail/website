@@ -25,6 +25,7 @@ import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
+import Tinymce from 'components/Tinymce'
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
  * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
@@ -400,7 +401,7 @@ export default function NewMail() {
     }
   }
   const [emailContent, setEmailContent] = useState('');
-
+  const handleEditorReady = () => { }
   return (
     <div
       className={`z-30 ${selectedDraft ? 'fadeInAnimation' : 'fadeInAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
@@ -480,7 +481,7 @@ export default function NewMail() {
       {
         <>
           {/* DynamicReactQuill 富文本编辑器 */}
-          <DynamicReactQuill
+          {/* <DynamicReactQuill
             onChange={setEmailContent}
             readOnly={false}
             forwardedRef={reactQuillRef}
@@ -493,7 +494,8 @@ export default function NewMail() {
             onFocus={handleDynamicFocus}
             key={iconKey}
             preserveWhitespace={true} // 保留空白符
-          />
+          /> */}
+          <Tinymce onEditorReady={handleEditorReady} />
           {isExtend && isShowFileUpload && (
             <FileUploader
               randomBits={randomBits}
