@@ -206,7 +206,7 @@ export default function MailDetail() {
 
   const handleReply = () => {
     // console.log(selectedMail)
-    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject);
+    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject,selectedMail);
   };
   const handleHighlineLink = (link: string) => {
     // 匹配字符串中的所有 <a> 标签
@@ -269,7 +269,7 @@ export default function MailDetail() {
       // 我们的用户
       return (
         <div className='flex items-center justify-center  flex-shrink-0 w-38 h-38'>
-          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[40px] font-800  absolute z-[1] opacity-100'>
+          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[43px] font-800  absolute z-[1] opacity-100'>
             {selectedMail.mail_from.name ? getFirstLetter(selectedMail.mail_from.name) : selectedMail.mail_from.address ? getFirstLetter(selectedMail.mail_from?.address) : ''}
           </span>
           <JazziconGrid size={38} addr={selectedMail.mail_from.address || ''} className='opacity-30' />
@@ -280,16 +280,7 @@ export default function MailDetail() {
       return <Avatar size={38} addr={selectedMail.mail_from.name || selectedMail.mail_from.address || ''} />
     }
   }
-  // Add a hook to make all links open a new window
-  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
-    if ('target' in node) {
-      node.setAttribute('target', '_blank');
-      node.setAttribute('rel', 'noopener noreferrer');
-    }
-    if (!node.hasAttribute('target') && (node.hasAttribute('xlink:href') || node.hasAttribute('href'))) {
-      node.setAttribute('xlink:show', 'new');
-    }
-  });
+
   return (
     // 邮件详情
     <>

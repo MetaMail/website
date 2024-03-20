@@ -143,7 +143,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       // 我们的用户
       return (
         <div className='flex items-center justify-center  flex-shrink-0 w-38 h-38'>
-          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[40px] font-800  absolute z-[1] opacity-100'>
+          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[43px] font-800  absolute z-[1] opacity-100'>
             {mail.mail_from.name ? getFirstLetter(mail.mail_from.name) : mail.mail_from.address ? getFirstLetter(mail.mail_from?.address) : ''}
           </span>
           <JazziconGrid size={38} addr={mail.mail_from.address || ''} className='opacity-30' />

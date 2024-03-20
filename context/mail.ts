@@ -1,9 +1,9 @@
 import { createContext } from 'react';
-import { IPersonItem } from 'lib/constants';
+import { IMailContentItem, IPersonItem } from 'lib/constants';
 
 interface IMailBoxContext {
   checkEncryptable?: (receivers: IPersonItem[]) => Promise<{ encryptable: boolean; publicKeys: string[] }>;
-  createDraft?: (mailTo: IPersonItem[], message_id?: string, subject?: string) => void;
+  createDraft?: (mailTo: IPersonItem[], message_id?: string, subject?: string,selectedMail?:IMailContentItem) => void;
   setShowLoading?: (show: boolean) => void;
   logout?: () => void;
   getMailStat?: () => Promise<void>;

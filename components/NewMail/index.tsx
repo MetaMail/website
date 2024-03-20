@@ -19,13 +19,18 @@ import NameSelector, { MailFromType } from './components/NameSelector';
 import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
 import LoadingRing from 'components/LoadingRing';
-import { ShinkIcon, ExtendIcon, AttachIcon, MailMore } from '../../components/svg/index'
-import { trashCan, extend, cancel, cancelDark, extendDark, shrinkDark, shrink } from 'assets/icons';
+import { ShinkIcon, ExtendIcon, AttachIcon, MailMore, ShowTrimContent } from '../../components/svg/index'
+import { trashCan, extend, cancel, cancelDark, extendDark, shrinkDark, shrink, showTrimContent } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
-import Tinymce from 'components/Tinymce'
+import Tinymce from 'components/Tinymce';
+interface EditorMethods {
+  getContent: () => string;
+  setContent: (content: string) => void;
+}
+
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
  * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
@@ -55,6 +60,33 @@ export default function NewMail() {
   const subjectRef = useRef<HTMLInputElement>();
   const { isDark } = useThemeStore();
   const { isInputShow, setIsInputShow } = useIsInputShow();
+  const [editorMethods, setEditorMethods] = useState<EditorMethods | null>(null);
+  const [replyContent, setReplyContent] = useState<string>('');
+
+  // 当编辑器准备就绪时，保存编辑器提供的方法
+  const handleEditorReady = (methods: EditorMethods) => {
+    setEditorMethods(methods);
+  };
+
+  // 设置编辑器内容
+  const setContentInEditor = (html:string) => {
+    if (editorMethods) {
+      editorMethods.setContent(html);
+    }
+  };
+
+  // 获取编辑器内容
+  const getContentFromEditor = () => {
+    if (editorMethods) {
+      const content = editorMethods.getContent();
+      return content;
+    }
+  };
+  // 获取html里的text
+  function getPlainTextFromHTML(htmlContent:string) {
+    const doc = new DOMParser().parseFromString(htmlContent, 'text/html');
+    return doc.body.textContent || "";
+  }
   // 控制富文本编辑器icon要不要变颜色
   const [iconKey, setIconKey] = useState(0);
   useEffect(() => {
@@ -224,13 +256,13 @@ export default function NewMail() {
         text: mailLocalStorage.getQuillText(),
       };
 
-    const quill = getQuill();
-    if (!quill || !quill?.getHTML || !quill?.getText) {
-      throw new Error('Failed to get message content');
-    }
-    let html = filterMailContent(quill?.getHTML()),
-      text = filterMailContent(quill?.getText());
-
+    // const quill = getQuill();
+    // if (!quill || !quill?.getHTML || !quill?.getText) {
+    //   throw new Error('Failed to get message content');
+    // }
+    let html = filterMailContent(getContentFromEditor()),
+      text = filterMailContent(getPlainTextFromHTML(getContentFromEditor()));
+    
     html = encryptMailContent(html, randomBits);
     text = encryptMailContent(text, randomBits);
     const json: IUpdateMailContentParams = {
@@ -248,7 +280,8 @@ export default function NewMail() {
     const fromLocalDraft = !selectedDraft.message_id;// true:新建全新的草稿；false是从草稿列表中读的草稿
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
     fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
-    if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to
+    if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to;
+ 
     const { mail_date, message_id } = await mailHttp.updateMail(json);
     selectedDraft.message_id = message_id;
     selectedDraft.mail_date = mail_date;
@@ -318,7 +351,6 @@ export default function NewMail() {
   };
 
   const handleChangeMailFrom = (from: MailFromType) => {
-
     setInitValue(from);
     const { address, ensName } = userLocalStorage.getUserInfo();
     // 这里的name优先ens;
@@ -400,8 +432,11 @@ export default function NewMail() {
       return <Image src={require(`assets/file/DEFAULT.svg`)} alt={type} width={20} height={24} />;
     }
   }
-  const [emailContent, setEmailContent] = useState('');
-  const handleEditorReady = () => { }
+  const handleShowTrimContent=()=>{
+    console.log(selectedDraft)
+    // setReplyContent(selectedDraft.origin_part_html)
+  }
+  
   return (
     <div
       className={`z-30 ${selectedDraft ? 'fadeInAnimation' : 'fadeInAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
@@ -495,7 +530,7 @@ export default function NewMail() {
             key={iconKey}
             preserveWhitespace={true} // 保留空白符
           /> */}
-          <Tinymce onEditorReady={handleEditorReady} />
+          <Tinymce  />
           {isExtend && isShowFileUpload && (
             <FileUploader
               randomBits={randomBits}
@@ -539,13 +574,16 @@ export default function NewMail() {
       }
 
       <div className="flex items-center gap-13 mt-8">
-
+        {/* show trimed content */}
+        {/* <ShowTrimContent fill={isDark?'#333':'#fff'}/> */}
+     
+       {selectedDraft.in_reply_to&&<Icon url={showTrimContent} onClick={handleShowTrimContent} className="h-18" title='Show trimmed content'/>}
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
           className="flex justify-center items-center bg-primary text-white px-14 py-8  rounded-[6px] text-[14px]">
           <Icon url={sendMailIcon} className="h-18" />
-          <span className="ml-8 h-[18px] leading-[18px]">Send</span>
+          <span className="ml-8 h-[18px] leading-[22px]">Send</span>
         </button>
         {/* 展开状态的上传附件按钮 */}
         {/* {isExtend && (

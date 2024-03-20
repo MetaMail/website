@@ -62,7 +62,10 @@ import dark_delete from './darkSlider/delete.svg'
 // checkBox
 import checkboxDark from './checkboxDark.svg'
 import favoriteDark from './favoriteDark.svg'
+
+import  showTrimContent  from './showTrimContent.svg';
 export {
+  showTrimContent,
   download,
   arrowDown,
   addDark,

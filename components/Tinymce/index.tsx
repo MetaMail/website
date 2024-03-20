@@ -8,7 +8,7 @@ interface EditorMethods {
 
 interface MyEditorProps {
   onEditorReady: (methods: EditorMethods) => void;
-  initialValue: string;
+  initialValue?: string;
 }
 
 const MyEditor: React.FC<MyEditorProps> = ({ onEditorReady, initialValue }) => {
@@ -27,14 +27,14 @@ const MyEditor: React.FC<MyEditorProps> = ({ onEditorReady, initialValue }) => {
 
   useEffect(() => {
     // 调用父组件提供的方法
-    onEditorReady({
-      getContent,
-      setContent: setContentValue
-    });
+    // onEditorReady({
+    //   getContent,
+    //   setContent: setContentValue
+    // });
   }, [content, onEditorReady]);
 
   const handleEditorChange = (content: string, editor: any) => {
-    console.log(content)
+    // console.log(content)
     // 当编辑器内容发生变化时，更新 state 中的内容
     setContent(content);
   };

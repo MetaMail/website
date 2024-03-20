@@ -17,6 +17,7 @@ interface IProps {
 }
 
 function NameSelector({ initValue, onChange }: IProps) {
+  console.log(initValue)
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const { ensName, address } = userLocalStorage.getUserInfo();
   const [showAddress, setShowAddress] = useState<string>(address);
