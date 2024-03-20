@@ -133,10 +133,22 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       } else return getShowAddress(item.address)
     })
   }
+  const getFirstLetter = (str: string) => {
+    if (str && str.length) {
+      return str[0]
+    } else return ''
+  }
   const renderAvator = () => {
     if (mail.mail_from.address.endsWith(PostfixOfAddress)) {
       // 我们的用户
-      return <JazziconGrid size={38} addr={mail.mail_from.address || ''} />
+      return (
+        <div className='flex items-center justify-center  flex-shrink-0 w-38 h-38'>
+          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[40px] font-800  absolute z-[1] opacity-100'>
+            {mail.mail_from.name ? getFirstLetter(mail.mail_from.name) : mail.mail_from.address ? getFirstLetter(mail.mail_from?.address) : ''}
+          </span>
+          <JazziconGrid size={38} addr={mail.mail_from.address || ''} className='opacity-30' />
+        </div>
+      )
     } else {
       // 别的用户
       return <Avatar size={38} addr={mail.mail_from.name || mail.mail_from.address || ''} />
@@ -212,7 +224,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
                   await handleTrash();
                 }}
                 title="Trash">
-                <Image src={trash} alt="" className='w-18 h-18'/>
+                <Image src={trash} alt="" className='w-18 h-18' />
               </div>
               <div
                 onClick={async e => {

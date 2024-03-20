@@ -5,6 +5,7 @@ import moment from 'moment';
 import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
 import ReactDOM from 'react-dom';
+import IframeComponent from 'components/IframeRender';
 import MailBoxContext from 'context/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
@@ -57,7 +58,6 @@ export default function MailDetail() {
         mark: selectedMail.mark,
         read: selectedMail.read,
       };
-      console.log('selectedMail', selectedMail.part_html)
       if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
         if (currentMailId !== _mail.message_id) return;
         randomBits = await getRandomBits('detail');
@@ -247,38 +247,34 @@ export default function MailDetail() {
     setIsOpen(false);
     window.open(link);
   };
-  useEffect(() => {
-    // 获取所有包含 <a> 标签的元素
-    const anchorElements: HTMLElement | null = document.querySelector('#mailHtml');
-    const links: NodeListOf<HTMLAnchorElement> = anchorElements.querySelectorAll('a');
 
-    // 为每个 <a> 标签添加点击事件处理函数
-    links.forEach(link => {
-      // console.log(anchorElement);
-      link.addEventListener('click', handleClick);
-    });
-
-    // 移除事件监听器以避免内存泄漏
-    return () => {
-      links.forEach(link => {
-        link.removeEventListener('click', handleClick);
-      });
-    };
-  }, [selectedMail]);
-
-  const handleClick = (event: any) => {
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    // console.log('点击了')
     event.preventDefault();
-    const targetHref = event.currentTarget.getAttribute('href');
-    console.log(targetHref);
+    if (!event.target) return;
+    const anchorElement = event.currentTarget as unknown as HTMLAnchorElement;
+    const targetHref = anchorElement.getAttribute('href');
     if (targetHref && !targetHref.startsWith(window.location.origin)) {
       setLink(targetHref)
       openModal()
     }
   };
+  const getFirstLetter = (str: string) => {
+    if (str && str.length) {
+      return str[0]
+    } else return ''
+  }
   const renderAvator = () => {
     if (selectedMail.mail_from.address.endsWith(PostfixOfAddress)) {
       // 我们的用户
-      return <JazziconGrid size={38} addr={selectedMail.mail_from.address || ''} />
+      return (
+        <div className='flex items-center justify-center  flex-shrink-0 w-38 h-38'>
+          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[40px] font-800  absolute z-[1] opacity-100'>
+            {selectedMail.mail_from.name ? getFirstLetter(selectedMail.mail_from.name) : selectedMail.mail_from.address ? getFirstLetter(selectedMail.mail_from?.address) : ''}
+          </span>
+          <JazziconGrid size={38} addr={selectedMail.mail_from.address || ''} className='opacity-30' />
+        </div>
+      )
     } else {
       // 别的用户
       return <Avatar size={38} addr={selectedMail.mail_from.name || selectedMail.mail_from.address || ''} />
@@ -391,12 +387,12 @@ export default function MailDetail() {
               </div>
             </div>
           </header>
-          <div className='relative flex justify-center text-left'>
+          <div className='relative h-full flex justify-center text-left'>
             {<LoadingRing loading={loading} />}
             {
-              <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
-                <div id="mailHtml" className='listContainer pl-[57px] pr-[5px] box-border'>
-                  {selectedMail?.part_html ? parse(handleHighlineLink(DOMPurify.sanitize(selectedMail?.part_html, { ADD_ATTR: ['target'], FORBID_TAGS: ['html', 'body'] })), { decodeEntities: true }) : selectedMail?.part_text}
+              <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} h-full flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
+                <div id="mailHtml" className='listContainer h-full pl-[57px] pr-[5px] box-border'>
+                  {selectedMail?.part_html && selectedMail?.part_html.includes('<html') ? <IframeComponent htmlContent={selectedMail?.part_html} handleClick={handleClick} /> : selectedMail?.part_html ? parse(handleHighlineLink(selectedMail?.part_html)) : selectedMail?.part_text}
                 </div>
               </div>
             }
