@@ -67,7 +67,7 @@ html{
 body {
   width: 100%;
   margin: auto;
-  background-color: #f2f8ff;
+  /* background-color: #f2f8ff; */
   background-repeat: no-repeat;
   background-size: cover;
   font-size: 14px;
@@ -302,3 +302,22 @@ button:disabled {
       display: none; /* 在100%时刻隐藏 */
     }
   }
+
+
+
+  
+/* 覆盖编辑器容器的样式 */
+.tox .tox-editor-container {
+  background-color: red;
+}
+
+/* 覆盖编辑器内容区域的样式 */
+.tox-tinymce ,.tox:not(.tox-tinymce-inline).tox-tinymce--toolbar-bottom .tox-editor-header{
+  /* 添加你想要的样式 */
+  border: none!important;
+}
+#tinymce{
+  margin-left: 0!important;
+  margin-right: 0!important;
+}
+  /* -----tinymce------ */

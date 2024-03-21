@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
@@ -29,7 +29,8 @@ interface IMailItemProps {
   loading: boolean
 }
 
-export default function MailListItem({ mail, onSelect, loading }: IMailItemProps) {
+// eslint-disable-next-line react/display-name
+const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
   const { isDark } = useThemeStore()
   const { getMailStat } = useContext(MailBoxContext);
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
@@ -127,7 +128,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
     return mail.digest;
   };
   const renderMailTo = (mail: MailListItemType) => {
-    return mail.mail_to.map((item, index) => {
+    return mail.mail_to.map((item, _index) => {
       if (item?.name && item.name.length > 0) {
         return item.name;
       } else return getShowAddress(item.address)
@@ -292,4 +293,5 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       }
     </>
   );
-}
+})
+export default MailListItem;

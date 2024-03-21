@@ -1,66 +1,66 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
-
 interface EditorMethods {
   getContent: () => string;
   setContent: (content: string) => void;
 }
 
 interface MyEditorProps {
-  onEditorReady: (methods: EditorMethods) => void;
   initialValue?: string;
 }
 
-const MyEditor: React.FC<MyEditorProps> = ({ onEditorReady, initialValue }) => {
+const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = ({ initialValue }, ref) => {
   const [content, setContent] = useState<string>(initialValue);
-
-  // 获取编辑器内容
-  const getContent = () => {
-    return content;
-  };
-
-  // 设置编辑器内容
-  const setContentValue = (value: string) => {
-
-    setContent(value);
-  };
-
-  useEffect(() => {
-    // 调用父组件提供的方法
-    // onEditorReady({
-    //   getContent,
-    //   setContent: setContentValue
-    // });
-  }, [content, onEditorReady]);
-
-  const handleEditorChange = (content: string, editor: any) => {
-    // console.log(content)
-    // 当编辑器内容发生变化时，更新 state 中的内容
-    setContent(content);
-  };
-
+  // 在组件挂载后，将编辑器实例暴露给父组件
+  useImperativeHandle(ref, () => ({
+    getContent: () => content,
+    setContent: (newContent: string) => setContent(newContent)
+  }));
   return (
-    <Editor
-      apiKey="noo6l6wle4d75xjcxaynsazleypv5m1do39w2gsn4av2iqwv"
-      initialValue={initialValue}
-      value={content}
-      init={{
-        remove_tinymce_branding: true,
-        height: 500,
-        menubar: false,
-        plugins: [
-          'advlist autolink lists link image charmap print preview anchor',
-          'searchreplace visualblocks code fullscreen',
-          'insertdatetime media table paste code help wordcount'
-        ],
-        toolbar:
-          '|undo redo | formatselect | bold italic backcolor | \
+    <div className='h-full' >
+      <Editor
+        apiKey="noo6l6wle4d75xjcxaynsazleypv5m1do39w2gsn4av2iqwv"
+        initialValue={initialValue}
+        value={content}
+        init={{
+          remove_tinymce_branding: true,
+          height: '100%',
+          branding: false, // 隐藏tinymce右下角水印
+          statusbar: false, // 隐藏底部状态栏
+          resize: false, //右下角调整编辑器大小，false关闭，true开启只改变高度，'both' 宽高都能改变
+          menubar: false,
+          poweredByAsset: false,
+          plugins: [
+            'autolink',
+            'link',
+            'image ',
+            'lists',
+            'charmap',
+            'preview',
+            'anchor',
+            'pagebreak',
+            'visualblocks',
+            'visualchars',
+            'code',
+            'fullscreen',
+            'insertdatetime',
+            'media',
+            'nonbreaking',
+            'table',
+            'directionality',
+            'emoticons',
+            'template',
+            'preview'
+          ],
+          toolbar:
+            '|undo redo | formatselect | bold italic backcolor | \
           alignleft aligncenter alignright alignjustify | \
-          bullist numlist outdent indent | removeformat | help'
-      }}
-      onEditorChange={handleEditorChange} // 在内容变化时触发回调函数
-    />
+          bullist numlist outdent indent | removeformat',
+          toolbar_location: 'bottom' // 将工具栏放置在底部
+        }}
+      />
+    </div >
   );
 };
 
-export default MyEditor;
+export default forwardRef(MyEditor);
