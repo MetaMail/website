@@ -13,20 +13,31 @@ const IframeComponent: React.FC<IframeProps> = ({ htmlContent, handleClick }) =>
   useEffect(() => {
     handleIframeLoad()
   }, [iframeRef.current]); // 仅在组件挂载时执行
-
+  // useEffect(() => {
+  //   const iframeDocument = iframeRef.current.contentDocument;
+  //   if (iframeDocument) {
+  //     if (htmlContent) {
+  //       iframeDocument.open();
+  //     } else {
+  //       iframeDocument.close();
+  //     }
+  //   }
+  // }, [htmlContent])
   const handleIframeLoad = () => {
-    // console.log(iframeRef.current)
+    console.log(DOMPurify.sanitize(htmlContent))
     if (iframeRef.current) {
       // 向 iframe 内部注入 HTML 内容
       const iframeDocument = iframeRef.current.contentDocument;
       if (iframeDocument) {
+        console.log(iframeDocument)
         // iframeDocument.open();
         // iframeDocument.write(htmlContent);
         // iframeDocument.close();
         const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
+        console.log('links', links)
         // 为每个 <a> 标签添加点击事件处理函数
         links.forEach(link => {
-          // console.log('为每个 <a> 标签添加点击事件处理函数');
+          console.log('为每个 <a> 标签添加点击事件处理函数');
           link.addEventListener('click', handleClick as unknown as EventListener);
         });
 

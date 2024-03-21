@@ -34,6 +34,7 @@ import {
 import { useRouter } from 'next/router';
 import Avatar from 'components/Avatar';
 import { PostfixOfAddress } from 'lib/base';
+import { isCompleteHtml } from 'lib/utils';
 
 let randomBits: string = '';
 let currentMailId: string = '';
@@ -206,7 +207,7 @@ export default function MailDetail() {
 
   const handleReply = () => {
     // console.log(selectedMail)
-    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject,selectedMail);
+    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject, selectedMail);
   };
   const handleHighlineLink = (link: string) => {
     // 匹配字符串中的所有 <a> 标签
@@ -247,7 +248,6 @@ export default function MailDetail() {
     setIsOpen(false);
     window.open(link);
   };
-
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     // console.log('点击了')
     event.preventDefault();
@@ -259,6 +259,26 @@ export default function MailDetail() {
       openModal()
     }
   };
+  useEffect(() => {
+    // 获取所有包含 <a> 标签的元素
+    const anchorElements: HTMLElement | null = document.querySelector('#mailHtml');
+    const links: NodeListOf<HTMLAnchorElement> = anchorElements.querySelectorAll('a');
+
+    // 为每个 <a> 标签添加点击事件处理函数
+    links.forEach(link => {
+      // console.log(anchorElement);
+      link.addEventListener('click', handleClick as unknown as EventListener);
+    });
+
+    // 移除事件监听器以避免内存泄漏
+    return () => {
+      links.forEach(link => {
+        link.removeEventListener('click', handleClick as unknown as EventListener);
+      });
+    };
+  }, [selectedMail]);
+
+
   const getFirstLetter = (str: string) => {
     if (str && str.length) {
       return str[0]
@@ -280,7 +300,16 @@ export default function MailDetail() {
       return <Avatar size={38} addr={selectedMail.mail_from.name || selectedMail.mail_from.address || ''} />
     }
   }
-
+  // 渲染html
+  const renderHtml = () => {
+    if (selectedMail?.part_html && isCompleteHtml(selectedMail?.part_html)) {
+      return (<IframeComponent htmlContent={selectedMail?.part_html} handleClick={handleClick} />)
+    } else if (selectedMail?.part_html) {
+      return (parse(handleHighlineLink(selectedMail?.part_html)))
+    } else if (selectedMail?.part_text) {
+      return (selectedMail?.part_text)
+    }
+  }
   return (
     // 邮件详情
     <>
@@ -383,7 +412,7 @@ export default function MailDetail() {
             {
               <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} h-full flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
                 <div id="mailHtml" className='listContainer h-full pl-[57px] pr-[5px] box-border'>
-                  {selectedMail?.part_html && selectedMail?.part_html.includes('<html') ? <IframeComponent htmlContent={selectedMail?.part_html} handleClick={handleClick} /> : selectedMail?.part_html ? parse(handleHighlineLink(selectedMail?.part_html)) : selectedMail?.part_text}
+                  {renderHtml()}
                 </div>
               </div>
             }

@@ -88,5 +88,16 @@ export function originFileName(name: string) {
   return name.substring(0, index)
 }
 
+
+
+export const isCompleteHtml = (htmlString: string) => {
+  // 定义正则表达式匹配完整的 HTML 标签
+  const htmlRegex = /<html[^>]*>[\s\S]*<\/html>/i;
+  // 定义正则表达式匹配 body 标签
+  const bodyRegex = /<body[^>]*>[\s\S]*<\/body>/i;
+
+  // 使用正则表达式测试 HTML 字符串
+  return htmlRegex.test(htmlString) && bodyRegex.test(htmlString);
+};
 export * from './session-storage';
 export * from './local-storage';
