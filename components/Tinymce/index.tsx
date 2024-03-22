@@ -18,10 +18,10 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
   }));
   const handleEditorChange = (newContent: string, editor: any) => {
     setContent(newContent);
-    console.log('Content was updated:', newContent);
+    // console.log('Content was updated:', newContent);
   };
   return (
-    <div className='h-full min-h-full' >
+    <div className='h-full min-h-[200px]' >
       <Editor
         onEditorChange={handleEditorChange}
         apiKey="noo6l6wle4d75xjcxaynsazleypv5m1do39w2gsn4av2iqwv"
@@ -59,7 +59,7 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
           toolbar:
             '|undo redo | formatselect | bold italic backcolor | \
           alignleft aligncenter alignright alignjustify | \
-          bullist numlist outdent indent | removeformat',
+          bullist numlist outdent indent | removeformat link',
           toolbar_location: 'bottom' // 将工具栏放置在底部
         }}
       />
