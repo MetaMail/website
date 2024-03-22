@@ -12,6 +12,7 @@ import copy from 'assets/mailbox/copy.svg';
 import copyDark from 'assets/mailbox/copyDark.svg'
 import right from 'assets/mailbox/right.svg';
 import { dropdownImg, searchNormal } from 'assets/icons';
+import { getThirdLetter } from 'utils';
 
 export default function Titlebar() {
   const { logout } = useContext(MailBoxContext);
@@ -93,8 +94,6 @@ export default function Titlebar() {
     }
 
   }
-
-
   return (
     <div className="navbar p-0 min-h-fit h-[50px] box-border py-[10px] flex items-center">
       {/* header-left 左边搜索框 */}
@@ -111,9 +110,13 @@ export default function Titlebar() {
           <label tabIndex={0} className="dropdown-label rounded-7 border-0 flex w-full justify-between items-center h-38 p-0 avatar mr-18 flex-shrink-0 bg-[#DCDCDC26] pl-9 pr-16   box-border">
             <div className="w-32 h-32 rounded-full  hover:border-5 flex items-center">
               {/* 头像 */}
-
-              <JazziconGrid size={32} addr={address} className='opacity-70' />
-
+              {/* <JazziconGrid size={32} addr={address} className='opacity-70' /> */}
+              <div className='flex items-center justify-center  flex-shrink-0 w-32 h-32'>
+                <span className='text-[#3264D9] inline-block h-32 text-[16px] font-bold leading-[35px] font-800  absolute z-[1] opacity-100'>
+                  {address && getThirdLetter(address)}
+                </span>
+                <JazziconGrid size={32} addr={address || ''} className='opacity-30' />
+              </div>
             </div>
             <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18  transition-all duration-200 ease-in-out transform ${dropdownShow ? 'transform rotate-180' : 'rotate-0'}`} />
           </label>
