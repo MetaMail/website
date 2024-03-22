@@ -1,19 +1,17 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import CryptoJS from 'crypto-js';
-import type ReactQuillType from 'react-quill';
 import { toast } from 'react-toastify';
 import { throttle } from 'lodash';
 import Image from 'next/image';
 import MailBoxContext from 'context/mail';
-import { IUpdateMailContentParams, MetaMailTypeEn, EditorFormats, EditorModules, FilterTypeEn, DarkEditorModules } from 'lib/constants';
+import { IUpdateMailContentParams, MetaMailTypeEn, FilterTypeEn } from 'lib/constants';
 import { useNewMailStore, useMailListStore, useThemeStore, useIsInputShow, useMailDetailStore } from 'lib/zustand-store';
-import { userLocalStorage, mailLocalStorage, percentTransform, dispatchEvent, fileType, originFileName } from 'lib/utils';
+import { userLocalStorage, mailLocalStorage, dispatchEvent, fileType, originFileName } from 'lib/utils';
 import { mailHttp } from 'lib/http';
 import { createEncryptedMailKey, encryptMailContent, decryptMailContent, concatAddress } from 'lib/encrypt';
 import { sendEmailInfoSignInstance } from 'lib/sign';
 import { useInterval } from 'hooks';
 import { PostfixOfAddress } from 'lib/base';
-import DynamicReactQuill from './components/DynamicReactQuill';
 import FileUploader from './components/FileUploader';
 import NameSelector, { MailFromType } from './components/NameSelector';
 import EmailRecipientInput from './components/EmailRecipientInput';
@@ -22,14 +20,10 @@ import LoadingRing from 'components/LoadingRing';
 import { ShinkIcon, ExtendIcon, AttachIcon, MailMore, ShowTrimContent } from '../../components/svg/index'
 import { trashCan, extend, cancel, cancelDark, extendDark, shrinkDark, shrink, showTrimContent } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
-import 'react-quill/dist/quill.snow.css';
 
 import styles from './index.module.scss';
 import Tinymce from 'components/Tinymce';
-interface EditorMethods {
-  getContent: () => string;
-  setContent: (content: string) => void;
-}
+import moment from 'moment';
 
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
@@ -56,47 +50,39 @@ export default function NewMail() {
   const [initValue, setInitValue] = useState(selectedDraft.mail_from.name.startsWith('0x') ? MailFromType.address : MailFromType.ensName);
   const [loading, setLoading] = useState(false);
   const dateRef = useRef<string>();
-  const reactQuillRef = useRef<ReactQuillType>();
   const subjectRef = useRef<HTMLInputElement>();
   const { isDark } = useThemeStore();
   const { isInputShow, setIsInputShow } = useIsInputShow();
-  const [editorMethods, setEditorMethods] = useState<EditorMethods | null>(null);
-  const [replyContent, setReplyContent] = useState<string>('');
+  // const [editorMethods, setEditorMethods] = useState<EditorMethods | null>(null);
+  const [replyContent, setReplyContent] = useState<string>(''); // 回复引用的html
+  const TinymceRef = useRef(null) // 编辑器
 
-  // 当编辑器准备就绪时，保存编辑器提供的方法
-  const handleEditorReady = (methods: EditorMethods) => {
-    setEditorMethods(methods);
-  };
 
-  // 设置编辑器内容
-  const setContentInEditor = (html:string) => {
-    if (editorMethods) {
-      editorMethods.setContent(html);
+  //  设置编辑器内容
+  const setContentInEditor = (html: string) => {
+    if (TinymceRef.current) {
+      TinymceRef.current.setContent(html);
     }
   };
 
-  // 获取编辑器内容
+  //  获取编辑器内容
   const getContentFromEditor = () => {
-    if (editorMethods) {
-      const content = editorMethods.getContent();
+    if (TinymceRef.current) {
+      const content = TinymceRef.current.getContent();
       return content;
     }
   };
   // 获取html里的text
-  function getPlainTextFromHTML(htmlContent:string) {
+  function getPlainTextFromHTML(htmlContent: string) {
     const doc = new DOMParser().parseFromString(htmlContent, 'text/html');
     return doc.body.textContent || "";
   }
   // 控制富文本编辑器icon要不要变颜色
   const [iconKey, setIconKey] = useState(0);
   useEffect(() => {
-    // console.log('改变了')
     setIconKey(iconKey + 1)
   }, [isDark]);
-  const getQuill = () => {
-    if (typeof reactQuillRef?.current?.getEditor !== 'function') return;
-    return reactQuillRef.current.makeUnprivilegedEditor(reactQuillRef.current.getEditor());
-  };
+
   const { selectedMail } = useMailDetailStore();
   // 把输入的正确的收件人加入待发送列表；
   const addReceiver = (address: string) => {
@@ -125,6 +111,8 @@ export default function NewMail() {
     signature: string,
     mail_decryption_key: string
   ) => {
+    // 发送邮件/mails/send
+    console.log('@selectedDraft.message_id', selectedDraft)
     const { message_id } = await mailHttp.sendMail({
       mail_id: window.btoa(selectedDraft.message_id),
       date: dateRef.current,
@@ -242,27 +230,24 @@ export default function NewMail() {
   };
 
   const getMailChanged = () => {
-    const quillHtml = filterMailContent(getQuill()?.getHTML());
-    const quillChanged = quillHtml !== initHtml;
+    const tinyEditorHtml = filterMailContent(getContentFromEditor());
+    const tinyEditorChanged = tinyEditorHtml !== initHtml;
 
-    return mailChanged || quillChanged;
+    return mailChanged || tinyEditorChanged;
   };
 
   const handleSave = async () => {
+    console.log('handleSave', getMailChanged())
     // save 的时候都是加密模式
     if (!getMailChanged())
       return {
-        html: mailLocalStorage.getQuillHtml(),
-        text: mailLocalStorage.getQuillText(),
+        html: mailLocalStorage.getTinyEditorHtml(),
+        text: mailLocalStorage.getTinyEditorText(),
       };
 
-    // const quill = getQuill();
-    // if (!quill || !quill?.getHTML || !quill?.getText) {
-    //   throw new Error('Failed to get message content');
-    // }
     let html = filterMailContent(getContentFromEditor()),
       text = filterMailContent(getPlainTextFromHTML(getContentFromEditor()));
-    
+
     html = encryptMailContent(html, randomBits);
     text = encryptMailContent(text, randomBits);
     const json: IUpdateMailContentParams = {
@@ -278,26 +263,21 @@ export default function NewMail() {
       meta_header: selectedDraft.meta_header
     };
     const fromLocalDraft = !selectedDraft.message_id;// true:新建全新的草稿；false是从草稿列表中读的草稿
+    console.log('fromLocalDraft', fromLocalDraft)
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
     fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
     if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to;
- 
+    // 新建邮件/更新邮件先调这个接口
     const { mail_date, message_id } = await mailHttp.updateMail(json);
+    console.log('执行', mail_date, message_id);
     selectedDraft.message_id = message_id;
     selectedDraft.mail_date = mail_date;
     fromLocalDraft && setSelectedDraft({ ...selectedDraft });
-    mailLocalStorage.setQuillHtml(html);
-    mailLocalStorage.setQuillText(text);
+    mailLocalStorage.setTinyEditorHtml(html);
+    mailLocalStorage.setTinyEditorText(text);
     dateRef.current = mail_date;
     filterType === FilterTypeEn.Draft && dispatchEvent('refresh-list', { showLoading: false });
     return { html, text };
-  };
-  // 向文本框设置内容
-  const setContentsToQuill = (html: string) => {
-    const editor = reactQuillRef.current?.getEditor();
-    if (editor) {
-      editor.setContents(editor.clipboard.convert(html));
-    }
   };
 
   const handleLoad = async () => {
@@ -334,7 +314,7 @@ export default function NewMail() {
       setSelectedDraft(_selectedDraft);
       initHtml = part_html;
 
-      setContentsToQuill(part_html);
+      setContentInEditor(part_html);
     } catch (error: any) {
       console.error(error);
       setSelectedDraft(null)
@@ -387,7 +367,7 @@ export default function NewMail() {
   useEffect(() => {
     dateRef.current = selectedDraft.mail_date;
     subjectRef.current.value = selectedDraft.subject;
-    setContentsToQuill(selectedDraft.part_html || '');
+    setContentInEditor(selectedDraft.part_html || '');
 
     handleLoad();
 
@@ -432,11 +412,20 @@ export default function NewMail() {
       return <Image src={require(`assets/file/DEFAULT.svg`)} alt={type} width={20} height={24} />;
     }
   }
-  const handleShowTrimContent=()=>{
-    console.log(selectedDraft)
-    // setReplyContent(selectedDraft.origin_part_html)
+  const handleShowTrimContent = () => {
+    // console.log(selectedDraft)
+    const replyContent = `${getContentFromEditor()}
+    <br><br>
+    <p>
+    <span>${moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</span>&nbsp;&nbsp;
+    <span>${selectedMail?.mail_from.name}</span>&nbsp;&nbsp;
+    <span><${selectedMail?.mail_from.address}></span>wrote:
+    </p>
+    <div style="border-left:1px solid rgb(204,204,204);padding-left:10px;"><br><br>${selectedDraft.origin_part_html}</div>`
+    setContentInEditor(replyContent)
+    setReplyContent(replyContent)
   }
-  
+
   return (
     <div
       className={`z-30 ${selectedDraft ? 'fadeInAnimation' : 'fadeInAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 w-[60vw] right-20 ${styles.newMailWrap}`
@@ -515,22 +504,8 @@ export default function NewMail() {
       {<LoadingRing loading={loading} />}
       {
         <>
-          {/* DynamicReactQuill 富文本编辑器 */}
-          {/* <DynamicReactQuill
-            onChange={setEmailContent}
-            readOnly={false}
-            forwardedRef={reactQuillRef}
-            className={`flex-1 pt-16 flex flex-col-reverse text-lightMailContent dark:text-DarkMailContent overflow-hidden  leading-[21px] ${isDark ? 'dark' : ''
-              }`}
-            theme={'snow'}
-            placeholder={''}
-            modules={!isDark ? EditorModules : DarkEditorModules}
-            formats={EditorFormats}
-            onFocus={handleDynamicFocus}
-            key={iconKey}
-            preserveWhitespace={true} // 保留空白符
-          /> */}
-          <Tinymce  />
+          {/*Tinymce 富文本编辑器 */}
+          <Tinymce ref={TinymceRef} />
           {isExtend && isShowFileUpload && (
             <FileUploader
               randomBits={randomBits}
@@ -576,8 +551,8 @@ export default function NewMail() {
       <div className="flex items-center gap-13 mt-8">
         {/* show trimed content */}
         {/* <ShowTrimContent fill={isDark?'#333':'#fff'}/> */}
-     
-       {selectedDraft.in_reply_to&&<Icon url={showTrimContent} onClick={handleShowTrimContent} className="h-18" title='Show trimmed content'/>}
+
+        {selectedDraft.in_reply_to && !replyContent && <Icon url={showTrimContent} onClick={handleShowTrimContent} className="h-18" title='Show trimmed content' />}
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}

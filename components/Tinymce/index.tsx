@@ -10,17 +10,21 @@ interface MyEditorProps {
 }
 
 const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = ({ initialValue }, ref) => {
-  const [content, setContent] = useState<string>(initialValue);
+  const [content, setContent] = useState<string>('');
   // 在组件挂载后，将编辑器实例暴露给父组件
   useImperativeHandle(ref, () => ({
     getContent: () => content,
     setContent: (newContent: string) => setContent(newContent)
   }));
+  const handleEditorChange = (newContent: string, editor: any) => {
+    setContent(newContent);
+    console.log('Content was updated:', newContent);
+  };
   return (
-    <div className='h-full' >
+    <div className='h-full min-h-full' >
       <Editor
+        onEditorChange={handleEditorChange}
         apiKey="noo6l6wle4d75xjcxaynsazleypv5m1do39w2gsn4av2iqwv"
-        initialValue={initialValue}
         value={content}
         init={{
           remove_tinymce_branding: true,

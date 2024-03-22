@@ -132,19 +132,19 @@ export const mailLocalStorage = {
     deleteStorage(TempMailStoreKey);
   },
 
-  getQuillHtml: (): string => {
+  getTinyEditorHtml: (): string => {
     return getStorage(QuillHtmlKey);
   },
 
-  setQuillHtml: (html: string) => {
+  setTinyEditorHtml: (html: string) => {
     setStorage(QuillHtmlKey, html);
   },
 
-  getQuillText: (): string => {
+  getTinyEditorText: (): string => {
     return getStorage(QuillTextKey);
   },
 
-  setQuillText: (text: string) => {
+  setTinyEditorText: (text: string) => {
     setStorage(QuillTextKey, text);
   },
 
