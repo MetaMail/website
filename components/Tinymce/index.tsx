@@ -60,7 +60,8 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
             '|undo redo | formatselect | bold italic backcolor | \
           alignleft aligncenter alignright alignjustify | \
           bullist numlist outdent indent | removeformat link',
-          toolbar_location: 'bottom' // 将工具栏放置在底部
+          toolbar_location: 'bottom',// 将工具栏放置在底部
+          icon_size: 16 // 设置图标大小为24像素
         }}
       />
     </div >
