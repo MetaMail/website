@@ -61,7 +61,7 @@ export default function MailDetail() {
         mark: selectedMail.mark,
         read: selectedMail.read,
       };
-      console.log('接口', _mail)
+      // console.log('接口', _mail)
       if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
         if (currentMailId !== _mail.message_id) return;
         randomBits = await getRandomBits('detail');

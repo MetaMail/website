@@ -118,7 +118,7 @@ const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
     } else {
       setSelectedMail(mail);
     }
-    console.log('点击查看详情', mail)
+    // console.log('点击查看详情', mail)
   }, 1000);
   const renderDigest = (mail: MailListItemType) => {
     if (!mail.digest) {

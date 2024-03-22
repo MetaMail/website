@@ -1,5 +1,5 @@
 // components/IframeComponent.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
 interface IframeProps {
@@ -9,50 +9,50 @@ interface IframeProps {
 
 const IframeComponent: React.FC<IframeProps> = ({ htmlContent, handleClick }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const handleIframeLoad = useCallback(() => {
+    setIframeLoaded(true);
+  }, []);
 
   useEffect(() => {
-    handleIframeLoad()
-  }, [iframeRef.current]); // 仅在组件挂载时执行
-  // useEffect(() => {
-  //   const iframeDocument = iframeRef.current.contentDocument;
-  //   if (iframeDocument) {
-  //     if (htmlContent) {
-  //       iframeDocument.open();
-  //     } else {
-  //       iframeDocument.close();
-  //     }
-  //   }
-  // }, [htmlContent])
-  const handleIframeLoad = () => {
-    console.log(DOMPurify.sanitize(htmlContent))
+    // 向 iframe 内部注入 HTML 内容
+    const iframeDocument = iframeRef.current.contentDocument;
     if (iframeRef.current) {
-      // 向 iframe 内部注入 HTML 内容
-      const iframeDocument = iframeRef.current.contentDocument;
-      if (iframeDocument) {
-        console.log(iframeDocument)
-        // iframeDocument.open();
-        // iframeDocument.write(htmlContent);
-        // iframeDocument.close();
-        const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
-        console.log('links', links)
-        // 为每个 <a> 标签添加点击事件处理函数
-        links.forEach(link => {
-          console.log('为每个 <a> 标签添加点击事件处理函数');
-          link.addEventListener('click', handleClick as unknown as EventListener);
-        });
+      console.log('加载完成')
+      const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
+      // 为每个 <a> 标签添加点击事件处理函数
+      links.forEach(link => {
+        // console.log('为每个 <a> 标签添加点击事件处理函数');
+        link.addEventListener('click', handleClick as unknown as EventListener);
+      });
 
-        // 移除事件监听器以避免内存泄漏
-        return () => {
-          links.forEach(link => {
-            link.removeEventListener('click', handleClick as unknown as EventListener);
-          });
-        };
-      }
+      // 移除事件监听器以避免内存泄漏
+      return () => {
+        links.forEach(link => {
+          link.removeEventListener('click', handleClick as unknown as EventListener);
+        });
+      };
+    } else {
+      console.log('还没加载完成')
+      const handleDisabledClick = (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+      };
+      const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
+      links.forEach(link => {
+        link.addEventListener('click', handleDisabledClick as unknown as EventListener);
+      });
+
+      // 移除事件监听器以避免内存泄漏
+      return () => {
+        links.forEach(link => {
+          link.removeEventListener('click', handleDisabledClick as unknown as EventListener);
+        });
+      };
     }
-  };
+
+  }, [iframeLoaded, iframeRef]);
 
   return (
-
     <iframe
       ref={iframeRef}
       title="My iframe"
@@ -65,3 +65,4 @@ const IframeComponent: React.FC<IframeProps> = ({ htmlContent, handleClick }) =>
 };
 
 export default IframeComponent;
+
