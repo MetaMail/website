@@ -59,12 +59,14 @@ export interface IPersonItem {
 }
 
 export interface IMailContentAttachment {
+  content_disposition?: string;
   attachment_id?: string;
   size?: number;
   encrypted_sha256?: string;
   plain_sha256?: string;
   filename: string;
   content_type?: string;
+  content_id: string;
   download?: {
     expire_at: string;
     url: string;

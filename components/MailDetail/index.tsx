@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import ReactDOM from 'react-dom';
 import IframeComponent from 'components/IframeRender';
 import MailBoxContext from 'context/mail';
-import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem } from 'lib/constants';
+import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem, IMailContentAttachment } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { useMailDetailStore, useMailListStore, useThemeStore } from 'lib/zustand-store';
 import { decryptMailContent } from 'lib/encrypt';
@@ -35,7 +35,7 @@ import { useRouter } from 'next/router';
 import Avatar from 'components/Avatar';
 import { PostfixOfAddress } from 'lib/base';
 import { isCompleteHtml } from 'lib/utils';
-import { getThirdLetter } from 'utils';
+import { getThirdLetter, replaceImageSrc } from 'utils';
 
 let randomBits: string = '';
 let currentMailId: string = '';
@@ -53,6 +53,7 @@ export default function MailDetail() {
     try {
       showLoading && setLoading(true);
       const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
+      // console.log('接口', mail)
       const _mail = {
         ...selectedMail,
         ...mail,
@@ -60,6 +61,7 @@ export default function MailDetail() {
         mark: selectedMail.mark,
         read: selectedMail.read,
       };
+      console.log('接口', _mail)
       if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
         if (currentMailId !== _mail.message_id) return;
         randomBits = await getRandomBits('detail');
@@ -75,6 +77,13 @@ export default function MailDetail() {
       // 防止loading的过程中，用户切换了邮件。比如用户先选择了A邮件然后快速选择B邮件，则A邮件走到这里来以后又会把当前邮件切换成A邮件
       // B邮件走到这里来以后又会把当前邮件切换成B邮件，形成死循环
       if (currentMailId !== _mail.message_id) return;
+
+      // 附件>0 && 附件里有inline=false的图
+      if (_mail.attachments.length && _mail.attachments.some((i: IMailContentAttachment) => i.content_disposition === 'inline')) {
+        // console.log(replaceImageSrc(_mail.part_html, _mail.attachments))
+        _mail.part_html = replaceImageSrc(_mail.part_html, _mail.attachments);
+      }
+
       setSelectedMail(_mail);
     } catch (error) {
       console.error(error);
@@ -277,6 +286,7 @@ export default function MailDetail() {
         link.removeEventListener('click', handleClick as unknown as EventListener);
       });
     };
+
   }, [selectedMail]);
 
   const renderAvator = () => {
@@ -419,7 +429,7 @@ export default function MailDetail() {
           {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
             <div className="flex gap-10 absolute pl-57 bottom-56 w-[100%] box-border py-10 bg-base-100 flex-wrap">
               {/* 文件s */}
-              {selectedMail?.attachments?.map((item, idx) => (
+              {selectedMail?.attachments?.filter((item) => item.content_disposition !== 'inline').map((item, idx) => (
                 <AttachmentItem
                   idx={idx}
                   key={idx}
@@ -427,6 +437,7 @@ export default function MailDetail() {
                   name={item?.filename}
                   randomBits={randomBits}
                 />
+
               ))}
             </div>
           )}
