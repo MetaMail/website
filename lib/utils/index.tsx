@@ -99,5 +99,30 @@ export const isCompleteHtml = (htmlString: string) => {
   // 使用正则表达式测试 HTML 字符串
   return htmlRegex.test(htmlString) && bodyRegex.test(htmlString);
 };
+
+// 合并并去重数组，根据指定键
+export function mergeAndUniqueArraysByKey<T>(arr1: T[], arr2: T[], key: keyof T): T[] {
+  // 合并两个数组
+  const mergedArray = [...arr1, ...arr2];
+  // 创建一个记录唯一键的映射
+  const uniqueKeys: Record<string, boolean> = {};
+
+  // 返回去重后的数组
+  return mergedArray.reduce((result: T[], item: T) => {
+      // 获取指定键的值，并进行类型断言
+      const keyValue = item[key] as unknown as string;
+
+      // 如果该键尚未被添加，则将其添加到结果数组中
+      if (!uniqueKeys[keyValue]) {
+          result.push(item);
+          uniqueKeys[keyValue] = true;
+      }
+
+      // 返回结果数组
+      return result;
+  }, []);
+}
+
+
 export * from './session-storage';
 export * from './local-storage';

@@ -34,7 +34,7 @@ import {
 import { useRouter } from 'next/router';
 import Avatar from 'components/Avatar';
 import { PostfixOfAddress } from 'lib/base';
-import { isCompleteHtml } from 'lib/utils';
+import { isCompleteHtml, mergeAndUniqueArraysByKey } from 'lib/utils';
 import { getThirdLetter, replaceImageSrc } from 'utils';
 
 let randomBits: string = '';
@@ -45,15 +45,23 @@ export default function MailDetail() {
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const { createDraft, getMailStat, getRandomBits } = useContext(MailBoxContext);
   const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
-  const { list, setList } = useMailListStore();
+  const { list, setList ,detailList,setDetailList} = useMailListStore();
   const [isMoreExtend, setIsMoreExtend] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLoad = async (showLoading = true) => {
     try {
       showLoading && setLoading(true);
-      const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
-      // console.log('接口', mail)
+      // const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
+      const detailArray = detailList;
+      if(detailArray.length<=0){
+        const batchResult = await mailHttp.getMailDetailByIdArr({
+          message_ids:[selectedMail.message_id]
+        })
+        setDetailList(mergeAndUniqueArraysByKey(detailList,batchResult,'message_id'));
+      }
+      const mail =detailList.find((item)=>{return item.message_id === selectedMail.message_id})
+      console.log('mail',selectedMail, mail)
       const _mail = {
         ...selectedMail,
         ...mail,
@@ -79,7 +87,7 @@ export default function MailDetail() {
       if (currentMailId !== _mail.message_id) return;
 
       // 附件>0 && 附件里有inline=false的图
-      if (_mail.attachments.length && _mail.attachments.some((i: IMailContentAttachment) => i.content_disposition === 'inline')) {
+      if (_mail.attachments&&_mail.attachments.length && _mail.attachments.some((i: IMailContentAttachment) => i.content_disposition === 'inline')) {
         // console.log(replaceImageSrc(_mail.part_html, _mail.attachments))
         _mail.part_html = replaceImageSrc(_mail.part_html, _mail.attachments);
       }

@@ -125,7 +125,7 @@ export interface MailListItemType extends IMailContentItem {
   selected?: boolean;
   local_id?: string;
   origin_part_text?: string;
-  origin_part_html: string;
+  origin_part_html?: string;
 }
 
 export enum AttachmentRelatedTypeEn {
