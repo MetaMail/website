@@ -83,12 +83,18 @@ export default function Welcome() {
 
   useEffect(() => {
     window.ethereum?.on('accountsChanged', (accounts: string[]) => {
-
       address = accounts[0].toLowerCase();
     });
     handleAutoLogin();
   }, [address]);
 
+  useEffect(() => {
+    const { address: localAddress } = userLocalStorage.getUserInfo();
+    const token = userLocalStorage.getToken();
+    if (localAddress && token) {
+      router.push('/mailbox');
+    }
+  }, [])
   return (
     <div className="!font-[spaceGrotesk] flex flex-col mx-auto max-w-[3000px]">
       <Head>

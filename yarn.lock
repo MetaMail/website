@@ -1047,13 +1047,13 @@
     "@tanstack/query-core" "4.35.0"
     use-sync-external-store "^1.2.0"
 
-"@tinymce/tinymce-react@^4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@tinymce/tinymce-react/-/tinymce-react-4.3.2.tgz#fbe05e35e948b0e577eddf639bfe7ee2158fdc10"
-  integrity sha512-wJHZhPf2Mk3yTtdVC/uIGh+kvDgKuTw/qV13uzdChTNo68JI1l7jYMrSQOpyimDyn5LHAw0E1zFByrm1WHAVeA==
+"@tinymce/tinymce-react@^4.3.3-rc.20240325045045390.sha185cf43":
+  version "4.3.3-rc.20240325045045390.sha185cf43"
+  resolved "https://registry.yarnpkg.com/@tinymce/tinymce-react/-/tinymce-react-4.3.3-rc.20240325045045390.sha185cf43.tgz#bc641d304597604e9e3070b4e863910bf10c5b96"
+  integrity sha512-TA2GI+ImfESQhCBkHt/BoIL2F3hrrTrLFdAxNelubsyeX7gXx1ZXa/Q/twgybFkRWRBtPMRZr6FH006jsl5pXQ==
   dependencies:
     prop-types "^15.6.2"
-    tinymce "^6.0.0 || ^5.5.1"
+    tinymce "^7.0.0 || ^6.0.0 || ^5.5.1"
 
 "@types/connect@^3.4.33":
   version "3.4.35"
@@ -2458,10 +2458,10 @@ domhandler@5.0.3, domhandler@^5.0.2, domhandler@^5.0.3:
   dependencies:
     domelementtype "^2.3.0"
 
-dompurify@^3.0.9:
-  version "3.0.10"
-  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.0.10.tgz#d48b7c5cef8f368fca380c6fbd9aa8d9f3ca0dcb"
-  integrity sha512-WZDL8ZHTliEVP3Lk4phtvjg8SNQ3YMc5WVstxE8cszKZrFjzI4PF4ZTIk9VGAc9vZADO7uGO2V/ZiStcRSAT4Q==
+dompurify@^3.0.10:
+  version "3.0.11"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.0.11.tgz#c163f5816eaac6aeef35dae2b77fca0504564efe"
+  integrity sha512-Fan4uMuyB26gFV3ovPoEoQbxRRPfTu3CvImyZnhGq5fsIEO+gEFLp45ISFt+kQBWsK5ulDdT0oV28jS1UrwQLg==
 
 domutils@^3.0.1:
   version "3.1.0"
@@ -5734,12 +5734,7 @@ thenify-all@^1.0.0:
   resolved "https://registry.npmmirror.com/through/-/through-2.3.8.tgz"
   integrity sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==
 
-"tinymce@^6.0.0 || ^5.5.1":
-  version "6.8.3"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-6.8.3.tgz#0025a4aaa4c24dc2a3e32e83dfda705d196fd802"
-  integrity sha512-3fCHKAeqT+xNwBVESf6iDbDV0VNwZNmfrkx9c/6Gz5iB8piMfaO6s7FvoiTrj1hf1gVbfyLTnz1DooI6DhgINQ==
-
-tinymce@^7.0.0:
+tinymce@^7.0.0, "tinymce@^7.0.0 || ^6.0.0 || ^5.5.1":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-7.0.0.tgz#d35441e15f8011cf549b39e58b64648798816e92"
   integrity sha512-ggXLfTRrUALAcjeJSRrZcJDOl6MgC2tPXe/zNOEkQXvTDgcKqFypPRoPpfpK5wejexjyaI/7dwETOntJ5MPBFg==

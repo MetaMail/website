@@ -23,10 +23,14 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
   return (
     <div className='h-full min-h-[200px]' >
       <Editor
+        tinymceScriptSrc={'/tinymce/tinymce.min.js'}
         onEditorChange={handleEditorChange}
         apiKey="noo6l6wle4d75xjcxaynsazleypv5m1do39w2gsn4av2iqwv"
         value={content}
         init={{
+          icons_url: './icons.js',
+          icons: 'custom',
+          toolbar_items_size: 'small',
           remove_tinymce_branding: true,
           height: '100%',
           branding: false, // 隐藏tinymce右下角水印
@@ -61,8 +65,9 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
           alignleft aligncenter alignright alignjustify | \
           bullist numlist outdent indent | removeformat link',
           toolbar_location: 'bottom',// 将工具栏放置在底部
-          icon_size: 16 // 设置图标大小为24像素
+
         }}
+
       />
     </div >
   );
