@@ -18,11 +18,11 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
   }));
   const handleEditorChange = (newContent: string, editor: any) => {
     setContent(newContent);
-    // console.log('Content was updated:', newContent);
   };
   return (
     <div className='h-full min-h-[200px]' >
       <Editor
+        textareaName="content1"
         tinymceScriptSrc={'/tinymce/tinymce.min.js'}
         onEditorChange={handleEditorChange}
         apiKey="noo6l6wle4d75xjcxaynsazleypv5m1do39w2gsn4av2iqwv"
