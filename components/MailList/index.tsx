@@ -168,11 +168,13 @@ export default function MailList() {
         item.local_id = item.message_id;
       });
       // 批量获取邮件详情
-      const batchResult = await mailHttp.getMailDetailByIdArr({
-        message_ids:ids
-      })
-      setDetailList(mergeAndUniqueArraysByKey(detailList,batchResult,'message_id'));
-  
+      if(filterType !== FilterTypeEn.Draft){
+        const batchResult = await mailHttp.getMailDetailByIdArr({
+          message_ids:ids
+        })
+        setDetailList(mergeAndUniqueArraysByKey(detailList,batchResult,'message_id'));  
+      }
+
       setList(mailsList ?? []);
       setPageNum(page_num);
       // 发送邮件成功，刷新列表
