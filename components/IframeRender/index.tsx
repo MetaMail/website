@@ -19,6 +19,7 @@ const IframeComponent: React.FC<IframeProps> = ({ htmlContent, handleClick }) =>
     const iframeDocument = iframeRef.current.contentDocument;
     if (iframeRef.current) {
       console.log('加载完成')
+      iframeDocument.body.innerHTML = DOMPurify.sanitize(htmlContent);
       const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
       // 为每个 <a> 标签添加点击事件处理函数
       links.forEach(link => {
@@ -57,7 +58,7 @@ const IframeComponent: React.FC<IframeProps> = ({ htmlContent, handleClick }) =>
       ref={iframeRef}
       title="My iframe"
       onLoad={handleIframeLoad}
-      srcDoc={DOMPurify.sanitize(htmlContent)}
+      // srcDoc={DOMPurify.sanitize(htmlContent)}
       style={{ width: '100%', height: '100%', border: 'none' }}
     ></iframe>
 

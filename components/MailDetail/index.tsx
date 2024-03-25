@@ -61,7 +61,7 @@ export default function MailDetail() {
         setDetailList(mergeAndUniqueArraysByKey(detailList,batchResult,'message_id'));
       }
       const mail =detailList.find((item)=>{return item.message_id === selectedMail.message_id})
-      console.log('mail',selectedMail, mail)
+      // console.log('mail',selectedMail, mail)
       const _mail = {
         ...selectedMail,
         ...mail,
@@ -76,7 +76,7 @@ export default function MailDetail() {
 
         if (_mail?.part_html) {
           _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
-          console.log('解密出来', _mail.part_html)
+          // console.log('解密出来', _mail.part_html)
         }
         if (_mail?.part_text) {
           _mail.part_text = decryptMailContent(_mail.part_text, randomBits);

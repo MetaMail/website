@@ -211,7 +211,7 @@ export default function MailList() {
 
   //  list
   useEffect(() => {
-    console.log('list改变')
+    // console.log('list改变')
     if (list.length) {
       const selectedListNum = getSelectedList().length;
       const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
