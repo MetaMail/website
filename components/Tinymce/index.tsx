@@ -22,14 +22,12 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
   return (
     <div className='h-full min-h-[200px]' >
       <Editor
-        textareaName="content1"
+
         tinymceScriptSrc={'/tinymce/tinymce.min.js'}
         onEditorChange={handleEditorChange}
         apiKey="noo6l6wle4d75xjcxaynsazleypv5m1do39w2gsn4av2iqwv"
         value={content}
         init={{
-          icons_url: './icons.js',
-          icons: 'custom',
           toolbar_items_size: 'small',
           remove_tinymce_branding: true,
           height: '100%',
@@ -60,10 +58,7 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
             'template',
             'preview'
           ],
-          toolbar:
-            '|undo redo | formatselect | bold italic backcolor | \
-          alignleft aligncenter alignright alignjustify | \
-          bullist numlist outdent indent | removeformat link',
+          toolbar: 'undo redo | bold italic backcolor alignleft aligncenter alignright alignjustify bullist numlist link|removeformat',
           toolbar_location: 'bottom',// 将工具栏放置在底部
 
         }}

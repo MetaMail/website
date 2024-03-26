@@ -327,4 +327,8 @@ button:disabled {
   margin-left: 0!important;
   margin-right: 0!important;
 }
+.tox .tox-tbtn{
+  height: 14px!important;
+  width: 25px!important;
+}
   /* -----tinymce------ */
