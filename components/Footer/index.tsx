@@ -43,7 +43,7 @@ export default function Footer() {
         <div className="text-[#0069E5] text-3xl font-black font-poppins">MetaMail</div>
         <div className="w-370 text-3xl font-light leading-tight ">Create And Use Your Crypto Email</div>
       </div>
-      <div className="flex  flex-col md:flex-row justify-between gap-30 font-poppins md:absolute bottom-0 md:bottom-83 right-0 md:right-130 zIndex-9">
+      <div className="flex  items-start text-[#333] flex-col md:flex-row justify-between gap-30 font-poppins md:absolute bottom-0 md:bottom-83 right-0 md:right-130 zIndex-9">
         <div className="flex items-center gap-40 md:gap-20">
           <span className="font-extrabold text-ml pt-10 cursor-pointer" onClick={() => router.push('/staticPages/FAQs')}>
             FAQs
