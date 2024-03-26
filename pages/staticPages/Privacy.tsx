@@ -1,16 +1,6 @@
-/* eslint-disable react/no-children-prop */
-/*
- * @Author: your name
- * @Date: 2024-03-21 10:23:03
- * @LastEditTime: 2024-03-21 14:36:26
- * @LastEditors: 韦玮莹
- * @Description: In User Settings Edit
- * @FilePath: \website\pages\statics\FAQs.tsx
- */
 
 import MDRender from "../../components/MdRender/MdRender";
-export default function FAQs() {
-
+export default function Privacy() {
   // --------------------------------------------------------------
   const markdownText = `A
 paragraph with *emphasis* and **strong importance**.

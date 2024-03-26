@@ -329,4 +329,12 @@ button:disabled {
   margin-left: 0!important;
   margin-right: 0!important;
 }
+.tox .tox-tbtn{
+  height: 20px!important;
+  width: 20px!important;
+  margin:0 4px 0 4px!important;
+}
+.tox .tox-toolbar__group{
+  padding: 0 5px 0 6px!important;
+}
   /* -----tinymce------ */

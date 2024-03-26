@@ -26,7 +26,7 @@ export default function MailList() {
   // 发送邮件成功，刷新列表
   const { isSendSuccess, setIsSendSuccess } = useNewMailStore();
   const { getMailStat } = useContext(MailBoxContext);
-  const { filterType, pageIndex, list, setList,detailList,setDetailList, addPageIndex, subPageIndex } = useMailListStore();
+  const { filterType, pageIndex, list, setList, detailList, setDetailList, addPageIndex, subPageIndex } = useMailListStore();
   // isDetailExtend : 详情是否占满全屏
   // selectedMail : 选中查看详情的邮件
   const { selectedMail, isDetailExtend } = useMailDetailStore();
@@ -161,18 +161,18 @@ export default function MailList() {
 
       const { mails, page_num } = data;
       let mailsList = mails as MailListItemType[];
-      const ids:string[]=[]
+      const ids: string[] = []
       mailsList.forEach(item => {
         ids.push(item.message_id)
         item.selected = false;
         item.local_id = item.message_id;
       });
       // 批量获取邮件详情
-      if(filterType !== FilterTypeEn.Draft){
+      if (filterType !== FilterTypeEn.Draft) {
         const batchResult = await mailHttp.getMailDetailByIdArr({
-          message_ids:ids
+          message_ids: ids
         })
-        setDetailList(mergeAndUniqueArraysByKey(detailList,batchResult,'message_id'));  
+        setDetailList(mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id'));
       }
 
       setList(mailsList ?? []);
@@ -249,22 +249,22 @@ export default function MailList() {
   useEffect(() => { console.log(filter) }, [filter])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
-    console.log('pageIndex',pageIndex)
+    console.log('pageIndex', pageIndex)
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     setFilter(null)
 
-      // 每隔 30 秒执行一次
-    const  intervalId = setInterval(() => fetchMailList(false), 20000);
-  
-      // 组件卸载时清除定时器
-      return () => {
-        clearInterval(intervalId);
-      };
-    
+    // 每隔 30 秒执行一次
+    const intervalId = setInterval(() => fetchMailList(false), 20000);
+
+    // 组件卸载时清除定时器
+    return () => {
+      clearInterval(intervalId);
+    };
+
   }, [pageIndex, filterType, isSendSuccess]);
 
 
- 
+
 
 
   return (
@@ -289,7 +289,7 @@ export default function MailList() {
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-18 h-18" />
-                <span className="text-[14px] h-16 leading-[15px] text-[#b2b2b2]">{filter}</span>
+                <span className="text-[14px] h-16 leading-[18px] text-[#b2b2b2]">{filter}</span>
               </label>
               <ul
                 tabIndex={0}
