@@ -59,8 +59,8 @@ export default function Footer() {
             ))}
           </div>
           <div className="font-normal text-[20px] flex flex-row justify-between gap-30 text-[#3E3E3E] font-poppins">
-            <Link target='_blank' href="https://docs.google.com/document/d/1saH6h8sMjIUtojf3DPu2yaYYzn5pv5ZDKIHE9JHkMdU/edit?usp=sharing">Terms of Service</Link>
-            <Link target='_blank' href="https://docs.google.com/document/d/1y3EfVHCieAMXSxyZJbQJhAjZyf45XRMVnAy78OZbBbE/edit?usp=sharing">Privacy</Link>
+            <span onClick={() => router.push('/staticPages/TermsOfService')} className='cursor-pointer'>Terms of Service</span>
+            <span onClick={() => router.push('/staticPages/Privacy')} className='cursor-pointer'>Privacy</span>
           </div>
         </div>
       </div>
