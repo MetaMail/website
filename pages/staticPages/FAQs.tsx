@@ -8,7 +8,7 @@
  * @FilePath: \website\pages\statics\FAQs.tsx
  */
 
-import MDRender from "./MdRender";
+import MDRender from "../../components/MdRender/MdRender";
 export default function FAQs() {
 
   // --------------------------------------------------------------

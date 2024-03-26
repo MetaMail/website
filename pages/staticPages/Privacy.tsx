@@ -1,5 +1,5 @@
 
-import MDRender from "./MdRender";
+import MDRender from "../../components/MdRender/MdRender";
 export default function Privacy() {
   // --------------------------------------------------------------
   const markdownText = `A
