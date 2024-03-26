@@ -66,7 +66,7 @@ export interface IMailContentAttachment {
   plain_sha256?: string;
   filename: string;
   content_type?: string;
-  content_id: string;
+  content_id?: string;
   download?: {
     expire_at: string;
     url: string;
@@ -118,6 +118,7 @@ export interface IUpdateMailContentParams extends IMailDetailBaseItem {
 export interface IAttachment extends IMailContentAttachment {
   uploadProcess?: number;
   cancelableUpload?: MMCancelableUpload;
+
 }
 
 export interface MailListItemType extends IMailContentItem {
@@ -126,6 +127,7 @@ export interface MailListItemType extends IMailContentItem {
   local_id?: string;
   origin_part_text?: string;
   origin_part_html?: string;
+
 }
 
 export enum AttachmentRelatedTypeEn {
