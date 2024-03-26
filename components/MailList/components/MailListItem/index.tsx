@@ -144,7 +144,7 @@ const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
           <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[43px] font-800  absolute z-[1] opacity-100'>
             {mail.mail_from.name ? getThirdLetter(mail.mail_from.name) : mail.mail_from.address ? getThirdLetter(mail.mail_from?.address) : ''}
           </span>
-          <JazziconGrid size={38} addr={mail.mail_from.address || ''} className='opacity-30' />
+          <JazziconGrid size={38} addr={mail.mail_from.address || ''} className='opacity-50' />
         </div>
       )
     } else {

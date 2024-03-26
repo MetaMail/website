@@ -115,7 +115,7 @@ export default function Titlebar() {
                 <span className='text-[#3264D9] inline-block h-32 text-[16px] font-bold leading-[35px] font-800  absolute z-[1] opacity-100'>
                   {address && getThirdLetter(address)}
                 </span>
-                <JazziconGrid size={32} addr={address || ''} className='opacity-30' />
+                <JazziconGrid size={32} addr={address || ''} className='opacity-50' />
               </div>
             </div>
             <Image src={dropdownImg} alt='dropdown' title='dropdown' className={`w-18 h-18  transition-all duration-200 ease-in-out transform ${dropdownShow ? 'transform rotate-180' : 'rotate-0'}`} />
