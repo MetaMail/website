@@ -59,7 +59,9 @@
     --btn-font-color: #fff;
     --handleoffsetcalculator:#3c6ff4;
     --tglbg:#3c6ff4;
-    --tooltip-color:'#1F1F1F'
+    --tooltip-color:'#1F1F1F';
+    color-scheme: unset;
+    background-color:unset;
 } 
 html{
   overflow-x: hidden;
