@@ -19,6 +19,22 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
   const handleEditorChange = (newContent: string, editor: any) => {
     setContent(newContent);
   };
+  const handleEditorInit = (editor: any) => {
+    // 在编辑器初始化完成后执行一些操作
+    console.log('Editor initialized:', editor);
+    // editor.setContent('<p>Initial content</p>');
+  };
+  const handleEditorSetup = (editor: any) => {
+    // 在编辑器初始化期间执行一些操作
+    console.log('Editor setup:', editor);
+    editor.ui.registry.addButton('customButton', {
+      text: 'Custom Button',
+      onAction: function () {
+        // editor.insertContent('Custom button clicked!');
+      }
+    });
+  };
+
   return (
     <div className='h-full min-h-[200px]' >
       <Editor
@@ -27,7 +43,9 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
         onEditorChange={handleEditorChange}
         apiKey="noo6l6wle4d75xjcxaynsazleypv5m1do39w2gsn4av2iqwv"
         value={content}
+        onInit={handleEditorInit}
         init={{
+          setup: handleEditorSetup,
           toolbar_items_size: 'small',
           remove_tinymce_branding: true,
           height: '100%',

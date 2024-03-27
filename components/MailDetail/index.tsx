@@ -27,7 +27,6 @@ import {
   markFavorite,
   markUnread,
   starred,
-  sent,
   shrink,
   replyMail
 } from 'assets/icons';
@@ -45,7 +44,7 @@ export default function MailDetail() {
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const { createDraft, getMailStat, getRandomBits } = useContext(MailBoxContext);
   const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
-  const { list, setList ,detailList,setDetailList} = useMailListStore();
+  const { list, setList, detailList, setDetailList } = useMailListStore();
   const [isMoreExtend, setIsMoreExtend] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -54,13 +53,13 @@ export default function MailDetail() {
       showLoading && setLoading(true);
       // const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
       const detailArray = detailList;
-      if(detailArray.length<=0){
+      if (detailArray.length <= 0) {
         const batchResult = await mailHttp.getMailDetailByIdArr({
-          message_ids:[selectedMail.message_id]
+          message_ids: [selectedMail.message_id]
         })
-        setDetailList(mergeAndUniqueArraysByKey(detailList,batchResult,'message_id'));
+        setDetailList(mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id'));
       }
-      const mail =detailList.find((item)=>{return item.message_id === selectedMail.message_id})
+      const mail = detailList.find((item) => { return item.message_id === selectedMail.message_id })
       // console.log('mail',selectedMail, mail)
       const _mail = {
         ...selectedMail,
@@ -87,7 +86,7 @@ export default function MailDetail() {
       if (currentMailId !== _mail.message_id) return;
 
       // 附件>0 && 附件里有inline=false的图
-      if (_mail.attachments&&_mail.attachments.length && _mail.attachments.some((i: IMailContentAttachment) => i.content_disposition === 'inline')) {
+      if (_mail.attachments && _mail.attachments.length && _mail.attachments.some((i: IMailContentAttachment) => i.content_disposition === 'inline')) {
         // console.log(replaceImageSrc(_mail.part_html, _mail.attachments))
         _mail.part_html = replaceImageSrc(_mail.part_html, _mail.attachments);
       }
@@ -207,6 +206,7 @@ export default function MailDetail() {
       handler: handleStar,
     },
     {
+      // 回复
       src: replyMail,
       title: 'Reply',
       handler: () => {
@@ -225,6 +225,7 @@ export default function MailDetail() {
 
   const handleReply = () => {
     // console.log(selectedMail)
+    // 创建草稿
     createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject, selectedMail);
   };
   const handleHighlineLink = (link: string) => {
@@ -323,6 +324,10 @@ export default function MailDetail() {
       return (selectedMail?.part_text)
     }
   }
+  // 转发
+  const handleForward = () => {
+    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject, selectedMail);
+  }
   return (
     // 邮件详情
     <>
@@ -380,7 +385,14 @@ export default function MailDetail() {
               <div className="flex shrink-0 flex-col gap-6 stroke-current text-[#b2b2b2] max-w-[160]">
                 <div className="text-[14px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
                 <div className="flex gap-10 justify-end">
-                  {/* 收藏，转发，更多 */}
+                  {/* 转发 */}
+                  <Icon
+                    url={replyMail}
+                    title="forward"
+                    onClick={handleForward}
+                    className="w-18 h-18 self-center transform scale-x-[-1]"
+                  />
+                  {/* 收藏，回复，更多 */}
                   {rightIcons.map((item, index) => {
                     return (
                       <Icon
