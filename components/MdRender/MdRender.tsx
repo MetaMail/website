@@ -3,6 +3,7 @@ import Markdown from 'react-markdown';
 import { routeBack } from 'assets/icons';
 import Icon from 'components/Icon';
 import { useRouter } from 'next/router';
+import styles from './MarkdownRenderer.module.css'; // 引入自定义样式文件
 interface IProps {
   markdownText: string;
 }
@@ -10,10 +11,17 @@ export default function MDRender({ markdownText }: IProps) {
   const router = useRouter();
   return (
     <>
-      <div className="container max-w-[1024px] min-h-[100vh] mx-auto bg-[#F2F5F8] px-62 text-[#333] text-[16px] pt-56">
+      <div className="container max-w-[1024px] min-h-[100vh] mx-auto bg-[#F2F5F8] px-62 text-[#333] text-[16px] py-56">
         <h2 className="mb-24 text-[#0069E5] text-[34px] font-[PoppinsBold]">Metamail</h2>
         <div className="bg-white p-32">
-          <Markdown skipHtml={false}  >
+          <Markdown skipHtml={false} components={{
+            // 为链接添加 className，应用自定义样式
+            a: ({ node, children, ...props }) => (
+              <a className={styles.markdownLink} {...props}>
+                {children}
+              </a>
+            ),
+          }}>
             {markdownText}
           </Markdown>
         </div>
