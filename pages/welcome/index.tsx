@@ -89,11 +89,11 @@ export default function Welcome() {
   }, [address]);
 
   useEffect(() => {
-    // const { address: localAddress } = userLocalStorage.getUserInfo();
-    // const token = userLocalStorage.getToken();
-    // if (localAddress && token) {
-    //   router.push('/mailbox');
-    // }
+    const { address: localAddress } = userLocalStorage.getUserInfo();
+    const token = userLocalStorage.getToken();
+    if (localAddress && token) {
+      router.push('/mailbox');
+    }
   }, [])
   return (
     <div className="!font-[spaceGrotesk] flex flex-col mx-auto max-w-[3000px]">
