@@ -168,7 +168,7 @@ export default function MailList() {
         item.local_id = item.message_id;
       });
       // 批量获取邮件详情
-      if (filterType !== FilterTypeEn.Draft) {
+      if (filterType !== FilterTypeEn.Draft && ids.length) {
         const batchResult = await mailHttp.getMailDetailByIdArr({
           message_ids: ids
         })
@@ -255,7 +255,10 @@ export default function MailList() {
 
     // 每隔 30 秒执行一次
     const intervalId = setInterval(() => fetchMailList(false), 20000);
-
+    // 只有在第一页的时候定时器查询
+    if (pageIndex > 0) {
+      clearInterval(intervalId);
+    }
     // 组件卸载时清除定时器
     return () => {
       clearInterval(intervalId);
