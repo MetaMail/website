@@ -302,12 +302,9 @@ export default function MailDetail() {
     if (selectedMail.mail_from.address.endsWith(PostfixOfAddress)) {
       // 我们的用户
       return (
-        <div className='flex items-center justify-center  flex-shrink-0 w-38 h-38'>
-          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[43px] font-800  absolute z-[1] opacity-100'>
-            {selectedMail.mail_from.name ? getThirdLetter(selectedMail.mail_from.name) : selectedMail.mail_from.address ? getThirdLetter(selectedMail.mail_from?.address) : ''}
-          </span>
-          <JazziconGrid size={38} addr={selectedMail.mail_from.address || ''} className='opacity-50' />
-        </div>
+
+        <JazziconGrid size={38} addr={selectedMail.mail_from.address || ''} />
+
       )
     } else {
       // 别的用户

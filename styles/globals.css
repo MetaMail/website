@@ -308,7 +308,11 @@ button:disabled {
   
 /* 覆盖编辑器容器的样式 */
 .tox .tox-editor-container {
-  background-color: red;
+  /* background-color: red; */
+}
+.tox:not(.tox-tinymce-inline) .tox-editor-header:not(:first-child) .tox-toolbar-overlord:first-child .tox-toolbar__primary, .tox:not(.tox-tinymce-inline) .tox-editor-header:not(:first-child) .tox-toolbar:first-child
+{
+  border: none!important;
 }
 
 /* 覆盖编辑器内容区域的样式 */
@@ -332,9 +336,12 @@ button:disabled {
 .tox .tox-tbtn{
   height: 20px!important;
   width: 20px!important;
-  margin:0 4px 0 4px!important;
+  margin:0 6px!important;
 }
 .tox .tox-toolbar__group{
-  padding: 0 5px 0 6px!important;
+  padding: 0!important;
+  /* margin: 0!important; */
 }
+
   /* -----tinymce------ */
+ 

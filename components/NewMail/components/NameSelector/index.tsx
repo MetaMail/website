@@ -47,12 +47,9 @@ function NameSelector({ initValue, onChange }: IProps) {
         <div onClick={handleToggle} className={` dark:bg-[#1F1F1F]  ${isOpen ? 'rounded-t-[8px]' : 'rounded-[8px]'} overflow-hidden`}>
           <div className={`flex items-center  gap-8 p-5 pr-9  dark:bg-[#1F1F1F] bg-[#F5F5F6]`}>
             {/* 头像 */}
-            <div className='flex items-center justify-center  flex-shrink-0 w-32 h-32'>
-                <span className='text-[#3264D9] inline-block h-32 text-[16px] font-bold leading-[35px] font-800  absolute z-[1] opacity-100'>
-                  {showAddress && getThirdLetter(showAddress)}
-                </span>
-                <JazziconGrid size={32} addr={showAddress || ''} className='opacity-50' />
-              </div>
+
+            <JazziconGrid size={32} addr={showAddress || ''} />
+
             <p className="w-[200px] overflow-x-hidden flex dark:text-[#B9B9B9]">
               <span className=' text-ellipsis flex-1 overflow-hidden'>{showAddress}</span>
               <span className='block'>{PostfixOfAddress}</span>
