@@ -323,7 +323,11 @@ export default function MailDetail() {
   }
   // 转发
   const handleForward = () => {
-    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject, selectedMail);
+    
+    const _selectedMail = JSON.parse(JSON.stringify(selectedMail))
+    // 是否作为转发邮件的标志
+    _selectedMail.isForward = true;
+    createDraft([], '', '', selectedMail,true);
   }
   return (
     // 邮件详情

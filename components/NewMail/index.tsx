@@ -281,11 +281,14 @@ export default function NewMail() {
   };
 
   const handleLoad = async () => {
+    console.log('handleLoad')
+    console.log('selectedDraft',selectedDraft)
     // load 的时候都是加密模式
     try {
       setLoading(true);
 
       if (!selectedDraft.message_id) {
+        // 新建全新邮件
         // create a temp randomBits
         const { publicKey, address } = userLocalStorage.getUserInfo();
         const { encrypted_encryption_key, randomBits: tempRandomBits } = await createEncryptedMailKey(
@@ -297,8 +300,11 @@ export default function NewMail() {
           encrypted_encryption_keys: [encrypted_encryption_key],
           encryption_public_keys: [publicKey],
         };
+       
         return;
       }
+   
+ 
 
       randomBits = await getRandomBits('draft');
       let _selectedDraft = selectedDraft;
@@ -412,6 +418,7 @@ export default function NewMail() {
       return <Image src={require(`assets/file/DEFAULT.svg`)} alt={type} width={20} height={24} />;
     }
   }
+  // 引用邮件
   const handleShowTrimContent = () => {
     // console.log(selectedDraft)
     const replyContent = `${getContentFromEditor()}

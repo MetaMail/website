@@ -14,6 +14,7 @@ import NewMail from 'components/NewMail';
 import Loading from 'components/Loading';
 import { isEmptyObject } from 'utils';
 import LoadingRing from 'components/LoadingRing';
+import moment from 'moment';
 
 export default function MailBoxPage() {
   const router = useRouter();
@@ -50,8 +51,28 @@ export default function MailBoxPage() {
       publicKeys,
     };
   };
+    // 拼一下转发邮件
+  const handleFormatForwardContent =()=>{
+      return  `
+        <br><br>
+        <p>---------- Forwarded message ---------</p>
+        <p>From: ${selectedMail?.mail_from.name} <${selectedMail?.mail_from.address}></p>
+        <p>Date: ${moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</p>
+        <p>Subject: ${selectedMail?.subject}</p>
+        <p>To: ${selectedMail.mail_to?.map(item=>`${item.name} <${item.address}>`).join(', ')}</p>
+        ${selectedMail.part_html}
+      `
+    }
   // 创建草稿
-  const createDraft = async (mailTo: IPersonItem[], message_id?: string, subject?: string,selectedMail?:IMailContentItem) => {
+  /**
+   * 
+   * @param mailTo 
+   * @param message_id 
+   * @param subject 
+   * @param selectedMail 
+   * @param isForward 是否是转发
+   */
+  const createDraft = async (mailTo: IPersonItem[], message_id?: string, subject?: string,selectedMail?:IMailContentItem,isForward?:boolean) => {
     const { address, ensName } = userLocalStorage.getUserInfo();
     const mailFrom = {
       address: (ensName || address) + PostfixOfAddress,
@@ -59,10 +80,10 @@ export default function MailBoxPage() {
     };
     let selectMailObj: any = {
       mail_from: mailFrom,
-      mail_to: mailTo,
+      mail_to: isForward?[]:mailTo,
       mail_cc: [],
       mark: MarkTypeEn.Normal,
-      part_html: '',
+      part_html: isForward?handleFormatForwardContent():'',
       part_text: '',
       attachments: [],
       subject: '',
@@ -82,7 +103,7 @@ export default function MailBoxPage() {
       }
     };
     // console.log('草稿', selectMailObj)
-    setSelectedDraft(selectMailObj);
+    setSelectedDraft({...selectMailObj});
   };
 
   const getMailStat = async () => {
