@@ -56,7 +56,7 @@ const App = () => {
   const editorRef = useRef(null);
   const [switching, setSwitching] = useState(false);
 
-  const handleInit = (evt, editor) => {
+  const handleInit = (evt: any, editor: any) => {
     // 将编辑器实例保存到 ref 中
     editorRef.current = editor;
   };

@@ -1,6 +1,8 @@
 import { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { useThemeStore } from 'lib/zustand-store';
+// import tinymce from 'tinymce';
+
 interface EditorMethods {
   getContent: () => string;
   setContent: (content: string) => void;
@@ -70,9 +72,10 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
 
   const handleGetContent = () => {
     // 确保编辑器已经实例化
-    if (editorRef.current) {
+    if (editorRef.current && typeof window !== 'undefined') {
       // 使用 tinymce.get 获取编辑器实例并获取内容
-      const instance = tinymce.get(editorRef.current.id);
+
+      const instance = tinymce?.get(editorRef.current.id);
       instance?.destroy();
       setSkin({
         skin_url: "/tinymce/skins/ui/oxide" + (isDark ? "-dark" : ""),
