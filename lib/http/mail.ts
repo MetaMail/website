@@ -13,6 +13,7 @@ import { MMCancelableUpload } from './cancelable-upload';
 const APIs = {
     getMailList: '/mails/filter', // 根据筛选条件获取邮件列表
     mailDetail: '/mails', // 获取邮件详情
+    mailsBatch:'/mails/batch',// 批量获取邮件详情
     updateMail: '/mails', // 创建邮件 or 更新邮件内容
     sendMail: '/mails/send', // 发送邮件
     uploadAttachment: '/mails/attachments', //上传附件
@@ -84,7 +85,9 @@ interface IGetMailListParams {
     filter: FilterTypeEn;
     page_index: number;
 }
-
+interface IBatchMailDetail{
+    message_ids:string[]
+}
 interface IGetSuggestedReceiversParams {
     prefix: string;
 }
@@ -100,7 +103,9 @@ export interface IGetMailListResponse {
     page_index: number;
     mails: IMailContentItem[];
 }
-
+export interface IBatchMailResponse{
+    data:IGetMailDetailResponse[]
+}
 interface IChangeMailStatusParams {
     mails: IMailChangeParams[];
     mark?: MarkTypeEn;
@@ -118,16 +123,21 @@ export interface IMailChangeOptions {
 }
 
 class MMMailHttp extends MMHttp {
+    // 单个获取邮件详情
     async getMailDetailByID(id: string) {
         return this.get<IGetMailDetailParams, IGetMailDetailResponse>(`${APIs.mailDetail}`, {
             mail_id: id,
         });
     }
-
+    // 获取邮件列表
     async getMailList(params: IGetMailListParams) {
         return this.post<IGetMailListParams, IGetMailListResponse>(APIs.getMailList, params);
     }
-
+    // 批量获取邮件详情
+    async getMailDetailByIdArr(params: IBatchMailDetail) {
+        return this.post<IBatchMailDetail, IMailContentItem[]>(APIs.mailsBatch, params);
+    }
+    
     async changeMailStatus(mails: IMailChangeParams[], options: IMailChangeOptions) {
         return this.post<IChangeMailStatusParams, void>(APIs.mailDetail, { mails, ...options });
     }

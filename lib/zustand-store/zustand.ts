@@ -7,6 +7,8 @@ interface IMailListState {
   unreadCount: number;
   spamCount: number;
   list: MailListItemType[];
+  detailList:IMailContentItem[];
+  setDetailList:(list: IMailContentItem[]) => void;
   setList: (list: MailListItemType[]) => void;
   setFilterType: (filterType: FilterTypeEn) => void;
   addPageIndex: () => void;
@@ -21,6 +23,8 @@ export const useMailListStore = create<IMailListState>()(set => ({
   unreadCount: 0,
   spamCount: 0,
   list: [],
+  detailList:[],
+  setDetailList:(detailList: IMailContentItem[]) => set(() => ({ detailList })),
   setList: (list: MailListItemType[]) => set(() => ({ list })),
   setFilterType: (filterType: FilterTypeEn) => set(() => ({ filterType })),
   addPageIndex: () => set(state => ({ pageIndex: state.pageIndex + 1 })),

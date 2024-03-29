@@ -59,7 +59,9 @@
     --btn-font-color: #fff;
     --handleoffsetcalculator:#3c6ff4;
     --tglbg:#3c6ff4;
-    --tooltip-color:'#1F1F1F'
+    --tooltip-color:'#1F1F1F';
+    color-scheme: unset;
+    background-color:unset;
 } 
 html{
   overflow-x: hidden;
@@ -67,7 +69,7 @@ html{
 body {
   width: 100%;
   margin: auto;
-  background-color: #f2f8ff;
+  /* background-color: #f2f8ff; */
   background-repeat: no-repeat;
   background-size: cover;
   font-size: 14px;
@@ -172,8 +174,6 @@ select:focus-visible {
 }
 
 .btn {
-  /* height: 40px;
-  min-height: 40px; */
   line-height: 38px;
   color: var(--btn-font-color);
 }
@@ -302,3 +302,46 @@ button:disabled {
       display: none; /* 在100%时刻隐藏 */
     }
   }
+
+
+
+  
+/* 覆盖编辑器容器的样式 */
+.tox .tox-editor-container {
+  /* background-color: red; */
+}
+.tox:not(.tox-tinymce-inline) .tox-editor-header:not(:first-child) .tox-toolbar-overlord:first-child .tox-toolbar__primary, .tox:not(.tox-tinymce-inline) .tox-editor-header:not(:first-child) .tox-toolbar:first-child
+{
+  border: none!important;
+}
+
+/* 覆盖编辑器内容区域的样式 */
+.tox-tinymce ,.tox:not(.tox-tinymce-inline).tox-tinymce--toolbar-bottom .tox-editor-header{
+  /* 添加你想要的样式 */
+  border: none!important;
+}
+#tinymce,.mce-content-body{
+  margin-left: 0!important;
+  margin-right: 0!important;
+  font-size: 14px;
+  font-family: Poppins;
+}
+.tox .tox-edit-area::before{
+  border: none!important;
+}
+:deep .mce-content-body{
+  margin-left: 0!important;
+  margin-right: 0!important;
+}
+.tox .tox-tbtn{
+  height: 20px!important;
+  width: 20px!important;
+  margin:0 6px!important;
+}
+.tox .tox-toolbar__group{
+  padding: 0!important;
+  /* margin: 0!important; */
+}
+
+  /* -----tinymce------ */
+ 

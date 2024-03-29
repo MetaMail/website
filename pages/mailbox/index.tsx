@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useMailDetailStore, useMailListStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
 import { userHttp, mailHttp } from 'lib/http';
 import { MMHttp, PostfixOfAddress } from 'lib/base';
-import { IPersonItem, MetaMailTypeEn, MarkTypeEn, MailBoxTypeEn, ReadStatusTypeEn } from 'lib/constants';
+import { IPersonItem, MetaMailTypeEn, MarkTypeEn, MailBoxTypeEn, ReadStatusTypeEn, IMailContentItem } from 'lib/constants';
 import { userSessionStorage, userLocalStorage, mailLocalStorage } from 'lib/utils';
 import { getPrivateKey, decryptMailKey } from 'lib/encrypt';
 import MailBoxContext from 'context/mail';
@@ -14,6 +14,7 @@ import NewMail from 'components/NewMail';
 import Loading from 'components/Loading';
 import { isEmptyObject } from 'utils';
 import LoadingRing from 'components/LoadingRing';
+import moment from 'moment';
 
 export default function MailBoxPage() {
   const router = useRouter();
@@ -50,8 +51,28 @@ export default function MailBoxPage() {
       publicKeys,
     };
   };
+    // 拼一下转发邮件
+  const handleFormatForwardContent =()=>{
+      return  `
+        <br><br>
+        <p>---------- Forwarded message ---------</p>
+        <p>From: ${selectedMail?.mail_from.name} <${selectedMail?.mail_from.address}></p>
+        <p>Date: ${moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</p>
+        <p>Subject: ${selectedMail?.subject}</p>
+        <p>To: ${selectedMail.mail_to?.map(item=>`${item.name} <${item.address}>`).join(', ')}</p>
+        ${selectedMail.part_html}
+      `
+    }
   // 创建草稿
-  const createDraft = async (mailTo: IPersonItem[], message_id?: string, subject?: string) => {
+  /**
+   * 
+   * @param mailTo 
+   * @param message_id 
+   * @param subject 
+   * @param selectedMail 
+   * @param isForward 是否是转发
+   */
+  const createDraft = async (mailTo: IPersonItem[], message_id?: string, subject?: string,selectedMail?:IMailContentItem,isForward?:boolean) => {
     const { address, ensName } = userLocalStorage.getUserInfo();
     const mailFrom = {
       address: (ensName || address) + PostfixOfAddress,
@@ -59,10 +80,10 @@ export default function MailBoxPage() {
     };
     let selectMailObj: any = {
       mail_from: mailFrom,
-      mail_to: mailTo,
+      mail_to: isForward?[]:mailTo,
       mail_cc: [],
       mark: MarkTypeEn.Normal,
-      part_html: '',
+      part_html: isForward?handleFormatForwardContent():'',
       part_text: '',
       attachments: [],
       subject: '',
@@ -76,9 +97,13 @@ export default function MailBoxPage() {
       // 回复邮件
       selectMailObj.in_reply_to = message_id;
       selectMailObj.subject = 'Re:' + subject;
+      if(selectedMail){
+        selectMailObj.origin_part_html=selectedMail.part_html;
+        selectMailObj.origin_part_text=selectedMail.part_text;
+      }
     };
-    console.log('草稿', selectMailObj)
-    setSelectedDraft(selectMailObj);
+    // console.log('草稿', selectMailObj)
+    setSelectedDraft({...selectMailObj});
   };
 
   const getMailStat = async () => {

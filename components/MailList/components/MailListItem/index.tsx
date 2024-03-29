@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
@@ -22,6 +22,7 @@ import { Lock } from 'components/svg/index'
 import { favorite, markFavorite, trash, markUnread, read, checkboxSvg, checkboxedSvg, checkboxDark, favoriteDark } from 'assets/icons';
 import Avatar from 'components/Avatar';
 import { PostfixOfAddress } from 'lib/base';
+import { getThirdLetter } from 'utils';
 
 interface IMailItemProps {
   mail: MailListItemType;
@@ -29,7 +30,8 @@ interface IMailItemProps {
   loading: boolean
 }
 
-export default function MailListItem({ mail, onSelect, loading }: IMailItemProps) {
+// eslint-disable-next-line react/display-name
+const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
   const { isDark } = useThemeStore()
   const { getMailStat } = useContext(MailBoxContext);
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
@@ -116,6 +118,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
     } else {
       setSelectedMail(mail);
     }
+    // console.log('点击查看详情', mail)
   }, 1000);
   const renderDigest = (mail: MailListItemType) => {
     if (!mail.digest) {
@@ -127,27 +130,19 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
     return mail.digest;
   };
   const renderMailTo = (mail: MailListItemType) => {
-    return mail.mail_to.map((item, index) => {
+    return mail.mail_to.map((item, _index) => {
       if (item?.name && item.name.length > 0) {
         return item.name;
       } else return getShowAddress(item.address)
     })
   }
-  const getFirstLetter = (str: string) => {
-    if (str && str.length) {
-      return str[0]
-    } else return ''
-  }
   const renderAvator = () => {
     if (mail.mail_from.address.endsWith(PostfixOfAddress)) {
       // 我们的用户
       return (
-        <div className='flex items-center justify-center  flex-shrink-0 w-38 h-38'>
-          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[40px] font-800  absolute z-[1] opacity-100'>
-            {mail.mail_from.name ? getFirstLetter(mail.mail_from.name) : mail.mail_from.address ? getFirstLetter(mail.mail_from?.address) : ''}
-          </span>
-          <JazziconGrid size={38} addr={mail.mail_from.address || ''} className='opacity-30' />
-        </div>
+
+        <JazziconGrid size={38} addr={mail.mail_from.address || ''} />
+
       )
     } else {
       // 别的用户
@@ -209,11 +204,14 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
           {/* 邮件list-item */}
           <div className="flex-1 flex items-center w-0 ml-32 omit  dark:text-base-content">
             {/* 加密邮件的小锁 */}
-            {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Unread ? isDark ? '#fff' : '#333333' : '#b2b2b2'} />}</span>}
+            {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
             {/* ReadStatusTypeEn.Read 已读 */}
-            <span className={`leading-[initial]  ${mail.read == ReadStatusTypeEn.Unread ? "font-poppinsSemiBold dark:text-[#fff] text-lightMailTitleUnRead" : 'text-lightMailTitleRead dark:text-DarkMailTitleRead'}`}>{mail.subject || '(no subject)'}</span>
+            <p className={` h-16 leading-[20px] ${mail.read == ReadStatusTypeEn.Unread ? "font-poppinsSemiBold dark:text-[#fff] text-lightMailTitleUnRead" : 'text-lightMailTitleRead dark:text-DarkMailTitleRead'}`}>{mail.subject || '(no subject)'}</p>
 
-            <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}><span className=" px-7 leading-[initial] ">{'-'}</span>{renderDigest(mail)}</span>
+            <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}>
+              <span className=" px-7 inline-block h-[14px] leading-[18px] ">{'-'}</span>
+              <span>{renderDigest(mail)}</span>
+            </span>
           </div>
           <div className="w-100 text-right text-[14px]">
             <div className="group-hover:hidden  text-lightMailDate dark:text-DarkMailDate">{transformTime(mail.mail_date)}</div>
@@ -283,7 +281,7 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
               <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailTitleRead dark:text-DarkMailTitleRead' : "text-base-content font-poppinsSemiBold dark:text-DarkMailTitleUnRead"}`}>
                 {mail.subject || '(no subject)'}
               </span>
-              {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock fill={mail.read == ReadStatusTypeEn.Read ? '#adadad' : '#333'} />}</span>}
+              {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
             </p>
             <p className={`omit text-[13px]  dark:text-[#A7A1A1]  text-lightMailDetailRead  leading-[17px]`}>{renderDigest(mail)}</p>
           </div>
@@ -292,4 +290,5 @@ export default function MailListItem({ mail, onSelect, loading }: IMailItemProps
       }
     </>
   );
-}
+})
+export default MailListItem;

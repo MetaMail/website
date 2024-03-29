@@ -1,6 +1,7 @@
 // components/IframeComponent.tsx
-import React, { useEffect, useRef } from 'react';
-
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import parse from 'html-react-parser';
+import DOMPurify from 'dompurify';
 interface IframeProps {
   htmlContent: string;
   handleClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
@@ -8,56 +9,61 @@ interface IframeProps {
 
 const IframeComponent: React.FC<IframeProps> = ({ htmlContent, handleClick }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const handleIframeLoad = useCallback(() => {
+    setIframeLoaded(true);
+  }, []);
 
   useEffect(() => {
-    let time = 0;
-    setInterval(() => {
-      if (!iframeRef.current) {
-        time++;
-      } else {
-        console.log(time)
-      }
-    }, 100)
-    handleIframeLoad()
-  }, [iframeRef.current]); // 仅在组件挂载时执行
-
-  const handleIframeLoad = () => {
-    // console.log(iframeRef.current)
+    // 向 iframe 内部注入 HTML 内容
+    const iframeDocument = iframeRef.current.contentDocument;
     if (iframeRef.current) {
-      // 向 iframe 内部注入 HTML 内容
-      const iframeDocument = iframeRef.current.contentDocument;
-      if (iframeDocument) {
-        // iframeDocument.open();
-        // iframeDocument.write(htmlContent);
-        // iframeDocument.close();
-        const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
-        // 为每个 <a> 标签添加点击事件处理函数
-        links.forEach(link => {
-          // console.log('为每个 <a> 标签添加点击事件处理函数');
-          link.addEventListener('click', handleClick as unknown as EventListener);
-        });
+      console.log('加载完成')
+      iframeDocument.body.innerHTML = DOMPurify.sanitize(htmlContent);
+      const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
+      // 为每个 <a> 标签添加点击事件处理函数
+      links.forEach(link => {
+        // console.log('为每个 <a> 标签添加点击事件处理函数');
+        link.addEventListener('click', handleClick as unknown as EventListener);
+      });
 
-        // 移除事件监听器以避免内存泄漏
-        return () => {
-          links.forEach(link => {
-            link.removeEventListener('click', handleClick as unknown as EventListener);
-          });
-        };
-      }
+      // 移除事件监听器以避免内存泄漏
+      return () => {
+        links.forEach(link => {
+          link.removeEventListener('click', handleClick as unknown as EventListener);
+        });
+      };
+    } else {
+      console.log('还没加载完成')
+      const handleDisabledClick = (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+      };
+      const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
+      links.forEach(link => {
+        link.addEventListener('click', handleDisabledClick as unknown as EventListener);
+      });
+
+      // 移除事件监听器以避免内存泄漏
+      return () => {
+        links.forEach(link => {
+          link.removeEventListener('click', handleDisabledClick as unknown as EventListener);
+        });
+      };
     }
-  };
+
+  }, [iframeLoaded, iframeRef]);
 
   return (
-
     <iframe
       ref={iframeRef}
       title="My iframe"
       onLoad={handleIframeLoad}
-      srcDoc={htmlContent}
+      // srcDoc={DOMPurify.sanitize(htmlContent)}
       style={{ width: '100%', height: '100%', border: 'none' }}
-    />
+    ></iframe>
 
   );
 };
 
 export default IframeComponent;
+

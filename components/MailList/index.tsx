@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
-import { userLocalStorage } from 'lib/utils';
+import { mergeAndUniqueArraysByKey, userLocalStorage } from 'lib/utils';
 import { MarkTypeEn, MetaMailTypeEn, ReadStatusTypeEn, MailListItemType, FilterTypeEn } from 'lib/constants';
 import { mailHttp, IMailChangeParams, IMailChangeOptions } from 'lib/http';
 import MailBoxContext from 'context/mail';
@@ -26,7 +26,7 @@ export default function MailList() {
   // 发送邮件成功，刷新列表
   const { isSendSuccess, setIsSendSuccess } = useNewMailStore();
   const { getMailStat } = useContext(MailBoxContext);
-  const { filterType, pageIndex, list, setList, addPageIndex, subPageIndex } = useMailListStore();
+  const { filterType, pageIndex, list, setList, detailList, setDetailList, addPageIndex, subPageIndex } = useMailListStore();
   // isDetailExtend : 详情是否占满全屏
   // selectedMail : 选中查看详情的邮件
   const { selectedMail, isDetailExtend } = useMailDetailStore();
@@ -160,11 +160,21 @@ export default function MailList() {
       });
 
       const { mails, page_num } = data;
-      const mailsList = mails as MailListItemType[];
+      let mailsList = mails as MailListItemType[];
+      const ids: string[] = []
       mailsList.forEach(item => {
+        ids.push(item.message_id)
         item.selected = false;
         item.local_id = item.message_id;
       });
+      // 批量获取邮件详情
+      if (filterType !== FilterTypeEn.Draft && ids.length) {
+        const batchResult = await mailHttp.getMailDetailByIdArr({
+          message_ids: ids
+        })
+        setDetailList(mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id'));
+      }
+
       setList(mailsList ?? []);
       setPageNum(page_num);
       // 发送邮件成功，刷新列表
@@ -203,7 +213,7 @@ export default function MailList() {
 
   //  list
   useEffect(() => {
-    // console.log('list', list)
+    // console.log('list改变')
     if (list.length) {
       const selectedListNum = getSelectedList().length;
       const isIndeterminate = selectedListNum > 0 && selectedListNum < list.length;
@@ -239,31 +249,25 @@ export default function MailList() {
   useEffect(() => { console.log(filter) }, [filter])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
-    // console.log('zhixing')
+    console.log('pageIndex', pageIndex)
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     setFilter(null)
+
+    // 每隔 30 秒执行一次
+    const intervalId = setInterval(() => fetchMailList(false), 20000);
+    // 只有在第一页的时候定时器查询
+    if (pageIndex > 0) {
+      clearInterval(intervalId);
+    }
+    // 组件卸载时清除定时器
+    return () => {
+      clearInterval(intervalId);
+    };
+
   }, [pageIndex, filterType, isSendSuccess]);
 
 
-  //  filterType
-  useEffect(() => {
-    // console.log('zhixing1')
-    setFilter(null);
-    const onRefresh: (e: Event) => Promise<void> = async event => {
-      const e = event as CustomEvent;
-      await fetchMailList(e.detail.showLoading);
-    };
 
-    window.addEventListener('refresh-list', onRefresh);
-    // 每隔 30 秒执行一次
-    intervalId = setInterval(() => fetchMailList(false), 20000);
-
-    // 组件卸载时清除定时器
-    return () => {
-      window.removeEventListener('refresh-list', onRefresh);
-      clearInterval(intervalId);
-    };
-  }, [filterType]);
 
 
   return (
@@ -288,7 +292,7 @@ export default function MailList() {
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-18 h-18" />
-                <span className="text-[14px] h-16 leading-[15px] text-[#b2b2b2]">{filter}</span>
+                <span className="text-[14px] h-16 leading-[18px] text-[#b2b2b2]">{filter}</span>
               </label>
               <ul
                 tabIndex={0}

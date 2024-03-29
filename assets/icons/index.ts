@@ -49,7 +49,7 @@ import arrowLeft from './arrowLeft.svg'
 import arrowRight from './arrowRight.svg'
 import arrowRightActive from './arrowRightActive.svg'
 import download from './download.svg'
-
+import routeBack from './routeBack.svg'
 // Dark theme slider icon 
 import dark_spam from './darkSlider/spam.svg';
 import dark_star from './darkSlider/star.svg'
@@ -62,9 +62,13 @@ import dark_delete from './darkSlider/delete.svg'
 // checkBox
 import checkboxDark from './checkboxDark.svg'
 import favoriteDark from './favoriteDark.svg'
+
+import showTrimContent from './showTrimContent.svg';
 export {
+  showTrimContent,
   download,
   arrowDown,
+  routeBack,
   addDark,
   cancelDark,
   extendDark,

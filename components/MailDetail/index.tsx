@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import ReactDOM from 'react-dom';
 import IframeComponent from 'components/IframeRender';
 import MailBoxContext from 'context/mail';
-import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem } from 'lib/constants';
+import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem, IMailContentAttachment } from 'lib/constants';
 import { mailHttp, IMailChangeOptions } from 'lib/http';
 import { useMailDetailStore, useMailListStore, useThemeStore } from 'lib/zustand-store';
 import { decryptMailContent } from 'lib/encrypt';
@@ -27,13 +27,14 @@ import {
   markFavorite,
   markUnread,
   starred,
-  sent,
   shrink,
   replyMail
 } from 'assets/icons';
 import { useRouter } from 'next/router';
 import Avatar from 'components/Avatar';
 import { PostfixOfAddress } from 'lib/base';
+import { isCompleteHtml, mergeAndUniqueArraysByKey } from 'lib/utils';
+import { getThirdLetter, replaceImageSrc } from 'utils';
 
 let randomBits: string = '';
 let currentMailId: string = '';
@@ -43,14 +44,23 @@ export default function MailDetail() {
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const { createDraft, getMailStat, getRandomBits } = useContext(MailBoxContext);
   const { selectedMail, setSelectedMail, isDetailExtend, setIsDetailExtend } = useMailDetailStore();
-  const { list, setList } = useMailListStore();
+  const { list, setList, detailList, setDetailList } = useMailListStore();
   const [isMoreExtend, setIsMoreExtend] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLoad = async (showLoading = true) => {
     try {
       showLoading && setLoading(true);
-      const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
+      // const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
+      const detailArray = detailList;
+      if (detailArray.length <= 0) {
+        const batchResult = await mailHttp.getMailDetailByIdArr({
+          message_ids: [selectedMail.message_id]
+        })
+        setDetailList(mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id'));
+      }
+      const mail = detailList.find((item) => { return item.message_id === selectedMail.message_id })
+      // console.log('mail',selectedMail, mail)
       const _mail = {
         ...selectedMail,
         ...mail,
@@ -58,13 +68,14 @@ export default function MailDetail() {
         mark: selectedMail.mark,
         read: selectedMail.read,
       };
+      // console.log('接口', _mail)
       if (selectedMail.meta_type === MetaMailTypeEn.Encrypted) {
         if (currentMailId !== _mail.message_id) return;
         randomBits = await getRandomBits('detail');
 
         if (_mail?.part_html) {
           _mail.part_html = decryptMailContent(_mail.part_html, randomBits);
-          console.log('解密出来', _mail.part_html)
+          // console.log('解密出来', _mail.part_html)
         }
         if (_mail?.part_text) {
           _mail.part_text = decryptMailContent(_mail.part_text, randomBits);
@@ -73,6 +84,13 @@ export default function MailDetail() {
       // 防止loading的过程中，用户切换了邮件。比如用户先选择了A邮件然后快速选择B邮件，则A邮件走到这里来以后又会把当前邮件切换成A邮件
       // B邮件走到这里来以后又会把当前邮件切换成B邮件，形成死循环
       if (currentMailId !== _mail.message_id) return;
+
+      // 附件>0 && 附件里有inline=false的图
+      if (_mail.attachments && _mail.attachments.length && _mail.attachments.some((i: IMailContentAttachment) => i.content_disposition === 'inline')) {
+        // console.log(replaceImageSrc(_mail.part_html, _mail.attachments))
+        _mail.part_html = replaceImageSrc(_mail.part_html, _mail.attachments);
+      }
+
       setSelectedMail(_mail);
     } catch (error) {
       console.error(error);
@@ -188,6 +206,7 @@ export default function MailDetail() {
       handler: handleStar,
     },
     {
+      // 回复
       src: replyMail,
       title: 'Reply',
       handler: () => {
@@ -206,7 +225,8 @@ export default function MailDetail() {
 
   const handleReply = () => {
     // console.log(selectedMail)
-    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject);
+    // 创建草稿
+    createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject, selectedMail);
   };
   const handleHighlineLink = (link: string) => {
     // 匹配字符串中的所有 <a> 标签
@@ -247,7 +267,6 @@ export default function MailDetail() {
     setIsOpen(false);
     window.open(link);
   };
-
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     // console.log('点击了')
     event.preventDefault();
@@ -259,37 +278,57 @@ export default function MailDetail() {
       openModal()
     }
   };
-  const getFirstLetter = (str: string) => {
-    if (str && str.length) {
-      return str[0]
-    } else return ''
-  }
+  useEffect(() => {
+    // 获取所有包含 <a> 标签的元素
+    const anchorElements: HTMLElement | null = document.querySelector('#mailHtml');
+    const links: NodeListOf<HTMLAnchorElement> = anchorElements.querySelectorAll('a');
+
+    // 为每个 <a> 标签添加点击事件处理函数
+    links.forEach(link => {
+      // console.log(anchorElement);
+      link.addEventListener('click', handleClick as unknown as EventListener);
+    });
+
+    // 移除事件监听器以避免内存泄漏
+    return () => {
+      links.forEach(link => {
+        link.removeEventListener('click', handleClick as unknown as EventListener);
+      });
+    };
+
+  }, [selectedMail]);
+
   const renderAvator = () => {
     if (selectedMail.mail_from.address.endsWith(PostfixOfAddress)) {
       // 我们的用户
       return (
-        <div className='flex items-center justify-center  flex-shrink-0 w-38 h-38'>
-          <span className='text-[#3264D9] inline-block h-38 text-[16px] font-bold leading-[40px] font-800  absolute z-[1] opacity-100'>
-            {selectedMail.mail_from.name ? getFirstLetter(selectedMail.mail_from.name) : selectedMail.mail_from.address ? getFirstLetter(selectedMail.mail_from?.address) : ''}
-          </span>
-          <JazziconGrid size={38} addr={selectedMail.mail_from.address || ''} className='opacity-30' />
-        </div>
+
+        <JazziconGrid size={38} addr={selectedMail.mail_from.address || ''} />
+
       )
     } else {
       // 别的用户
       return <Avatar size={38} addr={selectedMail.mail_from.name || selectedMail.mail_from.address || ''} />
     }
   }
-  // Add a hook to make all links open a new window
-  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
-    if ('target' in node) {
-      node.setAttribute('target', '_blank');
-      node.setAttribute('rel', 'noopener noreferrer');
+  // 渲染html
+  const renderHtml = () => {
+    if (selectedMail?.part_html && isCompleteHtml(selectedMail?.part_html)) {
+      return (<IframeComponent htmlContent={selectedMail?.part_html} handleClick={handleClick} />)
+    } else if (selectedMail?.part_html) {
+      return (parse(handleHighlineLink(selectedMail?.part_html)))
+    } else if (selectedMail?.part_text) {
+      return (selectedMail?.part_text)
     }
-    if (!node.hasAttribute('target') && (node.hasAttribute('xlink:href') || node.hasAttribute('href'))) {
-      node.setAttribute('xlink:show', 'new');
-    }
-  });
+  }
+  // 转发
+  const handleForward = () => {
+    
+    const _selectedMail = JSON.parse(JSON.stringify(selectedMail))
+    // 是否作为转发邮件的标志
+    _selectedMail.isForward = true;
+    createDraft([], '', '', selectedMail,true);
+  }
   return (
     // 邮件详情
     <>
@@ -328,7 +367,7 @@ export default function MailDetail() {
               </div>
             </div>
             {/* 邮件详情 */}
-            <h1 className="omit font-poppinsSemiBold my-20 max-w-4xl text-[22px] mt-15 mb-21 text-[#202224] dark:text-base-content">{selectedMail?.subject || '(no subject)'}</h1>
+            <h1 className="omit font-poppinsSemiBold my-10 max-w-4xl text-[22px]   text-[#202224] dark:text-base-content">{selectedMail?.subject || '(no subject)'}</h1>
             <div className="flex justify-between py-10">
               <div className="flex gap-20 items-start">
                 {/* 头像 */}
@@ -347,7 +386,14 @@ export default function MailDetail() {
               <div className="flex shrink-0 flex-col gap-6 stroke-current text-[#b2b2b2] max-w-[160]">
                 <div className="text-[14px]">{moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</div>
                 <div className="flex gap-10 justify-end">
-                  {/* 收藏，转发，更多 */}
+                  {/* 转发 */}
+                  <Icon
+                    url={replyMail}
+                    title="forward"
+                    onClick={handleForward}
+                    className="w-18 h-18 self-center transform scale-x-[-1]"
+                  />
+                  {/* 收藏，回复，更多 */}
                   {rightIcons.map((item, index) => {
                     return (
                       <Icon
@@ -392,7 +438,7 @@ export default function MailDetail() {
             {
               <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} h-full flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
                 <div id="mailHtml" className='listContainer h-full pl-[57px] pr-[5px] box-border'>
-                  {selectedMail?.part_html && selectedMail?.part_html.includes('<html') ? <IframeComponent htmlContent={selectedMail?.part_html} handleClick={handleClick} /> : selectedMail?.part_html ? parse(handleHighlineLink(selectedMail?.part_html)) : selectedMail?.part_text}
+                  {renderHtml()}
                 </div>
               </div>
             }
@@ -404,7 +450,7 @@ export default function MailDetail() {
           {selectedMail?.attachments && selectedMail.attachments.length > 0 && (
             <div className="flex gap-10 absolute pl-57 bottom-56 w-[100%] box-border py-10 bg-base-100 flex-wrap">
               {/* 文件s */}
-              {selectedMail?.attachments?.map((item, idx) => (
+              {selectedMail?.attachments?.filter((item) => item.content_disposition !== 'inline').map((item, idx) => (
                 <AttachmentItem
                   idx={idx}
                   key={idx}
@@ -412,6 +458,7 @@ export default function MailDetail() {
                   name={item?.filename}
                   randomBits={randomBits}
                 />
+
               ))}
             </div>
           )}

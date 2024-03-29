@@ -59,12 +59,14 @@ export interface IPersonItem {
 }
 
 export interface IMailContentAttachment {
+  content_disposition?: string;
   attachment_id?: string;
   size?: number;
   encrypted_sha256?: string;
   plain_sha256?: string;
   filename: string;
   content_type?: string;
+  content_id?: string;
   download?: {
     expire_at: string;
     url: string;
@@ -116,12 +118,16 @@ export interface IUpdateMailContentParams extends IMailDetailBaseItem {
 export interface IAttachment extends IMailContentAttachment {
   uploadProcess?: number;
   cancelableUpload?: MMCancelableUpload;
+
 }
 
 export interface MailListItemType extends IMailContentItem {
   attachments?: IAttachment[];
   selected?: boolean;
   local_id?: string;
+  origin_part_text?: string;
+  origin_part_html?: string;
+
 }
 
 export enum AttachmentRelatedTypeEn {
