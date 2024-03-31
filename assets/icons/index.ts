@@ -49,6 +49,7 @@ import arrowLeft from './arrowLeft.svg'
 import arrowRight from './arrowRight.svg'
 import arrowRightActive from './arrowRightActive.svg'
 import download from './download.svg'
+import downloadFile from './downloadFile.svg'
 import routeBack from './routeBack.svg'
 // Dark theme slider icon 
 import dark_spam from './darkSlider/spam.svg';
@@ -88,6 +89,7 @@ export {
   arrowRightActive,
   searchNormal,
   dropdownImg,
+  downloadFile,
   down,
   empty,
   mailMore,

@@ -75,6 +75,9 @@ body {
   font-size: 14px;
   overflow: hidden;
 }
+a, a:link, a:visited{
+  color: unset!important;
+}
 .home-bg {
   background-repeat: no-repeat;
 }
@@ -308,7 +311,8 @@ button:disabled {
   
 /* 覆盖编辑器容器的样式 */
 .tox .tox-editor-container {
-  /* background-color: red; */
+  margin-bottom: 10px!important;
+  border: none!important;
 }
 .tox:not(.tox-tinymce-inline) .tox-editor-header:not(:first-child) .tox-toolbar-overlord:first-child .tox-toolbar__primary, .tox:not(.tox-tinymce-inline) .tox-editor-header:not(:first-child) .tox-toolbar:first-child
 {

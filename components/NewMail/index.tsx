@@ -527,25 +527,24 @@ export default function NewMail() {
             />
           )}
           {/* 上传成功得文件列表 */}
-          <ul className="flex gap-10 flex-wrap">
+          <ul className={`flex gap-10 ${isExtend?'flex-wrap':'flex-nowrap overflow-x-scroll'}`}>
             {selectedDraft.attachments?.map((attr, index) => (
-              <li key={index} className="flex text-[#878787]">
+              <li key={index} className="flex text-[#878787] ">
                 <div
                   className="gap-[8px] box-border text-[14px]  px-12 py-12 bg-[#F4F4F4] dark:bg-[#F4F4F41A] dark:border dark:border-solid dark:border-gray-300 dark:border-opacity-4 rounded-4 cursor-pointer flex items-center"
                   title={attr.filename}>
                   {fileTypeSvg(fileType(attr.filename).toLocaleUpperCase())}
-                  <p className=' flex justify-start items-center'><span className="max-w-[150px] truncate">{originFileName(attr.filename)}</span><span>.{fileType(attr.filename)}</span></p>
+                  <p className=' flex leading-[20px] justify-start items-center'><span className="max-w-[150px] truncate">{originFileName(attr.filename)}</span><span>.{fileType(attr.filename)}</span></p>
                   <div className='w-16 flex justify-start items-center'>
-
                     {!attr.attachment_id && (
-                      <div className={`flex items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
+                      <div className={`flex  items-center ${!attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}}`}>
                         <span className="loading loading-spinner loading-xs text-[#31A608]"></span>
                       </div>
                     )}
 
                     {/* TODO:正在上传不能删除 */}
                     <button className={` ${attr.attachment_id ? 'animate-[fadeIn_150ms_ease-in-out_forwards]' : 'animate-[fadeOut_150ms_ease-in-out_forwards]'}`} onClick={() => removeAttachment(index)}>
-                      <Icon url={trashCan} title="trashCan" className="w-16 h-16" />
+                      <Icon url={trashCan} title="trashCan" className="w-13 h-13 pb-3" />
                     </button>
                   </div>
                 </div>

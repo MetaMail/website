@@ -95,9 +95,11 @@ export const isCompleteHtml = (htmlString: string) => {
   const htmlRegex = /<html[^>]*>[\s\S]*<\/html>/i;
   // 定义正则表达式匹配 body 标签
   const bodyRegex = /<body[^>]*>[\s\S]*<\/body>/i;
+  // 
+  const styleRegex = /<style[^>]*>[\s\S]*<\/style>/i;
 
   // 使用正则表达式测试 HTML 字符串
-  return htmlRegex.test(htmlString) && bodyRegex.test(htmlString);
+  return (htmlRegex.test(htmlString) && bodyRegex.test(htmlString)) || styleRegex.test(htmlString);
 };
 
 // 合并并去重数组，根据指定键

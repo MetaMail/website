@@ -85,7 +85,7 @@ export default function MailBoxPage() {
       mark: MarkTypeEn.Normal,
       part_html: isForward?handleFormatForwardContent():'',
       part_text: '',
-      attachments: [],
+      attachments:  isForward?selectedMail.attachments:[],
       subject: '',
       meta_type: MetaMailTypeEn.Encrypted,
       mailbox: MailBoxTypeEn.Draft,

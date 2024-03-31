@@ -98,7 +98,7 @@ export default function Sidebar() {
             <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-poppinsSemiBold" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
               <div className='flex items-center gap-x-9'>
                 {renderLogo(item.logo, filterType === Number(item.key))}
-                <span className={` inline-block h-[16px]  ${index !== 0 ? 'leading-[19px]' : 'leading-[17px]'} ${filterType === Number(item.key) ? '' : ''}`}>{item.title}</span>
+                <span className={` inline-block h-[16px]  ${index !== 0 ? 'leading-[19px]' : 'leading-[17px]'} ${filterType === Number(item.key) ? 'text-primary' : ''}`}>{item.title}</span>
               </div>
               {renderBadge(item.key)}
             </a>

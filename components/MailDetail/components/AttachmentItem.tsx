@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 import { convertWordArrayToUint8Array, fileType, originFileName } from 'lib/utils';
 import { decryptMailAttachment } from 'lib/encrypt';
 import Image from 'next/image';
-import { download } from 'assets/icons/index'
+import { downloadFile } from 'assets/icons/index'
 type AttachmentItemProps = {
   url: string;
   name: string;
@@ -53,10 +53,10 @@ export default function AttachmentItem({ url, name, idx, randomBits }: Attachmen
   };
   return (
     <div className='relative  cursor-pointer' onClick={handleClick}>
-      <div className="absolute transition-all duration-200 opacity-0 hover:opacity-100 w-full h-full hover:bg-[rgba(64,64,64,.9)]  rounded-4 flex justify-center items-center">
-        <Image src={download} alt="" className='w-30 h-30 ' />
+      <div className="absolute transition-all duration-200 opacity-0 hover:opacity-100 w-full h-full hover:bg-[rgba(0,0,0,0.55)]  rounded-15 flex justify-center items-center">
+        <Image src={downloadFile} alt="" className='w-30 h-30 ' />
       </div>
-      <div title={name} className=" flex text-lightMailContent dark:text-DarkMailContent text-[14px] px-12 py-12  bg-[#DCDCDC33] dark:bg-[#DCDCDC33] rounded-4 cursor-pointer  items-center gap-8">
+      <div title={name} className=" flex text-lightMailContent dark:text-DarkMailContent text-[14px] px-12 py-12  bg-[#DCDCDC33] dark:bg-[#DCDCDC33] rounded-15 cursor-pointer  items-center gap-8">
         {fileTypeSvg(fileType(name).toLocaleUpperCase())}
         <div className='flex items-center '><p className="max-w-[150px] truncate">{originFileName(name ?? `attachment${idx}`)}</p><span>.{fileType((name ?? `attachment${idx}`))}</span></div>
       </div>

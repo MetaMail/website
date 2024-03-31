@@ -314,6 +314,7 @@ export default function MailDetail() {
   // 渲染html
   const renderHtml = () => {
     if (selectedMail?.part_html && isCompleteHtml(selectedMail?.part_html)) {
+      // console.log(selectedMail?.part_html)
       return (<IframeComponent htmlContent={selectedMail?.part_html} handleClick={handleClick} />)
     } else if (selectedMail?.part_html) {
       return (parse(handleHighlineLink(selectedMail?.part_html)))
@@ -367,7 +368,7 @@ export default function MailDetail() {
               </div>
             </div>
             {/* 邮件详情 */}
-            <h1 className="omit font-poppinsSemiBold my-10 max-w-4xl text-[22px]   text-[#202224] dark:text-base-content">{selectedMail?.subject || '(no subject)'}</h1>
+            <h1 className="omit font-poppinsSemiBold mt-5  max-w-4xl text-[22px]   text-[#202224] dark:text-base-content">{selectedMail?.subject || '(no subject)'}</h1>
             <div className="flex justify-between py-10">
               <div className="flex gap-20 items-start">
                 {/* 头像 */}
