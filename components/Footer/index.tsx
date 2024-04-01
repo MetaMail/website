@@ -60,7 +60,7 @@ export default function Footer() {
           </div>
           <div className="font-normal text-[20px] flex flex-row justify-between gap-30 text-[#3E3E3E] font-poppins">
             <span onClick={() => router.push('/staticPages/TermsOfService')} className='cursor-pointer'>Terms of Service</span>
-            <span onClick={() => router.push('/staticPages/Privacy')} className='cursor-pointer'>Privacy</span>
+            <span onClick={() => router.push('/staticPages/Privacy')} className='cursor-pointer'>Privacy Policy</span>
           </div>
         </div>
       </div>
