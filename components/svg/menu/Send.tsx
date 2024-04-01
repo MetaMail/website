@@ -1,8 +1,16 @@
-export default function SendSvg({size=18}) {
+export default function SendSvg({ size = 18, stroke = "#545454" }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4.97246 4.28951L10.2787 2.52076C12.66 1.72701 13.9537 3.02701 13.1662 5.40826L11.3975 10.7145C10.21 14.2833 8.25996 14.2833 7.07246 10.7145L6.54746 9.13951L4.97246 8.61451C1.40371 7.42701 1.40371 5.48326 4.97246 4.28951Z" stroke="#7F7F7F" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M6.66602 8.87076L8.90352 6.62701" stroke="#7F7F7F" strokeLinecap="round" strokeLinejoin="round" />
+      <g clip-path="url(#clip0_3089_9944)">
+        <path d="M14.6667 1.33301L7.33337 8.66634" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14.6667 1.33301L10 14.6663L7.33337 8.66634L1.33337 5.99967L14.6667 1.33301Z" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+      <defs>
+        <clipPath id="clip0_3089_9944">
+          <rect width={size} height={size} fill="white" />
+        </clipPath>
+      </defs>
     </svg>
+
   );
 }
