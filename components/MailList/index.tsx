@@ -334,26 +334,23 @@ export default function MailList() {
             {/* <span className="text-md">total page: {pageNum}</span> */}
             <button
               disabled={pageIndex === 1}
-              className="w-18"
               onClick={() => {
                 if (pageIndex > 1) subPageIndex();
               }}>
               {/* 当是第一页 */}
-              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-18 h-18 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-16 h-16 rotate-180"></Icon>)}
+              {pageIndex === 1 ? (<Icon url={arrowLeft} title="arrowLeft" className="w-16 h-16 opacity-100"></Icon>) : (<Icon url={arrowRight} title="arrowRight" className="w-20 h-20 rotate-180"></Icon>)}
             </button>
 
             <button
-              className="w-18"
               disabled={pageIndex === pageNum}
               onClick={() => {
                 if (pageIndex < pageNum) addPageIndex();
               }}>
-              <Icon url={arrowRight} title="arrowRight" className="w-18 h-18"></Icon>
+              <Icon url={arrowRight} title="arrowRight" className="w-20 h-20"></Icon>
             </button>
             <Icon
               url={update}
               title="Refresh"
-              className="w-18 h-18"
               onClick={() => {
                 fetchMailList(true);
               }}

@@ -7,6 +7,7 @@
 /* 普通字体 */
   @font-face {
     font-family:'Poppins';
+    line-height: 1;
     src: url('/static/fonts/poppins-regular.ttf') format('ttf'),
              url('/static/fonts/poppins-regular.woff2') format('woff2'),
          url('/static/fonts/poppins-regular.woff') format('woff');
@@ -75,7 +76,7 @@ body {
   font-size: 14px;
   overflow: hidden;
 }
-a, a:link, a:visited{
+ a:visited{
   color: unset!important;
 }
 .home-bg {

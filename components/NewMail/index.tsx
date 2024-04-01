@@ -282,7 +282,7 @@ export default function NewMail() {
 
   const handleLoad = async () => {
     console.log('handleLoad')
-    console.log('selectedDraft',selectedDraft)
+    console.log('selectedDraft', selectedDraft)
     // load 的时候都是加密模式
     try {
       setLoading(true);
@@ -300,11 +300,11 @@ export default function NewMail() {
           encrypted_encryption_keys: [encrypted_encryption_key],
           encryption_public_keys: [publicKey],
         };
-       
+
         return;
       }
-   
- 
+
+
 
       randomBits = await getRandomBits('draft');
       let _selectedDraft = selectedDraft;
@@ -448,10 +448,10 @@ export default function NewMail() {
             <div onClick={() => setIsExtend(!isExtend)}>{
               isExtend ? (
                 <Icon url={isDark ? shrinkDark : shrink}
-                  className="w-14 h-auto self-center" />
+                  className="h-auto self-center" />
               ) : (
                 <Icon url={isDark ? extendDark : extend}
-                  className="w-14 h-auto self-center" />
+                  className="h-auto self-center" />
               )
             }
             </div>
@@ -459,7 +459,7 @@ export default function NewMail() {
           {/* 关闭 */}
           <Icon
             url={isDark ? cancelDark : cancel}
-            className="w-14 h-auto self-center"
+            className="h-auto self-center"
             onClick={async () => {
               if (!getMailChanged()) return setSelectedDraft(null);
               setShowLoading(true);
@@ -527,7 +527,7 @@ export default function NewMail() {
             />
           )}
           {/* 上传成功得文件列表 */}
-          <ul className={`flex gap-10 ${isExtend?'flex-wrap':'flex-nowrap overflow-x-scroll'}`}>
+          <ul className={`flex gap-10 ${isExtend ? 'flex-wrap' : 'flex-nowrap overflow-x-scroll'}`}>
             {selectedDraft.attachments?.map((attr, index) => (
               <li key={index} className="flex text-[#878787] ">
                 <div

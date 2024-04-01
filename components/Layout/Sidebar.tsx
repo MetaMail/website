@@ -98,7 +98,7 @@ export default function Sidebar() {
             <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-poppinsSemiBold" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
               <div className='flex items-center gap-x-9'>
                 {renderLogo(item.logo, filterType === Number(item.key))}
-                <span className={` inline-block h-[16px]  ${index !== 0 ? 'leading-[19px]' : 'leading-[17px]'} ${filterType === Number(item.key) ? 'text-primary' : ''}`}>{item.title}</span>
+                <span className={` inline-block h-[16px]   ${filterType === Number(item.key) ? 'text-primary' : ''}`}>{item.title}</span>
               </div>
               {renderBadge(item.key)}
             </a>
@@ -110,7 +110,6 @@ export default function Sidebar() {
           <li key={item.key} >
             {/* More */}
             <div className={`rounded-5 flex items-center p-0 h-32 pl-12 pr-5  menu-dropdown-toggle menu-dropdown-show after:w-0 transition-colors duration-75 ${filterType === Number(item.key) && item.childrenShow ? 'active rounded-4' : 'hover:bg-base-300 dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 '}`} onClick={() => handleToggle(menus_Map, index, 'childrenShow')}>
-              {/* <Image src={item?.logo} alt={item?.title} className={`w-18 h-18 self-center stroke-width-100 fill-primary filter-primary ${item.childrenShow ? 'transform rotate-180 duration-75' : ''}`} /> */}
               <div className={`transition-all duration-200 ease-in-out transform ${item.childrenShow ? ' rotate-180  ' : 'rotate-0'}`}>{renderLogo(item.logo, filterType === Number(item.key))}</div>
               <span className='leading-[36px] text-[#54545499] dark:text-[#E9E9E9]'>{item.title}</span>
               {item.childrenShow}

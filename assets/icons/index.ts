@@ -40,6 +40,7 @@ import cancel from './cancel.svg';
 import close from './close.svg';
 import mailMore from './mailMore.svg';
 import replyMail from './replyMail.svg';
+import forwardMail from './forwardMail.svg';
 import darkMailMore from './darkMailMore.svg';
 import dropdownImg from './dropdown.svg'
 import spam from './spam.svg';
@@ -94,6 +95,7 @@ export {
   empty,
   mailMore,
   replyMail,
+  forwardMail,
   darkMailMore,
   back,
   temp1,

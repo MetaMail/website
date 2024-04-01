@@ -28,7 +28,8 @@ import {
   markUnread,
   starred,
   shrink,
-  replyMail
+  replyMail,
+  forwardMail,
 } from 'assets/icons';
 import { useRouter } from 'next/router';
 import Avatar from 'components/Avatar';
@@ -231,12 +232,10 @@ export default function MailDetail() {
   const handleHighlineLink = (link: string) => {
     // 匹配字符串中的所有 <a> 标签
     const regex = /<a\s+([^>]*)>/gi;
-
     // 使用 replace 方法替换匹配的 <a> 标签，并添加 style 属性
     const result = link.replace(regex, function (match, attributes) {
-      // 如果标签中没有 style 属性，则在标签的末尾添加 style='color:blue'
-      return match.replace('>', `style='color: #06c;text-decoration:underline'>`);
-
+      // 如果标签中没有 style 属性，则在标签的末尾添加color: #06c;'
+      return match.replace('>', `style='text-decoration:underline'>`);
     });
     return result;
   }
@@ -324,11 +323,11 @@ export default function MailDetail() {
   }
   // 转发
   const handleForward = () => {
-    
+
     const _selectedMail = JSON.parse(JSON.stringify(selectedMail))
     // 是否作为转发邮件的标志
     _selectedMail.isForward = true;
-    createDraft([], '', '', selectedMail,true);
+    createDraft([], '', '', selectedMail, true);
   }
   return (
     // 邮件详情
@@ -389,7 +388,7 @@ export default function MailDetail() {
                 <div className="flex gap-10 justify-end">
                   {/* 转发 */}
                   <Icon
-                    url={replyMail}
+                    url={forwardMail}
                     title="forward"
                     onClick={handleForward}
                     className="w-18 h-18 self-center transform scale-x-[-1]"
