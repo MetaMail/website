@@ -281,8 +281,8 @@ export default function NewMail() {
   };
 
   const handleLoad = async () => {
-    console.log('handleLoad')
-    console.log('selectedDraft', selectedDraft)
+    // console.log('handleLoad')
+    // console.log('selectedDraft', selectedDraft)
     // load 的时候都是加密模式
     try {
       setLoading(true);

@@ -17,6 +17,7 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
   const { isDark } = useThemeStore();
 
   const [initData, setInitData] = useState<any>({
+    license_key: 'gpl',
     icons: 'thin',
     icons_url: '/tinymce/icons/thin/icons.js',
     toolbar_items_size: 'small',

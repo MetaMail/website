@@ -66,20 +66,20 @@ export default function Sidebar() {
   const renderLogo = (logo: string, isActive: boolean) => {
     switch (logo) {
       case 'inbox':
-        return isActive ? isDark ? <InboxActive fill=' #fff ' /> : <InboxActive /> : <Inbox />
+        return isActive ? <InboxActive stroke={isDark ? '#fff' : '#3C6FF4'} /> : <Inbox stroke={isDark ? '#fff' : '#545454'} />
       // 如果有其他情况，可以在这里继续添加 case 分支
       case 'send':
-        return isActive ? isDark ? <SendActive fill=' #fff ' /> : <SendActive /> : <Send />
+        return isActive ? <SendActive stroke={isDark ? '#fff' : '#3C6FF4'} /> : <Send stroke={isDark ? '#fff' : '#545454'} />
       case 'draft':
-        return isActive ? isDark ? <DraftActive fill=' #fff ' /> : <DraftActive /> : <Draft />
+        return isActive ? <DraftActive stroke={isDark ? '#fff' : '#3C6FF4'} /> : <Draft stroke={isDark ? '#fff' : '#545454'} />
       case 'starred':
-        return isActive ? isDark ? <StarredActive fill=' #fff ' /> : <StarredActive /> : <Starred />
+        return isActive ? <StarredActive stroke={isDark ? '#fff' : '#3C6FF4'} /> : <Starred stroke={isDark ? '#fff' : '#545454'} />
       case 'more':
-        return isActive ? <MoreActive /> : <More />
+        return isActive ? <MoreActive fill={isDark ? '#fff' : '#3C6FF4'} /> : <More />
       case 'trash':
-        return isActive ? isDark ? <DeleteActive fill=' #fff ' /> : <DeleteActive /> : <Deleted />
+        return isActive ? <DeleteActive stroke={isDark ? '#fff' : '#3C6FF4'} /> : <Deleted stroke={isDark ? '#fff' : '#545454'} />
       case 'spam':
-        return isActive ? isDark ? <SpamActive fill=' #fff ' /> : <SpamActive /> : <Spam />
+        return isActive ? <SpamActive fill={isDark ? '#fff' : '#3C6FF4'} /> : <Spam stroke={isDark ? '#fff' : '#545454'} />
       default:
         return null; // 或者返回适当的默认值
     }
@@ -98,7 +98,7 @@ export default function Sidebar() {
             <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 " : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
               <div className='flex items-center gap-x-9'>
                 {renderLogo(item.logo, filterType === Number(item.key))}
-                <span className={` inline-block ${filterType === Number(item.key) ? 'text-primary font-poppinsSemiBold' : ''}`}>{item.title}</span>
+                <span className={`inline-block ${filterType === Number(item.key) ? 'font-poppinsSemiBold' : ''} ${filterType === Number(item.key) ? isDark ? 'text-white' : 'text-primary' : ''}`}>{item.title}</span>
               </div>
               {renderBadge(item.key)}
             </a>

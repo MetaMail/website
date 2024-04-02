@@ -259,22 +259,21 @@ const MailList = () => {
       clearInterval(intervalId);
     };
   }, [])
-
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
     // 检查前后依赖项的值是否相同
-    if (prePageIndex.current !== pageIndex || preFilterType.current !== filterType || preIsSendSuccess.current !== isSendSuccess) {
-      // 执行逻辑
-      console.log('有值改变了');
+    if (list.length <= 0 || prePageIndex.current !== pageIndex || preFilterType.current !== filterType || preIsSendSuccess.current !== isSendSuccess) {
+
       if (userLocalStorage.getUserInfo()?.address && !loading) fetchMailList(true);
       setFilter(null)
       // 更新 prePageIndex 的值为当前依赖项的值
       prePageIndex.current = pageIndex;
       preFilterType.current = filterType;
       preIsSendSuccess.current = isSendSuccess;
+
     } else {
       // 前后依赖项的值相同，不执行逻辑
-      console.log('都没改变');
+      console.log('都没改变', list, pageIndex, filterType, isSendSuccess);
     }
   }, [pageIndex, filterType, isSendSuccess]); // 在这里添加你的依赖项
 
