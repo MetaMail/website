@@ -8,7 +8,7 @@ import { userSessionStorage, userLocalStorage, mailLocalStorage } from 'lib/util
 import { getPrivateKey, decryptMailKey } from 'lib/encrypt';
 import MailBoxContext from 'context/mail';
 import Layout from 'components/Layout';
-import DetailMailList from 'components/MailList/detailMailList';
+import DetailMailList from 'components/DetailMailList';
 import MailDetail from 'components/MailDetail';
 import NewMail from 'components/NewMail';
 import Loading from 'components/Loading';

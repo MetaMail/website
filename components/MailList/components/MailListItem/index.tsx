@@ -22,7 +22,6 @@ import { Lock } from 'components/svg/index'
 import { favorite, markFavorite, trash, markUnread, read, checkboxSvg, checkboxedSvg, checkboxDark, favoriteDark } from 'assets/icons';
 import Avatar from 'components/Avatar';
 import { PostfixOfAddress } from 'lib/base';
-import { getThirdLetter } from 'utils';
 import { useRouter } from 'next/router';
 
 interface IMailItemProps {

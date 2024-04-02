@@ -165,6 +165,7 @@ export default function MailDetail() {
       src: back,
       title: 'Back',
       handler: () => {
+        router.back();
         setSelectedMail(null);
         setIsDetailExtend(false);
       },
@@ -360,9 +361,9 @@ export default function MailDetail() {
                 <Icon
                   url={cancel}
                   onClick={() => {
+                    router.back()
                     setSelectedMail(null);
                     setIsDetailExtend(false);
-                    router.back()
                   }}
                   className="w-18 h-18 self-center"
                 />

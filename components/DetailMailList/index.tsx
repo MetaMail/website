@@ -1,21 +1,21 @@
 
 import LoadingRing from 'components/LoadingRing';
 import React, { useContext, useState } from 'react';
-import DetailMailListItem from './components/MailListItem/detailMailItem';
+import DetailMailListItem from './components/MailListItem/MailItem';
 import { empty } from 'assets/icons';
 import { MailListItemType } from 'lib/constants';
 import { useMailDetailStore, useMailListStore } from 'lib/zustand-store';
 import Image from 'next/image';
 
 const detailMailList = () => {
-  const { selectedMail, isDetailExtend } = useMailDetailStore();
-  const { filterType, pageIndex, list, setList, detailList, setDetailList, addPageIndex, subPageIndex } = useMailListStore();
+  const { selectedMail } = useMailDetailStore();
+  const { list } = useMailListStore();
   const [loading, setLoading] = useState(false);
   return (
-    <div className={`flex flex-col h-full transition-all text-[14px]  overflow-y-scroll ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'}`}>
+    <div className={`flex flex-col h-full transition-all text-[14px]  overflow-y-scroll w-333 pt-35`}>
       <div className="relative ">
         {<LoadingRing loading={loading} />}
-        <div className={`${loading ? `fadeOutAnimation` : 'fadeInAnimation'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
+        <div className={`${loading ? `fadeOutAnimation` : 'fadeInAnimation'} flex flex-col cursor-pointer overflow-y-scroll flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
           {list.length ? (<div className='listContainer'>
             {list.map((item: MailListItemType) => {
               return (

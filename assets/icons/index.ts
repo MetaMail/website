@@ -45,6 +45,7 @@ import darkMailMore from './darkMailMore.svg';
 import dropdownImg from './dropdown.svg'
 import spam from './spam.svg';
 import starred from './starred.svg'
+import removeStarred from './removeStarred.svg'
 import sent from './sent.svg'
 import arrowLeft from './arrowLeft.svg'
 import arrowRight from './arrowRight.svg'
@@ -78,6 +79,7 @@ export {
   checkboxDark,
   spam,
   starred,
+  removeStarred,
   sent,
   dark_spam,
   dark_star,

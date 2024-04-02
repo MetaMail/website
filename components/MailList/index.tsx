@@ -15,14 +15,13 @@ import {
   arrowLeft,
   arrowRight,
   checkboxSvg, checkboxedSvg,
-  trash, read, starred, markUnread, spam, filter as filterIcon, update
+  trash, read, starred, removeStarred, markUnread, spam, filter as filterIcon, update
 } from 'assets/icons';
 
 const MailListFilters = ['All', 'Read', 'Unread', 'Plain', 'Encrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
 const MailList = () => {
-  let intervalId: NodeJS.Timeout;
   // 发送邮件成功，刷新列表
   const { isSendSuccess, setIsSendSuccess } = useNewMailStore();
   const { getMailStat } = useContext(MailBoxContext);
@@ -34,7 +33,12 @@ const MailList = () => {
   const [pageNum, setPageNum] = useState(0);
   const [selectedAll, setSelectedAll] = useState(false);
   const [filter, setFilter] = useState<MailListFiltersType>();
+  //------
+  const prePageIndex = useRef(pageIndex);
+  const preFilterType = useRef(filterType);
+  const preIsSendSuccess = useRef(isSendSuccess);
 
+  // -----
   const inputCheckBoxRef = useRef<HTMLInputElement>();
 
   const handleFilterChange = (currentFilter: MailListFiltersType) => {
@@ -88,10 +92,11 @@ const MailList = () => {
       src: trash,
       httpParams: { mark: MarkTypeEn.Trash },
     },
+    // 在starred的时候，变成Remove star;别的时候都是starred
     {
-      title: 'Star',
-      src: starred,
-      httpParams: { mark: MarkTypeEn.Starred },
+      title: filterType === FilterTypeEn.Starred ? 'Remove star' : 'Star',
+      src: filterType === FilterTypeEn.Starred ? removeStarred : starred,
+      httpParams: { mark: filterType === FilterTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred },
     },
     {
       title: 'Spam',
@@ -254,12 +259,24 @@ const MailList = () => {
       clearInterval(intervalId);
     };
   }, [])
+
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
-    console.log('pageIndex', pageIndex, filterType, isSendSuccess, loading)
-    if (userLocalStorage.getUserInfo()?.address && !loading) fetchMailList(true);
-    setFilter(null)
-  }, [pageIndex, filterType, isSendSuccess]);
+    // 检查前后依赖项的值是否相同
+    if (prePageIndex.current !== pageIndex || preFilterType.current !== filterType || preIsSendSuccess.current !== isSendSuccess) {
+      // 执行逻辑
+      console.log('有值改变了');
+      if (userLocalStorage.getUserInfo()?.address && !loading) fetchMailList(true);
+      setFilter(null)
+      // 更新 prePageIndex 的值为当前依赖项的值
+      prePageIndex.current = pageIndex;
+      preFilterType.current = filterType;
+      preIsSendSuccess.current = isSendSuccess;
+    } else {
+      // 前后依赖项的值相同，不执行逻辑
+      console.log('都没改变');
+    }
+  }, [pageIndex, filterType, isSendSuccess]); // 在这里添加你的依赖项
 
   return (
     <div
