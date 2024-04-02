@@ -18,7 +18,7 @@ function Review({ imgSrc, content, role, role2 }: IReview) {
       <div className="flex  text-ml px-16 py-10 text-[#333]">{content ?? '-'}</div>
       <div className="flex space-x-7 pl-28 pr-10  mt-5 items-center">
         <Image className="w-36 h-36 " src={imgSrc} alt="reviewer" />
-        <p className="leading-snug text-[#979797]">
+        <p className=" text-[#979797]">
           {role}
           <br />
           {role2}
@@ -29,27 +29,27 @@ function Review({ imgSrc, content, role, role2 }: IReview) {
 }
 const slides = [
   {
-    content: 
-    <div className="swiper relative h-full lg:flex  flex-row   mx-auto  justify-around z-10  flex flex-col md:flex-row">
-      <Review
-        imgSrc={suneal}
-        role={'Suneal'}
-        role2={'dev @ WeChat'}
-        content={'MetaMail is the most secure mail application with end-to-end encryption.'}
-      />
-      <Review
-        imgSrc={mvs}
-        role={'mvs'}
-        role2={'UI designer'}
-        content={'We designed Metamail with the hope that users feel their data is valued, the internet is trustworthy, and they are empowered.'}
-      />
-      <Review
-        imgSrc={colin}
-        role={'Colin'}
-        role2={'protocol co-designer'}
-        content={'MetaMail protocol: Secure, verifiable, interoperable, evolving towards more trustless.'}
-      />
-    </div>
+    content:
+      <div className="swiper relative h-full lg:flex  flex-row   mx-auto  justify-around z-10  flex flex-col md:flex-row">
+        <Review
+          imgSrc={suneal}
+          role={'Suneal'}
+          role2={'dev @ WeChat'}
+          content={'MetaMail is the most secure mail application with end-to-end encryption.'}
+        />
+        <Review
+          imgSrc={mvs}
+          role={'mvs'}
+          role2={'UI designer'}
+          content={'We designed Metamail with the hope that users feel their data is valued, the internet is trustworthy, and they are empowered.'}
+        />
+        <Review
+          imgSrc={colin}
+          role={'Colin'}
+          role2={'protocol co-designer'}
+          content={'MetaMail protocol: Secure, verifiable, interoperable, evolving towards more trustless.'}
+        />
+      </div>
   },
   // {
   //   content: <div className="swiper relative h-full lg:flex  flex-row   mx-auto  justify-around z-10">
