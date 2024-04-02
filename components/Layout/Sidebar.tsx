@@ -53,7 +53,7 @@ export default function Sidebar() {
     const count = type === FilterTypeEn.Inbox ? unreadCount : spamCount;
     if (count <= 0) return null;
     return <p className="badge badge-sm rounded-2 btn-primary p-0 w-30 h-18 lh-18">
-      <span className='text-[18px] scale-50'> {count > 99 ? '99+' : count}</span>
+      <span className='text-[20px] scale-50 font-[400]'> {count > 99 ? '99+' : count}</span>
     </p>;
   };
 
@@ -95,10 +95,10 @@ export default function Sidebar() {
               handleChangeFilter(item.key);
             }}
             className='mb-2 text-[#545454]  dark:text-base-content'>
-            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 font-poppinsSemiBold" : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
+            <a className={`rounded-5 p-0 h-32 pl-12 pr-5 flex justify-between items-center  transition-colors duration-75  ${filterType === Number(item.key) ? "active rounded-4 " : 'hover:bg-base-300'}  dark:!bg-#E7E7E71A dark:hover:bg-[#E7E7E70F] dark:!bg-opacity-10 `}>
               <div className='flex items-center gap-x-9'>
                 {renderLogo(item.logo, filterType === Number(item.key))}
-                <span className={` inline-block ${filterType === Number(item.key) ? 'text-primary' : ''}`}>{item.title}</span>
+                <span className={` inline-block ${filterType === Number(item.key) ? 'text-primary font-poppinsSemiBold' : ''}`}>{item.title}</span>
               </div>
               {renderBadge(item.key)}
             </a>
