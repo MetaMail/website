@@ -41,6 +41,7 @@ let randomBits: string = '';
 let currentMailId: string = '';
 
 export default function MailDetail() {
+  const router = useRouter()
   const { isDark } = useThemeStore()
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const { createDraft, getMailStat, getRandomBits } = useContext(MailBoxContext);
@@ -361,6 +362,7 @@ export default function MailDetail() {
                   onClick={() => {
                     setSelectedMail(null);
                     setIsDetailExtend(false);
+                    router.back()
                   }}
                   className="w-18 h-18 self-center"
                 />

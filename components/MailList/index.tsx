@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useRef, useContext, useCallback } from 'react';
+import { useState, useEffect, useRef, useContext, useCallback, memo } from 'react';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { useMailListStore, useMailDetailStore, useNewMailStore } from 'lib/zustand-store';
@@ -21,7 +21,7 @@ import {
 const MailListFilters = ['All', 'Read', 'Unread', 'Plain', 'Encrypted'] as const;
 type MailListFiltersType = (typeof MailListFilters)[number];
 
-export default function MailList() {
+const MailList = () => {
   let intervalId: NodeJS.Timeout;
   // 发送邮件成功，刷新列表
   const { isSendSuccess, setIsSendSuccess } = useNewMailStore();
@@ -30,10 +30,7 @@ export default function MailList() {
   // isDetailExtend : 详情是否占满全屏
   // selectedMail : 选中查看详情的邮件
   const { selectedMail, isDetailExtend } = useMailDetailStore();
-  useEffect(() => {
-  }, [isDetailExtend])
   const [loading, setLoading] = useState(false);
-
   const [pageNum, setPageNum] = useState(0);
   const [selectedAll, setSelectedAll] = useState(false);
   const [filter, setFilter] = useState<MailListFiltersType>();
@@ -114,8 +111,7 @@ export default function MailList() {
   ];
 
   const handleMailActionsClick = async (httpParams: IMailChangeOptions) => {
-    // console.log('httpParams', httpParams)
-    // console.log('filterType', filterType)
+
     // 如果在Delete列表里面删除，应该传4
     if (filterType === FilterTypeEn.Trash) {
       httpParams.mark = MarkTypeEn.Deleted;
@@ -246,13 +242,7 @@ export default function MailList() {
       setFilter(null)
     }
   }
-  useEffect(() => { console.log(filter) }, [filter])
-  // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
-    console.log('pageIndex', pageIndex)
-    if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
-    setFilter(null)
-
     // 每隔 30 秒执行一次
     const intervalId = setInterval(() => fetchMailList(false), 20000);
     // 只有在第一页的时候定时器查询
@@ -263,12 +253,13 @@ export default function MailList() {
     return () => {
       clearInterval(intervalId);
     };
-
+  }, [])
+  // 左边slider点击，filterType改变的时候重新获取邮件列表
+  useEffect(() => {
+    console.log('pageIndex', pageIndex, filterType, isSendSuccess, loading)
+    if (userLocalStorage.getUserInfo()?.address && !loading) fetchMailList(true);
+    setFilter(null)
   }, [pageIndex, filterType, isSendSuccess]);
-
-
-
-
 
   return (
     <div
@@ -387,3 +378,4 @@ export default function MailList() {
     </div >
   );
 }
+export default memo(MailList);
