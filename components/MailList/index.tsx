@@ -248,12 +248,12 @@ const MailList = () => {
   }
   useEffect(() => {
     let intervalId: string | number | NodeJS.Timeout = null;
+    console.log(filterType)
     if (filterType !== FilterTypeEn.Inbox) {
       clearInterval(intervalId);
       return;
     }
     intervalId = setInterval(() => {
-      // console.log('每隔 20 秒执行一次')
       if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     }, 20000);
     if (pageIndex > 1) {
@@ -263,7 +263,7 @@ const MailList = () => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [])
+  }, [filterType])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
     // 检查前后依赖项的值是否相同
