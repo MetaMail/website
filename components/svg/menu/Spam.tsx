@@ -1,9 +1,16 @@
-export default function SpamSvg({size=18}) {
+export default function SpamSvg({ size = 18, stroke = "#545454" }) {
   return (
-    <svg width={size} height={size}viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8.38623 14.25C11.8237 14.25 14.6362 11.4375 14.6362 8C14.6362 4.5625 11.8237 1.75 8.38623 1.75C4.94873 1.75 2.13623 4.5625 2.13623 8C2.13623 11.4375 4.94873 14.25 8.38623 14.25Z" stroke="#7F7F7F" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M8.38623 5.5V8.625" stroke="#7F7F7F" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M8.38257 10.5H8.38818" stroke="#7F7F7F" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_3089_9974)">
+        <path d="M8.00004 14.6663C11.6819 14.6663 14.6667 11.6816 14.6667 7.99967C14.6667 4.31778 11.6819 1.33301 8.00004 1.33301C4.31814 1.33301 1.33337 4.31778 1.33337 7.99967C1.33337 11.6816 4.31814 14.6663 8.00004 14.6663Z" stroke="#545454" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 6L6 10" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6 6L10 10" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+      <defs>
+        <clipPath id="clip0_3089_9974">
+          <rect width={size} height={size} fill="white" />
+        </clipPath>
+      </defs>
     </svg>
 
   );

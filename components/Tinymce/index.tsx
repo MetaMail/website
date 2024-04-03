@@ -17,6 +17,7 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
   const { isDark } = useThemeStore();
 
   const [initData, setInitData] = useState<any>({
+    license_key: 'gpl',
     icons: 'thin',
     icons_url: '/tinymce/icons/thin/icons.js',
     toolbar_items_size: 'small',
@@ -54,7 +55,12 @@ const MyEditor: React.ForwardRefRenderFunction<EditorMethods, MyEditorProps> = (
   })
   const editorRef = useRef(null);
   const [switching, setSwitching] = useState(false);
-  const [skin, setSkin] = useState({})
+  const [skin, setSkin] = useState({
+    skin_url: "/tinymce/skins/ui/oxide" + (isDark ? "-dark" : ""),
+    content_css: isDark
+      ? "/tinymce/skins/content/dark/content.min.css"
+      : "/tinymce/skins/content/default/content.min.css",
+  })
   const handleInit = (evt: any, editor: any) => {
     // 将编辑器实例保存到 ref 中
     editorRef.current = editor;

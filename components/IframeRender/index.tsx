@@ -18,8 +18,9 @@ const IframeComponent: React.FC<IframeProps> = ({ htmlContent, handleClick }) =>
     // 向 iframe 内部注入 HTML 内容
     const iframeDocument = iframeRef.current.contentDocument;
     if (iframeRef.current) {
-      console.log('加载完成')
+      // console.log(iframeDocument)
       iframeDocument.body.innerHTML = DOMPurify.sanitize(htmlContent);
+      console.log('加载完成',iframeDocument.body)
       const links: NodeListOf<HTMLAnchorElement> = iframeDocument.querySelectorAll('a');
       // 为每个 <a> 标签添加点击事件处理函数
       links.forEach(link => {

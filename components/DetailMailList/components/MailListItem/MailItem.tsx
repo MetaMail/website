@@ -22,16 +22,17 @@ import { Lock } from 'components/svg/index'
 import { favorite, markFavorite, trash, markUnread, read, checkboxSvg, checkboxedSvg, checkboxDark, favoriteDark } from 'assets/icons';
 import Avatar from 'components/Avatar';
 import { PostfixOfAddress } from 'lib/base';
+import { getThirdLetter } from 'utils';
 import { useRouter } from 'next/router';
 
 interface IMailItemProps {
-  mail: MailListItemType;
-  onSelect: () => void;
-  loading: boolean
+  mail?: MailListItemType;
+  onSelect?: () => void;
+  loading?: boolean
 }
 
 // eslint-disable-next-line react/display-name
-const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
+const DetailMailItem = ({ mail, onSelect }: IMailItemProps) => {
   const { isDark } = useThemeStore()
   const { getMailStat } = useContext(MailBoxContext);
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
@@ -122,7 +123,7 @@ const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
     }
     // console.log('点击查看详情', mail)
   }, 1000);
-  const renderDigest = (mail: MailListItemType) => {
+  const renderDigest = (maiType: MailListItemType) => {
     if (!mail.digest) {
       return '( no abstract )';
     }
@@ -154,103 +155,48 @@ const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
 
   return (
     <>
-
+      {/* // 查看详情时候的邮件列表 */}
       <div
         onClick={handleClick}
-        className={` listStatus overflow-y-visible py-6 flex flex-row px-16 items-center group h-36 cursor-pointe  ${mail.selected ? `bg-base-300  bg-opacity-50 dark:bg-[rgba(243,247,255,.1)]` : 'hover:bg-[#EDF3FF] bg-opacity-50 hover:dark:bg-opacity-10  '
+        className={`detailDtatus text-base-content  items-start box-border px-17 py-9 flex group cursor-pointer transition-colors duration-75 hover:bg-base-200 dark:hover:bg-[#F3F7FF] dark:hover:bg-opacity-10 dark:bg-opacity-10 ${selectedMail && mail.message_id === selectedMail.message_id ? `bg-[#F3F7FF]` : ''
           }`}>
-        <div className="flex flex-row gap-12">
-          <input
-            type="checkbox"
-            title="Select"
-            className={`checkbox bg-no-repeat bg-cover checkbox-sm w-18 h-18 rounded-2 border-0 ${mail.selected ? 'checked:bg-transparent' : ''}`}
-            style={{ backgroundImage: `url(${mail.selected ? checkboxedSvg.src : isDark ? checkboxDark.src : checkboxSvg.src})` }}
-            checked={mail.selected}
-            onClick={e => {
-              e.stopPropagation();
-            }}
-            onChange={onSelect}
-          />
-
-          <Icon
-            url={mail.mark === MarkTypeEn.Starred ? markFavorite : isDark ? favoriteDark : favorite}
-            className="w-18 h-18"
-            title={mail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star'}
-            onClick={async e => {
-              e.stopPropagation();
-              await handleStar(
-                mail.mark === MarkTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred
-              );
-            }}
-          />
+        <div className='pt-5'>
+          {/* 头像 */}
+          {renderAvator()}
         </div>
-        {/* 展开时候的邮件名*/}
-        {/* 来自谁 */}
-        {/* inbox展示from;send展示同 */}
-        {
-          mail.mailbox === MailBoxTypeEn.Send ? (
-            <div title={renderMailTo(mail).join(';')}>
-              <span className={`w-[160px] max-w-[160px] ml-32  omit  text-left ${getIsReadTextClass(mail)}`} >{renderMailTo(mail).join(';')}
-              </span>
-            </div>
+        <div className="flex-1 pl-15 w-0 " >
+          <p className="flex justify-between items-center">
+            {/* 点击了邮件详情 */}
+            {/* 邮件地址 */}
+            {
+              mail.mailbox === MailBoxTypeEn.Send ? (<span
+                className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:dark:text-DarkMailAddressRead' : "text-lightMailAddressUnRead dark:text-DarkMailAddressUnRead font-poppinsSemiBold"}`}
+                title={renderMailTo(mail).join(';')}>
+                {renderMailTo(mail).join(';')}
+              </span>) : (
+                <span
+                  className={`text-[14px] mailFrom flex-1  w-0  omit mr-15 leading-[20px]   ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailAddressRead dark:dark:text-DarkMailAddressRead' : "text-lightMailAddressUnRead dark:text-DarkMailAddressUnRead font-poppinsSemiBold"}`}
+                  title={getMailFrom(mail)}>
+                  {getMailFrom(mail)}
+                </span>
+              )
+            }
 
-          ) : (
-            // Inbox
-            <div title={getMailFrom(mail)}>
-              <span className={`w-[160px]  max-w-[160px]  ml-32  omit ${getIsReadTextClass(mail)} ${mail.read == ReadStatusTypeEn.Read ? '!font-[400]' : ''}`} >
-                {getMailFrom(mail)}
-              </span>
-            </div>
-          )
-        }
-        {/* 邮件list-item */}
-        <div className="flex-1 flex items-center w-0 ml-32 omit  dark:text-base-content">
-          {/* 加密邮件的小锁 */}
-          {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
-          {/* ReadStatusTypeEn.Read 已读 */}
-          <p className={` h-16 leading-[20px] ${mail.read == ReadStatusTypeEn.Unread ? "font-poppinsSemiBold dark:text-[#fff] text-lightMailTitleUnRead" : 'text-lightMailTitleRead dark:text-DarkMailTitleRead'}`}>{mail.subject || '(no subject)'}</p>
-
-          <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}>
-            <span className=" px-7 inline-block h-[14px] leading-[18px] ">{'-'}</span>
-            <span>{renderDigest(mail)}</span>
-          </span>
-        </div>
-        <div className="w-100 text-right text-[14px]">
-          <div className="group-hover:hidden  text-lightMailDate dark:text-DarkMailDate">{transformTime(mail.mail_date)}</div>
-          <div className="hidden group-hover:flex items-center justify-end">
-            <div
-              onClick={async e => {
-                e.stopPropagation();
-                await handleTrash();
-              }}
-              title="Trash">
-              <Image src={trash} alt="" className='w-18 h-18' />
-            </div>
-            <div
-              onClick={async e => {
-                e.stopPropagation();
-                await handleChangeMailStatus({
-                  read:
-                    mail.read === ReadStatusTypeEn.Read
-                      ? ReadStatusTypeEn.Unread
-                      : ReadStatusTypeEn.Read,
-                });
-              }}
-              title={mail.read === ReadStatusTypeEn.Read ? 'Unread' : 'Read'}
-              className="ml-8">
-              <Image
-                src={mail.read === ReadStatusTypeEn.Read ? markUnread : read}
-                alt=""
-                className="w-18 h-18"
-              />
-            </div>
-          </div>
+            {/* 邮件日期 */}
+            <span className={`max-w-[80px] text-[14px] text-right text-lightMailDate dark:text-DarkMailDate`}>{transformTime(mail.mail_date)}</span>
+          </p>
+          <p className="flex justify-between items-center text-[14px] ">
+            {/* 邮件主体 */}
+            <span className={`omit mr-4 flex-1 w-0 text-[14px]  ${mail.read == ReadStatusTypeEn.Read ? 'text-lightMailTitleRead dark:text-DarkMailTitleRead' : "text-base-content font-poppinsSemiBold dark:text-DarkMailTitleUnRead"}`}>
+              {mail.subject || '(no subject)'}
+            </span>
+            {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
+          </p>
+          <p className={`omit text-[13px]  dark:text-[#A7A1A1]  text-lightMailDetailRead  leading-[17px]`}>{renderDigest(mail)}</p>
         </div>
       </div >
 
-
-
     </>
   );
-})
-export default MailListItem;
+}
+export default DetailMailItem;
