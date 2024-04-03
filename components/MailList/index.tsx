@@ -34,9 +34,9 @@ const MailList = () => {
   const [selectedAll, setSelectedAll] = useState(false);
   const [filter, setFilter] = useState<MailListFiltersType>();
   //------
-  const prePageIndex = useRef(pageIndex);
-  const preFilterType = useRef(filterType);
-  const preIsSendSuccess = useRef(isSendSuccess);
+  // const prePageIndex = useRef(pageIndex);
+  // const preFilterType = useRef(filterType);
+  // const preIsSendSuccess = useRef(isSendSuccess);
 
   // -----
   const inputCheckBoxRef = useRef<HTMLInputElement>();
@@ -248,10 +248,11 @@ const MailList = () => {
     }
   }
   useEffect(() => {
-    // 每隔 30 秒执行一次
-    const intervalId = setInterval(() => fetchMailList(false), 20000);
-    // 只有在第一页的时候定时器查询
-    if (pageIndex > 0) {
+    const intervalId = setInterval(() => {
+      // console.log('每隔 20 秒执行一次')
+      if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
+    }, 20000);
+    if (pageIndex > 1) {
       clearInterval(intervalId);
     }
     // 组件卸载时清除定时器
@@ -262,19 +263,9 @@ const MailList = () => {
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
     // 检查前后依赖项的值是否相同
-    if (list.length <= 0 || prePageIndex.current !== pageIndex || preFilterType.current !== filterType || preIsSendSuccess.current !== isSendSuccess) {
+    if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
+    setFilter(null)
 
-      if (userLocalStorage.getUserInfo()?.address && !loading) fetchMailList(true);
-      setFilter(null)
-      // 更新 prePageIndex 的值为当前依赖项的值
-      prePageIndex.current = pageIndex;
-      preFilterType.current = filterType;
-      preIsSendSuccess.current = isSendSuccess;
-
-    } else {
-      // 前后依赖项的值相同，不执行逻辑
-      console.log('都没改变', list, pageIndex, filterType, isSendSuccess);
-    }
   }, [pageIndex, filterType, isSendSuccess]); // 在这里添加你的依赖项
 
   return (
@@ -294,7 +285,7 @@ const MailList = () => {
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
             />
 
-            <div className={`dropdown dropdown - bottom ${selectedMail ? 'invisible' : 'visible'} `}>
+            <div className={`dropdown dropdown-bottom ${selectedMail ? 'invisible' : 'visible'} `}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-18 h-18" />
