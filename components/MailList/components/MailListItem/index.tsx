@@ -207,10 +207,10 @@ const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
           {/* 加密邮件的小锁 */}
           {mail.meta_type === MetaMailTypeEn.Encrypted && <span title="Encrypted email" className='mr-4'>{mail.meta_type === MetaMailTypeEn.Encrypted && <Lock />}</span>}
           {/* ReadStatusTypeEn.Read 已读 */}
-          <p className={` h-16 leading-[20px] ${mail.read == ReadStatusTypeEn.Unread ? "font-poppinsSemiBold dark:text-[#fff] text-lightMailTitleUnRead" : 'text-lightMailTitleRead dark:text-DarkMailTitleRead'}`}>{mail.subject || '(no subject)'}</p>
+          <span className={`${mail.read == ReadStatusTypeEn.Unread ? "font-poppinsSemiBold dark:text-[#fff] text-lightMailTitleUnRead" : 'text-lightMailTitleRead dark:text-DarkMailTitleRead'}`}>{mail.subject || '(no subject)'}</span>
 
-          <span className={`min-w-0 flex-1 leading-[18px] text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}>
-            <span className=" px-7 inline-block h-[14px] leading-[18px] ">{'-'}</span>
+          <span className={`min-w-0 flex-1  text-ellipsis overflow-hidden dark:text-[#A7A1A1]  ${mail.read === ReadStatusTypeEn.Unread ? 'text-lightMailDetailUnRead  ' : 'text-lightMailDetailRead '}`}>
+            <span className=" px-7 inline-block h-[14px]">{'-'}</span>
             <span>{renderDigest(mail)}</span>
           </span>
         </div>
