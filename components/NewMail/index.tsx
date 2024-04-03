@@ -269,7 +269,7 @@ export default function NewMail() {
     if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to;
     // 新建邮件/更新邮件先调这个接口
     const { mail_date, message_id } = await mailHttp.updateMail(json);
-    console.log('执行', mail_date, message_id);
+    // console.log('执行', mail_date, message_id);
     selectedDraft.message_id = message_id;
     selectedDraft.mail_date = mail_date;
     fromLocalDraft && setSelectedDraft({ ...selectedDraft });
@@ -424,11 +424,11 @@ export default function NewMail() {
     const replyContent = `${getContentFromEditor()}
     <br><br>
     <p>
-    <span>${moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</span>&nbsp;&nbsp;
-    <span>${selectedMail?.mail_from.name}</span>&nbsp;&nbsp;
-    <span><${selectedMail?.mail_from.address}></span>wrote:
+      <span>${moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</span>&nbsp;&nbsp;
+      <span>${selectedMail?.mail_from.name}</span>&nbsp;&nbsp;
+      <span><${selectedMail?.mail_from.address}></span>wrote:
     </p>
-    <div style="border-left:1px solid rgb(204,204,204);padding-left:10px;"><br><br>${selectedDraft.origin_part_html}</div>`
+    <div style="border-left:1px solid rgb(204,204,204);padding-left:10px;">${selectedDraft.origin_part_html ? selectedDraft.origin_part_html : selectedDraft.origin_part_text}</div>`
     setContentInEditor(replyContent)
     setReplyContent(replyContent)
   }
@@ -556,8 +556,6 @@ export default function NewMail() {
 
       <div className="flex items-center gap-13 mt-8">
         {/* show trimed content */}
-        {/* <ShowTrimContent fill={isDark?'#333':'#fff'}/> */}
-
         {selectedDraft.in_reply_to && !replyContent && <Icon url={showTrimContent} onClick={handleShowTrimContent} className="h-18" title='Show trimmed content' />}
         <button
           disabled={selectedDraft.mail_to.length <= 0}

@@ -279,8 +279,7 @@ const MailList = () => {
 
   return (
     <div
-      className={`flex flex-col h-full transition-all text-[14px]  overflow-y-scroll ${!selectedMail ? 'flex-1 min-w-0' : isDetailExtend ? 'w-0 invisible' : 'w-333'
-        }`}>
+      className={`flex flex-col h-full transition-all text-[14px]  overflow-y-scroll w-full`}>
       {
         list.length > 0 ? (<div className="sticky  top-0 bg-base-100 flex flex-row w-full justify-between px-16 box-border pt-12 pb-6 z-10 ">
           <div className="flex flex-row space-x-10 items-center" >
@@ -295,7 +294,7 @@ const MailList = () => {
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
             />
 
-            <div className={`dropdown dropdown-bottom ${selectedMail ? 'invisible' : 'visible'}`}>
+            <div className={`dropdown dropdown - bottom ${selectedMail ? 'invisible' : 'visible'} `}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-18 h-18" />
@@ -317,7 +316,7 @@ const MailList = () => {
                 })}
               </ul>
             </div>
-            <div className={`transition-all duration-200 ease-in-out transform flex gap-5 border-l-2 border-[#EFEFEF] pl-10 ${getSelectedList().length > 0 ? 'scale-100' : 'scale-0'}`}>
+            <div className={`transition - all duration - 200 ease -in -out transform flex gap - 5 border-l - 2 border-[#EFEFEF] pl - 10 ${getSelectedList().length > 0 ? 'scale-100' : 'scale-0'} `}>
               {/* 筛选旁边的小icon */}
               {!selectedMail && mailActions.map((item, index) => {
                 return (
@@ -369,13 +368,13 @@ const MailList = () => {
 
       <div className="relative">
         {<LoadingRing loading={loading} />}
-        <div className={`${loading ? `fadeOutAnimation` : 'fadeInAnimation'} flex flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'}   flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
+        <div className={`${loading ? `fadeOutAnimation` : 'fadeInAnimation'}  flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'} flex - 1 relative   ${list.length ? 'justify-start' : 'justify-center'} `}>
           {list.length ? (<div className='listContainer'>
             {list.map(item => {
               return (
                 <MailListItem
                   loading={loading}
-                  key={`${item.message_id}${item.mailbox}`}
+                  key={`${item.message_id}${item.mailbox} `}
                   mail={item}
                   onSelect={() => {
                     handleSelectItem(item);

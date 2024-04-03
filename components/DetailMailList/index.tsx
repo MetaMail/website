@@ -12,7 +12,7 @@ const detailMailList = () => {
   const { list } = useMailListStore();
   const [loading, setLoading] = useState(false);
   return (
-    <div className={`flex flex-col h-full transition-all text-[14px]  overflow-y-scroll w-333 pt-35`}>
+    <div className={`flex flex-col h-full transition-all text-[14px]  overflow-y-scroll w-333 pt-45`}>
       <div className="relative ">
         {<LoadingRing loading={loading} />}
         <div className={`${loading ? `fadeOutAnimation` : 'fadeInAnimation'} flex flex-col cursor-pointer overflow-y-scroll flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'}`}>
