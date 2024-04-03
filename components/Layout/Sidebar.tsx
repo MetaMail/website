@@ -28,7 +28,7 @@ import DeleteActive from 'components/svg/menu/DeleteActive'
 import Spam from 'components/svg/menu/Spam';
 import SpamActive from 'components/svg/menu/SpamActive';
 import { dispatchEvent } from 'lib/utils';
-export default function Sidebar() {
+function Sidebar() {
   const { isDark } = useThemeStore()
   useEffect(() => {
   }, [isDark])
@@ -151,3 +151,4 @@ export default function Sidebar() {
     </div>
   );
 }
+export default React.memo(Sidebar);

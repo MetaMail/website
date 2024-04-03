@@ -14,7 +14,7 @@ import right from 'assets/mailbox/right.svg';
 import { dropdownImg, searchNormal } from 'assets/icons';
 import { getThirdLetter } from 'utils';
 
-export default function Titlebar() {
+function Titlebar() {
   const { logout } = useContext(MailBoxContext);
   const JazziconGrid = dynamic(() => import('components/JazziconAvatar'), { ssr: false });
   const [address, setAddress] = useState<string>();
@@ -182,3 +182,4 @@ export default function Titlebar() {
     </div >
   );
 }
+export default React.memo(Titlebar)

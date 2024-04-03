@@ -237,7 +237,7 @@ const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
                 });
               }}
               title={mail.read === ReadStatusTypeEn.Read ? 'Unread' : 'Read'}
-              className="ml-12">
+              className="ml-8">
               <Image
                 src={mail.read === ReadStatusTypeEn.Read ? markUnread : read}
                 alt=""
