@@ -294,7 +294,7 @@ const MailList = () => {
               style={{ backgroundImage: `url(${selectedAll ? checkboxedSvg.src : checkboxSvg.src})` }}
             />
 
-            <div className={`dropdown dropdown-bottom ${selectedMail ? 'invisible' : 'visible'} `}>
+            <div className={`dropdown dropdown - bottom ${selectedMail ? 'invisible' : 'visible'} `}>
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-18 h-18" />
@@ -316,7 +316,7 @@ const MailList = () => {
                 })}
               </ul>
             </div>
-            <div className={`transition-all duration-200 ease -in -out transform flex gap-5 border-l-2 border-[#EFEFEF] pl-10 ${getSelectedList().length > 0 ? 'scale-100' : 'scale-0'} `}>
+            <div className={`transition - all duration - 200 ease -in -out transform flex gap - 5 border-l - 2 border-[#EFEFEF] pl - 10 ${getSelectedList().length > 0 ? 'scale-100' : 'scale-0'} `}>
               {/* 筛选旁边的小icon */}
               {!selectedMail && mailActions.map((item, index) => {
                 return (
@@ -368,7 +368,7 @@ const MailList = () => {
 
       <div className="relative">
         {<LoadingRing loading={loading} />}
-        <div className={`${loading ? `fadeOutAnimation` : 'fadeInAnimation'}  flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'} flex-1 relative   ${list.length ? 'justify-start' : 'justify-center'} `}>
+        <div className={`${loading ? `fadeOutAnimation` : 'fadeInAnimation'}  flex-col cursor-pointer ${selectedMail ? 'overflow-y-scroll' : 'overflow-y-visible'} flex - 1 relative   ${list.length ? 'justify-start' : 'justify-center'} `}>
           {list.length ? (<div className='listContainer'>
             {list.map(item => {
               return (

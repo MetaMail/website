@@ -166,9 +166,10 @@ export default function MailBoxPage() {
     <MailBoxContext.Provider
       value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat, getRandomBits }}>
       <Layout>
+        {/* list */}
         <MailList />
         {
-          selectedMail && <div className="bg-base-100  absolute left-0 top-0 w-full h-full z-2">
+          !!selectedMail && <div className="DetailContainer bg-base-100  absolute left-0 top-0 w-full h-full z-2">
             <DetailMailList /> && <MailDetail />
           </div>
         }
