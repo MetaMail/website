@@ -15,6 +15,7 @@ import Loading from 'components/Loading';
 import { isEmptyObject } from 'utils';
 import LoadingRing from 'components/LoadingRing';
 import moment from 'moment';
+import DetailMailList from 'components/DetailMailList';
 
 export default function MailBoxPage() {
   const router = useRouter();
@@ -53,14 +54,15 @@ export default function MailBoxPage() {
   };
   // 拼一下转发邮件
   const handleFormatForwardContent = () => {
+    console.log('selectedMail', selectedMail?.mail_from.address)
     return `
-        <br><br>
-        <p>---------- Forwarded message ---------</p>
-        <p>From: ${selectedMail?.mail_from.name} <${selectedMail?.mail_from.address}></p>
+        <br>
+        <p>---------- Forwarded message ---------</p><br>
+        <span>From: ${selectedMail?.mail_from.name}</span>< ${selectedMail?.mail_from.address} >
         <p>Date: ${moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</p>
         <p>Subject: ${selectedMail?.subject}</p>
         <p>To: ${selectedMail.mail_to?.map(item => `${item.name} <${item.address}>`).join(', ')}</p>
-        ${selectedMail.part_html}
+        ${selectedMail.part_html ? selectedMail.part_html : selectedMail.part_text}
       `
   }
   // 创建草稿
@@ -165,7 +167,11 @@ export default function MailBoxPage() {
       value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat, getRandomBits }}>
       <Layout>
         <MailList />
-        {/* {selectedMail && <MailDetail />} */}
+        {
+          selectedMail && <div className="bg-base-100  absolute left-0 top-0 w-full h-full z-2">
+            <DetailMailList /> && <MailDetail />
+          </div>
+        }
         {selectedDraft && <NewMail />}
       </Layout>
       {/* {show = { showLoading }} */}

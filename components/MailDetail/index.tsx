@@ -34,7 +34,7 @@ import {
 import { useRouter } from 'next/router';
 import Avatar from 'components/Avatar';
 import { PostfixOfAddress } from 'lib/base';
-import { isCompleteHtml, mergeAndUniqueArraysByKey } from 'lib/utils';
+import { isCompleteHtml, mergeAndUniqueArraysByKey, userLocalStorage } from 'lib/utils';
 import { getThirdLetter, replaceImageSrc } from 'utils';
 
 let randomBits: string = '';
@@ -165,7 +165,7 @@ export default function MailDetail() {
       src: back,
       title: 'Back',
       handler: () => {
-        router.back();
+        // router.back();
         setSelectedMail(null);
         setIsDetailExtend(false);
       },
@@ -227,7 +227,6 @@ export default function MailDetail() {
   };
 
   const handleReply = () => {
-    // console.log(selectedMail)
     // 创建草稿
     createDraft([selectedMail.mail_from], selectedMail.message_id, selectedMail.subject, selectedMail);
   };
@@ -325,17 +324,23 @@ export default function MailDetail() {
   }
   // 转发
   const handleForward = () => {
-
     const _selectedMail = JSON.parse(JSON.stringify(selectedMail))
     // 是否作为转发邮件的标志
     _selectedMail.isForward = true;
     createDraft([], '', '', selectedMail, true);
   }
+  useEffect(() => {
+    // 检查前后依赖项的值是否相同
+    if (list.length <= 0) {
+      // if (userLocalStorage.getUserInfo()?.address && !loading) fetchMailList(true);
+      // setFilter(null)
+    }
+  }, []); // 在这里添加你的依赖项
   return (
     // 邮件详情
     <>
       <div
-        className={`absolute right-0 justify-between  h-full overflow-y-scroll flex-1 rounded-10 flex flex-col pb-16 font-poppins px-16  bg-base-100 ${isDetailExtend ? 'w-full ' : 'w-[calc(100%-333px)]'}`}>
+        className={`absolute right-0 justify-between top-0  h-full overflow-y-scroll flex-1 rounded-10 flex flex-col pb-16 font-poppins px-16  bg-base-100 ${isDetailExtend ? 'w-full ' : 'w-[calc(100%-333px)]'}`}>
         <div className='relative h-full overflow-y-scroll'>
           <header className="flex flex-col justify-between w-full  sticky bg-base-100 top-0 z-10 pt-14">
             <div className="flex justify-between w-full pb-[10px]">
@@ -361,7 +366,7 @@ export default function MailDetail() {
                 <Icon
                   url={cancel}
                   onClick={() => {
-                    router.back()
+                    // router.back()
                     setSelectedMail(null);
                     setIsDetailExtend(false);
                   }}

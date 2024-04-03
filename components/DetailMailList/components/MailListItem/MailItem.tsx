@@ -119,7 +119,7 @@ const DetailMailItem = ({ mail, onSelect }: IMailItemProps) => {
     } else {
       // 查看邮件详情
       setSelectedMail(mail);
-      router.push('/mailDetail');
+      // router.push('/mailDetail');
     }
     // console.log('点击查看详情', mail)
   }, 1000);
