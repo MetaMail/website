@@ -227,7 +227,6 @@ const MailList = () => {
   // 遍历list后反填入filter
   const isAllFilter = () => {
     const selectList = list.filter(item => item.selected)
-    // console.log('selectList', selectList, selectList.length, list.length)
     if (selectList.length === list.length) {
       setFilter('All')
     } else if (selectList.length > 0) {
@@ -248,7 +247,12 @@ const MailList = () => {
     }
   }
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    let intervalId: string | number | NodeJS.Timeout = null;
+    if (filterType !== FilterTypeEn.Inbox) {
+      clearInterval(intervalId);
+      return;
+    }
+    intervalId = setInterval(() => {
       // console.log('每隔 20 秒执行一次')
       if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     }, 20000);
