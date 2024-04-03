@@ -51,18 +51,18 @@ export default function MailBoxPage() {
       publicKeys,
     };
   };
-    // 拼一下转发邮件
-  const handleFormatForwardContent =()=>{
-      return  `
+  // 拼一下转发邮件
+  const handleFormatForwardContent = () => {
+    return `
         <br><br>
         <p>---------- Forwarded message ---------</p>
         <p>From: ${selectedMail?.mail_from.name} <${selectedMail?.mail_from.address}></p>
         <p>Date: ${moment(selectedMail?.mail_date).format('ddd, MMM DD, Y LT')}</p>
         <p>Subject: ${selectedMail?.subject}</p>
-        <p>To: ${selectedMail.mail_to?.map(item=>`${item.name} <${item.address}>`).join(', ')}</p>
+        <p>To: ${selectedMail.mail_to?.map(item => `${item.name} <${item.address}>`).join(', ')}</p>
         ${selectedMail.part_html}
       `
-    }
+  }
   // 创建草稿
   /**
    * 
@@ -72,7 +72,7 @@ export default function MailBoxPage() {
    * @param selectedMail 
    * @param isForward 是否是转发
    */
-  const createDraft = async (mailTo: IPersonItem[], message_id?: string, subject?: string,selectedMail?:IMailContentItem,isForward?:boolean) => {
+  const createDraft = async (mailTo: IPersonItem[], message_id?: string, subject?: string, selectedMail?: IMailContentItem, isForward?: boolean) => {
     const { address, ensName } = userLocalStorage.getUserInfo();
     const mailFrom = {
       address: (ensName || address) + PostfixOfAddress,
@@ -80,12 +80,12 @@ export default function MailBoxPage() {
     };
     let selectMailObj: any = {
       mail_from: mailFrom,
-      mail_to: isForward?[]:mailTo,
+      mail_to: isForward ? [] : mailTo,
       mail_cc: [],
       mark: MarkTypeEn.Normal,
-      part_html: isForward?handleFormatForwardContent():'',
+      part_html: isForward ? handleFormatForwardContent() : '',
       part_text: '',
-      attachments:  isForward?selectedMail.attachments:[],
+      attachments: isForward ? selectedMail.attachments : [],
       subject: '',
       meta_type: MetaMailTypeEn.Encrypted,
       mailbox: MailBoxTypeEn.Draft,
@@ -97,13 +97,13 @@ export default function MailBoxPage() {
       // 回复邮件
       selectMailObj.in_reply_to = message_id;
       selectMailObj.subject = 'Re:' + subject;
-      if(selectedMail){
-        selectMailObj.origin_part_html=selectedMail.part_html;
-        selectMailObj.origin_part_text=selectedMail.part_text;
+      if (selectedMail) {
+        selectMailObj.origin_part_html = selectedMail.part_html;
+        selectMailObj.origin_part_text = selectedMail.part_text;
       }
     };
     // console.log('草稿', selectMailObj)
-    setSelectedDraft({...selectMailObj});
+    setSelectedDraft({ ...selectMailObj });
   };
 
   const getMailStat = async () => {
@@ -165,7 +165,7 @@ export default function MailBoxPage() {
       value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat, getRandomBits }}>
       <Layout>
         <MailList />
-        {selectedMail && <MailDetail />}
+        {/* {selectedMail && <MailDetail />} */}
         {selectedDraft && <NewMail />}
       </Layout>
       {/* {show = { showLoading }} */}
