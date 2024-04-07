@@ -263,7 +263,7 @@ export default function NewMail() {
       meta_header: selectedDraft.meta_header
     };
     const fromLocalDraft = !selectedDraft.message_id;// true:新建全新的草稿；false是从草稿列表中读的草稿
-    console.log('fromLocalDraft', fromLocalDraft)
+    // console.log('fromLocalDraft', fromLocalDraft)
     !fromLocalDraft && (json.mail_id = window.btoa(selectedDraft.message_id));
     fromLocalDraft && (json.meta_header = selectedDraft.meta_header);
     if (!!selectedDraft.in_reply_to) json.in_reply_to = selectedDraft.in_reply_to;

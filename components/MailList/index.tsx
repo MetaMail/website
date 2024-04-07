@@ -33,12 +33,7 @@ const MailList = () => {
   const [pageNum, setPageNum] = useState(0);
   const [selectedAll, setSelectedAll] = useState(false);
   const [filter, setFilter] = useState<MailListFiltersType>();
-  //------
-  // const prePageIndex = useRef(pageIndex);
-  // const preFilterType = useRef(filterType);
-  // const preIsSendSuccess = useRef(isSendSuccess);
-
-  // -----
+  const [fetchedDetails, setFetchedDetails] = useState(new Set());
   const inputCheckBoxRef = useRef<HTMLInputElement>();
 
   const handleFilterChange = (currentFilter: MailListFiltersType) => {
@@ -168,14 +163,6 @@ const MailList = () => {
         item.selected = false;
         item.local_id = item.message_id;
       });
-      // 批量获取邮件详情
-      if (filterType !== FilterTypeEn.Draft && ids.length) {
-        const batchResult = await mailHttp.getMailDetailByIdArr({
-          message_ids: ids
-        })
-        setDetailList(mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id'));
-      }
-
       setList(mailsList ?? []);
       setPageNum(page_num);
       // 发送邮件成功，刷新列表
@@ -188,6 +175,31 @@ const MailList = () => {
       });
     } finally {
       if (showLoading) setLoading(false);
+    }
+  };
+  // 在需要请求详情的地方调用这个函数
+  const fetchDetails = () => {
+    const messageIdsToFetch = list.map((message) => message.message_id)
+      .filter((messageId) => !fetchedDetails.has(messageId));
+    if (messageIdsToFetch.length > 0) {
+      getDetails(messageIdsToFetch);
+    } else {
+      console.log('All details are already fetched.');
+    }
+  };
+  // 批量获取邮件详情
+  const getDetails = async (messageIds: string[]) => {
+    try {
+      const batchResult = await mailHttp.getMailDetailByIdArr({
+        message_ids: messageIds
+      })
+      setDetailList(mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id'));
+      // 更新已获取详情的 message_id
+      const newFetchedDetails = new Set(messageIds);
+      messageIds.forEach((id) => newFetchedDetails.add(id));
+      setFetchedDetails(newFetchedDetails);
+    } catch (error) {
+      console.error('Error fetching details:', error);
     }
   };
   // 选中某一条邮件
@@ -221,6 +233,12 @@ const MailList = () => {
       inputCheckBoxRef.current.indeterminate = isIndeterminate;
       setSelectedAll(list.length && list.every(item => item.selected));
       isAllFilter()
+
+      // 批量获取邮件详情
+      if (filterType !== FilterTypeEn.Draft) {
+        fetchDetails()
+      }
+
     }
   }, [list]);
 
@@ -248,27 +266,41 @@ const MailList = () => {
   }
   useEffect(() => {
     let intervalId: string | number | NodeJS.Timeout = null;
-    console.log(filterType)
+    // console.log(filterType)
     if (filterType !== FilterTypeEn.Inbox) {
       clearInterval(intervalId);
       return;
     }
     intervalId = setInterval(() => {
-      if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
+      if (userLocalStorage.getUserInfo()?.address) fetchMailList(false);
     }, 20000);
     if (pageIndex > 1) {
       clearInterval(intervalId);
     }
+    // console.log('改变了吗2', filterType)
     // 组件卸载时清除定时器
     return () => {
       clearInterval(intervalId);
     };
+
   }, [filterType])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
+    // console.log('改变了吗1', filterType)
     // 检查前后依赖项的值是否相同
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
-    setFilter(null)
+    setFilter(null);
+    const onRefresh: (e: Event) => Promise<void> = async event => {
+      const e = event as CustomEvent;
+      await fetchMailList(e.detail.showLoading);
+    };
+
+    window.addEventListener('refresh-list', onRefresh);
+    // 组件卸载时清除定时器
+    return () => {
+      window.removeEventListener('refresh-list', onRefresh);
+    };
+
 
   }, [pageIndex, filterType, isSendSuccess]); // 在这里添加你的依赖项
 

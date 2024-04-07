@@ -37,6 +37,7 @@ function Sidebar() {
 
   function handleChangeFilter(filter: FilterTypeEn) {
     // 如果不是Draft,隐藏编辑框？
+    console.log('filter', filter, filterType, filterType === filter);
     setFilterType(filter);
     resetPageIndex();
     filterType === filter && dispatchEvent('refresh-list', { showLoading: true })
