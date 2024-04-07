@@ -68,6 +68,7 @@ export function percentTransform(percent: number) {
 }
 
 export function dispatchEvent(eventName: string, detail?: any) {
+  // 创建自定义事件
   const event = new CustomEvent(eventName, { detail });
   window.dispatchEvent(event);
 }
@@ -111,17 +112,17 @@ export function mergeAndUniqueArraysByKey<T>(arr1: T[], arr2: T[], key: keyof T)
 
   // 返回去重后的数组
   return mergedArray.reduce((result: T[], item: T) => {
-      // 获取指定键的值，并进行类型断言
-      const keyValue = item[key] as unknown as string;
+    // 获取指定键的值，并进行类型断言
+    const keyValue = item[key] as unknown as string;
 
-      // 如果该键尚未被添加，则将其添加到结果数组中
-      if (!uniqueKeys[keyValue]) {
-          result.push(item);
-          uniqueKeys[keyValue] = true;
-      }
+    // 如果该键尚未被添加，则将其添加到结果数组中
+    if (!uniqueKeys[keyValue]) {
+      result.push(item);
+      uniqueKeys[keyValue] = true;
+    }
 
-      // 返回结果数组
-      return result;
+    // 返回结果数组
+    return result;
   }, []);
 }
 

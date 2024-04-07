@@ -277,13 +277,16 @@ const MailList = () => {
     if (pageIndex > 1) {
       clearInterval(intervalId);
     }
+    console.log('改变了吗2', filterType)
     // 组件卸载时清除定时器
     return () => {
       clearInterval(intervalId);
     };
+
   }, [filterType])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
+    console.log('改变了吗1', filterType)
     // 检查前后依赖项的值是否相同
     if (userLocalStorage.getUserInfo()?.address) fetchMailList(true);
     setFilter(null)
