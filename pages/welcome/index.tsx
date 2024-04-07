@@ -92,6 +92,7 @@ export default function Welcome() {
     const { address: localAddress } = userLocalStorage.getUserInfo();
     const token = userLocalStorage.getToken();
     if (localAddress && token) {
+      // 检测到登录了自动跳转
       router.push('/mailbox');
     }
   }, [])
