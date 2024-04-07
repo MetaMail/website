@@ -283,7 +283,7 @@ const MailList = () => {
       clearInterval(intervalId);
     };
 
-  }, [filterType])
+  }, [filterType, pageIndex])
   // 左边slider点击，filterType改变的时候重新获取邮件列表
   useEffect(() => {
     // console.log('改变了吗1', filterType)
