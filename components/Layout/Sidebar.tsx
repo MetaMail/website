@@ -39,8 +39,9 @@ function Sidebar() {
     // 如果不是Draft,隐藏编辑框？
     console.log('filter', filter, filterType, filterType === filter);
     setFilterType(filter);
-    resetPageIndex();
-    filterType === filter && dispatchEvent('refresh-list', { showLoading: true })
+
+    filterType === filter && dispatchEvent('refresh-list', { showLoading: true });
+    if (filterType !== filter) resetPageIndex();
   }
 
   async function handleClickNewMail() {

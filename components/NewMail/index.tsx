@@ -309,8 +309,13 @@ export default function NewMail() {
       randomBits = await getRandomBits('draft');
       let _selectedDraft = selectedDraft;
       if (!selectedDraft.hasOwnProperty('part_html')) {
-        const mail = await mailHttp.getMailDetailByID(window.btoa(selectedDraft.message_id));
-        _selectedDraft = { ...selectedDraft, ...mail };
+        const batchResult = await mailHttp.getMailDetailByIdArr({
+          message_ids: [selectedDraft.message_id]
+        })
+        if (batchResult && batchResult.length) {
+          _selectedDraft = { ...selectedDraft, ...batchResult[0] };
+        }
+
       }
 
       const part_html = decryptMailContent(_selectedDraft.part_html || '', randomBits);
