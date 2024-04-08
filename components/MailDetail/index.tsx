@@ -53,7 +53,6 @@ export default function MailDetail() {
   const handleLoad = async (showLoading = true) => {
     try {
       showLoading && setLoading(true);
-      // const mail = await mailHttp.getMailDetailByID(window.btoa(selectedMail.message_id));
       const detailArray = detailList;
       if (detailArray.length <= 0) {
         const batchResult = await mailHttp.getMailDetailByIdArr({

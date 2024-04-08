@@ -27,6 +27,7 @@ import downloadMail from './downloadmailcontent.svg';
 import reply from './reply.svg';
 import white from './white.svg';
 import trash from './delete.svg';
+import removeTrashCan from './removeTrashCan.svg';
 import trashActive from './deleteActive.svg';
 import cancelSelected from './cancelselected.svg';
 import temp1 from './temp1.svg';
@@ -43,6 +44,7 @@ import replyMail from './replyMail.svg';
 import forwardMail from './forwardMail.svg';
 import darkMailMore from './darkMailMore.svg';
 import dropdownImg from './dropdown.svg'
+import removeSpam from './removeSpam.svg';
 import spam from './spam.svg';
 import starred from './starred.svg'
 import removeStarred from './removeStarred.svg'
@@ -78,6 +80,7 @@ export {
   favoriteDark,
   checkboxDark,
   spam,
+  removeSpam,
   starred,
   removeStarred,
   sent,
