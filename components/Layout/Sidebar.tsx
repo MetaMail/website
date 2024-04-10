@@ -127,7 +127,7 @@ function Sidebar() {
   };
   useEffect(() => {
     getMailStat();
-    const getMailsStatInterval = setInterval(getMailStat, 60000);
+    const getMailsStatInterval = setInterval(getMailStat, 20000);
     return () => {
       clearInterval(getMailsStatInterval);
     };
