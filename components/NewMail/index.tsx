@@ -17,7 +17,7 @@ import NameSelector, { MailFromType } from './components/NameSelector';
 import EmailRecipientInput from './components/EmailRecipientInput';
 import Icon from 'components/Icon';
 import LoadingRing from 'components/LoadingRing';
-import { ShinkIcon, ExtendIcon, AttachIcon, MailMore, ShowTrimContent } from '../../components/svg/index'
+import { SendMail, ShinkIcon, ExtendIcon, AttachIcon, MailMore, ShowTrimContent } from '../../components/svg/index'
 import { trashCan, extend, cancel, cancelDark, extendDark, shrinkDark, shrink, showTrimContent } from 'assets/icons';
 import sendMailIcon from 'assets/sendMail.svg';
 
@@ -565,9 +565,10 @@ export default function NewMail() {
         <button
           disabled={selectedDraft.mail_to.length <= 0}
           onClick={handleClickSend}
-          className="flex justify-center items-center bg-primary text-white px-14 py-8  rounded-[6px] text-[14px]">
-          <Icon url={sendMailIcon} className="h-18" />
-          <span className="ml-8 h-[18px] leading-[22px]">Send</span>
+          className="flex justify-center items-stretch bg-primary text-white px-14 py-8  rounded-[6px] text-[14px]">
+          {/* <Icon url={sendMailIcon} className="h-18" /> */}
+          <SendMail />
+          <span className="ml-4 h-[18px] leading-[18px]">Send</span>
         </button>
         {/* 展开状态的上传附件按钮 */}
         {/* {isExtend && (
