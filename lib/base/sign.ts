@@ -19,9 +19,8 @@ export abstract class MMSign {
   }
 
   get address() {
-    if (!this._address) {
-      this._address = userLocalStorage.getUserInfo()?.address || getAccount().address?.toLowerCase() || '';
-    }
+    // console.log('get address', userLocalStorage.getUserInfo(), getAccount());
+    this._address = userLocalStorage.getUserInfo()?.address || getAccount().address?.toLowerCase() || '';
     return this._address;
   }
 
