@@ -325,7 +325,7 @@ const MailList = () => {
               {/* 筛选漏斗icon */}
               <label tabIndex={0} className="cursor-pointer flex items-center  gap-3">
                 <Icon url={filterIcon} title="Filter" className="w-18 h-18" />
-                <span className="text-[14px] h-16 leading-[18px] text-[#b2b2b2]">{filter}</span>
+                <span className="text-[14px] h-16 leading-[18px] text-[#545454] dark:text-[#b2b2b2]">{filter}</span>
               </label>
               <ul
                 tabIndex={0}
