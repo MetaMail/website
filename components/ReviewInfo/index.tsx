@@ -41,7 +41,7 @@ export default function ReviewInfo() {
         imgSrc={mvs}
         role={'mvs'}
         role2={'UI designer'}
-        content={'We designed Metamail with the hope that users feel their data is valued, the internet is trustworthy, and they are empowered.'}
+        content={'We designed MetaMail with the hope that users feel their data is valued, the internet is trustworthy, and they are empowered.'}
       />
       <Review
         imgSrc={colin}
