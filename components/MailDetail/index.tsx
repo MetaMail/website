@@ -14,6 +14,7 @@ import AttachmentItem from './components/AttachmentItem';
 import LoadingRing from 'components/LoadingRing';
 import Modal from '../Common/Modal';
 import {
+  removeSpam,
   spam,
   extend,
   cancel,
@@ -175,10 +176,11 @@ export default function MailDetail() {
       },
     },
     {
-      src: spam,
-      title: 'Spam',
+      src: selectedMail.mark === MarkTypeEn.Spam ? removeSpam : spam,
+      title: selectedMail.mark === MarkTypeEn.Spam ? 'not spam' : 'Spam',
       handler: async () => {
-        await handleMailActionsClick({ mark: MarkTypeEn.Spam });
+        const markValue = selectedMail.mark === MarkTypeEn.Spam ? MarkTypeEn.Normal : MarkTypeEn.Spam
+        await handleMailActionsClick({ mark: markValue });
       },
     },
     {
