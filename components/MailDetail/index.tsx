@@ -24,6 +24,7 @@ import {
   mailMore,
   darkMailMore,
   markFavorite,
+  removeStarred,
   markUnread,
   starred,
   shrink,
@@ -195,16 +196,16 @@ export default function MailDetail() {
       },
     },
     {
-      src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
-      title: selectedMail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star',
+      src: selectedMail.mark === MarkTypeEn.Starred ? removeStarred : starred,
+      title: selectedMail.mark === MarkTypeEn.Starred ? 'Not Starred' : 'Star',
       handler: handleStar,
     },
   ];
 
   const rightIcons = [
     {
-      src: selectedMail.mark === MarkTypeEn.Starred ? markFavorite : starred,
-      title: selectedMail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star',
+      src: selectedMail.mark === MarkTypeEn.Starred ? removeStarred : starred,
+      title: selectedMail.mark === MarkTypeEn.Starred ? 'Not Starred' : 'Star',
       handler: handleStar,
     },
     {
