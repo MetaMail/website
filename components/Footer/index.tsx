@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import LinkItem from './LinkItem';
 import twitter from 'assets/twitter.svg';
-import facebook from 'assets/facebook.svg';
 import discord from 'assets/discord.png';
 import tg from 'assets/telegram.svg';
 import git from 'assets/git.png';
@@ -45,10 +44,10 @@ export default function Footer() {
       </div>
       <div className="flex  items-start text-[#333] flex-col md:flex-row justify-between gap-30 font-poppins md:absolute bottom-0 md:bottom-83 right-0 md:right-130 zIndex-9">
         <div className="flex items-center gap-40 md:gap-20">
-          <span className="font-extrabold text-ml pt-10 cursor-pointer" onClick={() => router.push('/staticPages/FAQs')}>
-            FAQs
-          </span>
-          <Link className="font-extrabold text-ml pr-20 pt-10" target='_blank' href="https://mirror.xyz/metamailink.eth">
+        <span className="font-extrabold text-[20px] pt-10 cursor-pointer" onClick={() => window.open('/FAQs', '_blank')}>
+          FAQs
+        </span>
+          <Link className="font-extrabold text-[20px] pt-10 cursor-pointer" target="_blank" href="https://mirror.xyz/metamailink.eth">
             Blog
           </Link>
         </div>
@@ -58,9 +57,13 @@ export default function Footer() {
               <LinkItem {...link} key={index} />
             ))}
           </div>
-          <div className="font-normal text-[20px] flex flex-row justify-between gap-30 text-[#3E3E3E] font-poppins">
-            <span onClick={() => router.push('/staticPages/TermsOfService')} className='cursor-pointer'>Terms of Service</span>
-            <span onClick={() => router.push('/staticPages/Privacy')} className='cursor-pointer'>Privacy Policy</span>
+          <div className="font-extrabold text-[20px] flex flex-row justify-between gap-30 text-[#333] font-poppins">
+            <span onClick={() => window.open('/terms-of-service', '_blank')} className='cursor-pointer'>
+              Terms of Service
+            </span>
+            <span onClick={() => window.open('/privacy-policy', '_blank')} className='cursor-pointer'>
+              Privacy Policy
+            </span>
           </div>
         </div>
       </div>
