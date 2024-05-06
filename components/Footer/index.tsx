@@ -55,7 +55,7 @@ export default function Footer() {
         <div className="flex flex-col gap-23">
           <div className="flex flex-row gap-10">
             {allLinks.map((link, index) => (
-              <LinkItem {...link} key={index} />
+              <LinkItem {...link} target='_blank' key={index} />
             ))}
           </div>
           <div className="font-extrabold text-[20px] flex flex-row justify-between gap-30 text-[#333] font-poppins">
