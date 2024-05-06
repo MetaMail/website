@@ -201,7 +201,7 @@ const MailList = () => {
       setDetailList([...detailList, ...mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id')]);
       // 更新已获取详情的 message_id
       const newFetchedDetails = new Set(messageIds);
-      fetchedDetails.forEach((id) => newFetchedDetails.add(id));
+      fetchedDetails.forEach((id: any) => newFetchedDetails.add(id));
       setFetchedDetails(newFetchedDetails);
     } catch (error) {
       console.error('Error fetching details:', error);
