@@ -122,6 +122,7 @@ export function mergeAndUniqueArraysByKey<T>(arr1: T[], arr2: T[], key: keyof T)
     }
 
     // 返回结果数组
+    // console.log('result', result)
     return result;
   }, []);
 }

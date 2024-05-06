@@ -11,6 +11,9 @@ const nextConfig = {
     exportPathMap: async function (defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
         return {
             '/': { page: '/welcome' },
+            '/FAQs': { page: '/FAQs' },
+            '/privacy-policy': { page: '/privacy-policy' },
+            '/terms-of-service': { page: '/terms-of-service' },
             '/mailbox': { page: '/mailbox' },
         };
     },
@@ -28,17 +31,17 @@ const nextConfig = {
     // 配置页面缓存
     // 这里使用了缓存策略，可以根据需要进行调整
     async headers() {
-      return [
-        {
-          source: '/(.*)',
-          headers: [
+        return [
             {
-              key: 'Cache-Control',
-              value: 'public, max-age=3600, must-revalidate',
+                source: '/(.*)',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=3600, must-revalidate',
+                    },
+                ],
             },
-          ],
-        },
-      ]
+        ];
     },
 };
 
