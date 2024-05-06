@@ -28,7 +28,7 @@ const Carousel: React.FC<CarouselProps> = ({ slides, autoplayInterval = 2000 }) 
   };
 
   return (
-    <Slider {...settings} className="relative items-center flex-col lg:flex lg:flex-row w-11/12 xl:w-5/6 2xl:w-2/3 max-w-500  top-0 md:-top-200 mx-auto border border-[#1e1e1e] bg-white rounded-28  justify-around z-10">
+    <Slider {...settings} className="relative items-center flex-col lg:flex lg:flex-row w-11/12 xl:w-5/6 2xl:w-2/3  top-0 md:-top-200 mx-auto border border-[#1e1e1e] bg-white rounded-28  justify-around z-10">
       {slides.map((slide, index) => (
         <div key={index} className={`h-400 md:h-360 lg:h-360 px-20 md:px-0  ${index === currentIndex ? 'active-slide  py-30 md:py-75' : ' py-75'}`}>
           {slide.content}
