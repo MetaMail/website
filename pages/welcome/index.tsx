@@ -69,7 +69,7 @@ export default function Welcome() {
       router.push('/mailbox');
     } catch (error: any) {
       console.error(error);
-      if (error?.code === 'ACTION_REJECTED') return;// 用户拒绝签名，不提示登录失败
+      if (error?.code === 'ACTION_REJECTED' || error?.code === 4001) return;// 用户拒绝签名，不提示登录失败
 
       toast.error('Login failed. Please make sure your balance > 0 in ETH Mainnet.', {
         position: 'top-center',

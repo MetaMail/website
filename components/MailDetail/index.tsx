@@ -1,10 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import dynamic from 'next/dynamic';
-import DOMPurify from 'dompurify';
 import moment from 'moment';
 import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
-import ReactDOM from 'react-dom';
 import IframeComponent from 'components/IframeRender';
 import MailBoxContext from 'context/mail';
 import { IMailContentItem, MetaMailTypeEn, ReadStatusTypeEn, MarkTypeEn, IPersonItem, IMailContentAttachment } from 'lib/constants';
@@ -371,7 +369,6 @@ export default function MailDetail() {
                 <Icon
                   url={cancel}
                   onClick={() => {
-                    // router.back()
                     setSelectedMail(null);
                     setIsDetailExtend(false);
                   }}
@@ -404,7 +401,7 @@ export default function MailDetail() {
                     url={forwardMail}
                     title="forward"
                     onClick={handleForward}
-                    className="w-18 h-18 self-center transform scale-x-[-1]"
+                    className="w-18 h-18 self-center "
                   />
                   {/* 收藏，回复，更多 */}
                   {rightIcons.map((item, index) => {
@@ -439,7 +436,6 @@ export default function MailDetail() {
                         title='download emil'>
                         <a className='text-[#333] dark:text-[#fff]' >Download eml</a>
                       </li>
-
                     </ul>
                   </div>
                 </div>
@@ -450,7 +446,7 @@ export default function MailDetail() {
             {<LoadingRing loading={loading} />}
             {
               <div className={`${loading ? `fadeOutAnima` : 'fadeInAnima'} h-full flex-1 overflow-auto  text-lightMailContent dark:text-DarkMailContent`}>
-                <div id="mailHtml" className='listContainer h-full pl-[57px] pr-[5px] box-border'>
+                <div id="mailHtml" className='listContainer h-full pl-[57px] pr-[5px] box-border pb-[100px]'>
                   {renderHtml()}
                 </div>
               </div>
@@ -471,7 +467,6 @@ export default function MailDetail() {
                   name={item?.filename}
                   randomBits={randomBits}
                 />
-
               ))}
             </div>
           )}
