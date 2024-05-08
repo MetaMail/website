@@ -174,7 +174,7 @@ const MailListItem = React.memo(({ mail, onSelect }: IMailItemProps) => {
           <Icon
             url={mail.mark === MarkTypeEn.Starred ? markFavorite : isDark ? favoriteDark : favorite}
             className="w-18 h-18"
-            title={mail.mark === MarkTypeEn.Starred ? 'UnStar' : 'Star'}
+            title={'Star'}
             onClick={async e => {
               e.stopPropagation();
               await handleStar(

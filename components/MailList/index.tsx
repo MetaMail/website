@@ -10,8 +10,8 @@ import MailBoxContext from 'context/mail';
 import MailListItem from './components/MailListItem';
 import LoadingRing from 'components/LoadingRing';
 import Icon from 'components/Icon';
-import { empty } from 'assets/icons';
 import {
+  empty, removeSpam,
   arrowLeft,
   arrowRight,
   checkboxSvg, checkboxedSvg,
@@ -89,22 +89,22 @@ const MailList = () => {
     },
     // 在starred的时候，变成Remove star;别的时候都是starred
     {
-      title: filterType === FilterTypeEn.Starred ? 'Remove star' : 'Star',
+      title: filterType === FilterTypeEn.Starred ? 'Remove star' : 'star',
       src: filterType === FilterTypeEn.Starred ? removeStarred : starred,
       httpParams: { mark: filterType === FilterTypeEn.Starred ? MarkTypeEn.Normal : MarkTypeEn.Starred },
     },
     {
-      title: 'Spam',
-      src: spam,
-      httpParams: { mark: MarkTypeEn.Spam },
+      title: filterType === FilterTypeEn.Spam ? 'not spam' : 'spam',
+      src: filterType === FilterTypeEn.Spam ? removeSpam : spam,
+      httpParams: { mark: filterType === FilterTypeEn.Spam ? MarkTypeEn.Normal : MarkTypeEn.Spam },
     },
     {
-      title: 'Read',
+      title: 'read',
       src: read,
       httpParams: { read: ReadStatusTypeEn.Read },
     },
     {
-      title: 'Unread',
+      title: 'unread',
       src: markUnread,
       httpParams: { read: ReadStatusTypeEn.Unread },
     },
@@ -181,22 +181,27 @@ const MailList = () => {
   const fetchDetails = () => {
     const messageIdsToFetch = list.map((message) => message.message_id)
       .filter((messageId) => !fetchedDetails.has(messageId));
+    // fetchedDetails 是已经获取过详情的 message_id 集合
+    // console.log('fetchedDetails', fetchedDetails)
     if (messageIdsToFetch.length > 0) {
       getDetails(messageIdsToFetch);
     } else {
       console.log('All details are already fetched.');
     }
   };
+  // useEffect(() => {
+  //   console.log('fetchedDetails', fetchedDetails)
+  // }, [fetchedDetails])
   // 批量获取邮件详情
   const getDetails = async (messageIds: string[]) => {
     try {
       const batchResult = await mailHttp.getMailDetailByIdArr({
         message_ids: messageIds
       })
-      setDetailList(mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id'));
+      setDetailList([...detailList, ...mergeAndUniqueArraysByKey(detailList, batchResult, 'message_id')]);
       // 更新已获取详情的 message_id
       const newFetchedDetails = new Set(messageIds);
-      messageIds.forEach((id) => newFetchedDetails.add(id));
+      fetchedDetails.forEach((id: any) => newFetchedDetails.add(id));
       setFetchedDetails(newFetchedDetails);
     } catch (error) {
       console.error('Error fetching details:', error);

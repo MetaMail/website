@@ -33,12 +33,13 @@ function Sidebar() {
   useEffect(() => {
   }, [isDark])
   const { logout, getMailStat, createDraft } = useContext(MailBoxContext);
-  const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount } = useMailListStore();
+  const { filterType, setFilterType, resetPageIndex, unreadCount, spamCount, list, setList } = useMailListStore();
 
   function handleChangeFilter(filter: FilterTypeEn) {
     // 如果不是Draft,隐藏编辑框？
-    console.log('filter', filter, filterType, filterType === filter);
+    // console.log('filter', filter, filterType, filterType === filter);
     setFilterType(filter);
+    setList([])
 
     filterType === filter && dispatchEvent('refresh-list', { showLoading: true });
     if (filterType !== filter) resetPageIndex();

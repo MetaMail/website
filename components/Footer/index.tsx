@@ -44,9 +44,10 @@ export default function Footer() {
       </div>
       <div className="flex  items-start text-[#333] flex-col md:flex-row justify-between gap-30 font-poppins md:absolute bottom-0 md:bottom-83 right-0 md:right-130 zIndex-9">
         <div className="flex items-center gap-40 md:gap-20">
-        <span className="font-extrabold text-[20px] pt-10 cursor-pointer" onClick={() => router.push('/FAQs')}>
-          FAQs
-        </span>
+
+          <Link className="font-extrabold text-[20px] pt-10 cursor-pointer" target="_blank" href="/FAQs">
+            FAQs
+          </Link>
           <Link className="font-extrabold text-[20px] pt-10 cursor-pointer" target="_blank" href="https://mirror.xyz/metamailink.eth">
             Blog
           </Link>
@@ -54,16 +55,16 @@ export default function Footer() {
         <div className="flex flex-col gap-23">
           <div className="flex flex-row gap-10">
             {allLinks.map((link, index) => (
-              <LinkItem {...link} key={index} />
+              <LinkItem {...link} target='_blank' key={index} />
             ))}
           </div>
           <div className="font-extrabold text-[20px] flex flex-row justify-between gap-30 text-[#333] font-poppins">
-            <span onClick={() => router.push('/terms-of-service')} className='cursor-pointer'>
+            <Link href='/terms-of-service' target="_blank" className='cursor-pointer'>
               Terms of Service
-            </span>
-            <span onClick={() => router.push('/privacy-policy')} className='cursor-pointer'>
+            </Link>
+            <Link href='/privacy-policy' target="_blank" className='cursor-pointer'>
               Privacy Policy
-            </span>
+            </Link>
           </div>
         </div>
       </div>
