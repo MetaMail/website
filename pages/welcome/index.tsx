@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { useAccount } from 'wagmi';
 import { disconnect } from '@wagmi/core';
 import { toast } from 'react-toastify';
-
+import ReactGA from 'react-ga';
 import { userHttp } from 'lib/http';
 import { userLocalStorage } from 'lib/utils';
 import { generateEncryptionUserKey } from 'lib/encrypt';
@@ -96,6 +96,9 @@ export default function Welcome() {
       router.push('/mailbox');
     }
   }, [])
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname);
+  }, []);
   return (
     <div className="!font-[spaceGrotesk] flex flex-col mx-auto max-w-[3000px]">
       <Head>
