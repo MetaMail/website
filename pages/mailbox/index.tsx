@@ -16,7 +16,7 @@ import { isEmptyObject } from 'utils';
 import LoadingRing from 'components/LoadingRing';
 import moment from 'moment';
 import DetailMailList from 'components/DetailMailList';
-import ReactGA from 'react-ga';
+
 export default function MailBoxPage() {
   const router = useRouter();
   const { selectedMail } = useMailDetailStore();
@@ -161,9 +161,7 @@ export default function MailBoxPage() {
   useEffect(() => {
     MMHttp.onUnAuthHandle = logout;
   }, []);
-  useEffect(() => {
-    ReactGA.pageview(window.location.pathname);
-  }, []);
+
   return (
     <MailBoxContext.Provider
       value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat, getRandomBits }}>
