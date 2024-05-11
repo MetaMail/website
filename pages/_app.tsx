@@ -9,14 +9,12 @@ import { useThemeStore } from 'lib/zustand-store';
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
-import ReactGA from 'react-ga';
+
 type AppPropsWithLayout = AppProps & { Component: NextPageWithLayout };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const { isDark, setIsDark } = useThemeStore()
-  useEffect(() => {
-    ReactGA.initialize('G-QMHT4QP6TP'); // 替换为您的跟踪 ID
-  }, []);
+
   useEffect(() => {
     themeChange(false);
     const theme = document.documentElement.getAttribute('data-theme') || '';
