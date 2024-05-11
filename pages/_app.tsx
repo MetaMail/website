@@ -28,7 +28,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', '${measurementId}', {
-        'send_page_view': false,
+        'send_page_view': true,
         'transport_type': 'beacon',
         'linker': {
           'domains': ['https://www.mmail-test.ink/'] // 替换为你的网站域名
