@@ -162,14 +162,15 @@ export default function MailBoxPage() {
     MMHttp.onUnAuthHandle = logout;
   }, []);
   useEffect(() => {
-    const measurementId = 'G-QMHT4QP6TP'; // 替换为你的 GA4 衡量 ID
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-    document.body.appendChild(script);
+    if (document && document.body) {
+      const measurementId = 'G-QMHT4QP6TP'; // 替换为你的 GA4 衡量 ID
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+      document.body.appendChild(script);
 
-    const gtagScript = document.createElement('script');
-    gtagScript.innerHTML = `
+      const gtagScript = document.createElement('script');
+      gtagScript.innerHTML = `
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -177,11 +178,13 @@ export default function MailBoxPage() {
         'send_page_view': true,
         'transport_type': 'beacon',
         'linker': {
-          'domains': [${window.location.host}] // 替换为你的网站域名
+          'domains': ['https://www.mmail-test.ink/','https://www.metamail.ink/'] // 替换为你的网站域名
         }
       });
     `;
-    document.body.appendChild(gtagScript);
+      document.body.appendChild(gtagScript);
+    }
+
   }, []);
   return (
     <MailBoxContext.Provider
