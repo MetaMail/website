@@ -161,7 +161,28 @@ export default function MailBoxPage() {
   useEffect(() => {
     MMHttp.onUnAuthHandle = logout;
   }, []);
+  useEffect(() => {
+    const measurementId = 'G-QMHT4QP6TP'; // 替换为你的 GA4 衡量 ID
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+    document.body.appendChild(script);
 
+    const gtagScript = document.createElement('script');
+    gtagScript.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${measurementId}', {
+        'send_page_view': true,
+        'transport_type': 'beacon',
+        'linker': {
+          'domains': [${window.location.host}] // 替换为你的网站域名
+        }
+      });
+    `;
+    document.body.appendChild(gtagScript);
+  }, []);
   return (
     <MailBoxContext.Provider
       value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat, getRandomBits }}>
