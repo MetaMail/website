@@ -6,6 +6,8 @@ import { themeChange } from 'theme-change';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
 import { useThemeStore } from 'lib/zustand-store';
+import * as ReactGA from 'react-ga';
+import { useRouter } from 'next/router';
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -14,29 +16,6 @@ type AppPropsWithLayout = AppProps & { Component: NextPageWithLayout };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const { isDark, setIsDark } = useThemeStore()
-  useEffect(() => {
-    const measurementId = 'G-QMHT4QP6TP'; // 替换为你的 GA4 衡量 ID
-
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-    document.body.appendChild(script);
-
-    const gtagScript = document.createElement('script');
-    gtagScript.innerHTML = `
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '${measurementId}', {
-        'send_page_view': true,
-        'transport_type': 'beacon',
-        'linker': {
-          'domains': ['https://www.mmail-test.ink/'] // 替换为你的网站域名
-        }
-      });
-    `;
-    document.body.appendChild(gtagScript);
-  }, []);
   useEffect(() => {
     themeChange(false);
     const theme = document.documentElement.getAttribute('data-theme') || '';

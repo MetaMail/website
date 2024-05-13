@@ -12,6 +12,7 @@ class MyDocument extends Document {
                         name="description"
                         content="metamail,metaMail,MetaMail,MetaMail邮箱,email, end-to-end encryption, web3, eth, ethereum, privacy"></meta>
                 </Head>
+
                 <body>
                     <Main />
                     <NextScript />
