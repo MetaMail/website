@@ -27,7 +27,7 @@ export default function GoogleAnalytics(): any {
 
   const loadGoogleAnalytics = () => {
     if (document && document.body) {
-      console.log('ga执行')
+      console.log('ga执行1')
       const measurementId = 'G-QMHT4QP6TP'; // 替换为你的 GA4 衡量 ID
       const script = document.createElement('script');
       script.async = true;
