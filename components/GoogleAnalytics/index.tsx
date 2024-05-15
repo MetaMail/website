@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-const GoogleAnalytics = () => {
+// const GoogleAnalytics = () => {
+export default function GoogleAnalytics(): any {
   const router = useRouter();
 
   useEffect(() => {
-    const handleRouteChange = (url) => {
+    const handleRouteChange = (url: string) => {
       // 这里可以根据路径判断是否加载 Google Analytics
       if (url === '/mailbox') {
         loadGoogleAnalytics();
@@ -53,4 +54,4 @@ const GoogleAnalytics = () => {
   return null; // 这个组件不需要渲染任何内容
 };
 
-export default GoogleAnalytics;
+
