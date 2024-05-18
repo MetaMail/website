@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Doc Last Updated Date: May 2, 2024
+Doc Last Updated Date: May 18, 2024
 
 Welcome to MetaMail, the privacy-focused, end-to-end encrypted email service ("Service"). MetaMail is dedicated to safeguarding the privacy and security of our users' information. This Privacy Policy explains our practices regarding the collection, use, and sharing of your information when you utilize our Service.
 
@@ -12,11 +12,30 @@ Please be aware that the use of MetaMail is also subject to our Terms of Service
 
 ## Information We Collect
 
-**Account Information:** To access our Service, you authenticate using your wallet's signature. Consequently, your blockchain address becomes known to us. Please be aware that any transactions or information associated with your address are publicly accessible on the blockchain. In accordance with our protocol, you locally generate a key pair along with associated metadata, which is designed to assist with the local decryption of your encrypted private key. You then upload the encrypted key pair and metadata to our servers. Your public key is meant to be accessible by anyone to enable encrypted communication, while your encrypted private key is securely stored on our servers in a way that ensures only you, with your blockchain account's private key, can decrypt it.
+To access our services, you authenticate using your wallet's signature, which means your blockchain address becomes known to us. Remember that any transactions or information associated with your address are publicly accessible on the blockchain.  Following our protocol, you locally generate a key pair and associated metadata, designed to help with the local decryption of your encrypted private key. You then upload the encrypted key pair and metadata to our servers. Your public key is accessible to anyone to enable encrypted communication, while your encrypted private key is securely stored on our servers. This ensures only you, with your blockchain account's private key, can decrypt it.
 
-**Communications:** Your emails are end-to-end encrypted within our Service. Please be aware that MetaMail can send and receive emails to and from external email services, but those emails will be unencrypted.
+While your emails are end-to-end encrypted within MetaMail, please be aware that when sending to or receiving emails from external email services, the content of your emails will be transmitted in plain text and not encrypted.
 
-**We currently do not collect Usage Data, which includes but is not limited to, access times, device information, IP addresses, browser types, language preferences, pages viewed, and the order of those pages.** However, we reserve the right to collect such information in the future to improve service functionality and user experience. Should we decide to collect additional data, this policy will be updated to reflect the changes and provide transparency about the data being collected and the purposes for its collection.
+We strive to improve service functionality and user experience. To achieve this, we use Google Analytics to collect Usage Data. This data includes, but is not limited to:
+
+* Access times
+* Device information
+* IP addresses
+* Browser types
+* Language preferences
+* Pages viewed
+* The order of page views
+
+Google Analytics employs cookies and similar technologies to collect and analyze this information, which is then transmitted to and stored by Google. You can learn more about how Google collects and processes data on their Privacy Policy page: [https://policies.google.com/privacy](https://policies.google.com/privacy).
+
+As a Web3 application, we prioritize your privacy and require your explicit consent before collecting this data. Upon signing in to our platform using your wallet, you will be presented with a clear and concise consent request. By signing in, you acknowledge and agree to the terms outlined in this Privacy Policy, including the use of Google Analytics cookies.
+
+Even if you initially consent, you can choose to prevent Google Analytics from collecting your data at any time by:
+
+* **Opting out of Google Analytics cookies:** Install the Google Analytics opt-out browser add-on, available at: [https://tools.google.com/dlpage/gaoptout](https://tools.google.com/dlpage/gaoptout).
+* **Adjusting your browser settings:** Most browsers allow you to control cookies, including blocking them entirely. Refer to your browser's help documentation for instructions.
+
+We may collect additional Usage Data in the future to further improve our service functionality and user experience. If we decide to collect additional data, we will update this policy to reflect the changes and provide transparency about the data being collected and its purpose. We will communicate any changes to data collection practices clearly, and your continued use of the platform following such changes constitutes your acceptance of the updated Privacy Policy.
 
 ## How We Use Your Information
 
