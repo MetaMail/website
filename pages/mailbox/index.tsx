@@ -16,7 +16,7 @@ import { isEmptyObject } from 'utils';
 import LoadingRing from 'components/LoadingRing';
 import moment from 'moment';
 import DetailMailList from 'components/DetailMailList';
-
+import GoogleAnalytics from 'components/GoogleAnalytics';
 export default function MailBoxPage() {
   const router = useRouter();
   const { selectedMail } = useMailDetailStore();
@@ -24,7 +24,7 @@ export default function MailBoxPage() {
   const { selectedDraft, setSelectedDraft } = useNewMailStore();
   const { removeAllState } = useUtilsStore();
   const [showLoading, setShowLoading] = useState(false);
-
+  const [isLogin, setIsLogin] = useState(false);
   const logout = () => {
     userLocalStorage.clearAll();
     mailLocalStorage.clearAll();
@@ -32,7 +32,10 @@ export default function MailBoxPage() {
     removeAllState();
     router.push('/');
   };
-
+  useEffect(() => {
+    MMHttp.onUnAuthHandle = logout;
+    setIsLogin(userLocalStorage.getUserInfo() && userLocalStorage.getUserInfo().address ? true : false);
+  }, []);
   const checkEncryptable = async (receivers: IPersonItem[]) => {
     const getSinglePublicKey = async (receiver: IPersonItem) => {
 
@@ -108,11 +111,14 @@ export default function MailBoxPage() {
     setSelectedDraft({ ...selectMailObj });
   };
 
+
   const getMailStat = async () => {
     try {
       const { spam, unread } = await mailHttp.getMailStat();
       setUnreadCount(unread);
       setSpamCount(spam);
+
+
     } catch (error) {
       console.error('get mail stat error');
       console.error(error);
@@ -158,13 +164,14 @@ export default function MailBoxPage() {
     return decryptMailKey(currentKey, purePrivateKey, currentEncryptionPublicKey);
   };
 
-  useEffect(() => {
-    MMHttp.onUnAuthHandle = logout;
-  }, []);
+
 
   return (
+
     <MailBoxContext.Provider
       value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat, getRandomBits }}>
+      {/* 用户已登录，加载ga */}
+      {isLogin && <GoogleAnalytics />}
       <Layout>
         {/* list */}
         <MailList />

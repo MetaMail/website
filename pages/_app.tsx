@@ -6,6 +6,8 @@ import { themeChange } from 'theme-change';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
 import { useThemeStore } from 'lib/zustand-store';
+import * as ReactGA from 'react-ga';
+import { useRouter } from 'next/router';
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -14,7 +16,6 @@ type AppPropsWithLayout = AppProps & { Component: NextPageWithLayout };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const { isDark, setIsDark } = useThemeStore()
-
   useEffect(() => {
     themeChange(false);
     const theme = document.documentElement.getAttribute('data-theme') || '';

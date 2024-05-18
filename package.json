@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@metamask/eth-sig-util": "^5.0.2",
+    "@next/third-parties": "^14.2.3",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@tinymce/tinymce-react": "^4.3.3-rc.20240325045045390.sha185cf43",
     "avvvatars-react": "^0.4.2",
