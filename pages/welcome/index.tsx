@@ -69,12 +69,22 @@ export default function Welcome() {
       router.push('/mailbox');
     } catch (error: any) {
       console.error(error);
-      if (error?.code === 'ACTION_REJECTED' || error?.code === 4001) return;// 用户拒绝签名，不提示登录失败
+      if (error?.code === 'ACTION_REJECTED' || error?.code === 4001) {
+        // 用户拒绝签名，不提示登录失败
+        return;
+      } else if (error.message) {
+        toast.error(error.message, {
+          position: 'top-center',
+          autoClose: 2000
+        });
+      } else {
+        toast.error('Login failed. Please make sure your balance > 0 in ETH Mainnet.', {
+          position: 'top-center',
+          autoClose: 2000
+        });
+      }
 
-      toast.error('Login failed. Please make sure your balance > 0 in ETH Mainnet.', {
-        position: 'top-center',
-        autoClose: 2000
-      });
+
     } finally {
       await disconnect();
       setLoading(false); // 请求结束后设置 loading 为 false

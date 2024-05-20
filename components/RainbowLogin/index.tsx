@@ -6,7 +6,7 @@ import ConnectBtn from './Custom';
 import '@rainbow-me/rainbowkit/styles.css';
 
 const { chains, provider } = configureChains([mainnet], [publicProvider()]);
-
+// getDefaultWallets 用于获取默认的钱包连接器 
 const { connectors } = getDefaultWallets({
   appName: 'My RainbowKit App',
   chains,
