@@ -43,7 +43,7 @@ export default function MailBoxPage() {
       console.log('ga执行')
 
       // 定义不同域名对应的 GA 测量 ID
-      const gaConfigs = {
+      const gaConfigs: any = {
         'https://www.mmail-test.ink/': 'G-QMHT4QP6TP', // 测量 ID 1
         'https://www.metamail.ink/': 'G-ZXMD9HB4WZ'      // 测量 ID 2
       };
