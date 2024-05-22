@@ -40,21 +40,22 @@ export default function MailBoxPage() {
 
   const loadGoogleAnalytics = () => {
     if (document && document.body) {
-      console.log('ga执行')
+
 
       // 定义不同域名对应的 GA 测量 ID
       const gaConfigs: any = {
-        'https://www.mmail-test.ink/': 'G-QMHT4QP6TP', // 测量 ID 1
-        'https://www.metamail.ink/': 'G-ZXMD9HB4WZ'      // 测量 ID 2
+        'https://www.mmail-test.ink': 'G-QMHT4QP6TP', // 测量 ID 1
+        'https://www.metamail.ink': 'G-ZXMD9HB4WZ'      // 测量 ID 2
       };
 
       // 获取当前页面的域名
       const currentDomain = window.location.origin;
-
+      console.log(currentDomain)
       // 获取对应域名的测量 ID
       const measurementId = gaConfigs[currentDomain];
 
       if (measurementId) {
+        console.log('ga执行')
         // 动态创建并加载 GA 脚本
         const script = document.createElement('script');
         script.async = true;
