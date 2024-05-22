@@ -40,27 +40,44 @@ export default function MailBoxPage() {
 
   const loadGoogleAnalytics = () => {
     if (document && document.body) {
-      console.log('ga执行1')
-      const measurementId = 'G-QMHT4QP6TP'; // 替换为你的 GA4 衡量 ID
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-      document.body.appendChild(script);
+      console.log('ga执行')
 
-      const gtagScript = document.createElement('script');
-      gtagScript.innerHTML = `
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '${measurementId}', {
-        'send_page_view': true,
-        'transport_type': 'beacon',
-        'linker': {
-          'domains': ['https://www.mmail-test.ink/','https://www.metamail.ink/'] // 替换为你的网站域名
-        }
-      });
-    `;
-      document.body.appendChild(gtagScript);
+      // 定义不同域名对应的 GA 测量 ID
+      const gaConfigs = {
+        'https://www.mmail-test.ink/': 'G-QMHT4QP6TP', // 测量 ID 1
+        'https://www.metamail.ink/': 'G-ZXMD9HB4WZ'      // 测量 ID 2
+      };
+
+      // 获取当前页面的域名
+      const currentDomain = window.location.origin;
+
+      // 获取对应域名的测量 ID
+      const measurementId = gaConfigs[currentDomain];
+
+      if (measurementId) {
+        // 动态创建并加载 GA 脚本
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+        document.body.appendChild(script);
+
+        const gtagScript = document.createElement('script');
+        gtagScript.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${measurementId}', {
+          'send_page_view': true,
+          'transport_type': 'beacon',
+          'linker': {
+            'domains': ['https://www.mmail-test.ink', 'https://www.metamail.ink']
+          }
+        });
+      `;
+        document.body.appendChild(gtagScript);
+      } else {
+        console.error('当前域名没有配置对应的测量 ID');
+      }
     }
   }
   const checkEncryptable = async (receivers: IPersonItem[]) => {
