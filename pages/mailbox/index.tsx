@@ -71,7 +71,7 @@ export default function MailBoxPage() {
           'send_page_view': true,
           'transport_type': 'beacon',
           'linker': {
-            'domains': ['https://www.mmail-test.ink', 'https://www.metamail.ink']
+            'domains': [${currentDomain}]
           }
         });
       `;
