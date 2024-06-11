@@ -24,6 +24,7 @@ import pic3Left from 'assets/pic3Left.svg';
 import gdL from 'assets/gdL.png';
 import LoadingRing from 'components/LoadingRing';
 import NormalSignModal from 'components/Modal/SignModal';
+import { useSignatureModalStore } from 'lib/zustand-store';
 export default function Welcome() {
   const [loading, setLoading] = useState(false);
 
@@ -32,14 +33,10 @@ export default function Welcome() {
   useEffect(() => {
     document.body.style.fontFamily = 'SpaceGrotesk'; // 应用字体样式
   }, []);
-  const [signModalShow, setSignModalShow] = useState(false);
-  const handleOpenModal = () => {
-    setSignModalShow(true);
-  };
+  // 签名提示弹窗---start
+  const { isShowSignature, setIsShowSignature, handleShowSignature } = useSignatureModalStore();
+  // 签名提示弹窗---end
 
-  const handleCloseModal = () => {
-    setSignModalShow(false);
-  };
   const handleAutoLogin = async () => {
     try {
       if (!address) return;
@@ -52,7 +49,7 @@ export default function Welcome() {
 
       const signData = await userHttp.getRandomStrToSign(address);
       randomStringSignInstance.signData = signData;
-      handleOpenModal();
+      handleShowSignature('Sign this message to verify your wallet');
       const signedMessage = await randomStringSignInstance.doSign(signData.signMessages);
       const { user } = await userHttp.getJwtToken({
         tokenForRandom: signData.tokenForRandom,
@@ -66,9 +63,9 @@ export default function Welcome() {
         await userHttp.putEncryptionKey({
           data: encryptionData,
         });
-        handleCloseModal()
+        setIsShowSignature(false)
       }
-      handleCloseModal();
+
       userLocalStorage.setUserInfo({
         address,
         ensName: (user && user.ens) || '',
@@ -97,6 +94,7 @@ export default function Welcome() {
     } finally {
       await disconnect();
       setLoading(false); // 请求结束后设置 loading 为 false
+      setIsShowSignature(false)
     }
   };
 
@@ -118,7 +116,7 @@ export default function Welcome() {
 
   return (
     <div className="!font-[spaceGrotesk] flex flex-col mx-auto max-w-[3000px]">
-      <NormalSignModal show={signModalShow} onClose={handleCloseModal} />
+      {isShowSignature && <NormalSignModal />}
       <Head>
         <title>MetaMail</title>
       </Head>

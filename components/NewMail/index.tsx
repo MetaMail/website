@@ -25,6 +25,7 @@ import styles from './index.module.scss';
 import Tinymce from 'components/Tinymce';
 import moment from 'moment';
 
+import { useSignatureModalStore } from 'lib/zustand-store';
 /**整体收发流程（加密邮件）
  * 1. 创建草稿时，本地生成randomBits，用自己的公钥加密后发给后端
  * 2. 发送邮件时，如果是加密邮件，要把收件人的公钥拿到，然后用每个人的公钥加密原始的randomBits，同时用原始的randomBits对称加密邮件内容
@@ -35,6 +36,7 @@ import moment from 'moment';
  * 1. 用途是加密邮件内容（对称加密）
  * 2. 如果是新建邮件，selectedDraft中会带有原始的randomBits（这样就不用在新建邮件时去签名解密了），如果是从草稿中加载，需要先通过私钥解一下randomBits
  */
+
 let randomBits: string = '';
 let autoSaveMail = true;
 let mailChanged = false;
@@ -56,7 +58,7 @@ export default function NewMail() {
   // const [editorMethods, setEditorMethods] = useState<EditorMethods | null>(null);
   const [replyContent, setReplyContent] = useState<string>(''); // 回复引用的html
   const TinymceRef = useRef(null) // 编辑器
-
+  const { handleShowSignature, setIsShowSignature } = useSignatureModalStore()
 
   //  设置编辑器内容
   const setContentInEditor = (html: string) => {
@@ -142,7 +144,7 @@ export default function NewMail() {
         });
       }
       const result = await Promise.all(
-        receiversInfo.map(item => createEncryptedMailKey(item.publicKey, item.address, randomBits))
+        receiversInfo.map(item => createEncryptedMailKey(item.publicKey, item.address, randomBits, 'Sign this message to write'))
       );
 
       encrypted_encryption_keys = result.map(item => item.encrypted_encryption_key);
@@ -178,7 +180,7 @@ export default function NewMail() {
         pureHtml = decryptMailContent(html || '', randomBits);
         pureText = decryptMailContent(text || '', randomBits);
       }
-
+      handleShowSignature('Sign this e-mail to send')
       const signature = await sendEmailInfoSignInstance.doSign({
         from: concatAddress(selectedDraft.mail_from),
         to: selectedDraft.mail_to.map(to => concatAddress(to)),
@@ -216,6 +218,7 @@ export default function NewMail() {
 
     } finally {
       toast.done(id);
+      setIsShowSignature(false)
     }
   };
 
@@ -285,25 +288,29 @@ export default function NewMail() {
     // console.log('selectedDraft', selectedDraft)
     // load 的时候都是加密模式
     try {
-      setLoading(true);
 
       if (!selectedDraft.message_id) {
         // 新建全新邮件
         // create a temp randomBits
         const { publicKey, address } = userLocalStorage.getUserInfo();
+        console.log('这里有点问题，没有拿到公钥')
+        setLoading(true);
+
+        // createEncryptedMailKey需要提示签名弹窗
+        const signMsg = 'Sign this message to write'
         const { encrypted_encryption_key, randomBits: tempRandomBits } = await createEncryptedMailKey(
           publicKey,
-          address
+          address,
+          '',
+          signMsg
         );
         randomBits = tempRandomBits;
         selectedDraft.meta_header = {
           encrypted_encryption_keys: [encrypted_encryption_key],
           encryption_public_keys: [publicKey],
         };
-
         return;
       }
-
 
 
       randomBits = await getRandomBits('draft');
@@ -326,6 +333,7 @@ export default function NewMail() {
       initHtml = part_html;
 
       setContentInEditor(part_html);
+
     } catch (error: any) {
       console.error(error);
       setSelectedDraft(null)
@@ -338,6 +346,7 @@ export default function NewMail() {
 
     } finally {
       setLoading(false);
+      setIsShowSignature(false)
     }
   };
 
@@ -440,7 +449,7 @@ export default function NewMail() {
 
   return (
     <div
-      className={`z-30 ${selectedDraft ? 'fadeInAnimation' : 'fadeInAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 2xl:h-700 w-[60vw] max-w-[1200px] right-20 ${styles.newMailWrap}`
+      className={`z-30 ${selectedDraft && selectedDraft.meta_header ? 'fadeInAnimation' : 'fadeOutAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 2xl:h-700 w-[60vw] max-w-[1200px] right-20 ${styles.newMailWrap}`
         } `}>
       <header className="flex justify-between">
         <div className="flex items-center">

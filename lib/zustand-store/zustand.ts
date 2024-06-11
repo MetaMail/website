@@ -7,8 +7,8 @@ interface IMailListState {
   unreadCount: number;
   spamCount: number;
   list: MailListItemType[];
-  detailList:IMailContentItem[];
-  setDetailList:(list: IMailContentItem[]) => void;
+  detailList: IMailContentItem[];
+  setDetailList: (list: IMailContentItem[]) => void;
   setList: (list: MailListItemType[]) => void;
   setFilterType: (filterType: FilterTypeEn) => void;
   addPageIndex: () => void;
@@ -23,8 +23,8 @@ export const useMailListStore = create<IMailListState>()(set => ({
   unreadCount: 0,
   spamCount: 0,
   list: [],
-  detailList:[],
-  setDetailList:(detailList: IMailContentItem[]) => set(() => ({ detailList })),
+  detailList: [],
+  setDetailList: (detailList: IMailContentItem[]) => set(() => ({ detailList })),
   setList: (list: MailListItemType[]) => set(() => ({ list })),
   setFilterType: (filterType: FilterTypeEn) => set(() => ({ filterType })),
   addPageIndex: () => set(state => ({ pageIndex: state.pageIndex + 1 })),
@@ -98,4 +98,23 @@ interface IIsInputShow {
 export const useIsInputShow = create<IIsInputShow>()(set => ({
   isInputShow: false,
   setIsInputShow: (isInputShow: boolean) => set(() => ({ isInputShow })),
+}));
+
+// 签名提示弹窗
+interface IIsShowSignature {
+  isShowSignature: boolean;
+  setIsShowSignature: (isShowSignature: boolean) => void;
+  message: string;
+  setMessage: (message: string) => void;
+  handleShowSignature: (message: string) => void;
+}
+export const useSignatureModalStore = create<IIsShowSignature>()(set => ({
+  isShowSignature: false,
+  setIsShowSignature: (isShowSignature: boolean) => set(() => ({ isShowSignature })),
+  message: '',
+  setMessage: (message: string) => set(() => ({ message })),
+  handleShowSignature: (message: string) => {
+    set(() => ({ message }));
+    set(() => ({ isShowSignature: true }));
+  }
 }));
