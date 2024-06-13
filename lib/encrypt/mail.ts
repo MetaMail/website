@@ -10,7 +10,7 @@ function generateRandom256Bits(address: string) {
 }
 
 // 获得原始randomBits和加密后的randomBits
-export const createEncryptedMailKey = async (publicKey: string, address: string, randomBits?: string, signModalMessage: string) => {
+export const createEncryptedMailKey = async (publicKey: string, address: string, randomBits?: string, signModalMessage?: string) => {
   const { handleShowSignature, setIsShowSignature } = useSignatureModalStore.getState();
   if (!address) {
     throw new Error('No address of current user, please check');
@@ -22,7 +22,7 @@ export const createEncryptedMailKey = async (publicKey: string, address: string,
   let purePrivateKey = userSessionStorage.getPurePrivateKey();
   if (!purePrivateKey) {
     const { privateKey, salt } = userLocalStorage.getUserInfo();
-    console.log('4444', signModalMessage)
+    // console.log('4444', signModalMessage)
     handleShowSignature(signModalMessage)
     purePrivateKey = await getPrivateKey(privateKey, salt);
     userSessionStorage.setPurePrivateKey(purePrivateKey);

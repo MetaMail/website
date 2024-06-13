@@ -118,3 +118,21 @@ export const useSignatureModalStore = create<IIsShowSignature>()(set => ({
     set(() => ({ isShowSignature: true }));
   }
 }));
+
+// 三部签名弹窗
+interface IIsShowThreeSignature {
+  isShowThreeSignature: boolean;
+  setIsShowThreeSignature: (isShowThreeSignature: boolean) => void;
+  activeStep: number;
+  setActiveStep: (activeStep: number) => void;
+  message: string;
+  setMessage: (message: string) => void;
+}
+export const useThreeSignatureModalStore = create<IIsShowThreeSignature>()(set => ({
+  isShowThreeSignature: false,
+  setIsShowThreeSignature: (isShowThreeSignature: boolean) => set(() => ({ isShowThreeSignature })),
+  activeStep: 0,
+  setActiveStep: (activeStep: number) => set(() => ({ activeStep })),
+  message: '',
+  setMessage: (message: string) => set(() => ({ message })),
+}))

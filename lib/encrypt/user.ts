@@ -3,17 +3,20 @@ import keccak256 from 'keccak256';
 
 import { ecdh, symmetricCryptoJSEncryptInstance } from '../base';
 import { saltSignInstance, keyDataSignInstance } from 'lib/sign';
-
+import { useThreeSignatureModalStore } from 'lib/zustand-store';
 // 获取用户的密钥对(目前只有welcome使用)
 export const generateEncryptionUserKey = async () => {
-
+  const { setActiveStep } = useThreeSignatureModalStore.getState();
   const salt = crypto.randomBytes(32).toString('hex');
   let signedSalt;
   try {
+    console.log('第二步骤')
+
     signedSalt = await saltSignInstance.doSign({
       salt: salt,
       hint: 'Sign this salt to generate encryption key',
     });
+    setActiveStep(2);
   } catch (error) {
     // Handle the case where signing is refused by the user
     // Throw a new error or handle it in a way that your application expects
@@ -66,7 +69,7 @@ export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) =
   }
   let signedSalt;
   try {
-    console.log('hhhhh')
+    console.log('@@@@@@@@@@@@@@@')
     signedSalt = await saltSignInstance.doSign({
       salt: salt,
       hint: 'Sign this salt to generate encryption key',
