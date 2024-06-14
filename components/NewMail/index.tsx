@@ -293,11 +293,12 @@ export default function NewMail() {
         // 新建全新邮件
         // create a temp randomBits
         const { publicKey, address } = userLocalStorage.getUserInfo();
-        console.log('这里有点问题，没有拿到公钥')
+        // console.log('这里有点问题，没有拿到公钥')
         setLoading(true);
 
         // createEncryptedMailKey需要提示签名弹窗
-        const signMsg = 'Sign this message to write'
+        const signMsg = 'Sign this message to write';
+        console.log('randomBits', randomBits)
         const { encrypted_encryption_key, randomBits: tempRandomBits } = await createEncryptedMailKey(
           publicKey,
           address,
@@ -309,6 +310,7 @@ export default function NewMail() {
           encrypted_encryption_keys: [encrypted_encryption_key],
           encryption_public_keys: [publicKey],
         };
+        console.log('randomBits-done', randomBits)
         return;
       }
 
@@ -448,8 +450,8 @@ export default function NewMail() {
   }
 
   return (
-    <div
-      className={`z-30 ${selectedDraft && selectedDraft.meta_header ? 'fadeInAnimation' : 'fadeOutAnimation'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 2xl:h-700 w-[60vw] max-w-[1200px] right-20 ${styles.newMailWrap}`
+    <><div
+      className={`z-30 ${randomBits ? selectedDraft ? 'fadeInAnimation' : 'fadeOutAnimation' : 'hidden'} dark:bg-[#191919] flex flex-col font-poppins bg-base-100 p-18  transition-all absolute bottom-0  rounded-22 ${isExtend ? 'h-full w-full right-0' : `h-502 2xl:h-700 w-[60vw] max-w-[1200px] right-20 ${styles.newMailWrap}`
         } `}>
       <header className="flex justify-between">
         <div className="flex items-center">
@@ -600,5 +602,6 @@ export default function NewMail() {
         )}
       </div>
     </div>
+    </>
   );
 }

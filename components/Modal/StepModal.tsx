@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2024-06-12 09:35:05
- * @LastEditTime: 2024-06-12 11:38:21
+ * @LastEditTime: 2024-06-14 16:37:39
  * @LastEditors: 韦玮莹
  * @Description: In User Settings Edit
  * @FilePath: \website\components\Modal\StepModal.tsx
@@ -26,7 +26,7 @@ export default function StepModal() {
         <div className={`shadow-gray-500 shadow-xl absolute flex flex-col justify-center items-center text-center pt-[33px]  box-border w-[520px]  bg-white rounded-[15px]  z-[100]`}>
           <div className='text-center font-Poppins '>
             <h1 className='text-black text-[text-[16px] font-700 '>Sign three steps to join <strong className='text-[#0069E5]'>MetaMail</strong></h1>
-            <p className='text-11 scale-50 text-[#8F8F8F]'>only needed in first login</p>
+            <p className='text-12 scale-90 leading-none text-[#8F8F8F]'>only needed in first login</p>
           </div>
           {/* {activeStep} */}
           <div className='gap-[66px] text-[18px] font-600 flex relative mt-30 mb-30'>

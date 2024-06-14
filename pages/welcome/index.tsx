@@ -65,10 +65,13 @@ export default function Welcome() {
       }
 
       const signedMessage = await randomStringSignInstance.doSign(signData.signMessages);
+      // 关闭老用户签名提示弹窗
+      setIsShowSignature(false)
       const { user } = await userHttp.getJwtToken({
         tokenForRandom: signData.tokenForRandom,
         signedMessage,
       });
+
       console.log('userLocalStorage.getUserInfo()', userHttp.getEncryptionKey(address))
       let encryptionData = await userHttp.getEncryptionKey(address);
       if (!ensName) {
@@ -80,7 +83,7 @@ export default function Welcome() {
         await userHttp.putEncryptionKey({
           data: encryptionData,
         });
-        setIsShowSignature(false)
+        setIsShowThreeSignature(false)
       }
 
       userLocalStorage.setUserInfo({
@@ -111,7 +114,9 @@ export default function Welcome() {
     } finally {
       await disconnect();
       setLoading(false); // 请求结束后设置 loading 为 false
-      setIsShowSignature(false)
+      setActiveStep(0)
+      setIsShowSignature(false);
+      setIsShowThreeSignature(false)
     }
   };
 
