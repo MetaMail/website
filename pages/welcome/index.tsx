@@ -23,20 +23,30 @@ import pic2Right from 'assets/pic2Right.svg';
 import pic3Left from 'assets/pic3Left.svg';
 import gdL from 'assets/gdL.png';
 import LoadingRing from 'components/LoadingRing';
-
+import NormalSignModal from 'components/Modal/SignModal';
+import { useSignatureModalStore, useThreeSignatureModalStore } from 'lib/zustand-store';
+import StepModal from 'components/Modal/StepModal';
 export default function Welcome() {
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   let address = useAccount().address?.toLowerCase();
   useEffect(() => {
     document.body.style.fontFamily = 'SpaceGrotesk'; // 应用字体样式
   }, []);
-  const handleAutoLogin = async () => {
+  // 签名提示弹窗---start
+  const { isShowSignature, setIsShowSignature, handleShowSignature } = useSignatureModalStore();
+  // 签名提示弹窗---end
 
+  // 新用户step弹窗
+  const { isShowThreeSignature, setIsShowThreeSignature, activeStep, setActiveStep } = useThreeSignatureModalStore();
+
+  const handleAutoLogin = async () => {
     try {
       if (!address) return;
       setLoading(true); // 开始请求时设置 loading 为 true
-      const { address: localAddress } = userLocalStorage.getUserInfo();
+      const { address: localAddress, ensName, publicKey, privateKey, salt } = userLocalStorage.getUserInfo();
+
       const token = userLocalStorage.getToken();
       if (localAddress && token) {
         return router.push('/mailbox');
@@ -44,20 +54,38 @@ export default function Welcome() {
 
       const signData = await userHttp.getRandomStrToSign(address);
       randomStringSignInstance.signData = signData;
+      // 判断是否新用户
+      if (!signData.isNewUser) {
+        // 是
+        handleShowSignature('Sign this message to verify your wallet');
+      } else {
+        // 否
+        setIsShowThreeSignature(true);
+
+      }
+
       const signedMessage = await randomStringSignInstance.doSign(signData.signMessages);
+      // 关闭老用户签名提示弹窗
+      setIsShowSignature(false)
       const { user } = await userHttp.getJwtToken({
         tokenForRandom: signData.tokenForRandom,
         signedMessage,
       });
-      let encryptionData = await userHttp.getEncryptionKey(address);
 
+      console.log('userLocalStorage.getUserInfo()', userHttp.getEncryptionKey(address))
+      let encryptionData = await userHttp.getEncryptionKey(address);
+      if (!ensName) {
+        setActiveStep(1);
+      }
       if (!encryptionData?.signature) {
         encryptionData = await generateEncryptionUserKey();
         // do upload
         await userHttp.putEncryptionKey({
           data: encryptionData,
         });
+        setIsShowThreeSignature(false)
       }
+
       userLocalStorage.setUserInfo({
         address,
         ensName: (user && user.ens) || '',
@@ -83,11 +111,12 @@ export default function Welcome() {
           autoClose: 2000
         });
       }
-
-
     } finally {
       await disconnect();
       setLoading(false); // 请求结束后设置 loading 为 false
+      setActiveStep(0)
+      setIsShowSignature(false);
+      setIsShowThreeSignature(false)
     }
   };
 
@@ -109,6 +138,8 @@ export default function Welcome() {
 
   return (
     <div className="!font-[spaceGrotesk] flex flex-col mx-auto max-w-[3000px]">
+      {isShowSignature && <NormalSignModal />}
+      <StepModal />
       <Head>
         <title>MetaMail</title>
       </Head>
