@@ -125,6 +125,7 @@ export default function Welcome() {
 
   // authResult is the return value for the signature
   const { authResult } = useAuthWindow();
+  const challenge = "metamail-oa-demo-challenge"
 
   // Define an internal async function
   const handleSignInWithOpenAccount = async (authResult: any) => {
@@ -181,8 +182,8 @@ export default function Welcome() {
               <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible flex items-center justify-center">
                 <RainbowLogin content="Connect Wallet" />
               </div>
-              <div className="flex justify-center align-center mt-[200px]" >
-                <AuthButton challenge="test-challenge-string"></AuthButton>
+              <div className="flex justify-center align-center mt-[200px] p-[20px]" >
+                <AuthButton challenge={challenge}></AuthButton>
               </div>
             </div>
           </header>

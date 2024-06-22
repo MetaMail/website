@@ -4,6 +4,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
     enabled: process.env.ANALYZE === 'true',
 });
 
+const withTM = require('next-transpile-modules')(['openaccount-connect']);
+
 const nextConfig = {
     reactStrictMode: false,
     swcMinify: true,
@@ -43,6 +45,9 @@ const nextConfig = {
             },
         ];
     },
+    experimental: {
+        esmExternals: 'loose',
+    },
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = withTM(withBundleAnalyzer(nextConfig));
