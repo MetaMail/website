@@ -31,6 +31,7 @@ import StepModal from 'components/Modal/StepModal';
 import { AuthButton, useAuthWindow, verifySignature } from "openaccount-connect";
 
 export default function Welcome() {
+  const [challenge, setChallenge] = useState("");
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -125,7 +126,15 @@ export default function Welcome() {
 
   // authResult is the return value for the signature
   const { authResult } = useAuthWindow();
-  const challenge = "metamail-oa-demo-challenge"
+
+  const fetchChallenge = async () => {
+    try {
+      const signData = await userHttp.getRandomStrToSign("0x1234");
+      setChallenge(signData.signMessages.challenge);
+    } catch (error) {
+      console.error('Error fetching challenge:', error);
+    }
+  };
 
   // Define an internal async function
   const handleSignInWithOpenAccount = async (authResult: any) => {
@@ -183,6 +192,7 @@ export default function Welcome() {
                 <RainbowLogin content="Connect Wallet" />
               </div>
               <div className="flex justify-center align-center mt-[200px] p-[20px]" >
+                <button onClick={fetchChallenge} className="mr-2">Get Challenge</button>
                 <AuthButton challenge={challenge}></AuthButton>
               </div>
             </div>

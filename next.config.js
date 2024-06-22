@@ -47,7 +47,7 @@ const nextConfig = {
     },
     experimental: {
         esmExternals: 'loose',
-    },
+    },  
 };
 
 module.exports = withTM(withBundleAnalyzer(nextConfig));
