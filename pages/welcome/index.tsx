@@ -26,6 +26,8 @@ import LoadingRing from 'components/LoadingRing';
 import NormalSignModal from 'components/Modal/SignModal';
 import { useSignatureModalStore, useThreeSignatureModalStore } from 'lib/zustand-store';
 import StepModal from 'components/Modal/StepModal';
+import { AuthButton, useAuthWindow, verifySignature } from "openaccount-connect";
+
 export default function Welcome() {
   const [loading, setLoading] = useState(false);
 
@@ -61,7 +63,6 @@ export default function Welcome() {
       } else {
         // 否
         setIsShowThreeSignature(true);
-
       }
 
       const signedMessage = await randomStringSignInstance.doSign(signData.signMessages);
@@ -120,6 +121,28 @@ export default function Welcome() {
     }
   };
 
+  // authResult is the return value for the signature
+  const { authResult } = useAuthWindow();
+
+  // Define an internal async function
+  const handleSignInWithOpenAccount = async (authResult: any) => {
+    try {
+      // Call your validation signature function
+      let status = await verifySignature(authResult);
+      alert(status)
+    } catch (error) {
+      // Error handling
+      console.error('Error verifying signature:', error);
+    }
+  };
+  
+  useEffect(() => {
+    if (authResult) {
+      console.log('AuthResult:', JSON.stringify(authResult, null, 2));
+      handleSignInWithOpenAccount(authResult)
+    }
+  }, [authResult]);
+
   useEffect(() => {
     window.ethereum?.on('accountsChanged', (accounts: string[]) => {
       address = accounts[0].toLowerCase();
@@ -150,10 +173,15 @@ export default function Welcome() {
           <div className="gradient-dot-middle" />
         </div>
         <div className="pt-43 relative">
-          <header className="flex flex-row justify-between px-40 lg:px-102">
-            <Image src={logoBrand} alt="logo" width={298} height={52} />
-            <div className="relative hover:shadow-md font-[600] text-[#000]  text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible  flex items-center justify-center">
-              <RainbowLogin content="Connect Wallet" />
+          <header className="flex flex-row justify-between items-start px-40 lg:px-102">
+                <Image src={logoBrand} alt="logo" width={298} height={52} />
+              <div className="flex flex-col space-y-2">
+              <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible flex items-center justify-center">
+                <RainbowLogin content="Connect Wallet" />
+              </div>
+              <div className="flex justify-center align-center mt-[200px]" >
+                <AuthButton challenge="test-challenge-string"></AuthButton>
+              </div>
             </div>
           </header>
         </div>
