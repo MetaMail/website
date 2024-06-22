@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import { themeChange } from 'theme-change';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
+import '../styles/tailwind.css';
 import { useThemeStore } from 'lib/zustand-store';
 import * as ReactGA from 'react-ga';
 import { useRouter } from 'next/router';
