@@ -1,13 +1,14 @@
 /** @type {import('next').NextConfig} */
-// const withImages = require('next-images');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
     enabled: process.env.ANALYZE === 'true',
 });
+const withTM = require('next-transpile-modules')(['openaccount-connect', '@passwordless-id/webauthn']);
 
 const nextConfig = {
     reactStrictMode: false,
     swcMinify: true,
     trailingSlash: true,
+    experimental: { esmExternals: 'loose' },
     exportPathMap: async function (defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
         return {
             '/': { page: '/welcome' },
@@ -45,4 +46,4 @@ const nextConfig = {
     },
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = withTM(withBundleAnalyzer(nextConfig));

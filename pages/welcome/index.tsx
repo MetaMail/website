@@ -26,7 +26,10 @@ import LoadingRing from 'components/LoadingRing';
 import NormalSignModal from 'components/Modal/SignModal';
 import { useSignatureModalStore, useThreeSignatureModalStore } from 'lib/zustand-store';
 import StepModal from 'components/Modal/StepModal';
+import { AuthButton, useAuthWindow, verifySignature } from 'openaccount-connect';
+
 export default function Welcome() {
+  const [challenge, setChallenge] = useState("");
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -120,6 +123,38 @@ export default function Welcome() {
     }
   };
 
+  // authResult is the return value for the signature
+  const { authResult } = useAuthWindow();
+
+  const getRandomChallenge = async () => {
+    try {
+      const signData = await userHttp.getRandomStrToSign("0xEE12C640b0793cF514E42EA1c428bd5399545d4D");
+      setChallenge(signData.signMessages.challenge);
+      console.log("New challenge:", signData.signMessages.challenge);
+    } catch (error) {
+      console.error('Error fetching challenge:', error);
+    }
+  };
+  
+  // Define an internal async function
+  const handleSignInWithOpenAccount = async (authResult: any) => {
+    try {
+      // Call your validation signature function
+      let status = await verifySignature(authResult);
+      alert(status)
+    } catch (error) {
+      // Error handling
+      console.error('Error verifying signature:', error);
+    }
+  };
+  
+  useEffect(() => {
+    if (authResult) {
+      console.log('AuthResult:', JSON.stringify(authResult, null, 2));
+      handleSignInWithOpenAccount(authResult)
+    }
+  }, [authResult]);
+
   useEffect(() => {
     window.ethereum?.on('accountsChanged', (accounts: string[]) => {
       address = accounts[0].toLowerCase();
@@ -152,9 +187,24 @@ export default function Welcome() {
         <div className="pt-43 relative">
           <header className="flex flex-row justify-between px-40 lg:px-102">
             <Image src={logoBrand} alt="logo" width={298} height={52} />
-            <div className="relative hover:shadow-md font-[600] text-[#000]  text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible  flex items-center justify-center">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
+            <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible flex items-center justify-center">
               <RainbowLogin content="Connect Wallet" />
             </div>
+            <div className="flex flex-col items-center gap-2">
+            <button 
+              onClick={getRandomChallenge}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+              >
+              Get Challenge
+            </button>
+            <div className="flex justify-center align-center">
+              <AuthButton challenge={challenge}></AuthButton>
+            </div>
+          </div>
+          </div>
+          </div>
           </header>
         </div>
         {/* -------- */}
