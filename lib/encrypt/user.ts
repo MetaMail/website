@@ -59,6 +59,32 @@ export const generateEncryptionUserKey = async () => {
   };
   return reqMessage;
 };
+export const generateOAEncryptionUserKey = async () => {
+  const salt = crypto.randomBytes(32).toString('hex');
+  const { privateKey, publicKey } = await ecdh.generateKey();
+  const Encrypted_Private_Store_Key = encryptPrivateKey(privateKey, salt);
+
+  const keysMeta = {
+    name: 'ECDH',
+    named_curve: 'P-384',
+    private_key_format: 'pkcs8',
+    public_key_format: 'spki',
+    private_key_encoding: 'hex',
+    public_key_encoding: 'hex',
+    key_usages: ['deriveKey'],
+    derived_key_name: 'AES-GCM',
+  };
+
+  const reqMessage = {
+    signature: "oa-account",
+    salt: salt,
+    encrypted_private_key: Encrypted_Private_Store_Key,
+    public_key: publicKey,
+    keys_meta: JSON.stringify(keysMeta),
+    date: new Date().toISOString(),
+  };
+  return reqMessage;
+};
 // 解密出经过对称加密的用户私钥
 export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) => {
   if (!encryptedPrivateKey || encryptedPrivateKey.length == 0) {

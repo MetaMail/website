@@ -180,26 +180,13 @@ export default function NewMail() {
         pureHtml = decryptMailContent(html || '', randomBits);
         pureText = decryptMailContent(text || '', randomBits);
       }
-      handleShowSignature('Sign this e-mail to send')
-      const signature = await sendEmailInfoSignInstance.doSign({
-        from: concatAddress(selectedDraft.mail_from),
-        to: selectedDraft.mail_to.map(to => concatAddress(to)),
-        cc: selectedDraft.mail_cc.map(cc => concatAddress(cc)),
-        date: dateRef.current,
-        subject: subjectRef.current.value,
-        text_hash: CryptoJS.SHA256(pureText).toString(),
-        html_hash: CryptoJS.SHA256(pureHtml).toString(),
-        attachment_hashes: selectedDraft.attachments.map(att => encrypted_encryption_keys.length ? att.encrypted_sha256 : att.plain_sha256),
-        encrypted_encryption_key_hashes: encrypted_encryption_keys ? encrypted_encryption_keys.map(key => CryptoJS.SHA256(key).toString()) : [],
-        encryption_public_key_hashes: encryption_public_keys ? encryption_public_keys.map(key => CryptoJS.SHA256(key).toString()) : [],
-      });
 
       // 如果是非加密邮件，则需要将randomBits传给后端，后端发送邮件之前会先解出原始正文
       // 如果是加密邮件，则不需要传randomBits
       const messageId = await postSignature(
         encrypted_encryption_keys,
         encryption_public_keys,
-        signature,
+        "",
         !encrypted_encryption_keys.length ? randomBits : ''
       );
       if (messageId) {

@@ -7,8 +7,8 @@ import { disconnect } from '@wagmi/core';
 import { toast } from 'react-toastify';
 
 import { userHttp } from 'lib/http';
-import { userLocalStorage } from 'lib/utils';
-import { generateEncryptionUserKey } from 'lib/encrypt';
+import { userSessionStorage, userLocalStorage } from 'lib/utils';
+import { generateEncryptionUserKey, generateOAEncryptionUserKey } from 'lib/encrypt';
 import { randomStringSignInstance } from 'lib/sign';
 import ReviewInfo from 'components/ReviewInfo';
 import Footer from 'components/Footer';
@@ -26,7 +26,12 @@ import LoadingRing from 'components/LoadingRing';
 import NormalSignModal from 'components/Modal/SignModal';
 import { useSignatureModalStore, useThreeSignatureModalStore } from 'lib/zustand-store';
 import StepModal from 'components/Modal/StepModal';
+import { AuthButton, useAuthWindow, verifySignature } from 'openaccount-connect';
+import { decryptPrivateKey } from '../../lib/encrypt/user';
+
 export default function Welcome() {
+  const [challenge, setChallenge] = useState("");
+  const [tokenForRandom, setTokenForRandom] = useState("");
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -120,6 +125,80 @@ export default function Welcome() {
     }
   };
 
+  // authResult is the return value for the signature
+  const { authResult } = useAuthWindow();
+
+  const getRandomChallenge = async () => {
+    try {
+      const signData = await userHttp.getRandomStrToSign("0xEE12C640b0793cF514E42EA1c428bd5399545d4D");
+      setChallenge(signData.signMessages.challenge);
+      setTokenForRandom(signData.tokenForRandom);
+      console.log("New challenge:", signData.signMessages.challenge);
+    } catch (error) {
+      console.error('Error fetching challenge:', error);
+    }
+  };
+  
+  // Define an internal async function
+  const handleSignInWithOpenAccount = async (authResult: any) => {
+    if (!tokenForRandom) {
+      console.error('tokenForRandom is not set');
+      return;
+    }
+
+    try {
+      // Call your validation signature function
+      let status = await verifySignature(authResult);
+      if (!status) {
+        alert('Signature verification failed');
+        return;
+      }
+
+      console.info(authResult);
+      console.info(JSON.stringify(authResult));
+
+      const { user } = await userHttp.getJwtToken({
+        tokenForRandom: tokenForRandom,
+        signedMessage: 'not used',
+        authResult: authResult,
+      });
+
+      address = authResult.fullChallenge.account
+      console.log('userLocalStorage.getUserInfo()', userHttp.getEncryptionKey(address))
+      let encryptionData = await userHttp.getEncryptionKey(address);
+      if (!encryptionData?.salt) {
+        encryptionData = await generateOAEncryptionUserKey();
+        // do upload
+        await userHttp.putEncryptionKey({
+          data: encryptionData,
+          isOA: true,
+        });
+      }
+
+      userLocalStorage.setUserInfo({
+        address,
+        ensName: (user && user.ens) || '',
+        publicKey: encryptionData.public_key,
+        privateKey: encryptionData.encrypted_private_key,
+        salt: encryptionData.salt,
+      });
+
+      userSessionStorage.setPurePrivateKey(decryptPrivateKey(encryptionData.encrypted_private_key, encryptionData.salt));
+
+      router.push('/mailbox');
+    } catch (error) {
+      console.error('Error during sign in:', error);
+      alert('Sign in failed. Please try again.');
+    }
+  };
+  
+  useEffect(() => {
+    if (authResult) {
+      console.log('AuthResult:', JSON.stringify(authResult, null, 2));
+      handleSignInWithOpenAccount(authResult)
+    }
+  }, [authResult]);
+
   useEffect(() => {
     window.ethereum?.on('accountsChanged', (accounts: string[]) => {
       address = accounts[0].toLowerCase();
@@ -152,9 +231,24 @@ export default function Welcome() {
         <div className="pt-43 relative">
           <header className="flex flex-row justify-between px-40 lg:px-102">
             <Image src={logoBrand} alt="logo" width={298} height={52} />
-            <div className="relative hover:shadow-md font-[600] text-[#000]  text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible  flex items-center justify-center">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
+            <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible flex items-center justify-center">
               <RainbowLogin content="Connect Wallet" />
             </div>
+            <div className="flex flex-col items-center gap-2">
+            <button 
+              onClick={getRandomChallenge}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+              >
+              Get Random Challenge
+            </button>
+            <div className="flex justify-center align-center">
+              <AuthButton challenge={challenge}></AuthButton>
+            </div>
+          </div>
+          </div>
+          </div>
           </header>
         </div>
         {/* -------- */}

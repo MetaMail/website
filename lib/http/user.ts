@@ -26,6 +26,7 @@ interface IGetEncryptionKeyResponse {
 
 interface IPutEncryptionKeyParams {
   data: IGetEncryptionKeyResponse;
+  isOA?: boolean;
 }
 
 interface IGetRandomStrToSignParams {
@@ -43,7 +44,8 @@ export interface IGetRandomStrToSignResponse {
 
 interface IGetJwtTokenParams {
   tokenForRandom: string;
-  signedMessage: string;
+  signedMessage?: string;
+  authResult?: string;
 }
 
 interface IGetJwtTokenResponse {
@@ -81,8 +83,13 @@ class MMUserHttp extends MMHttp {
   }
 
   async getJwtToken(params: IGetJwtTokenParams) {
+    console.log("getJwtToken params:", params);
+
     const data = await this.post<IGetJwtTokenParams, IGetJwtTokenResponse>(APIs.getAuthToken, params);
     userLocalStorage.setToken(data.token || '');
+
+    console.log("JWT Token:", data.token);
+
     return data;
   }
 
