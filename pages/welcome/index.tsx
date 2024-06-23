@@ -28,7 +28,7 @@ import LoadingRing from 'components/LoadingRing';
 import NormalSignModal from 'components/Modal/SignModal';
 import { useSignatureModalStore, useThreeSignatureModalStore } from 'lib/zustand-store';
 import StepModal from 'components/Modal/StepModal';
-import { AuthButton, useAuthWindow, verifySignature } from "openaccount-connect";
+import { AuthButton, useAuthResult, verifySignature } from "openaccount-connect";
 
 export default function Welcome() {
   const [challenge, setChallenge] = useState("");
@@ -125,7 +125,7 @@ export default function Welcome() {
   };
 
   // authResult is the return value for the signature
-  const { authResult } = useAuthWindow();
+  const { authResult } = useAuthResult();
 
   const fetchChallenge = async () => {
     try {
