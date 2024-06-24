@@ -253,19 +253,20 @@ export default function Welcome() {
           </header>
         </div>
         {/* -------- */}
-        <div className="pt-78 lg:pt-136 relative  left-0 md:left-174 2xl:left-[18%] w-399 text-[#333] z-[1]">
-          <div className=' scale-[80%] md:scale-100'>
-          <h1 className="font-bold text-5xl leading-snug ">
-            <p>Your</p>
-            <p>Web3 Email</p>
-          </h1>
-          <p className="text-4xl font-light leading-snug">Create And Use Your Crypto Email</p>
-          </div>
+        <div className="py-30 md:pb-0 md:pt-78 lg:pt-136 relative  left-0 md:left-174 2xl:left-[18%] w-399 text-[#333] z-[1]">
+          <div className=' scale-[90%] md:scale-100'>
+            <h1 className="font-bold text-5xl leading-snug ">
+              <p>Your</p>
+              <p>Web3 Email</p>
+            </h1>
+            <p className="text-4xl font-light leading-snug">Create And Use Your Crypto Email</p>
+            </div>
           <div
-            className="relative hover:shadow-md mt-80  z-[10]  rounded-[0.5rem] ">
+            className="p-20 md:p-0 relative hover:shadow-md mt-40 md:mt-80  z-[10]  rounded-[0.5rem] w-fit">
             {/* <RainbowLogin content="Try It Now" /> */}
             <AuthButton challenge={challenge}></AuthButton>
           </div>
+       
         </div>
         <div className="scale-65 xl:scale-80 2xl:scale-100">
           <div className="relative hidden lg:flex">
@@ -306,7 +307,7 @@ export default function Welcome() {
           <div className="text-[20px] md:text-3xl font-normal leading-normal">
             Sign evey mail digitally with your wallet. No forged mails anymore!
           </div>
-          <div className="mb-10 md:mb-0 mt-40 md:mt-0 relative hover:shadow-md  font-[600] text-[#000]  rounded-[0.5rem] visible ">
+          <div className="mb-10 md:mb-0 mt-40 md:mt-0 relative hover:shadow-md  font-[600] text-[#000] w-fit rounded-[0.5rem] visible ">
             {/* <RainbowLogin content="Start Now" /> */}
             <AuthButton challenge={challenge}></AuthButton>
           </div>
