@@ -237,29 +237,34 @@ export default function Welcome() {
         <div className="pt-43 relative">
           <header className="flex flex-row justify-between px-40 lg:px-102">
             <Image src={logoBrand} alt="logo" width={298} height={52} />
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
-            <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible flex items-center justify-center">
-              <RainbowLogin content="Connect Wallet" />
-            </div>
-            <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible flex items-center justify-center">
-              <AuthButton challenge={challenge}></AuthButton>
-            </div>
+            <div className="flex flex-col lg:flex-row items-center justify-center">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-10">
+              <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-50 border   border-zinc-300 rounded-[20px] invisible lg:visible flex items-center justify-center">
+                <RainbowLogin content="Connect Wallet" />
+              </div>
+              
+              {/* openaccount */}
+              <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] rounded-[0.5rem] invisible lg:visible flex items-center justify-center">
+                <AuthButton challenge={challenge}></AuthButton>
+              </div>
+            
           </div>
           </div>
           </header>
         </div>
         {/* -------- */}
-        <div className="pt-78 lg:pt-136 relative scale-[80%] md:scale-100 left-0 md:left-174 2xl:left-[18%] w-399 text-[#333] z-[1]">
+        <div className="pt-78 lg:pt-136 relative  left-0 md:left-174 2xl:left-[18%] w-399 text-[#333] z-[1]">
+          <div className=' scale-[80%] md:scale-100'>
           <h1 className="font-bold text-5xl leading-snug ">
             <p>Your</p>
             <p>Web3 Email</p>
           </h1>
           <p className="text-4xl font-light leading-snug">Create And Use Your Crypto Email</p>
+          </div>
           <div
-            className="relative hover:shadow-md mt-80  z-[10]  flex items-center justify-center w-219 h-69 rounded-20 text-white  
-    text-2xl bg-black ">
-            <RainbowLogin content="Try It Now" />
+            className="relative hover:shadow-md mt-80  z-[10]  rounded-[0.5rem] ">
+            {/* <RainbowLogin content="Try It Now" /> */}
+            <AuthButton challenge={challenge}></AuthButton>
           </div>
         </div>
         <div className="scale-65 xl:scale-80 2xl:scale-100">
@@ -289,8 +294,9 @@ export default function Welcome() {
             Use the wallet to log in our mailbox directly, send and receive mails with users of our mailbox
             and other common mainstream mailboxes. Totally free!
           </div>
-          <div className="relative hover:shadow-md font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 visible  flex items-center justify-center">
-            <RainbowLogin content="Connect Wallet" />
+          <div className="relative hover:shadow-md font-[600] text-[#000]  rounded-[0.5rem] visible  ">
+            {/* <RainbowLogin content="Connect Wallet" /> */}
+            <AuthButton challenge={challenge}></AuthButton>
           </div>
         </div>
       </div>
@@ -300,8 +306,9 @@ export default function Welcome() {
           <div className="text-[20px] md:text-3xl font-normal leading-normal">
             Sign evey mail digitally with your wallet. No forged mails anymore!
           </div>
-          <div className="mb-10 md:mb-0 mt-40 md:mt-0 relative hover:shadow-md  font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 visible  flex items-center justify-center">
-            <RainbowLogin content="Start Now" />
+          <div className="mb-10 md:mb-0 mt-40 md:mt-0 relative hover:shadow-md  font-[600] text-[#000]  rounded-[0.5rem] visible ">
+            {/* <RainbowLogin content="Start Now" /> */}
+            <AuthButton challenge={challenge}></AuthButton>
           </div>
         </div>
         <Image src={pic2Right} alt="second carton pic" className="origin-top scale-[80%] sm:scale-[60%] md:scale-125 lg:scale-100 w-full md:w-420" />
@@ -316,8 +323,9 @@ export default function Welcome() {
             Mails sent and received by MetaMail users could be optionally encrypted, and only the recipient
             has the private key to decrypt the mails, ensuring the ultimate security.
           </div>
-          <div className="relative hover:shadow-md  font-[600] text-[#000]   w-250 h-44 border border-[#1e1e1e] rounded-40 invisible lg:visible flex items-center justify-center">
-            <RainbowLogin content="Encrypt Now" />
+          <div className="relative hover:shadow-md  font-[600] text-[#000]   rounded-[0.5rem] invisible lg:visible ">
+            {/* <RainbowLogin content="Encrypt Now" /> */}
+            <AuthButton challenge={challenge}></AuthButton>
           </div>
         </div>
       </div>

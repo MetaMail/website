@@ -7165,10 +7165,10 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-openaccount-connect@^1.0.26:
-  version "1.0.26"
-  resolved "https://registry.npmjs.org/openaccount-connect/-/openaccount-connect-1.0.26.tgz"
-  integrity sha512-yJ24jVYYWc9vBc/yqJUy929aZfZsrk5tm1X2y28foUPX/MFf2dvO64OUYBURswySTuS/lub4EFeHxi+KCf9RgA==
+openaccount-connect@^1.0.30:
+  version "1.0.30"
+  resolved "https://registry.yarnpkg.com/openaccount-connect/-/openaccount-connect-1.0.30.tgz#487481f7bad2f2ed194a408b70b734c9e2538147"
+  integrity sha512-ABoUW7FxuX9I4yRCoTjE2HfjfQgeRdglQOhU2hNQrt3NOEWQ36TIZlGaZ+nldpGgpZdHuwqqI1x5EvFmcSIjDw==
   dependencies:
     "@nextui-org/react" "^2.4.2"
     "@passwordless-id/webauthn" "^1.6.1"
