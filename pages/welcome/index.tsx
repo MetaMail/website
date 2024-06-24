@@ -295,7 +295,7 @@ export default function Welcome() {
             Use the wallet to log in our mailbox directly, send and receive mails with users of our mailbox
             and other common mainstream mailboxes. Totally free!
           </div>
-          <div className="relative hover:shadow-md font-[600] text-[#000]  rounded-[0.5rem] visible  ">
+          <div className="relative hover:shadow-md font-[600] text-[#000]  rounded-[0.5rem] visible w-fit ">
             {/* <RainbowLogin content="Connect Wallet" /> */}
             <AuthButton challenge={challenge}></AuthButton>
           </div>
@@ -324,7 +324,7 @@ export default function Welcome() {
             Mails sent and received by MetaMail users could be optionally encrypted, and only the recipient
             has the private key to decrypt the mails, ensuring the ultimate security.
           </div>
-          <div className="relative hover:shadow-md  font-[600] text-[#000]   rounded-[0.5rem] invisible lg:visible ">
+          <div className="relative hover:shadow-md  font-[600] text-[#000]   rounded-[0.5rem] invisible lg:visible w-fit">
             {/* <RainbowLogin content="Encrypt Now" /> */}
             <AuthButton challenge={challenge}></AuthButton>
           </div>
