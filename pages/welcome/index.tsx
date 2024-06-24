@@ -191,6 +191,12 @@ export default function Welcome() {
       alert('Sign in failed. Please try again.');
     }
   };
+
+  useEffect(() => {
+    getRandomChallenge();
+    const intervalId = setInterval(getRandomChallenge, 3360000);
+    return () => clearInterval(intervalId);
+  }, []);
   
   useEffect(() => {
     if (authResult) {
@@ -236,17 +242,9 @@ export default function Welcome() {
             <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible flex items-center justify-center">
               <RainbowLogin content="Connect Wallet" />
             </div>
-            <div className="flex flex-col items-center gap-2">
-            <button 
-              onClick={getRandomChallenge}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
-              >
-              Get Random Challenge
-            </button>
-            <div className="flex justify-center align-center">
+            <div className="relative hover:shadow-md font-[600] text-[#000] text-[16px] w-250 h-44 border border-[#1e1e1e] rounded-[20px] invisible lg:visible flex items-center justify-center">
               <AuthButton challenge={challenge}></AuthButton>
             </div>
-          </div>
           </div>
           </div>
           </header>
