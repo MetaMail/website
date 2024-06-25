@@ -148,12 +148,16 @@ export default function Welcome() {
 
     try {
       // Call your validation signature function
-      let status = await verifySignature(authResult);
-      if (!status) {
-        alert('Signature verification failed');
-        return;
+      // let status = await verifySignature(authResult);
+      // if (!status) {
+      //   alert('Signature verification failed');
+      //   return;
+      // }
+      if (!authResult.signature) {
+        toast.warn('Not signed');
       }
 
+      toast.info('Loging in...');
       console.info(authResult);
       console.info(JSON.stringify(authResult));
 
