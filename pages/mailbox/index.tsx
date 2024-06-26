@@ -44,8 +44,8 @@ export default function MailBoxPage() {
 
       // 定义不同域名对应的 GA 测量 ID
       const gaConfigs: any = {
-        'https://www.mmail-test.ink': 'G-QMHT4QP6TP', // 测量 ID 1
-        'https://www.metamail.ink': 'G-ZXMD9HB4WZ'      // 测量 ID 2
+        'https://www.mmail-test.ink': 'G-75FTNMN94W', // 测量 ID 1
+        'https://www.metamail.ink': 'G-KCYK0VD85J'      // 测量 ID 2
       };
 
       // 获取当前页面的域名
