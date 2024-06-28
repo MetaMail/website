@@ -157,7 +157,7 @@ export default function Welcome() {
         toast.warn('Not signed');
       }
 
-      toast.info('Loging in...');
+      toast.info('Logging in...');
       console.info(authResult);
       console.info(JSON.stringify(authResult));
 
