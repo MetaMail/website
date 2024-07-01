@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useMailDetailStore, useMailListStore, useNewMailStore, useUtilsStore } from 'lib/zustand-store';
+import { useMailDetailStore, useMailListStore, useNewMailStore, useSignatureModalStore, useUtilsStore } from 'lib/zustand-store';
 import { userHttp, mailHttp } from 'lib/http';
 import { MMHttp, PostfixOfAddress } from 'lib/base';
 import { IPersonItem, MetaMailTypeEn, MarkTypeEn, MailBoxTypeEn, ReadStatusTypeEn, IMailContentItem } from 'lib/constants';
@@ -16,6 +16,7 @@ import { isEmptyObject } from 'utils';
 import LoadingRing from 'components/LoadingRing';
 import moment from 'moment';
 import DetailMailList from 'components/DetailMailList';
+import NormalSignModal from 'components/Modal/SignModal';
 export default function MailBoxPage() {
   const router = useRouter();
   const { selectedMail } = useMailDetailStore();
@@ -24,6 +25,24 @@ export default function MailBoxPage() {
   const { removeAllState } = useUtilsStore();
   const [showLoading, setShowLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [signModalShow, setSignModalShow] = useState(false);
+
+  // 签名提示弹窗---start
+  const { isShowSignature, setIsShowSignature, message, setMessage } = useSignatureModalStore();
+  const handleOpenModal = () => {
+    setIsShowSignature(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsShowSignature(false);
+  };
+  const handleOnSign = (message: string) => {
+    console.log('hand;e')
+    setMessage(message);
+    handleOpenModal()
+  }
+
+  // 签名提示弹窗---end
   const logout = () => {
     userLocalStorage.clearAll();
     mailLocalStorage.clearAll();
@@ -71,7 +90,7 @@ export default function MailBoxPage() {
           'send_page_view': true,
           'transport_type': 'beacon',
           'linker': {
-            'domains': ['https://www.mmail-test.ink', 'https://www.metamail.ink']
+            'domains': [${currentDomain}]
           }
         });
       `;
@@ -202,9 +221,17 @@ export default function MailBoxPage() {
 
     let purePrivateKey = userSessionStorage.getPurePrivateKey();
     if (!purePrivateKey) {
-      const { privateKey, salt } = userLocalStorage.getUserInfo();
-      purePrivateKey = await getPrivateKey(privateKey, salt);
-      userSessionStorage.setPurePrivateKey(purePrivateKey);
+      try {
+        const { privateKey, salt } = userLocalStorage.getUserInfo();
+        console.log('1')
+        setMessage(type === 'draft' ? 'Sign this message to write' : 'Sign this message to decrypt this e-mail');
+        setIsShowSignature(true)
+        purePrivateKey = await getPrivateKey(privateKey, salt);
+
+        userSessionStorage.setPurePrivateKey(purePrivateKey);
+      } finally {
+        setIsShowSignature(false)
+      }
     }
     return decryptMailKey(currentKey, purePrivateKey, currentEncryptionPublicKey);
   };
@@ -215,7 +242,7 @@ export default function MailBoxPage() {
 
     <MailBoxContext.Provider
       value={{ checkEncryptable, createDraft, setShowLoading, logout, getMailStat, getRandomBits }}>
-
+      {isShowSignature && <NormalSignModal />}
       <Layout>
         {/* list */}
         <MailList />

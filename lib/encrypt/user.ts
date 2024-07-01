@@ -3,16 +3,20 @@ import keccak256 from 'keccak256';
 
 import { ecdh, symmetricCryptoJSEncryptInstance } from '../base';
 import { saltSignInstance, keyDataSignInstance } from 'lib/sign';
-// 获取用户的密钥对
+import { useThreeSignatureModalStore } from 'lib/zustand-store';
+// 获取用户的密钥对(目前只有welcome使用)
 export const generateEncryptionUserKey = async () => {
-
+  const { setActiveStep } = useThreeSignatureModalStore.getState();
   const salt = crypto.randomBytes(32).toString('hex');
   let signedSalt;
   try {
+    console.log('第二步骤')
+
     signedSalt = await saltSignInstance.doSign({
       salt: salt,
       hint: 'Sign this salt to generate encryption key',
     });
+    setActiveStep(2);
   } catch (error) {
     // Handle the case where signing is refused by the user
     // Throw a new error or handle it in a way that your application expects
@@ -36,7 +40,7 @@ export const generateEncryptionUserKey = async () => {
 
   const public_key_hash = crypto.createHash('sha256').update(publicKey).digest('hex');
   const encrypted_private_key_hash = crypto.createHash('sha256').update(Encrypted_Private_Store_Key).digest('hex');
-  const keys_hash = crypto.createHash('sha256').update(public_key_hash+encrypted_private_key_hash).digest('hex');
+  const keys_hash = crypto.createHash('sha256').update(public_key_hash + encrypted_private_key_hash).digest('hex');
   const signMessages = {
     salt: salt,
     keys_hash: keys_hash,
@@ -65,6 +69,7 @@ export const getPrivateKey = async (encryptedPrivateKey: string, salt: string) =
   }
   let signedSalt;
   try {
+    console.log('@@@@@@@@@@@@@@@')
     signedSalt = await saltSignInstance.doSign({
       salt: salt,
       hint: 'Sign this salt to generate encryption key',
